@@ -1,0 +1,32 @@
+{
+  "name": "rw-preact",
+  "version": "1.0.0",
+  "author": "Ryan Weiss (rw3iss@gmail.com)",
+  "license": "ISC",
+  "description": "",
+  "main": "build/app.js",
+  "scripts": {
+    "setup": "sudo npm install -g browser-sync nodemon && npm install",
+    "build": "node build",
+    "dev": "concurrently --kill-others \"npm run start-build-watcher\" \"npm run start-browser-sync\"",
+    "start-build-watcher": "nodemon --watch 'src/**/*' -e ts,tsx,js,jsx,scss,html --exec \"node build\"",
+    "start-browser-sync": "node launch",
+    "serve": "serve -l 4500 build"
+  },
+  "sideEffects": false,
+  "devDependencies": {
+    "@types/node": "^14.14.10",
+    "browser-sync": "^2.26.13",
+    "concurrently": "^5.3.0",
+    "esbuild": "^0.8.16",
+    "node-sass": "^5.0.0",
+    "node-sass-alias-importer": "^1.0.0"
+  },
+  "dependencies": {
+    "dateformat": "^4.4.1",
+    "history": "^5.0.0",
+    "preact": "^10.5.10",
+    "preact-router": "^3.2.1",
+    "proxy-compare": "^1.1.3"
+  }
+}

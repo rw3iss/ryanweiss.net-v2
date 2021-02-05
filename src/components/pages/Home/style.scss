@@ -1,0 +1,189 @@
+@import 'src/styles/vars.scss';
+@import 'src/styles/mixins.scss';
+
+#home {
+    $menuWidth: 200px;
+    $menuAreaWidth: 38.2vw;
+    $stageWidth: 61.8vw;
+    $animMenu: .5s;
+    
+    
+    position: relative;
+    @include flex-center-col;
+    flex: 1;
+    padding: 0;
+    max-height: 100%;
+    overflow: hidden;
+    
+    .logo {
+        position: absolute;
+        margin-top: 1.5vh;
+        left: 0;
+        font-family: 'Montserrat';
+        font-size: 45vh;
+        font-weight: 900;
+        opacity: .15;
+        writing-mode: tb-rl;
+        transform: rotate(180deg);
+    }
+    
+    .container {
+        @include flex-no-wrap;
+        align-items: center;
+        position: relative;
+        opacity: 0;
+        margin-right: $menuAreaWidth;
+        height: 100%;
+        
+        &.page-loaded {
+            top: 0;
+            opacity: 1 !important;
+            transition: opacity $animMenu ease-in-out;
+        }
+        
+        .header {
+            @include h1;
+            font-family: $fontBold;
+            padding: 0 0 1rem 1rem;
+            letter-spacing: 2px;
+            font: $fontBold;
+            background-color: #5C9980;
+            color: transparent;
+            text-shadow: 2px 2px 3px rgba(#5C9980,0.5);
+            -webkit-background-clip: text;
+                -moz-background-clip: text;
+                    background-clip: text;
+        }
+        
+        .menu {
+            position: relative;
+            width: 0;
+            right: 0;//$menuWidth;  
+            z-index: 2;
+            transition: 
+                right $animMenu*2 ease-in-out,
+                opacity $animMenu*2 linear;
+            
+            
+            .menu-content {
+                width: $menuWidth;
+                box-shadow: 3px 3px 15px rgba(0,0,0,.4);
+                overflow: hidden;
+                background: $colorBackground2;
+                border-radius: 15px;
+            
+                li {
+                    width: 100%;
+                    border-bottom: 1px solid rgba(0,0,0,.2);  
+                    transition: 
+                        background-color $animMenu linear,
+                        color $animMenu linear,
+                        box-shadow $animMenu linear;
+                    
+                    span {
+                        left: 0;
+                        display: block;
+                        position: relative;
+                        padding: 1rem;
+                        color: #abc;
+                        letter-spacing: 1px;
+                        font-weight: bold;
+                        transition: left $animMenu ease-in-out;
+                    }
+                    
+                    &:hover {
+                        cursor: pointer;
+                        color: #fff;
+                        background-color: rgba(0,0,0,.2);
+                        box-shadow: inset 0px 3px 5px rgba(0,0,0,.1);
+                        transition: 
+                            background-color $animMenu/2 linear,
+                            color $animMenu/2 linear,
+                            box-shadow $animMenu linear;
+                    }
+                    
+                    &.clicked {
+                        span {
+                            left: 10%;
+                            transition: left $animMenu ease-in-out;
+                        }
+                    }
+                    
+                }
+            }
+        }
+        
+        .stage {
+            position: relative;
+            opacity: 0; 
+            width: 0;
+            height: 100%;
+            transition: opacity $animMenu*2 ease-in-out;
+            
+            .stage-content {
+                position: absolute;
+                width: $stageWidth;
+                height: 100%;
+                background: $colorBackgroundDark;
+
+                &:before {
+                    box-shadow: inset 6.18vw 0 6.18vw -6.18vw rgba(0,0,0,.7);
+                    content: " ";
+                    height: 100%;
+                    left: 0;
+                    position: absolute;
+                    top: 0;
+                    width: 6.18vw;
+                }
+                
+                &:after {
+                    box-shadow: inset -6.18vw 0px 6.18vw -6.18vw rgba(0,0,0,.7);
+                    content: " ";
+                    height: 100%;
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 6.18vw;
+                }
+                
+                .loader {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    margin-top: -32px;
+                    margin-left: -32px;
+                    opacity: 0;
+                    @include loader-ring;
+                    transition: opacity $animMenu ease-in-out;
+                }
+            }
+        }
+        
+        
+        // PAGE STAGES -----------------------------
+         
+        &.navigating {
+            .menu {
+                right: calc(#{$menuWidth/2} + 50vw/2 - #{$menuAreaWidth}/4);
+                transition: right $animMenu*1.5 ease-in-out;
+            }
+        }
+        
+        &.show-stage {
+            .stage {
+                opacity: 1;
+                transition: opacity $animMenu ease-in-out;
+             }
+        }
+          
+        &.loading {
+            .stage {
+                .loader {
+                    opacity: 1;
+                    transition: opacity $animMenu ease-in-out;
+                }
+             }
+        }
+    }
+    
+}

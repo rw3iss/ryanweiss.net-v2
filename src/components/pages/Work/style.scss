@@ -1,0 +1,22 @@
+@import 'src/styles/vars.scss';
+
+#work {
+	.sub-nav {
+		padding: $itemPadding;
+
+		a {
+			font-weight: bold;
+			padding: $itemPadding;
+			font-family: $fontBold;
+		}
+	}
+}
+
+@media all and (max-width: 1023px) {
+	#work {
+		.sub-nav {
+			width: 100%;
+			text-align: center;
+		}
+	}
+}

@@ -1,0 +1,1 @@
+sudo npm install -g browser-sync nodemon && npm install
