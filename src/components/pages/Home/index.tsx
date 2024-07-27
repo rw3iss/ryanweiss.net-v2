@@ -1,8 +1,6 @@
-import { h, Component } from 'preact';
-import { Link } from 'preact-router/match';
+import { Component } from 'react';
 import './style.scss';
-
-var db = require('../../../data/db');
+import db from '../../../data/db';
 
 export default class Home extends Component {
 
@@ -11,8 +9,8 @@ export default class Home extends Component {
     }
 
     componentWillMount() {
-        var items = db.getLatest();
-        this.setState({ 
+        const items = db.getLatest();
+        this.setState({
             items,
             currentId: undefined
         });
@@ -28,13 +26,13 @@ export default class Home extends Component {
 
     onNavClick(e, path) {
         const self = this;
-        let id = path.replaceAll('/', '');
-        let items = document.querySelectorAll('.menu li');
+        const id = path.replaceAll('/', '');
+        const items = document.querySelectorAll('.menu li');
 
         Array.from(items)
             .filter(i => i.children[0] != e.target)
             .forEach(i => i.classList.remove('clicked'))
-        
+
         e.target.parentNode.classList.add('clicked');
         this.container.classList.add('navigating');
 
@@ -44,7 +42,7 @@ export default class Home extends Component {
     loadContent(id) {
         const self = this;
         console.log('load content', id);
-        this.setState({ 
+        this.setState({
             currentId: id
         });
 
@@ -55,7 +53,7 @@ export default class Home extends Component {
 
             // load new content
 
-            setTimeout(() => { 
+            setTimeout(() => {
                 self.container.classList.remove('loading');
             }, 500);
         } else {
@@ -67,14 +65,14 @@ export default class Home extends Component {
 
     render() {
         return (
-            <div class="page" id="home">
+            <div className="page" id="home">
 
-                <div class="logo">RYAN</div>
-                
-                <div class="container" style="opacity: 0;">
+                <div className="logo">RYAN</div>
 
-                    <div class="menu">
-                        <ul class="menu-content">
+                <div className="container">
+
+                    <div className="menu">
+                        <ul className="menu-content">
                             <li onClick={(e) => { this.onNavClick(e, '/about') }}><span>About</span></li>
                             <li onClick={(e) => { this.onNavClick(e, '/portfolio') }}><span>Portfolio</span></li>
                             <li onClick={(e) => { this.onNavClick(e, '/projects') }}><span>Other Projects</span></li>
@@ -82,11 +80,11 @@ export default class Home extends Component {
                         </ul>
                     </div>
 
-                    <div class="stage">
-                        <div class="stage-content">
-                            
-                            <div class="loader">
-                                <div class="loader-ring">
+                    <div className="stage">
+                        <div className="stage-content">
+
+                            <div className="loader">
+                                <div className="loader-ring">
                                     <div></div><div></div><div></div><div></div>
                                 </div>
                             </div>

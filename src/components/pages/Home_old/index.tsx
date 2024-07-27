@@ -13,12 +13,12 @@ export default class Home extends Component {
 
     componentWillMount() {
         var items = db.getLatest();
-        this.setState({items});
+        this.setState({ items });
     }
 
     scrollTo(targetId) {
         var target = document.getElementById(targetId);
-        // Velocity(target, "scroll", { 
+        // Velocity(target, "scroll", {
         //     duration: 500,
         //     container: document.getElementById('app-container'),
         //     easing: "easeInBack"
@@ -27,16 +27,16 @@ export default class Home extends Component {
 
     render() {
         return (
-            <div class="page" id="home">
+            <div className="page" id="home">
                 <h1>Hello, World</h1>
 
-                <div class="bio flex-row flex-wrap">
-                    
-                    <div class="left flex-row flex-nowrap">
-                        <div class="col image">
+                <div className="bio flex-row flex-wrap">
+
+                    <div className="left flex-row flex-nowrap">
+                        <div className="col image">
                             <img src="/img/profile.png" width="180" height="200" />
                         </div>
-                        <div class="col me fill">
+                        <div className="col me fill">
                             <h3>I'm</h3>
                             <ul>
                                 <li>Ryan Weiss</li>
@@ -55,10 +55,10 @@ export default class Home extends Component {
                         </div>
                     </div>
 
-                    <div class="right">
-                        <div class="section" id="skills">
+                    <div className="right">
+                        <div className="section" id="skills">
                             <h3>Skills</h3>
-                            <div class="skill-types">  
+                            <div className="skill-types">
                                 <h4>Frontend (<a target="_blank" href="/files/resume.pdf">full list</a>)</h4>
                                 <ul>
                                     <li>JavaScript, React.js, Angular.js, Preact, Vue.js, Backbone.js, Mithril.js, Offline apps, service workers,  Marko, ember.js, Knockout.js, HTML5, CSS3, SASS, CSS Flexbox and Grid, Canvas, WebGL, websockets, PWA's and service workers, jQuery, Bootstrap, CoffeeScript, Handlebars, OAuth, Webpack, gulp, grunt, <a target="_blank" href="/files/resume.pdf">more</a></li>
@@ -74,18 +74,18 @@ export default class Home extends Component {
 
                 </div>
 
-                <div class="line-title" id="fulltime"><h3>Latest</h3><h4>(updated September 2020)</h4></div>
-                <div class="items flex-row flex-wrap">
-                 {this.state.items.map(function(item, i){
-                    return <Item item={item} key={i} />
-                  })}
+                <div className="line-title" id="fulltime"><h3>Latest</h3><h4>(updated September 2020)</h4></div>
+                <div className="items flex-row flex-wrap">
+                    {this.state.items.map(function (item, i) {
+                        return <Item item={item} key={i} />
+                    })}
                 </div>
 
-                <h5><a onClick={()=>this.scrollTo('home')} href="#">Back to Top</a></h5>
+                <h5><a onClick={() => this.scrollTo('home')} href="#">Back to Top</a></h5>
 
-                <h3 class="see-more">See more <Link href="/work">Work</Link> or <Link href="/play">Play</Link> ...</h3>
+                <h3 className="see-more">See more <Link href="/work">Work</Link> or <Link href="/play">Play</Link> ...</h3>
             </div>
         );
     }
-    
+
 }

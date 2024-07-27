@@ -1,37 +1,54 @@
 {
     "compilerOptions": {
-        "baseUrl": "./src",
-        "outDir": "./build/",       // path to output directory
-        "sourceMap": true,          // allow sourcemap support
-        "strictNullChecks": true,   // enable strict null checks as a best practice
-        "module": "commonjs",       // specifiy module code generation
-        "target": "ES2017",         // specify ECMAScript target version
-        "jsx": "react",             // use typescript to transpile jsx to js
-        "jsxFactory": "h",
-        "allowJs": true,            // allow a partial TypeScript and JavaScript codebase  
-        "noImplicitThis": true,
+        "composite": true,
+        "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+        "target": "ES2020",
+        "useDefineForClassFields": true,
+        "lib": [
+            "ES2020",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "baseUrl": "./",
+        "moduleResolution": "Bundler",
+        "module": "ES2020",
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "allowJs": false,
+        "esModuleInterop": true,
+        "allowImportingTsExtensions": true,
+        "isolatedModules": false,
+        "moduleDetection": "auto",
+        "noEmit": true,
+        "jsx": "react-jsx",
+        /* Linting */
+        "strict": false,
+        "strictFunctionTypes": false,
+        "exactOptionalPropertyTypes": false,
+        "noImplicitAny": false,
         "noImplicitReturns": false,
-
-        // Not sure if either of these are necessary:   
-        "experimentalDecorators": true,
-        "forceConsistentCasingInFileNames": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noFallthroughCasesInSwitch": true,
 
         "paths": {
-            "client/*":     ["./*"],
-            "components/*": ["components/*"],
             "config/*":     ["config/*"],
-            "data/*":       ["data/*"],
-            "style/*":      ["src/styles/*"],
-            "utils/*":      ["utils/*"]
+            "app/*":        ["src/*"],
+            "src/*":        ["src/*"],
+            "components/*": ["src/components/*"],
+            "pages/*":      ["src/components/pages/*"],
+            "lib/*":        ["src/lib/*"],
+            "utils/*":      ["src/utils/*"],
+            "services/*":   ["src/services/*"],
+            "helpers/*":    ["src/helpers/*"],
+            "data/*":       ["src/lib/data/*"],
+            "static/*":     ["src/static/*"],
+            "styles/*":     ["src/styles/*"],
+            "shared/*":     ["../shared/*"]
         }
     },
     "include": [
-        "src/*"
-    ],
-    "exclude": [
-        "../node_modules/**/*",
-        "./build/*"
-    ],
-   //"files": []
-
+        "src",
+        "config"
+    ]
 }

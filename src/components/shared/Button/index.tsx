@@ -15,6 +15,6 @@ export default class Button extends Component<IProps, any> {
     }
 
     render(props) {
-        return <div class="button" onClick={props.click ? props.click : () => null}>{...props.children}</div>
+        return <div className="button" onClick={props.click ? props.click : () => null}>{...props.children}</div>
     }
 }

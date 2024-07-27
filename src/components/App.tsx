@@ -1,4 +1,5 @@
-import { h, Component } from 'preact';
+import { Component } from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import SiteHeader from './shared/SiteHeader';
 import Routes from './Routes';
 
@@ -9,15 +10,17 @@ export default class App extends Component {
 
     render() {
         return (
-            <div id="app">
-                
-                <div class="content-wrapper">
-                        
-                    <Routes />
+            <Router>
+                <div id="app">
+
+                    <div className="content-wrapper">
+
+                        <Routes />
+
+                    </div>
 
                 </div>
-
-            </div>
+            </Router>
         );
     }
 

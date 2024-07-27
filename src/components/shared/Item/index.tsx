@@ -1,4 +1,4 @@
-import { h, Component } from 'preact';
+import { Component } from 'react';
 import dateFormat from 'dateformat';
 import './style.scss';
 
@@ -6,13 +6,13 @@ interface IProps {
     item: any
 }
 
-export default class Item extends Component<IProps, any>{
+export default class Item extends Component<IProps, any> {
 
     handleClick() {
         /*
         if(this.props.item.isOpen == true)
             this.props.item.isOpen = false;
-        else 
+        else
             this.props.item.isOpen = true;
         this.forceUpdate();
         */
@@ -30,7 +30,7 @@ export default class Item extends Component<IProps, any>{
         var self = this;
         var item = this.props.item;
 
-        if(item.date_added) {
+        if (item.date_added) {
             var date = Date.parse(item.date_added);
             var dateString = dateFormat(date, 'mmmm dS, yyyy');
         } else if (item.date_from) {
@@ -40,19 +40,19 @@ export default class Item extends Component<IProps, any>{
         }
 
         return (
-            <div class={"item " + (item.isOpen == true ? 'open' : '')}>
-                <div class="inner clear" onClick={this.handleClick}>
-                    <div class="thumb">{item.thumb && <img src={item.thumb}/>}</div>
-                    <div class="text-top">
-                        <div class="date">{dateString}</div>
-                        <div class="title">{item.title}</div>
-                        {item.url && <div class="link"><a href={item.url} target="_blank">{item.url}</a></div>}
-                        {item.tags && <div class="tags"><span className="label">Tags:</span> {item.tags}</div>}
+            <div className={"item " + (item.isOpen == true ? 'open' : '')}>
+                <div className="inner clear" onClick={this.handleClick}>
+                    <div className="thumb">{item.thumb && <img src={item.thumb} />}</div>
+                    <div className="text-top">
+                        <div className="date">{dateString}</div>
+                        <div className="title">{item.title}</div>
+                        {item.url && <div className="link"><a href={item.url} target="_blank">{item.url}</a></div>}
+                        {item.tags && <div className="tags"><span className="label">Tags:</span> {item.tags}</div>}
                     </div>
-                    <div class="text-bottom">
-                        <div class="content" dangerouslySetInnerHTML={{__html: item.description}}></div>
+                    <div className="text-bottom">
+                        <div className="content" dangerouslySetInnerHTML={{ __html: item.description }}></div>
                     </div>
-                    { item.demo && <div class="demo-link">
+                    {item.demo && <div className="demo-link">
                         <a href={item.demo} target="_blank">Demo</a>
                     </div>
                     }
