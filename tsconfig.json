@@ -33,8 +33,6 @@
 
         "paths": {
             "config/*":     ["config/*"],
-            "app/*":        ["src/*"],
-            "src/*":        ["src/*"],
             "components/*": ["src/components/*"],
             "pages/*":      ["src/components/pages/*"],
             "lib/*":        ["src/lib/*"],

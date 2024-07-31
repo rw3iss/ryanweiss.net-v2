@@ -4,6 +4,7 @@ import './style.scss';
 
 import db from '../../../data/db';
 
+
 export default class Work extends Component {
 
     state = {
@@ -46,7 +47,7 @@ export default class Work extends Component {
                     <a onClick={() => this.scrollTo('fulltime')} href="#fulltime">Fulltime</a>
                 </div>
 
-                <div className="line-title" id="freelance"><h3>Freelance</h3></div>
+                {/* <div className="line-title" id="freelance"><h3>Freelance</h3></div>
                 <div className="items flex-row flex-wrap">
                     {this.state.freelance.map(function (item, i) {
                         return <Item item={item} key={i} />
@@ -60,7 +61,7 @@ export default class Work extends Component {
                     {this.state.fulltime.map(function (item, i) {
                         return <Item item={item} key={i} />
                     })}
-                </div>
+                </div> */}
             </div>
         );
     }

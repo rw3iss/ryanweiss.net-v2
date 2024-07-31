@@ -24,10 +24,13 @@ body {
 }
 
 a {
-    color: $colorLink;
     transition: color 0.2s ease;
 
+    &:visited {
+        color: lighten($colorLink, 15%); //var(--color-link); //$colorLink;
+    }
+
     &:hover {
-        color: lighten($colorLink, 15%);
+        color: lighten($colorLink, 25%);
     }
 }

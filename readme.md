@@ -1,9 +1,9 @@
 # Description
 * Build on Preact, with a JSON "database".
-* Uses ebuild as a bundler/builder, with sass integration. 
+* Uses ebuild as a bundler/builder, with sass integration.
 
 ## For development:
-* Nodemon is used to monitor source files and rebuild them to build folder. 
+* Nodemon is used to monitor source files and rebuild them to build folder.
 * Browser-sync can be started (npm run dev) to auto-refresh page when new bundles are built.
 * (see package.json scripts)
 
@@ -19,3 +19,8 @@
 ## View the site without dev'ing:
 ```npm run serve```
 * Will serve the files in ./build (```npm run build``` to create/update them)
+
+
+# Data organization:
+
+ApiService.get('entries?orderBy=createdAt');

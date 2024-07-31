@@ -3,6 +3,8 @@ import Home from 'components/pages/Home';
 import Work from 'components/pages/Work';
 import Play from 'components/pages/Play';
 import Info from 'components/pages/Info';
+import Entry from 'components/pages/Entry';
+import NotFound from 'components/pages/NotFound';
 
 const routes = (props) => {
 
@@ -12,6 +14,8 @@ const routes = (props) => {
             <Route path="/work" element={<Work />} />
             <Route path="/play" element={<Play />} />
             <Route path="/info" element={<Info />} />
+            <Route path="/entry/:slug" element={<Entry />} />
+            <Route path="*" element={<NotFound />} />
         </Routes>
     );
 }

@@ -1,0 +1,33 @@
+#entry {
+    .entry {
+        padding: 20px;
+        text-align: left;
+        line-height: 1.5em;
+        opacity: 0.8;
+        font-smooth: always;
+
+        .title {
+            color: gold;
+            font-size: 1.25em;
+            font-weight: 900;
+            font-family: "Mario";
+            padding-bottom: 5px;
+        }
+
+        .date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75em;
+        }
+
+        .content {
+            color: white;
+            margin-top: 5px;
+            letter-spacing: -1px;
+        }
+
+        &:hover {
+            opacity: 1;
+            cursor: pointer;
+        }
+    }
+}

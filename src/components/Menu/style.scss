@@ -1,0 +1,111 @@
+@import "src/styles/vars";
+@import "src/styles/mixins";
+
+$menuWidth: 16vw;
+$menuAreaWidth: 38.2vw;
+$stageWidth: 61.8vw;
+$animMenu: 0.1s;
+
+.menu {
+    z-index: 2;
+    font-family: "Coolvetica";
+    font-family: "Icarus";
+    position: relative;
+    bottom: 0;
+    transition:
+        right $animMenu * 2 ease-in-out,
+        opacity $animMenu * 2 linear;
+
+    .menu-content {
+        width: $menuWidth;
+        min-width: 250px;
+        padding-top: 25px;
+        padding-bottom: 25px;
+        overflow: hidden;
+        background: $colorBackground2;
+        box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.4);
+        border-radius: 15px;
+
+        li {
+            position: relative;
+            width: 100%;
+            //border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+            color: rgba(239, 226, 190, 0.75);
+            text-align: center;
+            //padding-left: 35px;
+            //padding-right: 55px;
+            padding: 0 2em;
+            margin: 2em auto;
+            font-size: clamp(1em, 1.25vw, 2em);
+            transition:
+                background-color $animMenu linear,
+                color $animMenu linear,
+                box-shadow $animMenu linear;
+
+            span {
+                padding: 5px;
+                //display: inline-block;
+                //white-space: nowrap;
+                position: relative;
+                //padding: 0.5rem;
+                //letter-spacing: 1px;
+                //margin: 0 auto;
+                transition: left $animMenu ease-in-out;
+            }
+
+            &:hover,
+            &.selected {
+                cursor: pointer;
+                //background-color: rgba(0, 0, 0, 0.2);
+                //box-shadow: inset 0px 3px 5px rgba(0, 0, 0, 0.1);
+                color: rgb(255, 208, 19);
+                transition:
+                    background-color calc($animMenu/2) linear,
+                    color calc($animMenu/2) linear,
+                    box-shadow $animMenu linear;
+
+                span::before {
+                    position: absolute;
+                    content: "🪽";
+                    top: 30%;
+                    -moz-transform: scaleX(-1) translateY(-50%); /* Gecko */
+                    -o-transform: scaleX(-1) translateY(-50%); /* Opera */
+                    -webkit-transform: scaleX(-1) translateY(-50%); /* Webkit */
+                    transform: scaleX(-1) translateY(-50%); /* Standard */
+                    filter: FlipH;
+                    left: -1.5em;
+                    font-size: 1em;
+                }
+
+                span::after {
+                    position: absolute;
+                    content: "🪽";
+                    top: 30%;
+                    transform: translateY(-50%);
+                    right: -1.25em;
+                    left: auto;
+                    font-size: 1em;
+                }
+            }
+
+            &.clicked {
+                span {
+                    left: 10%;
+                    transition: left $animMenu ease-in-out;
+                }
+            }
+        }
+    }
+
+    @include mobile {
+        .menu-content {
+            width: 80vw;
+            min-height: 400px;
+            @include flex-col-center-both;
+
+            li {
+                font-size: clamp(1em, 2.5vw, 4em);
+            }
+        }
+    }
+}

@@ -38,12 +38,14 @@
         "dateformat": "^5.0.3",
         "eventbusjs": "^0.2.0",
         "form-auto-content": "^3.2.1",
+        "history": "^5.3.0",
         "jsonwebtoken": "^9.0.2",
         "jwt-decode": "^4.0.0",
         "moment-timezone": "^0.5.45",
         "qs": "^6.12.1",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
-        "react-router-dom": "^6.24.0"
+        "react-router-dom": "^6.24.0",
+        "use-sound": "^4.0.3"
     }
 }

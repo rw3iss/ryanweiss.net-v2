@@ -1,7 +1,7 @@
-@import 'src/styles/vars.scss';
+@import "src/styles/includes";
 
 #play {
-	h3 {
-		padding: $itemPadding*2;
-	}
+    h3 {
+        padding: $itemPadding * 2;
+    }
 }

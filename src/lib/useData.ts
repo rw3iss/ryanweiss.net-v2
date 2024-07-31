@@ -6,8 +6,9 @@ function useData(getData: Function, params?) {
     const [query, setQuery] = useState<{ [key: string]: string }>({
         query: "react hooks"
     });
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<any[]>(undefined);
     const [loading, setLoading] = useState<boolean>(false);
+
     const [error, setError] = useState<string>("");
     const [token, setToken] = useState<CancelTokenSource>(undefined);
 
@@ -19,7 +20,7 @@ function useData(getData: Function, params?) {
         async function fetchData() {
             setError("");
             setLoading(true);
-            setData([]);
+            //setData([]);
 
             try {
                 const users = await getData(params);

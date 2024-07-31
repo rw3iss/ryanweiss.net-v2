@@ -1,10 +1,4 @@
-@import './vars.scss';
-@import './mixins.scss';
+@import "./vars.scss";
+@import "./mixins.scss";
 
-@import './common/global.scss';
-@import './common/controls.scss';
-@import './common/page.scss';
-@import './common/fonts.scss';
-@import './common/normalize.scss';
-@import './common/common.scss';
-@import './common/flex.scss';
+@import "./common/index.scss";

@@ -1,36 +1,81 @@
-import { Component, useEffect } from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import SiteHeader from './shared/SiteHeader';
 import Routes from './Routes';
+import Menu from './Menu';
+import Router from 'components/shared/Router';
+import { Link } from 'react-router-dom';
+import { createBrowserHistory } from "history";
+import { DataContext, DataProvider } from 'lib/DataProvider';
 
 // global styles
 import './style.scss';
-import useData from 'app/lib/useData';
-import DataService from 'app/lib/DataService';
+
+const history = createBrowserHistory();
 
 const App = (props) => {
-    const [data, loading, error] = useData(DataService.getData);
-    console.log(`data`, data);
 
-    useEffect(() => {
-        console.log(`get App data`);
-    }, [data])
+    // useEffect(() => {
+    //     if (data) console.log(`got App data`, data);
+    // }, [data])
+
+    const onRouteChange = (e) => {
+        console.log(`onRouteChange`, e);
+    }
 
     return (
-        <Router>
+        <Router history={history} onRouteChange={onRouteChange}>
             <div id="app">
 
-                <div className="content-wrapper">
+                <DataProvider>
 
-                    {loading ? "LOADING" :
+                    <DataContext.Consumer>
+                        {data =>
 
-                        <Routes />
-                    }
+                            <div className="content-wrapper">
 
-                </div>
+                                <div className="nav">
 
-            </div>
-        </Router>
+                                    <Link to="/" className="logo">
+                                        <div className="name">Ryan<br />Weiss</div>
+                                        <div className="title">Developer</div>
+                                    </Link>
+
+                                    <Menu />
+
+                                </div>
+
+                                <div className="page">
+
+                                    { /* Todo: need App data cache context... site is loaded until cache and data are ready */}
+
+                                    <div className="container">
+
+                                        <div className="stage">
+                                            <div className="stage-content">
+
+                                                {data?.loading ? <div className="loader">
+                                                    <div className="loader-ring">
+                                                        LOADING
+                                                        <div></div><div></div><div></div><div></div>
+                                                    </div>
+                                                </div> :
+
+                                                    <Routes />
+                                                }
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        }
+                    </DataContext.Consumer>
+
+                </DataProvider>
+
+            </div >
+        </Router >
     );
 
 }

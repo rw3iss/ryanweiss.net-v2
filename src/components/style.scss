@@ -1,31 +1,233 @@
-@import 'src/styles/index.scss';
+@import "src/styles/index";
 
 #app {
     @include flex-col;
     height: 100%;
     max-height: 100%;
-	max-width: 100%;
-	overflow: hidden;
+    max-width: 100%;
+    min-height: 700px;
+    overflow: hidden;
 
-	.content-wrapper {
-        flex: 1;
+    $menuWidth: 200px;
+    $menuAreaWidth: 38.2vw;
+    $stageWidth: 61.8vw;
+    $animMenu: 0.5s;
+
+    .content-wrapper {
+        flex: 1 0 100%;
         width: 100%;
-        @include flex-col;
+        @include flex-row;
+        height: 100%;
         margin: 0 auto;
-	}
+        position: relative;
+
+        .nav {
+            flex: 0.382 0 38.2%;
+            @include flex-col-center-both;
+            justify-content: flex-end;
+            padding-left: 0vw;
+            margin-bottom: clamp(20px, 15vh, 300px);
+
+            .logo {
+                position: absolute;
+                top: 75px; //clamp(75px, 5vh, 60px);
+                margin: 0 auto;
+                font-family: "Mario";
+                text-align: center;
+                opacity: 1;
+                transition: opacity 0.5s linear;
+
+                .name {
+                    line-height: 1em;
+                    font-size: clamp(1.75em, 2.7vw, 4em);
+                    //writing-mode: tb-rl;
+                    //transform: rotate(180deg);
+                    letter-spacing: 1px;
+                    transform: scaleY(1);
+                    //text-shadow: 1px 1px 12px rgba(0, 0, 0, 0.25);
+                    // text-shadow:
+                    //     1px 1px 1px rgba(255, 255, 255, 0.5),
+                    //     -1px -1px 1px #222;
+                    color: white;
+
+                    &::after {
+                        content: "✨";
+                        font-size: clamp(1.75em, 2.7vw, 4em);
+                        position: absolute;
+                        top: -0.45em;
+                        left: -0.5em;
+                    }
+
+                    // &:hover {
+                    //     &::after {
+                    //         content: "✨";
+                    //         font-size: 5rem;
+                    //         position: absolute;
+                    //         top: -1.8rem;
+                    //         left: -3.1rem;
+                    //         opacity: 1;
+                    //     }
+                    // }
+                }
+
+                &:hover {
+                    opacity: 1;
+                    transition: opacity 0.5s linear;
+                }
+
+                .title {
+                    margin: 5px;
+                    //color: rgba(150, 160, 180, 1);
+                    font-size: clamp(0.65em, 1vw, 1.75em);
+                    letter-spacing: 4px;
+                    //display: none;
+                    // text-shadow:
+                    //     1px 1px 1px rgba(255, 255, 255, 0.15),
+                    //     -1px -1px 1px rgba(25, 25, 25, 0.5);
+                }
+                // filter: blur(5px);
+            }
+        }
+
+        .page {
+            position: relative;
+            @include flex-col;
+            flex: 0.618 0 61.8%;
+            padding: 0;
+            overflow: hidden;
+            padding: 20px 20px 0px 20px;
+
+            .container {
+                @include flex-no-wrap;
+                //align-items: center;
+                position: relative;
+                opacity: 1; //0;
+                height: 100%;
+                width: 100%;
+
+                &.page-loaded {
+                    top: 0;
+                    opacity: 1 !important;
+                    transition: opacity $animMenu ease-in-out;
+                }
+
+                .stage {
+                    position: relative;
+                    opacity: 1; //0;
+                    width: 100%;
+                    height: 100%;
+                    transition: opacity $animMenu * 2 ease-in-out;
+
+                    .stage-content {
+                        width: $stageWidth;
+                        height: 100%;
+                        overflow-y: auto;
+                        background: $colorBackgroundDark;
+                        padding-bottom: 50px;
+
+                        &:before {
+                            box-shadow: inset 6.18vw 0 6.18vw -6.18vw rgba(0, 0, 0, 0.7);
+                            content: " ";
+                            height: 100%;
+                            left: 0;
+                            position: absolute;
+                            top: 0;
+                            width: 6.18vw;
+                        }
+
+                        &:after {
+                            box-shadow: inset -6.18vw 0px 6.18vw -6.18vw rgba(0, 0, 0, 0.7);
+                            content: " ";
+                            height: 100%;
+                            position: absolute;
+                            top: 0;
+                            right: 0;
+                            width: 6.18vw;
+                        }
+
+                        .loader {
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            margin-top: -32px;
+                            margin-left: -32px;
+                            opacity: 0;
+                            @include loader-ring;
+                            transition: opacity $animMenu ease-in-out;
+                        }
+                    }
+                }
+
+                // PAGE STAGES -----------------------------
+
+                &.navigating {
+                    .menu {
+                        right: calc(calc($menuWidth/2) + 50vw / 2 - $menuAreaWidth/ 4);
+                        transition: right $animMenu * 1.5 ease-in-out;
+                    }
+                }
+
+                &.show-stage {
+                    .stage {
+                        opacity: 1;
+                        transition: opacity $animMenu ease-in-out;
+                    }
+                }
+
+                &.loading {
+                    .stage {
+                        .loader {
+                            opacity: 1;
+                            transition: opacity $animMenu ease-in-out;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media all and (max-height: 767px) {
+    #app {
+        .content-wrapper {
+            .nav {
+                //margin-bottom: clamp(20px, 5vh, 100px);
+            }
+        }
+    }
 }
 
 @media all and (max-width: 767px) {
-	#app {
-		max-width: 100%;
+    #app {
+        max-width: 100%;
+        overflow-y: auto;
 
-		.content-wrapper {
-			max-width: 100%;
-		}
-	}
+        .content-wrapper {
+            max-width: 100%;
+            @include flex-col;
+
+            .nav {
+                flex: 1 0 100%;
+                width: 100%;
+            }
+
+            .page {
+                flex: 1 0 100%;
+                width: 100%;
+
+                .container {
+                    .stage {
+                        .stage-content {
+                            width: 100vw;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 .to-top {
-	display: block;
-	margin-top: 3px;
+    display: block;
+    margin-top: 3px;
 }

@@ -3,7 +3,7 @@ import Constants from 'lib/Constants';
 import Cookies from 'lib/utils/Cookies';
 import { getLogger } from 'lib/utils/logging';
 
-const { log, warn } = getLogger('ApiService', { color: 'green', enabled: false });
+const { log, warn } = getLogger('ApiService', { color: 'black', enabled: false });
 
 const DEFAULT_TASK_POLL_INTERVAL_MS = 1000;
 
@@ -27,7 +27,7 @@ export const updateAuthToken = (token) => {
 // });
 
 instance.interceptors.request.use(request => {
-    log('%c Request:::', 'background: #222; color: #bada55', request);
+    log('Request:::', request);
     const token = Cookies.get(Constants.ACCESS_TOKEN);
     if (token) request.headers['Authorization'] = `Bearer ${token}`;
     //request.headers['Content-Type'] = 'application/json';
@@ -41,7 +41,7 @@ instance.interceptors.response.use(response => {
 
 export default {
 
-    get: async (url, config?: AxiosRequestConfig) => {
+    get: async (url, config?: AxiosRequestConfig): Promise<any> => {
         try {
             //if (external) {
             log('GET', url);

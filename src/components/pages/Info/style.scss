@@ -1,13 +1,13 @@
-@import 'src/styles/vars.scss';
+@import "src/styles/includes";
 
 #info {
-	.bio {
-		padding: $itemPadding*2;
-	}
+    .bio {
+        padding: $itemPadding * 2;
+    }
 }
 
 @media all and (max-width: 1023px) {
-	#info {
-		text-align: center;
-	}
+    #info {
+        text-align: center;
+    }
 }
