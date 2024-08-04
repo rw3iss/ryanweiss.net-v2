@@ -41,6 +41,7 @@
             "helpers/*":    ["src/helpers/*"],
             "data/*":       ["src/lib/data/*"],
             "static/*":     ["src/static/*"],
+            "public]/*":    ["public/*"],
             "styles/*":     ["src/styles/*"],
             "shared/*":     ["../shared/*"]
         }

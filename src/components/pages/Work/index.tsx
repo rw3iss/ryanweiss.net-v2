@@ -1,69 +1,26 @@
-import { Component } from 'react';
-import Item from '../../shared/Item';
+import { useContext, useEffect } from 'react';
+import { renderDate } from 'lib/utils/DateUtils';
+import { DataContext, useEntries } from 'lib/DataProvider';
+import EntryList from 'components/shared/EntryList';
 import './style.scss';
 
-import db from '../../../data/db';
+const Work = (props) => {
+    const entries = useEntries({ tags: ['fulltime', 'freelance'] });
 
+    return (
+        <div className="page" id="work">
 
-export default class Work extends Component {
+            <h1>Work</h1>
 
-    state = {
-        freelance: [],
-        fulltime: []
-    }
-
-    componentWillMount() {
-        this.setState({
-            freelance: db.getFreelance(),
-            fulltime: db.getFulltime()
-        });
-    }
-
-    componentDidMount() {
-        // var hash = this.props.location.hash.substring(1);
-        // if(hash.length) {
-        //     console.log(hash, hash.length)
-        //     this.scrollTo(hash);
-        // }
-    }
-
-    scrollTo(targetId) {
-        const target = document.getElementById(targetId);
-        // Velocity(target, "scroll", {
-        //     duration: 500,
-        //     container: document.getElementById('app-container'),
-        //     easing: "easeInBack"
-        // });
-    }
-
-    render() {
-        console.log("render");
-
-        return (
-            <div className="page" id="work">
-                <h1>Work</h1>
-                <div className="sub-nav">
-                    <a onClick={() => this.scrollTo('freelance')} href="#freelance">Freelance</a>
-                    <a onClick={() => this.scrollTo('fulltime')} href="#fulltime">Fulltime</a>
-                </div>
-
-                {/* <div className="line-title" id="freelance"><h3>Freelance</h3></div>
-                <div className="items flex-row flex-wrap">
-                    {this.state.freelance.map(function (item, i) {
-                        return <Item item={item} key={i} />
-                    })}
-                </div>
-
-                <div className="line-title" id="fulltime"><h3>Fulltime</h3>
-                    <h5><a onClick={() => this.scrollTo('work')} href="#" className="to-top">Back to Top</a></h5>
-                </div>
-                <div className="items flex-row flex-wrap">
-                    {this.state.fulltime.map(function (item, i) {
-                        return <Item item={item} key={i} />
-                    })}
-                </div> */}
+            <div className="sub-nav">
+                <a href="#freelance">Freelance</a>
+                <a href="#fulltime">Fulltime</a>
             </div>
-        );
-    }
 
+            <EntryList entries={entries} />
+
+        </div>
+    );
 }
+
+export default Work;

@@ -11,6 +11,7 @@ export default ({ mode }) => {
     return defineConfig({
         root: resolve(__dirname, '../'),
         publicDir: resolve(__dirname, '../public'),
+        logLevel: 'info',
         plugins: [
             tsconfigPaths({
                 loose: true

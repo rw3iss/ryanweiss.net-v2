@@ -14,7 +14,7 @@ const routes = (props) => {
             <Route path="/work" element={<Work />} />
             <Route path="/play" element={<Play />} />
             <Route path="/info" element={<Info />} />
-            <Route path="/entry/:slug" element={<Entry />} />
+            <Route path="/entries/:slug" element={<Entry />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     );

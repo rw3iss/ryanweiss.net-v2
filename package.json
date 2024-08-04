@@ -42,10 +42,12 @@
         "jsonwebtoken": "^9.0.2",
         "jwt-decode": "^4.0.0",
         "moment-timezone": "^0.5.45",
-        "qs": "^6.12.1",
+        "query-string": "^9.1.0",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
+        "react-markdown": "^9.0.1",
         "react-router-dom": "^6.24.0",
+        "react-syntax-highlighter": "^15.5.0",
         "use-sound": "^4.0.3"
     }
 }

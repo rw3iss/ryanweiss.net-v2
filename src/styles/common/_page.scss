@@ -6,6 +6,7 @@
     max-width: 100%;
     padding-top: $itemPadding;
     color: var(--color-text);
+    //letter-spacing: -1px;
 
     h1 {
         padding: $itemPadding * 2 0 0 $itemPadding * 2;
@@ -14,6 +15,7 @@
         text-shadow: 1px 1px 3px #000;
         font-family: $fontBold;
         color: var(--color-header);
+        padding-bottom: $itemPadding * 2;
     }
 
     h3 {

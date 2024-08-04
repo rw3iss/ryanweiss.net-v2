@@ -49,14 +49,30 @@ export const DataProvider: React.FC = ({ children }) => {
 };
 
 
-export const useEntries = (type?) => {
+export const useEntries = (filter?) => {
     const context = useContext(DataContext);
     if (!context) throw new Error('useData ust be used within a DataProvider');
 
-    const entries = context.entries;
+    let entries = context.entries;
     console.log(`useEntries`, entries);
 
-    return type ? entries.filter(e => e.type == type) : entries;
+    if (filter) {
+        if (filter.type) entries = entries.filter(e => e.type == filter.type);
+        if (filter.tags) entries = entries.filter(e => {
+            let tagged = false;
+            if (e.tags) {
+                for (const t in filter.tags) {
+                    if (e.tags.includes(t)) {
+                        tagged = true;
+                        break;
+                    }
+                }
+            }
+            return tagged;
+        });
+    }
+
+    return entries;
 };
 
 export const useEntry = (slug) => {

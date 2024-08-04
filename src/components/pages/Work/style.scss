@@ -2,7 +2,7 @@
 
 #work {
     .sub-nav {
-        padding: $itemPadding;
+        padding: 0 $itemPadding $itemPadding * 2;
 
         a {
             font-weight: bold;

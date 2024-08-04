@@ -3,6 +3,10 @@
 #info {
     .bio {
         padding: $itemPadding * 2;
+
+        .section {
+            margin: 20px 0;
+        }
     }
 }
 

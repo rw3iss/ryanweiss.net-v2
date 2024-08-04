@@ -1,43 +1,23 @@
-import { Component } from 'react';
-import Item from '../../shared/Item';
-import { Link } from 'preact-router/match';
+import { useContext, useEffect } from 'react';
+import { renderDate } from 'lib/utils/DateUtils';
+import { DataContext, useEntries } from 'lib/DataProvider';
+import EntryList from 'components/shared/EntryList';
 import './style.scss';
 
-import db from '../../../data/db';
+const Play = (props) => {
 
-export default class Play extends Component {
+    const entries = useEntries();
+    console.log(`work context data`, entries);
 
-    state = {
-        items: []
-    }
+    return (
+        <div className="page" id="play">
 
-    componentWillMount() {
-        const items = db.getPlay();
-        console.log('play', items)
-        this.setState({ items });
-    }
+            <h1>Play</h1>
 
-    handleClick(item) {
-        if (item.isOpen == true)
-            item.isOpen = false;
-        else
-            item.isOpen = true;
-        this.forceUpdate();
-    }
+            <EntryList entries={entries} />
 
-    render() {
-        return (
-            <div className="page" id="play">
-                <h1>Play</h1>
-
-                <div className="items flex-row flex-wrap">
-                    {this.state.items.map(function (item, i) {
-                        return <Item item={item} key={i} />
-                    })}
-                </div>
-
-            </div>
-        );
-    }
-
+        </div>
+    );
 }
+
+export default Play;

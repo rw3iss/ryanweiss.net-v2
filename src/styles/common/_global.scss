@@ -24,6 +24,7 @@ body {
 }
 
 a {
+    color: var(--color-link);
     transition: color 0.2s ease;
 
     &:visited {

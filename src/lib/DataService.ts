@@ -1,3 +1,4 @@
+import queryString from "query-string";
 import ApiService from "./ApiService";
 import IDbOrCacheStore from "lib/cache/IDbOrCacheStore";
 
@@ -23,16 +24,17 @@ class DataService {
     public getEntries = async (params: any = {}) => {
         const type = params?.type;
         const id = params?.id;
-        const sortBy = params?.sortBy;
         let entries;
 
         if (this.cache) entries = await this.cache.get(this.entryCacheKey(type, id));
 
         if (!entries) {
-            const r = await ApiService.get(`${process.env.API_URL}/entries${sortBy ? `?sortBy=${sortBy}` : ''}`);
+            console.log(`getEntries()`, params);
+            const url = `${process.env.API_URL}/entries`;//${Object.keys(params).length ? `?${queryString.stringify(params)}` : ''}}`;
+            const r = await ApiService.get(url);
             if (r.success && r.response) {
                 const entries = r.response.entries;
-                this.sortAndCacheEntries(entries);
+                this._sortAndCacheEntries(entries);
                 return type ? entries.filter((e: any) => e.type == type) : entries;
             }
         }
@@ -44,7 +46,7 @@ class DataService {
         return entries.find(e => e.slug == slug);
     }
 
-    private sortAndCacheEntries = (entries) => {
+    private _sortAndCacheEntries = (entries) => {
         if (!entries || !this.cache) return;
         const entriesByType = {};
         entries.forEach(e => {

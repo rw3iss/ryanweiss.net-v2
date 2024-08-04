@@ -3,6 +3,7 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 import { useEntry } from 'lib/DataProvider';
 import { renderDate } from 'lib/utils/DateUtils';
 import './style.scss';
+import { renderContentByType, renderMarkdown } from 'lib/ContentUtils';
 
 const Entry = (props) => {
     const params = useParams();
@@ -28,9 +29,11 @@ const Entry = (props) => {
         <div className="page" id="entry">
             {entry &&
                 <div key={entry.id} className="entry">
-                    <div className="title">{entry.title}</div>
                     <div className="date">{renderDate(entry.dateAdded || entry.dateUpdated)}</div>
-                    <div className="content">{entry.content}</div>
+                    <div className="title">{entry.title}</div>
+                    <div className="content">
+                        {renderContentByType(entry.contentType, entry.content)}
+                    </div>
                 </div>
             }
         </div>

@@ -11,7 +11,14 @@ export default class Info extends Component {
                 <h1>Info</h1>
 
                 <div className="bio">
-                    For now, I can be reached by email at <a href="mailto:rw3iss@gmail.com">rw3iss@gmail.com</a>.
+
+                    <div className="section">
+                        E-mail: <a href="mailto:rw3iss@gmail.com">rw3iss@gmail.com</a>
+                    </div>
+
+                    <div className="section">
+                        Resume: <a href="/files/resume-ryan-weiss.pdf" target="_blank">View</a>
+                    </div>
                 </div>
 
             </div>

@@ -1,7 +1,7 @@
 @import "src/styles/vars";
 @import "src/styles/mixins";
 
-$menuWidth: 16vw;
+$menuWidth: 14vw;
 $menuAreaWidth: 38.2vw;
 $stageWidth: 61.8vw;
 $animMenu: 0.1s;
@@ -18,7 +18,8 @@ $animMenu: 0.1s;
 
     .menu-content {
         width: $menuWidth;
-        min-width: 250px;
+        min-width: 280px;
+        max-width: 300px;
         padding-top: 25px;
         padding-bottom: 25px;
         overflow: hidden;

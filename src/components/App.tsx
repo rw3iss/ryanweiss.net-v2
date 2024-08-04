@@ -36,9 +36,18 @@ const App = (props) => {
                                     <Link to="/" className="logo">
                                         <div className="name">Ryan<br />Weiss</div>
                                         <div className="title">Developer</div>
+                                        <div className="star">✨</div>
                                     </Link>
 
                                     <Menu />
+
+                                    <div className="trees">
+                                        <img className="tree tree1" src="/images/trees/tree1.png" />
+                                        <img className="tree tree2" src="/images/trees/tree2.png" />
+                                        <img className="tree tree3" src="/images/trees/tree3.png" />
+                                        <img className="tree tree4" src="/images/trees/tree4.png" />
+                                        <img className="tree tree5" src="/images/trees/tree5.png" />
+                                    </div>
 
                                 </div>
 
