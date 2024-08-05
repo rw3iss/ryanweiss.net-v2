@@ -1,7 +1,7 @@
 @import "src/styles/vars";
 @import "src/styles/mixins";
 
-$menuWidth: 14vw;
+$menuWidth: clamp(150px, 14vw, 250px);
 $menuAreaWidth: 38.2vw;
 $stageWidth: 61.8vw;
 $animMenu: 0.1s;
@@ -37,7 +37,7 @@ $animMenu: 0.1s;
             //padding-right: 55px;
             padding: 0 2em;
             margin: 2em auto;
-            font-size: clamp(1em, 1.25vw, 2em);
+            font-size: clamp(1em, 1.25vw, 24px);
             transition:
                 background-color $animMenu linear,
                 color $animMenu linear,
@@ -105,7 +105,9 @@ $animMenu: 0.1s;
             @include flex-col-center-both;
 
             li {
-                font-size: clamp(1em, 2.5vw, 4em);
+                font-size: clamp(1.5em, 6vw, 30px);
+
+                margin: 1em auto;
             }
         }
     }
