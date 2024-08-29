@@ -8,11 +8,12 @@
     //font-smooth: always;
 
     .title {
-        color: gold;
-        font-size: 1.25em;
+        color: #ace398;
+        font-size: 1.65em;
+        line-height: 1.25em;
         font-weight: 900;
         font-family: "Mario";
-        margin: 5px 0 7px;
+        margin: 5px 0 10px;
     }
 
     .date {
@@ -23,19 +24,10 @@
     .content {
         color: white;
         margin-top: 5px;
-        letter-spacing: -1px;
+        //letter-spacing: -1px;
 
         .markdown-content {
-            ul {
-                padding-left: 10px;
-                margin: 10px 0;
-                list-style-type: bullet;
-                color: white;
-
-                li {
-                    padding: 4px;
-                }
-            }
+            @import "./entries/entry-markdown.scss";
         }
     }
 

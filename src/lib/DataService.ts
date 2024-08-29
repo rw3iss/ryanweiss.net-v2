@@ -1,13 +1,15 @@
 import queryString from "query-string";
 import ApiService from "./ApiService";
 import IDbOrCacheStore from "lib/cache/IDbOrCacheStore";
+import { getLogger } from "./utils/logging";
 
 let EntriesCache: IDbOrCacheStore = undefined;//new Cache();
 
+const { log, warn } = getLogger('DataService', { color: 'green', enabled: true });
 
 class DataService {
 
-    private cache: IDbOrCacheStore = undefined;
+    private cache: IDbOrCacheStore = undefined; e
 
     constructor() {
         this.cache = new IDbOrCacheStore('entries', {
@@ -29,8 +31,8 @@ class DataService {
         if (this.cache) entries = await this.cache.get(this.entryCacheKey(type, id));
 
         if (!entries) {
-            console.log(`getEntries()`, params);
-            const url = `${process.env.API_URL}/entries`;//${Object.keys(params).length ? `?${queryString.stringify(params)}` : ''}}`;
+            log(`getEntries()`, params, Object.keys(params), Object.keys(params).length >= 1);
+            const url = `${process.env.API_URL}/entries` + (Object.keys(params).length >= 1 ? `?${queryString.stringify(params)}` : '');
             const r = await ApiService.get(url);
             if (r.success && r.response) {
                 const entries = r.response.entries;

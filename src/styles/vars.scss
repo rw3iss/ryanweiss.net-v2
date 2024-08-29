@@ -5,10 +5,12 @@ $defaultRadius: 4px;
 
 $colorLink: #90c3d4;
 
-$font: "Icarus"; //"Maven Pro", "Open Sans", sans-serif;
+$font: "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace; // "8bit"; //"Icarus"; //"Maven Pro", "Open Sans", sans-serif;
 $fontBold: "Mario"; //"Maven Pro Bold", "Open Sans Bold", sans-serif;
 $fontBaseSize: 16px;
 $fontColor: #123;
+$fontMenu: "8bit";
+$fontCode: "Fira Code";
 
 /* Gradients */
 $gradientAngle: -30deg;

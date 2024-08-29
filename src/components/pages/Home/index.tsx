@@ -7,7 +7,6 @@ import './style.scss';
 const Home = (props) => {
 
     const entries = useEntries();
-    console.log(`home context data`, entries);
 
     // useEffect(() => {
     //     if (data) console.log(`got App data home`, data);

@@ -9,8 +9,9 @@ const CustomRouter = ({ history, onRouteChange, ...props }) => {
 
     useLayoutEffect(() => history.listen((location, action) => {
         console.log(`history change`, location);
+        setState({ action, location });
         onRouteChange(location)
-    }), [history.pathname, onRouteChange]);
+    }), [history, onRouteChange]);
 
     return (
         <Router history={history}

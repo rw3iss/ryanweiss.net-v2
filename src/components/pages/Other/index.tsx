@@ -5,8 +5,9 @@ import './style.scss';
 import { useEntries } from 'lib/DataProvider';
 
 const Other = (props) => {
+
     const entries = useEntries('other');
-    console.log(`other context data`, entries);
+    //console.log(`other context data`, entries);
 
     return (
         <div className="page" id="other">

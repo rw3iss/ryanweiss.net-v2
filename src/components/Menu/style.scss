@@ -1,15 +1,14 @@
 @import "src/styles/vars";
 @import "src/styles/mixins";
 
-$menuWidth: clamp(150px, 14vw, 250px);
+$menuWidth: clamp(120px, 12vw, 250px);
 $menuAreaWidth: 38.2vw;
 $stageWidth: 61.8vw;
 $animMenu: 0.1s;
 
 .menu {
     z-index: 2;
-    font-family: "Coolvetica";
-    font-family: "Icarus";
+    font-family: $fontMenu;
     position: relative;
     bottom: 0;
     transition:
@@ -20,8 +19,8 @@ $animMenu: 0.1s;
         width: $menuWidth;
         min-width: 280px;
         max-width: 300px;
-        padding-top: 25px;
-        padding-bottom: 25px;
+        padding-top: 20px;
+        padding-bottom: 20px;
         overflow: hidden;
         background: $colorBackground2;
         box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.4);
@@ -35,9 +34,10 @@ $animMenu: 0.1s;
             text-align: center;
             //padding-left: 35px;
             //padding-right: 55px;
-            padding: 0 2em;
-            margin: 2em auto;
-            font-size: clamp(1em, 1.25vw, 24px);
+            letter-spacing: 2px;
+            padding: 0 1em;
+            margin: 1.75em auto;
+            font-size: clamp(1em, 1.5vw, 30px);
             transition:
                 background-color $animMenu linear,
                 color $animMenu linear,

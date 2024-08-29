@@ -1,9 +1,20 @@
 import Markdown from 'react-markdown'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+//import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+
+import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
+import jsx from 'react-syntax-highlighter/dist/esm/languages/prism/jsx';
+import prism from 'react-syntax-highlighter/dist/esm/styles/prism/prism';
+
+SyntaxHighlighter.registerLanguage('jsx', jsx);
+
 import { oneDark as dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { truncate } from "./utils/StrUtils";
 
+// dark['code[class*="language-"]'] = '8bit';
+// console.log(`theme`, dark);
+
 export const renderContentByType = (type, content, options?) => {
+
     const shorten = options?.shorten ? true : false;
     return (
         <div className="content-wrap">

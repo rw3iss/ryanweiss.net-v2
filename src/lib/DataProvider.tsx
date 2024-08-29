@@ -54,9 +54,10 @@ export const useEntries = (filter?) => {
     if (!context) throw new Error('useData ust be used within a DataProvider');
 
     let entries = context.entries;
-    console.log(`useEntries`, entries);
+    //console.log(`useEntries`, entries);
 
     if (filter) {
+        // todo: filter dynamically
         if (filter.type) entries = entries.filter(e => e.type == filter.type);
         if (filter.tags) entries = entries.filter(e => {
             let tagged = false;
@@ -80,7 +81,7 @@ export const useEntry = (slug) => {
     if (!context) throw new Error('useData ust be used within a DataProvider');
 
     const entries = context.entries;
-    console.log(`useEntry`, slug, entries);
+    //log(`useEntry`, slug, entries);
 
     return entries.find(e => e.slug == slug);
 };

@@ -2,12 +2,28 @@
 
 #work {
     .sub-nav {
-        padding: 0 $itemPadding $itemPadding * 2;
+        $linkColor: #648cc859;
+        padding: 0 $itemPadding $itemPadding;
 
         a {
             font-weight: bold;
             padding: $itemPadding;
-            font-family: $fontBold;
+            font-family: "8bit"; // $fontBold;
+            color: $linkColor;
+            letter-spacing: 2px;
+            font-size: 1.25em;
+            transition: color 0.1s linear;
+
+            &:hover {
+                color: lighten($linkColor, 25%);
+                transition: color 0.1s linear;
+            }
+
+            &.on {
+                color: #90c3d4; //, 5%);
+                transition: color 0.1s linear;
+                text-shadow: 0px 0px 15px rgba(235, 255, 220, 0.35);
+            }
         }
     }
 }

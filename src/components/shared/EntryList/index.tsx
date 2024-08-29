@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 const EntryList = ({ entries }) => {
 
+    console.log(`EntryList`, entries)
 
     return (
         <div className="entry-list">

@@ -7,7 +7,7 @@ import './style.scss';
 const Play = (props) => {
 
     const entries = useEntries();
-    console.log(`work context data`, entries);
+    //console.log(`play context data`, entries);
 
     return (
         <div className="page" id="play">
