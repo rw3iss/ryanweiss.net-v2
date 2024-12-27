@@ -1,20 +1,20 @@
 {
     "compilerOptions": {
         "composite": true,
-        "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-        "target": "ES2020",
+        "target": "ES2022",
         "useDefineForClassFields": true,
         "lib": [
-            "ES2020",
+            "ES2022",
             "DOM",
             "DOM.Iterable"
         ],
         "baseUrl": "./",
-        "moduleResolution": "Bundler",
+        "outDir": "dist",
+        "moduleResolution": "bundler",
         "module": "ES2020",
         "skipLibCheck": true,
         "sourceMap": true,
-        "allowJs": false,
+        "allowJs": true,
         "esModuleInterop": true,
         "allowImportingTsExtensions": true,
         "isolatedModules": false,
@@ -32,22 +32,25 @@
         "noFallthroughCasesInSwitch": true,
 
         "paths": {
-            "config/*":     ["config/*"],
-            "components/*": ["src/components/*"],
-            "pages/*":      ["src/components/pages/*"],
-            "lib/*":        ["src/lib/*"],
-            "utils/*":      ["src/utils/*"],
-            "services/*":   ["src/services/*"],
-            "helpers/*":    ["src/helpers/*"],
-            "data/*":       ["src/lib/data/*"],
-            "static/*":     ["src/static/*"],
-            "public]/*":    ["public/*"],
-            "styles/*":     ["src/styles/*"],
+            "config/*":     ["./config/*"],
+            "components/*": ["./src/components/*"],
+            "pages/*":      ["./src/components/pages/*"],
+            "lib/*":        ["./src/lib/*"],
+            "utils/*":      ["./src/utils/*"],
+            "services/*":   ["./src/services/*"],
+            "helpers/*":    ["./src/helpers/*"],
+            "data/*":       ["./src/lib/data/*"],
+            "static/*":     ["./src/static/*"],
+            "public/*":     ["./dist/*"],
+            "styles/*":     ["./src/styles/*"],
             "shared/*":     ["../shared/*"]
         }
     },
     "include": [
         "src",
         "config"
-    ]
+    ],
+    "exclude": [
+        "public/*"
+    ],
 }

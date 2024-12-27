@@ -1,3 +1,12 @@
+@keyframes loader-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 @mixin loader-ring {
     .loader-ring {
         display: inline-block;
@@ -29,14 +38,5 @@
 
     .loader-ring div:nth-child(3) {
         animation-delay: -0.15s;
-    }
-
-    @keyframes loader-ring {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
     }
 }

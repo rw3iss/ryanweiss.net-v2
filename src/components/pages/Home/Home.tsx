@@ -1,12 +1,15 @@
 import { Component } from 'react';
-import './style.scss';
 import db from '../../../data/db';
+import './style.scss';
 
 export default class Home extends Component {
 
     state = {
-        items: []
+        items: [],
+        currentId: undefined
     }
+
+    container: any;
 
     componentWillMount() {
         const items = db.getLatest();

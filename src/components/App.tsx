@@ -1,27 +1,16 @@
+import { BrowserRouter, Link } from "react-router-dom";
+import { DataContext, DataProvider } from '../lib/DataProvider';
 import Routes from './Routes';
-import Menu from './Menu';
-import Router from 'components/shared/Router';
-import { Link } from 'react-router-dom';
-import { createBrowserHistory } from "history";
-import { DataContext, DataProvider } from 'lib/DataProvider';
+import Menu from './shared/Menu';
 
 // global styles
 import './style.scss';
 
-const history = createBrowserHistory();
-
 const App = (props) => {
 
-    // useEffect(() => {
-    //     if (data) console.log(`got App data`, data);
-    // }, [data])
-
-    const onRouteChange = (e) => {
-        console.log(`onRouteChange`, e);
-    }
-
     return (
-        <Router history={history} onRouteChange={onRouteChange}>
+        <BrowserRouter>
+
             <div id="app">
 
                 <DataProvider>
@@ -83,8 +72,9 @@ const App = (props) => {
 
                 </DataProvider>
 
-            </div >
-        </Router >
+            </div>
+
+        </BrowserRouter>
     );
 
 }

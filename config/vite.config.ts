@@ -14,8 +14,14 @@ export default ({ mode }) => {
         logLevel: 'info',
         plugins: [
             tsconfigPaths({
-                loose: true
+                root: "../"
             }),
+            // dts({
+            //     tsconfigPath: '../tsconfig.json',
+            //     exclude: [
+            //         'node_modules'
+            //     ],
+            // }),
             react(),
             EnvironmentPlugin(['SITE_NAME', 'DEFAULT_TIMEZONE', 'API_URL', 'IDB_NAME', 'IDB_VERSION'])
         ],

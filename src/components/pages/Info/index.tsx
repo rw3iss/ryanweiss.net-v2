@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import { Link } from 'preact-router/match';
 import './style.scss';
 
 export default class Info extends Component {

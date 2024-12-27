@@ -9,13 +9,13 @@
             font-weight: bold;
             padding: $itemPadding;
             font-family: "8bit"; // $fontBold;
-            color: $linkColor;
+            color: lighten($linkColor, 25%);
             letter-spacing: 2px;
             font-size: 1.25em;
             transition: color 0.1s linear;
 
             &:hover {
-                color: lighten($linkColor, 25%);
+                color: $linkColor;
                 transition: color 0.1s linear;
             }
 

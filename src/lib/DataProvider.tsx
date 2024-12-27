@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useLayoutEffect, useState } from "react";
+import { createContext, useContext, useLayoutEffect, useState } from "react";
 import DataService from "./DataService";
 import IDB from "./cache/IDB";
 
@@ -13,7 +13,7 @@ export const DataContext = createContext<DataContextType | undefined>(undefined)
 // register data stores before opening db.
 const dataService = new DataService();
 
-export const DataProvider: React.FC = ({ children }) => {
+export const DataProvider = (props) => {
     const [data, setData] = useState<DataContextType | null>({ entries: null, loading: true });
     //console.log(`DataProvider get Data`, data);
 
@@ -43,7 +43,7 @@ export const DataProvider: React.FC = ({ children }) => {
     // }
 
     return (<DataContext.Provider value={data}>
-        {children}
+        {props.children}
     </DataContext.Provider>
     )
 };

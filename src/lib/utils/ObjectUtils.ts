@@ -37,7 +37,6 @@ export const tryJsonStringify = (obj, def = undefined) => {
             return def;
         }
     }
-    return def;
 }
 
 export const tryParseInt = (int, def = undefined) => {
@@ -69,7 +68,7 @@ export const arrayRemove = (arr, value) => {
 }
 
 //Removes the matching elements from the array that do NOT pass the filter.
-export const arrayFilterRemove = (array: [], filter) => {
+export const arrayFilterRemove = (array: Array<any>, filter) => {
     if (array && Array.isArray(array) && filter) {
         array = array.filter(r => !filter(r));
     }

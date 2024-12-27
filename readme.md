@@ -1,6 +1,4 @@
 # Description
-* Build on Preact, with a JSON "database".
-* Uses ebuild as a bundler/builder, with sass integration.
 
 ## For development:
 * Nodemon is used to monitor source files and rebuild them to build folder.
@@ -15,6 +13,10 @@
 * Starts watching ./src/**/* for any changes and rebuilds
 * Also starts a browser-sync session and watcher, which reload with any changes to the ./build/**/*
 * Open http://localhost:3000 for the hot ./build
+
+Or:
+vite build
+vite preview
 
 ## View the site without dev'ing:
 ```npm run serve```

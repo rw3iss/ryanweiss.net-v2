@@ -1,0 +1,81 @@
+{
+    "folders": [
+        {
+            "name": "api",
+            "path": "../personal/ryanweiss-template/api-fastify"
+        },
+        {
+            "name": "admin",
+            "path": "../personal/ryanweiss-template/admin"
+        },
+        {
+            "name": "app",
+            "path": "./"
+        }
+    ],
+    "settings": {
+        "files.exclude": {
+            "**/.git": true,
+            "**/.svn": true,
+            "**/.hg": true,
+            "**/CVS": true,
+            "**/.DS_Store": true,
+            "**/Thumbs.db": true,
+            "**/.env.gcp": true,
+            "**/.env.production": true,
+            "**/.env.development": true,
+            "**/.env.staging": true,
+            "**/.firebaserc": true,
+            "**/firebase.json": true,
+            "**/package-lock.json": true,
+            "**/README.md": true,
+            "**/.vscode": true,
+            "**/build": true,
+            "**/dist": true,
+            "**/node_modules": true,
+            "**/requirements.txt": true,
+            "**/Procfile": true,
+            "**/tsconfig.build.json": true,
+            "**/venv": true,
+            "**/.firebase": true,
+            "**/.github": true,
+            "**/.gitignore": true,
+            "**/.prettierrc": true,
+            "**/static.json": true,
+            "**/.eslintrc": true,
+            "**/.eslintrc.js": true,
+            "**/docker-compose.yaml": true,
+            "**/Dockerfile": true,
+            "**/.gitattributes": true,
+            "**/tsconfig.build.tsbuildinfo": true,
+            "**/.env.test": true,
+            "**/.dockerignore": true,
+            "**/.adminjs": true
+        },
+        "explorerExclude.backup": {},
+        "workbench.colorCustomizations": {
+            "activityBar.activeBackground": "#fbed80",
+            "activityBar.background": "#fbed80",
+            "activityBar.foreground": "#15202b",
+            "activityBar.inactiveForeground": "#15202b99",
+            "activityBarBadge.background": "#06b9a5",
+            "activityBarBadge.foreground": "#15202b",
+            "commandCenter.border": "#15202b99",
+            "sash.hoverBorder": "#fbed80",
+            "statusBar.background": "#f9e64f",
+            "statusBar.foreground": "#15202b",
+            "statusBarItem.hoverBackground": "#f7df1e",
+            "statusBarItem.remoteBackground": "#f9e64f",
+            "statusBarItem.remoteForeground": "#15202b",
+            "titleBar.activeBackground": "#f9e64f",
+            "titleBar.activeForeground": "#15202b",
+            "titleBar.inactiveBackground": "#f9e64f99",
+            "titleBar.inactiveForeground": "#15202b99"
+        },
+        "peacock.color": "#f9e64f",
+        "files.associations": {
+            "*.tsx": "typescriptreact",
+            "*.ts": "typescript",
+        }
+    },
+}

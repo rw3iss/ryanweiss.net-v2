@@ -1,0 +1,154 @@
+@import "src/styles/vars";
+@import "src/styles/mixins";
+
+$menuWidth: clamp(120px, 12vw, 250px);
+$menuAreaWidth: 38.2vw;
+$stageWidth: 61.8vw;
+$animMenu: 0.1s;
+
+.menu {
+    z-index: 2;
+    font-family: $fontMenu;
+    position: relative;
+    bottom: 0;
+    transition:
+        right $animMenu * 2 ease-in-out,
+        opacity $animMenu * 2 linear;
+
+    .shadow {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: red;
+    }
+
+    .menu-wrapper {
+        position: relative;
+        width: $menuWidth;
+        min-width: 280px;
+        max-width: 300px;
+        overflow: hidden;
+        background: $colorBackgroundDark;
+        box-shadow: 0px 30px 45px rgba(0, 0, 0, 0.8);
+        border-top-left-radius: 150px 250px;
+        border-top-right-radius: 150px 250px;
+        border-bottom-left-radius: 150px 100px;
+        border-bottom-right-radius: 150px 100px;
+
+        .glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: $colorBackground;
+            box-shadow: inset 0px 0px 60px rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        &:hover {
+            .glow {
+                opacity: 0.5;
+                transition: opacity 0.4s ease-in-out;
+            }
+        }
+
+        .menu-content {
+            width: $menuWidth;
+            min-width: 280px;
+            max-width: 300px;
+            padding-top: 45px;
+            padding-bottom: 20px;
+            overflow: hidden;
+            box-shadow: inset 0px 0px 60px rgba(0, 0, 0, 0.8);
+            border-top-left-radius: 150px 250px;
+            border-top-right-radius: 150px 250px;
+            border-bottom-left-radius: 150px 100px;
+            border-bottom-right-radius: 150px 100px;
+
+            li {
+                position: relative;
+                width: 100%;
+                //border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+                color: rgba(239, 226, 190, 0.75);
+                text-align: center;
+                //padding-left: 35px;
+                //padding-right: 55px;
+                letter-spacing: 2px;
+                padding: 0 1em;
+                margin: 1.75em auto;
+                font-size: clamp(1em, 1.5vw, 30px);
+                transition:
+                    background-color $animMenu linear,
+                    color $animMenu linear,
+                    box-shadow $animMenu linear;
+
+                span {
+                    padding: 5px;
+                    //display: inline-block;
+                    //white-space: nowrap;
+                    position: relative;
+                    //padding: 0.5rem;
+                    //letter-spacing: 1px;
+                    //margin: 0 auto;
+                    transition: left $animMenu ease-in-out;
+                }
+
+                &:hover,
+                &.selected {
+                    cursor: pointer;
+                    //background-color: rgba(0, 0, 0, 0.2);
+                    //box-shadow: inset 0px 3px 5px rgba(0, 0, 0, 0.1);
+                    color: rgb(255, 208, 19);
+                    transition:
+                        background-color calc($animMenu/2) linear,
+                        color calc($animMenu/2) linear,
+                        box-shadow $animMenu linear;
+
+                    span::before {
+                        position: absolute;
+                        content: "🪽";
+                        top: 30%;
+                        -moz-transform: scaleX(-1) translateY(-50%); /* Gecko */
+                        -o-transform: scaleX(-1) translateY(-50%); /* Opera */
+                        -webkit-transform: scaleX(-1) translateY(-50%); /* Webkit */
+                        transform: scaleX(-1) translateY(-50%); /* Standard */
+                        filter: FlipH;
+                        left: -1.5em;
+                        font-size: 1em;
+                    }
+
+                    span::after {
+                        position: absolute;
+                        content: "🪽";
+                        top: 30%;
+                        transform: translateY(-50%);
+                        right: -1.25em;
+                        left: auto;
+                        font-size: 1em;
+                    }
+                }
+
+                &.clicked {
+                    span {
+                        left: 10%;
+                        transition: left $animMenu ease-in-out;
+                    }
+                }
+            }
+        }
+    }
+
+    @include mobile {
+        .menu-content {
+            width: 80vw;
+            min-height: 400px;
+            @include flex-col-center-both;
+
+            li {
+                font-size: clamp(1.5em, 6vw, 30px);
+
+                margin: 1em auto;
+            }
+        }
+    }
+}

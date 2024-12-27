@@ -1,13 +1,15 @@
 {
-    "name": "rw-preact",
+    "name": "rw",
     "version": "1.0.0",
     "author": "Ryan Weiss (rw3iss@gmail.com)",
     "license": "ISC",
     "description": "",
-    "main": "build/app.js",
+    "main": "dist/app.js",
     "scripts": {
+        "clean": "rimraf dist/",
+        "copy-files": "copyfiles -u 1 public/* dist/",
+        "build": "npm run clean && mkdir dist && cp -rf public/* dist && tsc -b",
         "dev": "vite -c config/vite.config.ts",
-        "build": "tsc -b && vite build",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview"
     },
@@ -48,6 +50,7 @@
         "react-markdown": "^9.0.1",
         "react-router-dom": "^6.24.0",
         "react-syntax-highlighter": "^15.5.0",
-        "use-sound": "^4.0.3"
+        "use-sound": "^4.0.3",
+        "vite-plugin-dts": "^4.3.0"
     }
 }
