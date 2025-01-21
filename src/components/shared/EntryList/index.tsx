@@ -1,6 +1,5 @@
 import { renderContentByType } from 'lib/ContentUtils';
 import { renderDate } from 'lib/utils/DateUtils';
-import { Link } from 'react-router-dom';
 
 const EntryList = ({ entries }) => {
 

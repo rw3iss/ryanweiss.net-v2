@@ -1,122 +1,129 @@
-const fs = require('fs');
 
-// This file uses the esbuild api to bundle the frontend client, and output it to ./build
+const fs = require("fs");
+const path = require("path");
+const esbuild = require('esbuild');
+const { nodeExternalsPlugin } = require('esbuild-node-externals');
+//const postCssPlugin = require("esbuild-plugin-postcss2");
+//const autoprefixer = require("autoprefixer");
+const { getNormalizedEnvVars } = require("./utils/envUtils");
+const { mkDirSync } = require("./utils/fileUtils");
+const dotenv = require('dotenv');
+//const postcss = require("postcss");
+//const postcssPresetEnv = require("postcss-preset-env");
+//const sassPlugin = require("esbuild-plugin-sass");
+const { sassPlugin } = require('esbuild-sass-plugin');
+const scssPlugin = require('./plugins/scssPlugin.ts');
+const transformHtmlTemplatePlugin = require("./plugins/transformHtmlTemplatePlugin.ts");
+const copyPlugin = require("./plugins/copyPlugin.ts");
+const { createServer } = require("http");
+const postcss = require('postcss');
+const autoprefixer = require('autoprefixer');
 
-// built-in loaders:
-// (js, jsx, ts, tsx, css, json, text, base64, dataurl, file, binary)
+//const gzipPlugin = require('@luncheon/esbuild-plugin-gzip');
 
-//"build": "esbuild src/index.tsx --bundle --jsx-factory=h --inject:src/lib/h.ts --loader:.ttf=file --outfile=build/app.js && cp src/index.html build/",
+// Config params (relative to where npm/script is called from):
+const GLOBAL_NAME = 'Bluetooth';
+const INPUT_DIR = './src';
+const OUTPUT_DIR = './build';
+const TARGET = 'esnext';
 
-function build() {
-    if (!fs.existsSync('build'))
-        fs.mkdirSync('build');
+const IS_DEV = process.env.NODE_ENV != 'production';
 
-    require('esbuild').build({
-        entryPoints: ['src/index.tsx'],
-        outfile: 'build/app.js',
-        bundle: true,
-        jsxFactory: "h",
-        loader: {
-            '.ttf': 'file',
-            '.otf': 'file'
-        },
-        //inject: ["node_modules/preact/dist/preact.min.js"],
-        //minify: true,
-        define: { "process.env.NODE_ENV": "\"development\"" },
-        plugins: [scssPlugin, copyPlugin],
-        target: 'esnext',
-        //pubicPath: '',
-        sourcemap: true
-    })
-        .then(r => { console.log("Build succeeded.") })
-        .catch((e) => {
-            //console.log("ERROR", e.message);
-            process.exit(1)
-        })
-}
+const NODE_ENV = (process.env.NODE_ENV || 'local');
+dotenv.config({ path: `.env.${NODE_ENV}` });
+const { define, defineNoQuotes } = getNormalizedEnvVars();
 
-// TODO: use serve() api:
-// https://esbuild.github.io/api/#serve
+console.log('build.js node environment detected as: ' + NODE_ENV);
+///////////////////////////////////////////////////////////////////////////////
 
-let scssPlugin = {
-    name: 'scss',
-    setup(build) {
-        const fs = require('fs');
-        const sass = require('node-sass');
-        const aliasImporter = require("node-sass-alias-importer");
-        const path = require('path');
+const pluginCache = new Map();
+const CWD = path.resolve('./');
 
-        build.onLoad({ filter: /\.(scss)$/ }, async (args) => {
-            let filePath = path.resolve(args.path);
-            let data = await fs.promises.readFile(filePath, 'utf8')
-            let contents = '';
-            try {
-                if (data) {
-                    let result = sass.renderSync({
-                        data,
-                        includePaths: [], // todo: dynamically add global imports??
-                        sourceComments: true,
-                        sourceMap: true,
-                        // s
-                    });
-                    contents = result.css;
-                    //console.log("render result", result)
-                }
-                return {
-                    contents: contents,
-                    loader: 'css'
-                };
-            } catch (e) {
-                //throw e;
-                throw new Error("\n\nError rendering SCSS file:\n  " + filePath + " => \n\n" + e.formatted);//, { path: filePath });
-            }
-        })
-    }
-};
+const clients = [];
 
-let copyPlugin = {
-    name: 'copy',
-    setup(build) {
-        let fs = require('fs');
-        // todo: pull config array of files/directories
-        fs.copyFile('src/index.html', 'build/index.html', (err) => {
-            if (err) throw err;
-        });
-
-        // todo: copy src/static folder to build/static... if it differs?
-        // fs.copyFile('src/index.html', 'build/index.html', (err) => {
-        //     if (err) throw err;
-        // });
-    }
-}
-
-
-// let definePlugin = {
-//     name: 'define',
-//     setup(build) {
-//         let fs = require('fs');
-
-//         build.onLoad({ filter: /\.(t|js)x?$/ }, async (args) => {
-//             let text = await fs.promises.readFile(args.path, 'utf8')
-//             return {
-//                 contents: text,
-//                 loader: 'js',
-//             }
-//         })
-
-//         build.onLoad({ filter: /\.json$/ }, async (args) => {
-//             let text = await fs.promises.readFile(args.path, 'utf8')
-//             return {
-//                 contents: JSON.stringify(text.split(/\s+/)),
-//                 loader: 'json',
-//             }
-//         })
+// const liveReload = {
+//     name: 'liveReload',
+//     setup: (build) => {
+//         build.onEnd(result => {
+//             clients.forEach((res) => res.write("data: update\n\n"));
+//             clients.length = 0;
+//         });
 //     }
 // };
 
-// const aliases = {
-//     styles: "src/styles/"
-// }
+// Main bundling function.
+async function build() {
+    mkDirSync(OUTPUT_DIR);
 
+    await esbuild
+        .build({
+            platform: "browser",
+            entryPoints: [
+                `${INPUT_DIR}/index.tsx`,
+                `${INPUT_DIR}/styles/index.scss`
+            ],
+            //entryFile: `${INPUT_DIR}/index.tsx`,
+            outfile: `${OUTPUT_DIR}/app.js`,
+            bundle: true,
+            format: "esm",
+            jsxFactory: "h",
+            inject: ["preact"],
+            //inject: ["virtual-dom/h"],
+            globalName: GLOBAL_NAME,
+            loader: { // built-in loaders: js, jsx, ts, tsx, css, json, text, base64, dataurl, file, binary
+                '.ttf': 'file',
+                '.otf': 'file',
+                '.woff': 'file',
+                '.woff2': 'file',
+                '.png': 'file',
+                '.gif': 'file',
+                '.jpg': 'file',
+                '.svg': 'file',
+                '.js': 'js',
+                '.jsx': 'jsx',
+                '.ts': 'ts',
+                '.tsx': 'tsx',
+                //'.scss': 'file'
+            },
+            external: ['window', 'document'],
+            assetNames: 'public/[name].[hash]',
+            tsconfig: "tsconfig.json",
+            mainFields: ["browser", "module", "main"],
+            plugins: [
+                //nodeExternalsPlugin(),
+                sassPlugin({
+                    //cache: pluginCache,
+                    //loadPaths: [`${CWD}`],
+                    filter: '*.scss',
+                    async transform(source) {
+                        const { css } = await postcss([autoprefixer]).process(source);
+                        return css;
+                    },
+                    type: 'css'
+                }),
+                copyPlugin,
+                // gzipPlugin({
+                //     uncompressed: true,
+                //     gzip: true,
+                //     brotli: true,
+                //     onEnd: ({ outputFiles }) => {
+                //         // outputFiles.forEach(({ path, contents }) => {})
+                //     }
+                // })
+            ],
+            //write: false, // necessary for gzipPlugin
+            define: { ...define, global: "window" },
+            treeShaking: true,
+            minify: NODE_ENV === 'production',
+            sourcemap: IS_DEV ? true : false
+        })
+        .catch((e) => {
+            console.error(`Error building:`, e);
+            process.exit(1)
+        });
 
+    console.log(`Build finished.`)
+}
+
+// call build for main app bundle
 build();

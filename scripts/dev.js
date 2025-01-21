@@ -79,10 +79,6 @@ async function dev() {
                 '.gif': 'file',
                 '.jpg': 'file',
                 '.svg': 'file',
-                '.js': 'js',
-                '.jsx': 'jsx',
-                '.ts': 'ts',
-                '.tsx': 'tsx',
                 //'.scss': 'file'
             },
             external: ['window', 'document'],
@@ -137,71 +133,6 @@ async function dev() {
 
     console.log(`Frontend served at: http://localhost:${port}`)
 
-    // createServer((req, res) => {
-    //     return clients.push(
-    //         res.writeHead(200, {
-    //             "Content-Type": "text/event-stream",
-    //             "Cache-Control": "no-cache",
-    //             "Access-Control-Allow-Origin": "*",
-    //             Connection: "keep-alive",
-    //         }),
-    //     );
-    // }).listen(process.env.PORT);
-
-    // await ctx.watch();
-
-    // let ctx = await esbuild.context(APP_BUILD_CONFIG);
-
-    // // build html
-    // //function buildHtml() {
-    // console.log('buildHtml()');// called:', entryFile, outFile);
-    // // make sure build directory existsSync
-    // mkDirSync(OUTPUT_DIR);
-
-    // const ctxHtml = await esbuild.context(HTML_BUILD_CONFIG);
-
-    // await Promise.all([ctx.rebuild(), ctx.serve({ port: 4000 }), ctx.watch(), ctxHtml.rebuild(), ctxHtml.serve({ port: 4002 }), ctxHtml.watch()]);
-
 }
 
-// copies any imports or paths that start with /static to the build folder.
-// todo: also needs to parse file contents for references to /static?
-// let copyStaticPlugin = {
-//     name: 'copy-static',
-//     setup(build) {
-
-//         function _findEnvFile(dir) {
-//             if (!fs.existsSync(dir))
-//                 return false;
-//             let filePath = `${dir}/.env`;
-//             if ((fs.existsSync(filePath))) {
-//                 return filePath;
-//             } else {
-//                 return _findEnvFile(path.resolve(dir, '../'));
-//             }
-//         }
-
-//         build.onResolve({ filter: /^static$/ }, async (args) => {
-//             // find a .env file in current directory or any parent:
-//             return ({
-//                 path: _findEnvFile(args.resolveDir),
-//                 namespace: 'env-ns',
-//             })
-//         })
-
-//         build.onLoad({ filter: /.*/, namespace: 'env-ns' }, async (args) => {
-//             // read in .env file contents and combine with regular .env:
-//             let data = await fs.promises.readFile(args.path, 'utf8')
-//             const buf = Buffer.from(data)
-//             const config = require('dotenv').parse(buf);
-
-//             return ({
-//                 contents: JSON.stringify({ ...process.env, ...config }),
-//                 loader: 'json'
-//             });
-//         })
-//     }
-// }
-
-// call build for main app bundle
 dev();

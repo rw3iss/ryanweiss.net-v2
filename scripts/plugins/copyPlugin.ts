@@ -1,4 +1,4 @@
-import path from 'path';
+const path = require('path');
 
 // todo: integrate somehow
 const OUTPUT_DIR = './build';
@@ -10,15 +10,27 @@ module.exports = {
     setup(build) {
         const fse = require('fs-extra');
 
-        // copy index.html
-        // THIS IS HANDLED SEPARATELY NOW, for templating.
-        fse.copySync(path.resolve('./src/index.html'), path.resolve(`${OUTPUT_DIR}/index.html`), { overwrite: true });
-
         // copy static folder to build.
-        // and copy the adtrack library to main url suffix for brevity.
         try {
-            fse.copySync(path.resolve('./src/static'), path.resolve(`${OUTPUT_DIR}/static`), { overwrite: true });
-            fse.copySync(path.resolve('./src/static/favicon.ico'), path.resolve(`${OUTPUT_DIR}/favicon.ico`), { overwrite: true });
+            let indexHtml = path.resolve(`./index.html`);
+            if (fse.existsSync(indexHtml)) {
+                fse.copySync(indexHtml, path.resolve(`${OUTPUT_DIR}/index.html`), { overwrite: true }, (err) => {
+                    if (err) throw err;
+                });
+            } else {
+                console.log(`copyPlugin: index.html doesnt exist`);
+            }
+
+            let assetDir = 'public';
+            let assetPath = path.resolve(`./${assetDir}`);
+            if (fse.existsSync(assetPath)) {
+                fse.copySync(assetPath, path.resolve(`${OUTPUT_DIR}/${assetDir}`), { overwrite: true }, (err) => {
+                    if (err) throw err;
+                });
+                //fse.copySync(path.resolve('./static/favicon.ico'), path.resolve(`${OUTPUT_DIR}/favicon.ico`), { overwrite: true });
+            } else {
+                console.log(`copyPlugin: public dir doesnt exist`)
+            }
         } catch (e) {
             console.error('error: ', e);
         }

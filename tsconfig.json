@@ -1,56 +1,77 @@
 {
     "compilerOptions": {
-        "composite": true,
-        "target": "ES2022",
-        "useDefineForClassFields": true,
+        "baseUrl": "./",
+        "outDir": "./build",
+        "target": "es2022",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "noEmitOnError": true,
         "lib": [
-            "ES2022",
-            "DOM",
+            "es2021",
+            "dom",
             "DOM.Iterable"
         ],
-        "baseUrl": "./",
-        "outDir": "dist",
-        "moduleResolution": "bundler",
-        "module": "ES2020",
-        "skipLibCheck": true,
-        "sourceMap": true,
-        "allowJs": true,
-        "esModuleInterop": true,
-        "allowImportingTsExtensions": true,
-        "isolatedModules": false,
-        "moduleDetection": "auto",
-        "noEmit": true,
-        "jsx": "react-jsx",
-        /* Linting */
         "strict": false,
-        "strictFunctionTypes": false,
-        "exactOptionalPropertyTypes": false,
+        "strictNullChecks": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "importHelpers": true,
+        "sourceMap": true,
+        "inlineSources": true,
+        "rootDir": "./",
+        "jsx": "react-jsx",
+        "jsxImportSource": "preact",
+        "incremental": true,
+        "skipLibCheck": true,
         "noImplicitAny": false,
-        "noImplicitReturns": false,
+        "noImplicitThis": false,
         "noUnusedLocals": false,
         "noUnusedParameters": false,
-        "noFallthroughCasesInSwitch": true,
-
         "paths": {
-            "config/*":     ["./config/*"],
-            "components/*": ["./src/components/*"],
-            "pages/*":      ["./src/components/pages/*"],
-            "lib/*":        ["./src/lib/*"],
-            "utils/*":      ["./src/utils/*"],
-            "services/*":   ["./src/services/*"],
-            "helpers/*":    ["./src/helpers/*"],
-            "data/*":       ["./src/lib/data/*"],
-            "static/*":     ["./src/static/*"],
-            "public/*":     ["./dist/*"],
-            "styles/*":     ["./src/styles/*"],
-            "shared/*":     ["../shared/*"]
+            "config/*": [
+                "./config/*"
+            ],
+            "components/*": [
+                "./src/components/*"
+            ],
+            "pages/*": [
+                "./src/components/pages/*"
+            ],
+            "lib/*": [
+                "./src/lib/*"
+            ],
+            "utils/*": [
+                "./src/utils/*"
+            ],
+            "services/*": [
+                "./src/services/*"
+            ],
+            "helpers/*": [
+                "./src/helpers/*"
+            ],
+            "data/*": [
+                "./src/lib/data/*"
+            ],
+            "static/*": [
+                "./src/static/*"
+            ],
+            "public/*": [
+                "./dist/*"
+            ],
+            "styles/*": [
+                "./src/styles/*"
+            ],
+            "shared/*": [
+                "../shared/*"
+            ]
         }
     },
     "include": [
-        "src",
-        "config"
-    ],
-    "exclude": [
-        "public/*"
-    ],
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.js",
+        "**/*.jsx",
+        "./src/styles/*"
+    ]
 }

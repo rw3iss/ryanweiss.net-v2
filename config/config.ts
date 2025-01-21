@@ -1,4 +1,6 @@
+import { routes } from 'config/routes';
 
 export default {
-    SITE_NAME: process.env.SITE_NAME
+    DEFAUlT_ROUTE: "/",
+    routes
 }

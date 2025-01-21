@@ -37,11 +37,11 @@ export const Colors = {
 const DISABLED_LOGGER = { log: () => { }, warn: () => { } };
 
 export function color(color, str) {
-    const cs = color.indexOf('\x1b') >= 0 ? color : Colors[color];
+    let cs = color.indexOf('\x1b') >= 0 ? color : Colors[color];
     return `${cs}${str}${Colors['reset']}`;
 }
 
-const loggers = {};
+let loggers = {};
 /**
  * @description Retrieve a logger by name.
  * @param {string} [namespace='']
@@ -74,7 +74,7 @@ let logOnly = undefined;
 if (typeof window != 'undefined' && typeof URLSearchParams != 'undefined') {
     windowParams = new URLSearchParams(window.location.search);
     if (windowParams.get('logAll')) {
-        const logWhat = windowParams.get('logAll');
+        let logWhat = windowParams.get('logAll');
         if (logWhat == 'true') {
             isLogAllMode = true;
         } else if (logWhat && logWhat != 'true') {
@@ -91,12 +91,12 @@ if (typeof window != 'undefined' && typeof URLSearchParams != 'undefined') {
 export const log = function (...args) {
     const namespace = args.length > 1 ? args[0] : '';
     args = args.length > 1 ? args.slice(1, args.length) : [];
-    const l = getLogger(namespace);
+    let l = getLogger(namespace);
     if (l) {
         // log if normal mode, and logger is enabled, or log if it is globally-enabled
         if ((!isLogAllMode && l.enabled) ||
             (isLogAllMode && (!logOnly || logOnly.includes(namespace)))) {
-            const la = [...args];
+            let la = [...args];
             if (namespace) la.unshift(`${Colors[l.color] || Colors[l.black]}${namespace || '(no namespace)'}:${Colors["reset"]}`);
             console.log.apply(console, la);
         }
@@ -112,11 +112,11 @@ export const log = function (...args) {
 export const warn = function (...args) {
     const namespace = args.length > 1 ? args[0] : '';
     args = args.length > 1 ? args.slice(1, args.length) : [];
-    const l = getLogger(namespace);
+    let l = getLogger(namespace);
     if (l) {
-        const la = [...args];
+        let la = [...args];
         if (namespace) {
-            la.unshift(`${Colors[l.color] || Colors[l.black]}${namespace || '(no namespace)'}:${Colors["reset"]} ⚠️ Warning:`);
+            la.unshift(`${Colors[l.color] || Colors[l.black]}${namespace || '(no namespace)'}:${Colors["reset"]} ⚠️`);
         }
         console.log.apply(console, la);
     } else {
@@ -124,6 +124,22 @@ export const warn = function (...args) {
     }
 }
 
+/**
+ * @description Debugs logs/arguments to a specific namespace (first parameter), or default/global.
+ * @param {*} args
+ */
+export const error = function (...args) {
+    const namespace = args.length > 1 ? args[0] : '';
+    args = args.length > 1 ? args.slice(1, args.length) : [];
+    let l = getLogger(namespace);
+    if (l) {
+        let la = [...args];
+        if (namespace) la.unshift(`${Colors["red"]}${namespace || '(no namespace)'}:${Colors["reset"]} 🛑`);
+        console.error.apply(console, la);
+    } else {
+        console.error(`Error:`, args);
+    }
+}
 /**
  * @description Shortcut to determine if we're okay to dev.
  * @return {*}
@@ -158,6 +174,12 @@ export class Logger {
     // this is like log, but it will show it always
     public warn = (...args) => {
         warn(this.namespace, ...args);
+        return this;
+    }
+
+    // this is like log, but it will show it always
+    public error = (...args) => {
+        error(this.namespace, ...args);
         return this;
     }
 

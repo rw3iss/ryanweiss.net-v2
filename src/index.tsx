@@ -1,10 +1,14 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './components/App'
-import './styles/index.scss'
+import Application from 'Application';
+import { render } from 'preact';
+import { App } from './components/app/App';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>,
-)
+// initialize app db.
+const initApp = async () => {
+
+    await Application.init();
+
+    render(<App />, document.body);
+
+}
+
+initApp();

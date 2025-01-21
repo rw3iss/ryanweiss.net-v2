@@ -1,13 +1,10 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { renderContentByType } from 'lib/ContentUtils';
 import { useEntry } from 'lib/DataProvider';
 import { renderDate } from 'lib/utils/DateUtils';
 import './style.scss';
-import { renderContentByType, renderMarkdown } from 'lib/ContentUtils';
 
 const Entry = (props) => {
     const params = useParams();
-    const navigate = useNavigate();
     const entry = useEntry(params.slug);
 
     // useLayoutEffect(() => {

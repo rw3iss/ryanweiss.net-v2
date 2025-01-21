@@ -1,12 +1,10 @@
+import { useState } from 'preact/hooks';
 import clickSfx from 'public/sounds/click.wav';
 import coinSfx from 'public/sounds/cool-click.wav';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import useSound from 'use-sound';
 import './style.scss';
 
 const Menu = (props) => {
-    const navigate = useNavigate();
     const [playClickSound] = useSound(coinSfx);
     const [playHoverSound] = useSound(clickSfx);
     const [selected, setSelected] = useState(undefined);
@@ -14,7 +12,7 @@ const Menu = (props) => {
     const onNavClick = (route) => {
         playClickSound();
         setSelected(route);
-        navigate(route);
+        //navigate(route);
     };
 
     const menuItem = (route, label) => (

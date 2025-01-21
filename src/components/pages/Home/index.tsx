@@ -1,7 +1,5 @@
-import { useContext, useEffect } from 'react';
-import { renderDate } from 'lib/utils/DateUtils';
-import { DataContext, useEntries } from 'lib/DataProvider';
 import EntryList from 'components/shared/EntryList';
+import { useEntries } from 'lib/DataProvider';
 import './style.scss';
 
 const Home = (props) => {
