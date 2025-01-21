@@ -243,6 +243,37 @@
   }
 }
 
+/* src/components/shared/UnderConstruction/style.scss */
+.under-construction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  font-size: max(2rem, min(5vw, 5rem));
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.under-construction .links {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.5rem;
+  margin: 100px 0 40px;
+}
+.under-construction .links a {
+  padding: 4px;
+  margin: 5px;
+}
+.under-construction .icon {
+  font-size: max(5rem, min(12vw, 10rem));
+  text-shadow: 1px 1px 15px rgb(0, 5, 10);
+}
+.under-construction .uc {
+  font-size: max(2rem, min(8vw, 4rem));
+  padding: 20px;
+}
+
 /* src/components/app/App.scss */
 @keyframes loader-ring {
   0% {
@@ -391,8 +422,7 @@ body {
   box-sizing: border-box;
 }
 a {
-  color: #90c3d4;
-  color: var(--color-link);
+  color: rgb(199.1396103896, 224.8051948052, 233.3603896104);
   transition: color 0.2s ease;
 }
 a:visited {
@@ -1005,15 +1035,15 @@ iframe {
   flex-direction: column;
   justify-content: flex-end;
   padding-left: 0vw;
-  margin-bottom: max(20px, min(15vh, 300px));
+  margin-top: 50px;
+  margin-bottom: max(20px, min(5vh, 100px));
 }
 #app .content-wrapper .nav .menu {
   display: none;
 }
 #app .content-wrapper .nav .logo {
   width: 100%;
-  position: absolute;
-  top: max(75px, min(7vh, 150px));
+  position: relative;
   margin: 0 auto;
   font-family: "Mario";
   text-align: center;
@@ -1053,10 +1083,11 @@ iframe {
   align-items: center;
   position: relative;
   margin: 5px;
+  color: rgb(8, 96, 151);
   font-size: max(0.65em, min(1vw, 24px));
   letter-spacing: 4px;
   transition: opacity 0.25s linear;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.3);
   z-index: 1;
 }
 #app .content-wrapper .nav .logo:hover .star {
@@ -1070,24 +1101,29 @@ iframe {
   transition: opacity 0.25s linear;
 }
 #app .content-wrapper .nav .logo:hover .title {
-  transition: opacity 0.25s linear;
+  transition: opacity 0.25s linear, color 0.25s linear;
+  color: rgb(36, 85, 122);
 }
 #app .content-wrapper .nav .trees {
-  position: absolute;
+  position: fixed;
   left: 0;
   right: 0;
-  bottom: -200px;
+  bottom: -250px;
+  width: 100vw;
   display: flex;
   flex-direction: row;
-  filter: blur(7px);
+  justify-content: center;
+  filter: blur(10px);
   transform: scale(1.25);
   margin-left: 30px;
+  opacity: 0.5;
 }
 #app .content-wrapper .nav .trees .tree {
+  flex: 1 0 auto;
   position: relative;
-  max-width: 10vw;
-  width: 10vw;
+  width: 12vw;
   margin-left: -30px;
+  min-width: 100px;
 }
 #app .content-wrapper .nav .trees img {
   max-width: 15vw;
@@ -1099,7 +1135,6 @@ iframe {
   flex-direction: column;
   flex: 0.618 0 61.8%;
   padding: 0;
-  overflow: hidden;
   margin: 20px 20px 0px 20px;
   border-top-left-radius: 25px;
 }
@@ -1194,39 +1229,18 @@ iframe {
   opacity: 1;
   transition: opacity 0.25s ease-in-out;
 }
-@media all and (max-width: 767px) {
-  #app {
-    max-width: 100%;
-    overflow-y: auto;
+@media only screen and (min-device-width: 0px) and (max-device-width: 768px) and (-webkit-min-device-pixel-ratio: 2) {
+  #app .content-wrapper .nav .trees {
+    margin: 0 0 100px;
+    transform: scale(3);
+    filter: blur(2px);
   }
-  #app .content-wrapper {
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-  #app .content-wrapper .nav {
-    flex: 1 0 100%;
-    width: 100%;
-    justify-content: center;
-  }
-  #app .content-wrapper .page {
-    flex: 1 0 100%;
-    width: 100%;
-  }
-  #app .content-wrapper .page .container .stage .stage-content {
-    width: 100vw;
+  #app .content-wrapper .nav .trees .tree {
+    margin: 0px;
   }
 }
 .to-top {
   display: block;
   margin-top: 3px;
 }
-
-/* src/components/shared/UnderConstruction/style.scss */
-.under-construction {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  font-size: 2rem;
-}
+/*# sourceMappingURL=index.css.map */

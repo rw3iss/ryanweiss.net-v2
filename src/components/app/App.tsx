@@ -1,9 +1,7 @@
-import { RouteContext } from '../shared/RouteContext/RouteContext';
-import Menu from '../shared/Menu';
-import Link from '../shared/Link/Link';
-import "./App.scss";
-import UnderConstruction from '../shared/UnderConstruction/index.js';
 import { playSound } from 'lib/AudioManager.js';
+import Menu from '../shared/Menu';
+import UnderConstruction from '../shared/UnderConstruction/index.js';
+import "./App.scss";
 
 const App = (props) => {
 
@@ -23,11 +21,11 @@ const App = (props) => {
                     <Menu />
 
                     <div className="trees">
-                        <img className="tree tree1" src="/images/trees/tree1.png" />
-                        <img className="tree tree2" src="/images/trees/tree2.png" />
-                        <img className="tree tree3" src="/images/trees/tree3.png" />
-                        <img className="tree tree4" src="/images/trees/tree4.png" />
-                        <img className="tree tree5" src="/images/trees/tree5.png" />
+                        <img className="tree tree1" src="/public/images/trees/tree1.png" />
+                        <img className="tree tree2" src="/public/images/trees/tree2.png" />
+                        <img className="tree tree3" src="/public/images/trees/tree3.png" />
+                        <img className="tree tree4" src="/public/images/trees/tree4.png" />
+                        <img className="tree tree5" src="/public/images/trees/tree5.png" />
                     </div>
 
                 </div>

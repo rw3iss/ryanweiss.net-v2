@@ -782,7 +782,15 @@ var Menu_default = Menu;
 
 // src/components/shared/UnderConstruction/index.tsx
 var UnderConstruction = () => {
-  return /* @__PURE__ */ u3("div", { class: "under-construction", children: "UNDER CONSTRUCTION" });
+  return /* @__PURE__ */ u3("div", { class: "under-construction", children: [
+    /* @__PURE__ */ u3("div", { class: "icon", children: "\u26A0\uFE0F" }),
+    /* @__PURE__ */ u3("div", { class: "uc", children: "UNDER CONSTRUCTION" }),
+    /* @__PURE__ */ u3("div", { class: "links", children: [
+      /* @__PURE__ */ u3("a", { target: "_blank", href: "https://docs.google.com/document/d/1KDdb3txAdTjWnsQl2imkjp4l2Ed0Xua0Z9J-f6mqR48/edit?usp=sharing", children: "Resume" }),
+      /* @__PURE__ */ u3("a", { target: "_blank", href: "https://github.com/rw3iss", children: "GitHub" }),
+      /* @__PURE__ */ u3("a", { target: "_blank", href: "https://www.linkedin.com/in/ryan-weiss-1b80a35/", children: "LinkedIn" })
+    ] })
+  ] });
 };
 var UnderConstruction_default = UnderConstruction;
 
@@ -801,11 +809,11 @@ var App = (props) => {
       ] }),
       /* @__PURE__ */ u3(Menu_default, {}),
       /* @__PURE__ */ u3("div", { className: "trees", children: [
-        /* @__PURE__ */ u3("img", { className: "tree tree1", src: "/images/trees/tree1.png" }),
-        /* @__PURE__ */ u3("img", { className: "tree tree2", src: "/images/trees/tree2.png" }),
-        /* @__PURE__ */ u3("img", { className: "tree tree3", src: "/images/trees/tree3.png" }),
-        /* @__PURE__ */ u3("img", { className: "tree tree4", src: "/images/trees/tree4.png" }),
-        /* @__PURE__ */ u3("img", { className: "tree tree5", src: "/images/trees/tree5.png" })
+        /* @__PURE__ */ u3("img", { className: "tree tree1", src: "/public/images/trees/tree1.png" }),
+        /* @__PURE__ */ u3("img", { className: "tree tree2", src: "/public/images/trees/tree2.png" }),
+        /* @__PURE__ */ u3("img", { className: "tree tree3", src: "/public/images/trees/tree3.png" }),
+        /* @__PURE__ */ u3("img", { className: "tree tree4", src: "/public/images/trees/tree4.png" }),
+        /* @__PURE__ */ u3("img", { className: "tree tree5", src: "/public/images/trees/tree5.png" })
       ] })
     ] }),
     /* @__PURE__ */ u3("div", { className: "page", children: /* @__PURE__ */ u3("div", { className: "container", children: /* @__PURE__ */ u3(UnderConstruction_default, {}) }) })
@@ -819,3 +827,4 @@ var initApp = async () => {
   D(/* @__PURE__ */ u3(App_default, {}), document.body);
 };
 initApp();
+//# sourceMappingURL=index.js.map

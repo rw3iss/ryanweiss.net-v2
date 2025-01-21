@@ -24,7 +24,7 @@ body {
 }
 
 a {
-    color: var(--color-link);
+    color: lighten($colorLink, 15%);
     transition: color 0.2s ease;
 
     &:visited {

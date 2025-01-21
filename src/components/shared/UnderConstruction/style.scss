@@ -1,7 +1,33 @@
 .under-construction {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    text-align: center;
     padding: 20px;
-    font-size: 2rem;
+    font-size: clamp(2rem, 5vw, 5rem);
+    font-weight: 600;
+    letter-spacing: 1px;
+
+    .links {
+        display: flex;
+        flex-direction: column;
+        font-size: 1.5rem;
+        margin: 100px 0 40px;
+
+        a {
+            padding: 4px;
+            margin: 5px;
+        }
+    }
+
+    .icon {
+        font-size: clamp(5rem, 12vw, 10rem);
+        text-shadow: 1px 1px 15px rgba(0, 5, 10, 1);
+    }
+
+    .uc {
+        font-size: clamp(2rem, 8vw, 4rem);
+        padding: 20px;
+    }
 }

@@ -26,7 +26,8 @@
             @include flex-col-center-both;
             justify-content: flex-end;
             padding-left: 0vw;
-            margin-bottom: clamp(20px, 15vh, 300px);
+            margin-top: 50px;
+            margin-bottom: clamp(20px, 5vh, 100px);
 
             .menu {
                 display: none;
@@ -34,8 +35,8 @@
 
             .logo {
                 width: 100%;
-                position: absolute;
-                top: clamp(75px, 7vh, 150px);
+                position: relative;
+                //top: clamp(75px, 7vh, 150px);
                 margin: 0 auto;
                 font-family: "Mario";
                 text-align: center;
@@ -80,11 +81,11 @@
                     align-items: center;
                     position: relative;
                     margin: 5px;
-                    //color: rgba(150, 160, 180, 1);
+                    color: rgb(8, 96, 151);
                     font-size: clamp(0.65em, 1vw, 24px);
                     letter-spacing: 4px;
                     transition: opacity $animSpeed linear;
-                    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+                    text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.3);
                     z-index: 1;
                     //display: none;
                     // text-shadow:
@@ -107,27 +108,36 @@
                     }
 
                     .title {
-                        transition: opacity $animSpeed linear;
+                        transition:
+                            opacity $animSpeed linear,
+                            color $animSpeed linear;
+                        color: rgb(36, 85, 122);
                     }
                 }
                 // filter: blur(5px);
             }
 
             .trees {
-                position: absolute;
+                position: fixed;
                 left: 0;
                 right: 0;
-                bottom: -200px;
+                bottom: -250px;
+                width: 100vw;
                 @include flex-row;
-                filter: blur(7px);
+                justify-content: center;
+                filter: blur(10px);
                 transform: scale(1.25);
                 margin-left: 30px;
+                opacity: 0.5;
+                //display: none;
 
                 .tree {
+                    flex: 1 0 auto;
                     position: relative;
-                    max-width: 10vw;
-                    width: 10vw;
+                    //max-width: 10vw;
+                    width: 12vw;
                     margin-left: -30px;
+                    min-width: 100px;
                 }
 
                 img {
@@ -142,7 +152,6 @@
             @include flex-col;
             flex: 0.618 0 61.8%;
             padding: 0;
-            overflow: hidden;
             margin: 20px 20px 0px 20px;
             border-top-left-radius: 25px;
 
@@ -223,46 +232,55 @@
     }
 }
 
-@media all and (max-height: 767px) {
+@include mobile {
     #app {
         .content-wrapper {
             .nav {
                 //margin-bottom: clamp(20px, 5vh, 100px);
-            }
-        }
-    }
-}
+                .trees {
+                    margin: 0 0 100px;
+                    transform: scale(3);
+                    filter: blur(2px);
 
-@media all and (max-width: 767px) {
-    #app {
-        max-width: 100%;
-        overflow-y: auto;
-
-        .content-wrapper {
-            max-width: 100%;
-            @include flex-col;
-
-            .nav {
-                flex: 1 0 100%;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .page {
-                flex: 1 0 100%;
-                width: 100%;
-
-                .container {
-                    .stage {
-                        .stage-content {
-                            width: 100vw;
-                        }
+                    .tree {
+                        margin: 0px;
                     }
                 }
             }
         }
     }
 }
+
+// @media all and (max-width: 767px) {
+//     #app {
+//         max-width: 100%;
+//         overflow-y: auto;
+
+//         .content-wrapper {
+//             max-width: 100%;
+//             @include flex-col;
+
+//             .nav {
+//                 flex: 1 0 100%;
+//                 width: 100%;
+//                 justify-content: center;
+//             }
+
+//             .page {
+//                 flex: 1 0 100%;
+//                 width: 100%;
+
+//                 .container {
+//                     .stage {
+//                         .stage-content {
+//                             width: 100vw;
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
 
 .to-top {
     display: block;
