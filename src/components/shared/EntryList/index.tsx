@@ -1,5 +1,6 @@
-import { renderContentByType } from 'lib/ContentUtils';
+///import { renderContentByType } from 'lib/utils/ContentUtils';
 import { renderDate } from 'lib/utils/DateUtils';
+import Link from '../Link/Link.js';
 
 const EntryList = ({ entries }) => {
 
@@ -13,7 +14,8 @@ const EntryList = ({ entries }) => {
                     <div className="date">{renderDate(e.dateAdded || e.dateUpdated)}</div>
                     <div className="title">{e.title}</div>
                     <div className="content">
-                        {renderContentByType(e.contentType, e.content, { shorten: true })}
+                        {JSON.stringify(e.content)}
+                        {/* {renderContentByType(e.contentType, e.content, { shorten: true })} */}
                     </div>
                 </Link>)}
 

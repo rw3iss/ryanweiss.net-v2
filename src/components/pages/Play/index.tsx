@@ -1,12 +1,9 @@
-import { useContext, useEffect } from 'react';
-import { renderDate } from 'lib/utils/DateUtils';
-import { DataContext, useEntries } from 'lib/DataProvider';
-import EntryList from 'components/shared/EntryList';
+//import EntryList from 'components/shared/EntryList';
 import './style.scss';
 
-const Play = (props) => {
+const PlayPage = (props) => {
 
-    const entries = useEntries();
+    //const entries = useEntries();
     //console.log(`play context data`, entries);
 
     return (
@@ -14,10 +11,10 @@ const Play = (props) => {
 
             <h1>Play</h1>
 
-            <EntryList entries={entries} />
+            {/* <EntryList entries={entries} /> */}
 
         </div>
     );
 }
 
-export default Play;
+export default PlayPage;

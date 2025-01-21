@@ -1,6 +1,6 @@
-import Application from 'Application';
+import Application from './Application';
 import { render } from 'preact';
-import { App } from './components/app/App';
+import App from './components/app/App';
 
 // initialize app db.
 const initApp = async () => {

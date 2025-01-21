@@ -1,7 +1,9 @@
-import { RouteContext } from 'components/app/route-context/RouteContext';
+import { RouteContext } from '../shared/RouteContext/RouteContext';
 import Menu from '../shared/Menu';
-
+import Link from '../shared/Link/Link';
 import "./App.scss";
+import UnderConstruction from '../shared/UnderConstruction/index.js';
+import { playSound } from 'lib/AudioManager.js';
 
 const App = (props) => {
 
@@ -12,11 +14,11 @@ const App = (props) => {
 
                 <div className="nav">
 
-                    <Link to="/" className="logo">
+                    <div className="logo" onMouseEnter={e => playSound('click')}>
                         <div className="name">Ryan<br />Weiss</div>
                         <div className="title">Developer</div>
                         <div className="star">✨</div>
-                    </Link>
+                    </div>
 
                     <Menu />
 
@@ -36,13 +38,15 @@ const App = (props) => {
 
                     <div className="container">
 
-                        <div className="stage">
+                        <UnderConstruction />
+
+                        {/* <div className="stage">
                             <div className="stage-content">
 
                                 <RouteContext />
 
                             </div>
-                        </div>
+                        </div> */}
 
                     </div>
 

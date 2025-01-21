@@ -1,21 +1,16 @@
-import { useContext, useEffect, useState } from 'react';
-import { renderDate } from 'lib/utils/DateUtils';
-import { DataContext, useEntries } from 'lib/DataProvider';
+import { useState } from 'preact/hooks';
+//import { useEntries } from 'lib/DataProvider';
 import EntryList from 'components/shared/EntryList';
-import coinSfx from 'public/sounds/cool-click.wav';
-import clickSfx from 'public/sounds/click.wav';
-import useSound from 'use-sound';
 import './style.scss';
+import { playSound } from 'lib/AudioManager.js';
 
-const Work = (props) => {
+const WorkPage = (props) => {
     const [filters, setFilters] = useState([]);
-    const [playClickSound] = useSound(coinSfx);
-    const [playHoverSound] = useSound(clickSfx);
 
-    const entries = useEntries();//{ tags: ['tag'] });
+    const entries = []; // useEntries();//{ tags: ['tag'] });
 
     const clickSubnav = (f) => {
-        playClickSound()
+        playSound('click')
         toggleFilter(f);
     }
 
@@ -35,10 +30,10 @@ const Work = (props) => {
 
             <div className="sub-nav">
                 <a href="#freelance"
-                    onMouseEnter={(e) => playHoverSound()}
+                    onMouseEnter={(e) => playSound('hover')}
                     onClick={e => clickSubnav('freelance')} className={isFiltered('freelance') ? ' on' : ''}>Freelance</a>
                 <a href="#fulltime"
-                    onMouseEnter={(e) => playHoverSound()}
+                    onMouseEnter={(e) => playSound('hover')}
                     onClick={e => clickSubnav('fulltime')} className={isFiltered('fulltime') ? ' on' : ''}>Fulltime</a>
             </div>
 
@@ -48,4 +43,4 @@ const Work = (props) => {
     );
 }
 
-export default Work;
+export default WorkPage;

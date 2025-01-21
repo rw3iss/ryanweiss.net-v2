@@ -1,5 +1,5 @@
 import { AxiosError, CancelTokenSource } from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "preact/hooks";
 import { getInnerError } from 'lib/utils/errorUtils';
 
 function useData(getData: Function, params?) {

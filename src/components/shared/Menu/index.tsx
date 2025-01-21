@@ -1,16 +1,12 @@
 import { useState } from 'preact/hooks';
-import clickSfx from 'public/sounds/click.wav';
-import coinSfx from 'public/sounds/cool-click.wav';
-import useSound from 'use-sound';
+import { playSound } from 'lib/AudioManager.js';
 import './style.scss';
 
 const Menu = (props) => {
-    const [playClickSound] = useSound(coinSfx);
-    const [playHoverSound] = useSound(clickSfx);
     const [selected, setSelected] = useState(undefined);
 
     const onNavClick = (route) => {
-        playClickSound();
+        playSound('click')
         setSelected(route);
         //navigate(route);
     };
@@ -18,7 +14,7 @@ const Menu = (props) => {
     const menuItem = (route, label) => (
         <li
             className={`${(selected == route ? ' selected' : '')}`}
-            onMouseEnter={(e) => playHoverSound()}
+            onMouseEnter={(e) => playSound('hover')}
             onClick={(e) => { onNavClick(route) }}>
             {label}
         </li>

@@ -1,4 +1,3 @@
-import { Component } from 'react';
 import dateFormat from 'dateformat';
 import './style.scss';
 

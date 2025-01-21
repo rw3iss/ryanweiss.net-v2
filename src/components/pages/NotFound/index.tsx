@@ -1,6 +1,6 @@
 import './style.scss';
 
-const NotFound = (props) => {
+const NotFoundPage = (props) => {
 
     return (
         <div className="page center" id="not-found">
@@ -9,4 +9,4 @@ const NotFound = (props) => {
     );
 };
 
-export default NotFound;
+export default NotFoundPage;

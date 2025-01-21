@@ -1,8 +1,8 @@
 import { getLogger } from "./logging";
-
+import { DEFAULT_TIMEZONE as _DEFAULT_TIMEZONE } from "env";
 const { log, warn } = getLogger('Dates', { color: 'black', enabled: false });
 
-export const DEFAULT_TIMEZONE = process.env.DEFAULT_TIMEZONE || "America/New_York";
+export const DEFAULT_TIMEZONE = _DEFAULT_TIMEZONE || "America/New_York";
 export const DATE_FORMAT = "YYYY-MM-DD";
 export const FULL_DATE_FORMAT = "YYYY-MM-DD HH:mm:ss a";
 export const SHORT_DATE_FORMAT = "MMM Do h:mma";
