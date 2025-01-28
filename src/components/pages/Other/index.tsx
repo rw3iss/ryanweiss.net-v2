@@ -1,3 +1,4 @@
+import BlobEditor from 'components/shared/BlobEditor/BlobEditor';
 import './style.scss';
 
 const OtherPage = (props) => {
@@ -8,7 +9,9 @@ const OtherPage = (props) => {
 
     return (
         <div className="page" id="entry">
-            OTHER
+
+            <BlobEditor />
+
         </div>
     );
 };

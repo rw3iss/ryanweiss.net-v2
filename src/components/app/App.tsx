@@ -1,6 +1,4 @@
-import { playSound } from 'lib/AudioManager.js';
-import Menu from '../shared/Menu';
-import UnderConstruction from '../shared/UnderConstruction/index.js';
+import { RouteContext } from '../shared/RouteContext/RouteContext';
 import "./App.scss";
 
 const App = (props) => {
@@ -10,7 +8,7 @@ const App = (props) => {
 
             <div className="content-wrapper">
 
-                <div className="nav">
+                {/* <div className="nav">
 
                     <div className="logo" onMouseEnter={e => playSound('click')}>
                         <div className="name">Ryan<br />Weiss</div>
@@ -28,7 +26,7 @@ const App = (props) => {
                         <img className="tree tree5" src="/public/images/trees/tree5.png" />
                     </div>
 
-                </div>
+                </div> */}
 
                 <div className="page">
 
@@ -36,15 +34,15 @@ const App = (props) => {
 
                     <div className="container">
 
-                        <UnderConstruction />
+                        {/* <UnderConstruction /> */}
 
-                        {/* <div className="stage">
+                        <div className="stage">
                             <div className="stage-content">
 
                                 <RouteContext />
 
                             </div>
-                        </div> */}
+                        </div>
 
                     </div>
 

@@ -150,9 +150,10 @@
         .page {
             position: relative;
             @include flex-col;
-            flex: 0.618 0 61.8%;
+            flex: 1; //0.618 0 61.8%;
+            width: 100%;
             padding: 0;
-            margin: 20px 20px 0px 20px;
+            //margin: 20px 20px 0px 20px;
             border-top-left-radius: 25px;
 
             .container {
@@ -170,7 +171,6 @@
                 }
 
                 .stage {
-                    display: none;
                     position: relative;
                     opacity: 1; //0;
                     width: 100%;
@@ -184,25 +184,25 @@
                         background: $colorBackgroundDark;
                         padding-bottom: 50px;
 
-                        &:before {
-                            box-shadow: inset 6.18vw 0 6.18vw -6.18vw rgba(0, 0, 0, 0.7);
-                            content: " ";
-                            height: 100%;
-                            left: 0;
-                            position: absolute;
-                            top: 0;
-                            width: 6.18vw;
-                        }
+                        // &:before {
+                        //     box-shadow: inset 6.18vw 0 6.18vw -6.18vw rgba(0, 0, 0, 0.7);
+                        //     content: " ";
+                        //     height: 100%;
+                        //     left: 0;
+                        //     position: absolute;
+                        //     top: 0;
+                        //     width: 6.18vw;
+                        // }
 
-                        &:after {
-                            box-shadow: inset -6.18vw 0px 6.18vw -6.18vw rgba(0, 0, 0, 0.7);
-                            content: " ";
-                            height: 100%;
-                            position: absolute;
-                            top: 0;
-                            right: 0;
-                            width: 6.18vw;
-                        }
+                        // &:after {
+                        //     box-shadow: inset -6.18vw 0px 6.18vw -6.18vw rgba(0, 0, 0, 0.7);
+                        //     content: " ";
+                        //     height: 100%;
+                        //     position: absolute;
+                        //     top: 0;
+                        //     right: 0;
+                        //     width: 6.18vw;
+                        // }
 
                         .loader {
                             position: absolute;

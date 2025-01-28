@@ -1,6 +1,14 @@
 @charset "UTF-8";
 
-/* src/components/shared/Menu/style.scss */
+/* src/components/pages/Entry/style.scss */
+@keyframes loader-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 @keyframes loader-ring {
   0% {
     transform: rotate(0deg);
@@ -107,6 +115,96 @@
     --default-padding: 15px;
   }
 }
+.entry,
+.entry-list .entries .entry {
+  padding: 20px;
+  text-align: left;
+  line-height: 1.5em;
+  opacity: 0.8;
+}
+.entry .title,
+.entry-list .entries .entry .title {
+  color: #ace398;
+  font-size: 1.65em;
+  line-height: 1.25em;
+  font-weight: 900;
+  font-family: "Mario";
+  margin: 5px 0 10px;
+}
+.entry .date,
+.entry-list .entries .entry .date {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75em;
+}
+.entry .content,
+.entry-list .entries .entry .content {
+  color: white;
+  margin-top: 5px;
+}
+.entry .content .markdown-content ul {
+  padding-left: 5px;
+  list-style: square;
+  color: white;
+}
+.entry .content .markdown-content ul li {
+  padding: 4px;
+}
+.entry .content .markdown-content ul li::before {
+  position: relative;
+  left: -5px;
+  content: "\2022";
+  color: rgba(255, 255, 255, 0.75);
+}
+.entry .content .markdown-content pre div {
+  background: rgba(40, 44, 52, 0.2) !important;
+}
+.entry .content .markdown-content pre div code {
+  text-shadow: 1px 1px 1px black !important;
+  background: none !important;
+  font-smooth: always;
+}
+.entry .content .markdown-content h1 {
+  font-size: 1.35em;
+  padding: 15px 0 10px;
+  color: gold;
+}
+.entry .content .markdown-content h2 {
+  font-size: 1.25em;
+  padding: 10px 0 7px;
+  color: gold;
+}
+.entry .content .markdown-content h3 {
+  font-size: 1.15em;
+  padding: 7px 0 5px;
+  color: gold;
+}
+.entry .content .markdown-content h4 {
+  font-size: 1.1em;
+  padding: 5px 0 3px;
+  color: gold;
+}
+.entry:hover,
+.entry-list .entries .entry:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+.entry-list {
+  display: flex;
+  flex-direction: column;
+}
+.entry-list .entries {
+  display: flex;
+  flex-direction: column;
+}
+#entry .entry {
+  opacity: 1;
+  cursor: auto;
+  cursor: initial;
+}
+
+/* src/components/pages/Home/style.scss */
+
+/* src/components/pages/Info/style.scss */
 @keyframes loader-ring {
   0% {
     transform: rotate(0deg);
@@ -115,163 +213,589 @@
     transform: rotate(360deg);
   }
 }
-.menu {
-  z-index: 2;
-  font-family: "8bit";
-  position: relative;
-  bottom: 0;
-  transition: right 0.2s ease-in-out, opacity 0.2s linear;
+@keyframes loader-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
-.menu .shadow {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: red;
-}
-.menu .menu-wrapper {
-  position: relative;
-  width: max(120px, min(12vw, 250px));
-  min-width: 280px;
-  max-width: 300px;
-  overflow: hidden;
-  background:
-    linear-gradient(
-      -30deg,
-      #111827 0%,
-      rgb(17, 24, 39) 100%);
-  box-shadow: 0px 30px 45px rgba(0, 0, 0, 0.8);
-  border-top-left-radius: 150px 250px;
-  border-top-right-radius: 150px 250px;
-  border-bottom-left-radius: 150px 100px;
-  border-bottom-right-radius: 150px 100px;
-}
-.menu .menu-wrapper .glow {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background:
-    linear-gradient(
-      -30deg,
-      #2f5047 0%,
-      #99f2c8 100%);
-  box-shadow: inset 0px 0px 60px rgba(0, 0, 0, 0.8);
-  opacity: 0;
-  transition: opacity 0.4s ease-in-out;
-}
-.menu .menu-wrapper:hover .glow {
-  opacity: 0.5;
-  transition: opacity 0.4s ease-in-out;
-}
-.menu .menu-wrapper .menu-content {
-  width: max(120px, min(12vw, 250px));
-  min-width: 280px;
-  max-width: 300px;
-  padding-top: 45px;
-  padding-bottom: 20px;
-  overflow: hidden;
-  box-shadow: inset 0px 0px 60px rgba(0, 0, 0, 0.8);
-  border-top-left-radius: 150px 250px;
-  border-top-right-radius: 150px 250px;
-  border-bottom-left-radius: 150px 100px;
-  border-bottom-right-radius: 150px 100px;
-}
-.menu .menu-wrapper .menu-content li {
-  position: relative;
-  width: 100%;
-  color: rgba(239, 226, 190, 0.75);
-  text-align: center;
-  letter-spacing: 2px;
-  padding: 0 1em;
-  margin: 1.75em auto;
-  font-size: max(1em, min(1.5vw, 30px));
-  transition:
-    background-color 0.1s linear,
-    color 0.1s linear,
-    box-shadow 0.1s linear;
-}
-.menu .menu-wrapper .menu-content li span {
-  padding: 5px;
-  position: relative;
-  transition: left 0.1s ease-in-out;
-}
-.menu .menu-wrapper .menu-content li:hover,
-.menu .menu-wrapper .menu-content li.selected {
-  cursor: pointer;
-  color: rgb(255, 208, 19);
-  transition:
-    background-color 0.05s linear,
-    color 0.05s linear,
-    box-shadow 0.1s linear;
-}
-.menu .menu-wrapper .menu-content li:hover span::before,
-.menu .menu-wrapper .menu-content li.selected span::before {
-  position: absolute;
-  content: "\1fabd";
-  top: 30%;
-  transform: scaleX(-1) translateY(-50%);
-  filter: FlipH;
-  left: -1.5em;
-  font-size: 1em;
-}
-.menu .menu-wrapper .menu-content li:hover span::after,
-.menu .menu-wrapper .menu-content li.selected span::after {
-  position: absolute;
-  content: "\1fabd";
-  top: 30%;
-  transform: translateY(-50%);
-  right: -1.25em;
-  left: auto;
-  font-size: 1em;
-}
-.menu .menu-wrapper .menu-content li.clicked span {
-  left: 10%;
-  transition: left 0.1s ease-in-out;
+:root {
+  --font-size-default: 16px;
+  --font-default: "Icarus";
+  --font-bold-default: "Mario";
+  --font-input: "Icarus";
+  --font-dropdown: var(--font-input);
+  --font-button: var(--font-input);
+  --color-font: var(--color-grey);
+  --color-text: var(--color-font);
+  --color-header: #ace398;
+  --color-subheader: #fff;
+  --color-error: var(--color-red);
+  --color-error-dark: var(--color-red-dark);
+  --input-color: var(--color-grey-1);
+  --input-color-placeholder: var(--color-grey-4);
+  --input-color-dark: var(--color-grey-9);
+  --input-color-placeholder-dark: var(--color-grey-7);
+  --button-font: "Mario";
+  --button-font-size: 1rem;
+  --button-text-color: var(--color-blue-light);
+  --button-text-color-hover: white;
+  --button-color-bg: none;
+  --button-background-color: #0069d2;
+  --button-height: 2rem;
+  --button-radius: calc(var(--button-height) / 3.5);
+  --button-border-width: 2px;
+  --button-bar-height: var(--button-height);
+  --caret-color: white;
+  --caret-color-dark: var(--color-blue-dark);
+  --input-padding: 0.75rem;
+  --input-font-size: 1.25rem;
+  --input-radius: 5px;
+  --modal-radius: calc(2 * var(--button-radius));
+  --modal-background: white;
+  --modal-color-font: var(--color-grey-3);
+  --header-height: 50px;
+  --default-padding: 20px;
+  --default-gutter: max(1rem, min(1vw, 3rem));
+  --default-gutter: max(1rem, min(1vw, 3rem));
+  --default-gutter-static: 15px;
+  --gutter-large: max(2rem, min(2vw, 6rem));
+  --dropdown-background: rgba(20, 38, 67, 1);
+  --dropdown-border-color: #fff;
+  --dropdown-border-width: 1px;
+  --dropdown-shadow: 1px 1px 10px rgba(0, 0, 0, 0.25);
+  --dropdown-shadow-light: 1px 0px 5px rgba(0, 0, 0, 0.1);
+  --default-item-padding: 15px;
+  --defaultPagePadding: 20px;
+  --defaultPagePaddingTop: 50px;
+  --defaultButtonPadding: 0.7em 1.1em;
+  --defaultButtonHeight: 45px;
+  --defaultInputPadding: 10px;
+  --defaultRadius: 3px;
+  --fontSizeInput: 1em;
+  --animDefault: 0.35s;
+  --color-red: #ff7158;
+  --color-green: #66ffcc;
+  --color-green-2: #3ec692;
+  --color-green-3: #2af378;
+  --color-blue-3: #89e0f4;
+  --color-blue-2: #37c6f7;
+  --color-blue: #3976ee;
+  --color-purple: #623fea;
+  --color-magenta: #a61fe5;
+  --color-magenta-2: #f33fff;
+  --color-orange: #eaa824;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-link: #90c3d4;
+  --color-link-hover: #90c3d4;
+  --color-font: #fff;
+  --color-font-grey: #333;
+  --color-background: #fff;
+  --button-radius: var(--default-radius);
+  --button-color-bg: var(--color-blue);
+  --button-color-font: var(--color-white);
+  --button-color-bg-hover: var(--color-blue);
+  --button-text-color: var(--color-blue);
+  --button-text-color-hover: white;
+  --input-radius: var(--default-radius);
+  --input-padding: 10px;
+  --input-font-size: 1.18rem;
+  --font-size-h1: 1rem;
+  --font-size-h2: 1.2;
+  --default-gutter: 1vw;
 }
 @media only screen and (min-device-width: 0px) and (max-device-width: 768px) and (-webkit-min-device-pixel-ratio: 2) {
-  .menu .menu-content {
-    width: 80vw;
-    min-height: 400px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+  :root {
+    --defaultPagePadding: 10px;
+    --default-item-padding: 10px;
+    --defaultRadius: 7px;
+    --header-height: 85px;
+    --default-gutter: 4vw;
+    --default-gutter-static: 15px;
+    --gutter-large: 8vw;
+    --default-padding: 15px;
   }
-  .menu .menu-content li {
-    font-size: max(1.5em, min(6vw, 30px));
-    margin: 1em auto;
+}
+#info .bio {
+  padding: 20px;
+}
+#info .bio .section {
+  margin: 20px 0;
+}
+@media all and (max-width: 1023px) {
+  #info {
+    text-align: center;
   }
 }
 
-/* src/components/shared/UnderConstruction/style.scss */
-.under-construction {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+/* src/components/pages/NotFound/style.scss */
+
+/* src/components/pages/Other/style.scss */
+@keyframes loader-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loader-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+:root {
+  --font-size-default: 16px;
+  --font-default: "Icarus";
+  --font-bold-default: "Mario";
+  --font-input: "Icarus";
+  --font-dropdown: var(--font-input);
+  --font-button: var(--font-input);
+  --color-font: var(--color-grey);
+  --color-text: var(--color-font);
+  --color-header: #ace398;
+  --color-subheader: #fff;
+  --color-error: var(--color-red);
+  --color-error-dark: var(--color-red-dark);
+  --input-color: var(--color-grey-1);
+  --input-color-placeholder: var(--color-grey-4);
+  --input-color-dark: var(--color-grey-9);
+  --input-color-placeholder-dark: var(--color-grey-7);
+  --button-font: "Mario";
+  --button-font-size: 1rem;
+  --button-text-color: var(--color-blue-light);
+  --button-text-color-hover: white;
+  --button-color-bg: none;
+  --button-background-color: #0069d2;
+  --button-height: 2rem;
+  --button-radius: calc(var(--button-height) / 3.5);
+  --button-border-width: 2px;
+  --button-bar-height: var(--button-height);
+  --caret-color: white;
+  --caret-color-dark: var(--color-blue-dark);
+  --input-padding: 0.75rem;
+  --input-font-size: 1.25rem;
+  --input-radius: 5px;
+  --modal-radius: calc(2 * var(--button-radius));
+  --modal-background: white;
+  --modal-color-font: var(--color-grey-3);
+  --header-height: 50px;
+  --default-padding: 20px;
+  --default-gutter: max(1rem, min(1vw, 3rem));
+  --default-gutter: max(1rem, min(1vw, 3rem));
+  --default-gutter-static: 15px;
+  --gutter-large: max(2rem, min(2vw, 6rem));
+  --dropdown-background: rgba(20, 38, 67, 1);
+  --dropdown-border-color: #fff;
+  --dropdown-border-width: 1px;
+  --dropdown-shadow: 1px 1px 10px rgba(0, 0, 0, 0.25);
+  --dropdown-shadow-light: 1px 0px 5px rgba(0, 0, 0, 0.1);
+  --default-item-padding: 15px;
+  --defaultPagePadding: 20px;
+  --defaultPagePaddingTop: 50px;
+  --defaultButtonPadding: 0.7em 1.1em;
+  --defaultButtonHeight: 45px;
+  --defaultInputPadding: 10px;
+  --defaultRadius: 3px;
+  --fontSizeInput: 1em;
+  --animDefault: 0.35s;
+  --color-red: #ff7158;
+  --color-green: #66ffcc;
+  --color-green-2: #3ec692;
+  --color-green-3: #2af378;
+  --color-blue-3: #89e0f4;
+  --color-blue-2: #37c6f7;
+  --color-blue: #3976ee;
+  --color-purple: #623fea;
+  --color-magenta: #a61fe5;
+  --color-magenta-2: #f33fff;
+  --color-orange: #eaa824;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-link: #90c3d4;
+  --color-link-hover: #90c3d4;
+  --color-font: #fff;
+  --color-font-grey: #333;
+  --color-background: #fff;
+  --button-radius: var(--default-radius);
+  --button-color-bg: var(--color-blue);
+  --button-color-font: var(--color-white);
+  --button-color-bg-hover: var(--color-blue);
+  --button-text-color: var(--color-blue);
+  --button-text-color-hover: white;
+  --input-radius: var(--default-radius);
+  --input-padding: 10px;
+  --input-font-size: 1.18rem;
+  --font-size-h1: 1rem;
+  --font-size-h2: 1.2;
+  --default-gutter: 1vw;
+}
+@media only screen and (min-device-width: 0px) and (max-device-width: 768px) and (-webkit-min-device-pixel-ratio: 2) {
+  :root {
+    --defaultPagePadding: 10px;
+    --default-item-padding: 10px;
+    --defaultRadius: 7px;
+    --header-height: 85px;
+    --default-gutter: 4vw;
+    --default-gutter-static: 15px;
+    --gutter-large: 8vw;
+    --default-padding: 15px;
+  }
+}
+#other h3 {
+  margin-bottom: 5px;
+}
+#other > h3 {
+  margin-left: 20px;
+}
+#other h3.latest {
+  margin-left: 20px;
+  margin-bottom: 0;
+}
+#other h3.see-more {
+  margin-bottom: 20px;
+}
+#other .bio {
   padding: 20px;
-  font-size: max(2rem, min(5vw, 5rem));
-  font-weight: 600;
-  letter-spacing: 1px;
+  border-radius: 12px;
+  margin: 10px 0 20px;
+  box-shadow:
+    inset 1px 1px 26px linear-gradient(
+      -30deg,
+      #2f5047 0%,
+      #99f2c8 100%);
+  transition: all 0.35s ease;
 }
-.under-construction .links {
+#other .bio .left {
+  min-width: 300px;
+  padding-right: 10px;
+}
+#other .bio .left .col.image img {
+  max-width: 180px;
+  height: auto;
+  border-radius: 4px;
+}
+#other .bio .left .col.me {
+  padding: 0 10px 0 10px;
+}
+#other .bio .left .col.me h3:not(:first-child) {
+  margin-top: 10px;
+}
+#other .bio .right {
+  flex: 1;
+  padding-left: 10px;
+}
+#other .bio .right .section:not(:last-child) {
+  margin-bottom: 10px;
+}
+#other .bio .right .section ul li {
+  display: block;
+  margin-left: 5px;
+}
+#other .bio .right #skills .skill-types h4 {
+  font-family: "Mario";
+}
+#other .bio .right #skills .skill-types h4:not(:first-child) {
+  margin-top: 10px;
+}
+#other .bio .right #skills .skill-types ul {
   display: flex;
-  flex-direction: column;
-  font-size: 1.5rem;
-  margin: 100px 0 40px;
+  flex-wrap: wrap;
+  max-width: 100%;
 }
-.under-construction .links a {
-  padding: 4px;
-  margin: 5px;
+#other .bio .right #skills .skill-types ul li {
+  display: block;
+  padding: 0px 10px;
+  font-size: 0.9em;
 }
-.under-construction .icon {
-  font-size: max(5rem, min(12vw, 10rem));
-  text-shadow: 1px 1px 15px rgb(0, 5, 10);
+@media all and (max-width: 1023px) {
+  #home .bio {
+    border-radius: 0;
+    width: 100%;
+  }
 }
-.under-construction .uc {
-  font-size: max(2rem, min(8vw, 4rem));
+@media all and (max-width: 767px) {
+  #home .bio {
+    display: block;
+  }
+  #home .bio .left,
+  #home .bio .right {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    padding-left: 0;
+  }
+  #home .bio .left .col.image img {
+    max-width: 115px;
+  }
+}
+
+/* src/components/pages/Play/style.scss */
+@keyframes loader-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loader-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+:root {
+  --font-size-default: 16px;
+  --font-default: "Icarus";
+  --font-bold-default: "Mario";
+  --font-input: "Icarus";
+  --font-dropdown: var(--font-input);
+  --font-button: var(--font-input);
+  --color-font: var(--color-grey);
+  --color-text: var(--color-font);
+  --color-header: #ace398;
+  --color-subheader: #fff;
+  --color-error: var(--color-red);
+  --color-error-dark: var(--color-red-dark);
+  --input-color: var(--color-grey-1);
+  --input-color-placeholder: var(--color-grey-4);
+  --input-color-dark: var(--color-grey-9);
+  --input-color-placeholder-dark: var(--color-grey-7);
+  --button-font: "Mario";
+  --button-font-size: 1rem;
+  --button-text-color: var(--color-blue-light);
+  --button-text-color-hover: white;
+  --button-color-bg: none;
+  --button-background-color: #0069d2;
+  --button-height: 2rem;
+  --button-radius: calc(var(--button-height) / 3.5);
+  --button-border-width: 2px;
+  --button-bar-height: var(--button-height);
+  --caret-color: white;
+  --caret-color-dark: var(--color-blue-dark);
+  --input-padding: 0.75rem;
+  --input-font-size: 1.25rem;
+  --input-radius: 5px;
+  --modal-radius: calc(2 * var(--button-radius));
+  --modal-background: white;
+  --modal-color-font: var(--color-grey-3);
+  --header-height: 50px;
+  --default-padding: 20px;
+  --default-gutter: max(1rem, min(1vw, 3rem));
+  --default-gutter: max(1rem, min(1vw, 3rem));
+  --default-gutter-static: 15px;
+  --gutter-large: max(2rem, min(2vw, 6rem));
+  --dropdown-background: rgba(20, 38, 67, 1);
+  --dropdown-border-color: #fff;
+  --dropdown-border-width: 1px;
+  --dropdown-shadow: 1px 1px 10px rgba(0, 0, 0, 0.25);
+  --dropdown-shadow-light: 1px 0px 5px rgba(0, 0, 0, 0.1);
+  --default-item-padding: 15px;
+  --defaultPagePadding: 20px;
+  --defaultPagePaddingTop: 50px;
+  --defaultButtonPadding: 0.7em 1.1em;
+  --defaultButtonHeight: 45px;
+  --defaultInputPadding: 10px;
+  --defaultRadius: 3px;
+  --fontSizeInput: 1em;
+  --animDefault: 0.35s;
+  --color-red: #ff7158;
+  --color-green: #66ffcc;
+  --color-green-2: #3ec692;
+  --color-green-3: #2af378;
+  --color-blue-3: #89e0f4;
+  --color-blue-2: #37c6f7;
+  --color-blue: #3976ee;
+  --color-purple: #623fea;
+  --color-magenta: #a61fe5;
+  --color-magenta-2: #f33fff;
+  --color-orange: #eaa824;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-link: #90c3d4;
+  --color-link-hover: #90c3d4;
+  --color-font: #fff;
+  --color-font-grey: #333;
+  --color-background: #fff;
+  --button-radius: var(--default-radius);
+  --button-color-bg: var(--color-blue);
+  --button-color-font: var(--color-white);
+  --button-color-bg-hover: var(--color-blue);
+  --button-text-color: var(--color-blue);
+  --button-text-color-hover: white;
+  --input-radius: var(--default-radius);
+  --input-padding: 10px;
+  --input-font-size: 1.18rem;
+  --font-size-h1: 1rem;
+  --font-size-h2: 1.2;
+  --default-gutter: 1vw;
+}
+@media only screen and (min-device-width: 0px) and (max-device-width: 768px) and (-webkit-min-device-pixel-ratio: 2) {
+  :root {
+    --defaultPagePadding: 10px;
+    --default-item-padding: 10px;
+    --defaultRadius: 7px;
+    --header-height: 85px;
+    --default-gutter: 4vw;
+    --default-gutter-static: 15px;
+    --gutter-large: 8vw;
+    --default-padding: 15px;
+  }
+}
+#play h3 {
   padding: 20px;
+}
+
+/* src/components/pages/Work/style.scss */
+@keyframes loader-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loader-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+:root {
+  --font-size-default: 16px;
+  --font-default: "Icarus";
+  --font-bold-default: "Mario";
+  --font-input: "Icarus";
+  --font-dropdown: var(--font-input);
+  --font-button: var(--font-input);
+  --color-font: var(--color-grey);
+  --color-text: var(--color-font);
+  --color-header: #ace398;
+  --color-subheader: #fff;
+  --color-error: var(--color-red);
+  --color-error-dark: var(--color-red-dark);
+  --input-color: var(--color-grey-1);
+  --input-color-placeholder: var(--color-grey-4);
+  --input-color-dark: var(--color-grey-9);
+  --input-color-placeholder-dark: var(--color-grey-7);
+  --button-font: "Mario";
+  --button-font-size: 1rem;
+  --button-text-color: var(--color-blue-light);
+  --button-text-color-hover: white;
+  --button-color-bg: none;
+  --button-background-color: #0069d2;
+  --button-height: 2rem;
+  --button-radius: calc(var(--button-height) / 3.5);
+  --button-border-width: 2px;
+  --button-bar-height: var(--button-height);
+  --caret-color: white;
+  --caret-color-dark: var(--color-blue-dark);
+  --input-padding: 0.75rem;
+  --input-font-size: 1.25rem;
+  --input-radius: 5px;
+  --modal-radius: calc(2 * var(--button-radius));
+  --modal-background: white;
+  --modal-color-font: var(--color-grey-3);
+  --header-height: 50px;
+  --default-padding: 20px;
+  --default-gutter: max(1rem, min(1vw, 3rem));
+  --default-gutter: max(1rem, min(1vw, 3rem));
+  --default-gutter-static: 15px;
+  --gutter-large: max(2rem, min(2vw, 6rem));
+  --dropdown-background: rgba(20, 38, 67, 1);
+  --dropdown-border-color: #fff;
+  --dropdown-border-width: 1px;
+  --dropdown-shadow: 1px 1px 10px rgba(0, 0, 0, 0.25);
+  --dropdown-shadow-light: 1px 0px 5px rgba(0, 0, 0, 0.1);
+  --default-item-padding: 15px;
+  --defaultPagePadding: 20px;
+  --defaultPagePaddingTop: 50px;
+  --defaultButtonPadding: 0.7em 1.1em;
+  --defaultButtonHeight: 45px;
+  --defaultInputPadding: 10px;
+  --defaultRadius: 3px;
+  --fontSizeInput: 1em;
+  --animDefault: 0.35s;
+  --color-red: #ff7158;
+  --color-green: #66ffcc;
+  --color-green-2: #3ec692;
+  --color-green-3: #2af378;
+  --color-blue-3: #89e0f4;
+  --color-blue-2: #37c6f7;
+  --color-blue: #3976ee;
+  --color-purple: #623fea;
+  --color-magenta: #a61fe5;
+  --color-magenta-2: #f33fff;
+  --color-orange: #eaa824;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-link: #90c3d4;
+  --color-link-hover: #90c3d4;
+  --color-font: #fff;
+  --color-font-grey: #333;
+  --color-background: #fff;
+  --button-radius: var(--default-radius);
+  --button-color-bg: var(--color-blue);
+  --button-color-font: var(--color-white);
+  --button-color-bg-hover: var(--color-blue);
+  --button-text-color: var(--color-blue);
+  --button-text-color-hover: white;
+  --input-radius: var(--default-radius);
+  --input-padding: 10px;
+  --input-font-size: 1.18rem;
+  --font-size-h1: 1rem;
+  --font-size-h2: 1.2;
+  --default-gutter: 1vw;
+}
+@media only screen and (min-device-width: 0px) and (max-device-width: 768px) and (-webkit-min-device-pixel-ratio: 2) {
+  :root {
+    --defaultPagePadding: 10px;
+    --default-item-padding: 10px;
+    --defaultRadius: 7px;
+    --header-height: 85px;
+    --default-gutter: 4vw;
+    --default-gutter-static: 15px;
+    --gutter-large: 8vw;
+    --default-padding: 15px;
+  }
+}
+#work .sub-nav {
+  padding: 0 10px 10px;
+}
+#work .sub-nav a {
+  font-weight: bold;
+  padding: 10px;
+  font-family: "8bit";
+  color: rgba(194.1071428571, 209.8214285714, 233.3928571429, 0.3490196078);
+  letter-spacing: 2px;
+  font-size: 1.25em;
+  transition: color 0.1s linear;
+}
+#work .sub-nav a:hover {
+  color: rgba(100, 140, 200, 0.3490196078);
+  transition: color 0.1s linear;
+}
+#work .sub-nav a.on {
+  color: #90c3d4;
+  transition: color 0.1s linear;
+  text-shadow: 0px 0px 15px rgba(235, 255, 220, 0.35);
+}
+@media all and (max-width: 1023px) {
+  #work .sub-nav {
+    width: 100%;
+    text-align: center;
+  }
 }
 
 /* src/components/app/App.scss */
@@ -1133,9 +1657,9 @@ iframe {
   position: relative;
   display: flex;
   flex-direction: column;
-  flex: 0.618 0 61.8%;
+  flex: 1;
+  width: 100%;
   padding: 0;
-  margin: 20px 20px 0px 20px;
   border-top-left-radius: 25px;
 }
 #app .content-wrapper .page .container {
@@ -1153,7 +1677,6 @@ iframe {
   transition: opacity 0.25s ease-in-out;
 }
 #app .content-wrapper .page .container .stage {
-  display: none;
   position: relative;
   opacity: 1;
   width: 100%;
@@ -1170,24 +1693,6 @@ iframe {
       #111827 0%,
       rgb(17, 24, 39) 100%);
   padding-bottom: 50px;
-}
-#app .content-wrapper .page .container .stage .stage-content:before {
-  box-shadow: inset 6.18vw 0 6.18vw -6.18vw rgba(0, 0, 0, 0.7);
-  content: " ";
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 6.18vw;
-}
-#app .content-wrapper .page .container .stage .stage-content:after {
-  box-shadow: inset -6.18vw 0px 6.18vw -6.18vw rgba(0, 0, 0, 0.7);
-  content: " ";
-  height: 100%;
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 6.18vw;
 }
 #app .content-wrapper .page .container .stage .stage-content .loader {
   position: absolute;

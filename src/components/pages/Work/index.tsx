@@ -1,8 +1,7 @@
 import { useState } from 'preact/hooks';
 //import { useEntries } from 'lib/DataProvider';
-import EntryList from 'components/shared/EntryList';
-import './style.scss';
 import { playSound } from 'lib/AudioManager.js';
+import './style.scss';
 
 const WorkPage = (props) => {
     const [filters, setFilters] = useState([]);
@@ -37,7 +36,7 @@ const WorkPage = (props) => {
                     onClick={e => clickSubnav('fulltime')} className={isFiltered('fulltime') ? ' on' : ''}>Fulltime</a>
             </div>
 
-            <EntryList entries={entries} />
+            {/* <EntryList entries={entries} /> */}
 
         </div>
     );

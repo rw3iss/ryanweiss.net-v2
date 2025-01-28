@@ -1,18 +1,17 @@
-import HomePage from 'components/pages/Home';
-import WorkPage from 'components/pages/Work';
-import PlayPage from 'components/pages/Play';
-import InfoPage from 'components/pages/Info';
 import EntryPage from 'components/pages/Entry';
+import HomePage from 'components/pages/Home';
+import InfoPage from 'components/pages/Info';
 import NotFoundPage from 'components/pages/NotFound';
+import OtherPage from 'components/pages/Other/index';
+import PlayPage from 'components/pages/Play';
+import WorkPage from 'components/pages/Work';
 
-console.log(`RRR`, HomePage);
-
-export const routes = {
+export default {
     "/": (p?) => <HomePage />,
     "/work": (p?) => <WorkPage />,
     "/play": (p?) => <PlayPage />,
     "/info": (p?) => <InfoPage />,
+    "/other": (p?) => <OtherPage />,
     "/entries/:slug": (p?) => <EntryPage />,
     "*": (p?) => <NotFoundPage />
-};
-export const DEFAULT_ROUTE = "/roast";
+}

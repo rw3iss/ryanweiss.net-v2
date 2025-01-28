@@ -1,4 +1,4 @@
-import { routes } from 'app/config/routes.js';
+import { routes } from 'config/config';
 import EventService from 'lib/EventService';
 import RouteParser from 'routes';
 
@@ -6,6 +6,7 @@ console.log(`routes`, routes);
 
 export class Router {
 
+    public routes = routes;
     public route = undefined;
     public routeParams = undefined;
 
@@ -13,6 +14,7 @@ export class Router {
 
     constructor() {
         this.parser = RouteParser();
+
         this.registerRoutes(routes);
 
         window.addEventListener("popstate", (e) => {
