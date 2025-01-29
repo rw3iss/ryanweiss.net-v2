@@ -5,6 +5,7 @@ import { throttle } from 'utils/throttle';
 import { BlobService } from './BlobService'; // Assuming BlobService is in this path
 import './styles/BlobEditor.scss';
 import { WEditor } from './WEditor';
+import { DragDropPlugin } from './plugins/DragDropPlugin.ts';
 
 interface Props {
     blob?: Blob;
@@ -47,7 +48,10 @@ export const BlobEditor: FunctionComponent<Props> = ({ blob: initialBlob }) => {
                 containerRef.current,
                 currentBlob,
                 onContentChanged,
-                [new TabPlugin()]
+                [
+                    new TabPlugin(),
+                    new DragDropPlugin()
+                ]
             );
         }
     }, [currentBlob]);

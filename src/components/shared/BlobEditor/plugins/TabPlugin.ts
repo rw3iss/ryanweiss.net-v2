@@ -1,14 +1,9 @@
 import { WEditor } from '../WEditor';
+import { IPlugin } from './IPlugin.ts';
 
+export class TabPlugin implements IPlugin {
 
-export interface Plugin {
-    initialize(editor: WEditor, container: HTMLElement): Plugin;
-}
-
-
-export class TabPlugin implements Plugin {
-
-    initialize(editor: WEditor, container: HTMLElement) {
+    initialize(editor: WEditor, container: HTMLElement): IPlugin {
         container.addEventListener('keydown', this.handleTabKey, true); // Capture phase to catch the event before it bubbles
         return this;
     }

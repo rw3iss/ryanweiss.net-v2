@@ -2111,6 +2111,118 @@ var init_WEditor = __esm({
   }
 });
 
+// src/components/shared/BlobEditor/FilePreviewHandler.ts
+var FilePreviewHandler;
+var init_FilePreviewHandler = __esm({
+  "src/components/shared/BlobEditor/FilePreviewHandler.ts"() {
+    "use strict";
+    init_preact_module();
+    FilePreviewHandler = class {
+      editor;
+      constructor(editor) {
+        this.editor = editor;
+      }
+      createPreview(file, range) {
+        let previewElement;
+        if (file.type.startsWith("image/")) {
+          previewElement = this.renderImage(file);
+        } else if (file.type.startsWith("video/")) {
+          previewElement = this.renderVideo(file);
+        } else if (file.type.startsWith("audio/")) {
+          previewElement = this.renderAudio(file);
+        } else {
+          previewElement = this.renderGeneric(file);
+        }
+        previewElement.setAttribute("data-file-type", file.type);
+        previewElement.setAttribute("data-file-size", file.size.toString());
+        previewElement.setAttribute("data-file-name", file.name);
+        range.deleteContents();
+        range.insertNode(previewElement);
+        range.setStartAfter(previewElement);
+        range.collapse(true);
+        const selection = window.getSelection();
+        if (selection) {
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
+        this.editor.applyChanges();
+      }
+      renderImage(file) {
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+        return this.wrapPreview(img, "image");
+      }
+      renderVideo(file) {
+        const video = document.createElement("video");
+        video.src = URL.createObjectURL(file);
+        video.controls = true;
+        return this.wrapPreview(video, "video");
+      }
+      renderAudio(file) {
+        const audio = document.createElement("audio");
+        audio.src = URL.createObjectURL(file);
+        audio.controls = true;
+        return this.wrapPreview(audio, "audio");
+      }
+      renderGeneric(file) {
+        const div = document.createElement("div");
+        div.textContent = file.name;
+        return this.wrapPreview(div, "file");
+      }
+      wrapPreview(element, type) {
+        const wrapper = document.createElement("div");
+        wrapper.className = `file-preview ${type}-preview`;
+        wrapper.appendChild(element);
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Remove";
+        deleteButton.addEventListener("click", () => this.removePreview(wrapper));
+        wrapper.appendChild(deleteButton);
+        return wrapper;
+      }
+      removePreview(previewElement) {
+        previewElement.remove();
+        this.editor.applyChanges();
+      }
+    };
+  }
+});
+
+// src/components/shared/BlobEditor/plugins/DragDropPlugin.ts
+var DragDropPlugin;
+var init_DragDropPlugin = __esm({
+  "src/components/shared/BlobEditor/plugins/DragDropPlugin.ts"() {
+    "use strict";
+    init_preact_module();
+    init_FilePreviewHandler();
+    DragDropPlugin = class {
+      // private editor: WEditor;
+      // private container: HTMLElement;
+      filePreviewHandler;
+      initialize(editor, container) {
+        this.filePreviewHandler = new FilePreviewHandler(editor);
+        container.addEventListener("dragover", this.handleDragOver);
+        container.addEventListener("drop", this.handleDrop);
+        return this;
+      }
+      handleDragOver = (e4) => {
+        e4.preventDefault();
+      };
+      handleDrop = (e4) => {
+        e4.preventDefault();
+        if (!e4.dataTransfer) return;
+        const files = Array.from(e4.dataTransfer.files);
+        files.forEach((file) => {
+          const selection = window.getSelection();
+          if (selection && selection.rangeCount) {
+            const range = selection.getRangeAt(0);
+            this.filePreviewHandler.createPreview(file, range);
+          }
+        });
+      };
+    };
+  }
+});
+
 // src/components/shared/BlobEditor/BlobEditor.tsx
 var BlobEditor;
 var init_BlobEditor2 = __esm({
@@ -2124,6 +2236,7 @@ var init_BlobEditor2 = __esm({
     init_BlobService();
     init_BlobEditor();
     init_WEditor();
+    init_DragDropPlugin();
     init_jsxRuntime_module();
     BlobEditor = ({ blob: initialBlob }) => {
       const [currentBlob, setCurrentBlob] = h2(initialBlob || null);
@@ -2158,7 +2271,10 @@ var init_BlobEditor2 = __esm({
             containerRef.current,
             currentBlob,
             onContentChanged,
-            [new TabPlugin()]
+            [
+              new TabPlugin(),
+              new DragDropPlugin()
+            ]
           );
         }
       }, [currentBlob]);
