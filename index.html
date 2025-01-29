@@ -24,7 +24,116 @@
 </head>
 
 <body>
-    <script src="./build/index.js"></script>
+    <!-- <script src="./build/index.js"></script> -->
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set the canvas width and height
+        canvas.width = 800;
+        canvas.height = 600;
+
+        // Define the data for the events
+        const events = [
+            {
+                category: 'work',
+                name: 'Meeting with John',
+                notes: 'Discussed project XYZ',
+                tags: ['project'],
+                time: new Date('2022-01-01T12:00:00')
+            },
+            {
+                category: 'work',
+                name: 'Meeting with Jane',
+                notes: 'Discussed project XYZ',
+                tags: ['project'],
+                time: new Date('2022-01-02T13:00:00')
+            },
+            {
+                category: 'personal',
+                name: 'Birthday party',
+                notes: 'Celebrating my birthday',
+                tags: ['party'],
+                time: new Date('2022-01-05T17:00:00')
+            },
+            // ... more events here
+        ];
+
+        // Define the colors for each category
+        const categories = {
+            'work': '#3498db',
+            'personal': '#e74c3c',
+            'other': '#2ecc71'
+        };
+
+        // Draw the timeline
+        function drawTimeline() {
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Loop through each event and draw it on the canvas
+            events.forEach((event) => {
+                const x = Math.floor((event.time - new Date('2022-01-01T00:00:00')) / (365 * 24 * 60 * 60 * 1000));
+                const y = Math.floor(event.category);
+
+                // Draw the circle for the event
+                ctx.beginPath();
+                ctx.arc(x, y, 10, 0, Math.PI * 2);
+                ctx.fillStyle = categories[event.category];
+                ctx.fill();
+
+                // Add a label for the event
+                const label = document.createElement('span');
+                label.textContent = event.name;
+                label.style.position = 'absolute';
+                label.style.left = `${x}px`;
+                label.style.top = `${y - 10}px`;
+                canvas.appendChild(label);
+            });
+        }
+
+        // Draw the timeline on load
+        drawTimeline();
+
+        // Add event listeners for zooming and hovering over events
+        canvas.addEventListener('wheel', (event) => {
+            const delta = event.deltaY * -1;
+
+            // Scale the canvas by a factor of 0.9 or 1.1 depending on the direction of the scroll
+            if (delta > 0) {
+                ctx.scale(0.9, 0.9);
+            } else {
+                ctx.scale(1.1, 1.1);
+            }
+
+            // Redraw the timeline with the new scale
+            drawTimeline();
+        });
+
+        canvas.addEventListener('mousemove', (event) => {
+            const x = event.clientX - canvas.offsetLeft;
+            const y = event.clientY - canvas.offsetTop;
+
+            // Check if the mouse is over an event circle
+            events.forEach((event) => {
+                const eventX = Math.floor((event.time - new Date('2022-01-01T00:00:00')) / (365 * 24 * 60 * 60 * 1000));
+                const eventY = Math.floor(event.category);
+
+                if (x >= eventX - 10 && x <= eventX + 10 && y >= eventY - 10 && y <= eventY + 10) {
+                    // Show the hover popup with the event details
+                    const popup = document.createElement('div');
+                    popup.textContent = `${event.name}: ${event.notes}`;
+                    popup.style.position = 'absolute';
+                    popup.style.left = `${x + 10}px`;
+                    popup.style.top = `${y - 20}px`;
+                    canvas.appendChild(popup);
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

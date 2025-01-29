@@ -28,20 +28,20 @@ const BlobEditor = (props) => {
             }
         ]);
 
-        const editor = new WYSIWYGEditor(document.getElementById('editor-container'), initialBlob);
-        console.log(`editor`, editor)
+        const editor = new WYSIWYGEditor(document.getElementById('editor-container'), document.getElementById('title-container')); //, initialBlob);
         window.editor = editor;
 
     }, [])
 
     function onBlobChange(b) {
-        console.log(`change blob`, b)
         window.editor.loadBlob(b);
     }
 
     return (
         <>
             <BlobMenu onBlobChange={onBlobChange} />
+
+            <div id="title-container"></div>
 
             <div id="editor-container">
 

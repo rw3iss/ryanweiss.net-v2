@@ -75,13 +75,13 @@ function P() {
   P.__r = 0;
 }
 function $(n2, l3, u4, t3, i4, r3, o3, e4, f4, c3, s3) {
-  var a3, h4, y3, d3, w3, _2, g2 = t3 && t3.__k || v, m3 = l3.length;
-  for (f4 = I(u4, l3, g2, f4, m3), a3 = 0; a3 < m3; a3++) null != (y3 = u4.__k[a3]) && (h4 = -1 === y3.__i ? p : g2[y3.__i] || p, y3.__i = a3, _2 = j(n2, y3, h4, i4, r3, o3, e4, f4, c3, s3), d3 = y3.__e, y3.ref && h4.ref != y3.ref && (h4.ref && V(h4.ref, null, y3), s3.push(y3.ref, y3.__c || d3, y3)), null == w3 && null != d3 && (w3 = d3), 4 & y3.__u || h4.__k === y3.__k ? f4 = A(y3, f4, n2) : "function" == typeof y3.type && void 0 !== _2 ? f4 = _2 : d3 && (f4 = d3.nextSibling), y3.__u &= -7);
+  var a3, h3, y3, d3, w3, _2, g2 = t3 && t3.__k || v, m3 = l3.length;
+  for (f4 = I(u4, l3, g2, f4, m3), a3 = 0; a3 < m3; a3++) null != (y3 = u4.__k[a3]) && (h3 = -1 === y3.__i ? p : g2[y3.__i] || p, y3.__i = a3, _2 = j(n2, y3, h3, i4, r3, o3, e4, f4, c3, s3), d3 = y3.__e, y3.ref && h3.ref != y3.ref && (h3.ref && V(h3.ref, null, y3), s3.push(y3.ref, y3.__c || d3, y3)), null == w3 && null != d3 && (w3 = d3), 4 & y3.__u || h3.__k === y3.__k ? f4 = A(y3, f4, n2) : "function" == typeof y3.type && void 0 !== _2 ? f4 = _2 : d3 && (f4 = d3.nextSibling), y3.__u &= -7);
   return u4.__e = w3, f4;
 }
 function I(n2, l3, u4, t3, i4) {
-  var r3, o3, e4, f4, c3, s3 = u4.length, a3 = s3, h4 = 0;
-  for (n2.__k = new Array(i4), r3 = 0; r3 < i4; r3++) null != (o3 = l3[r3]) && "boolean" != typeof o3 && "function" != typeof o3 ? (f4 = r3 + h4, (o3 = n2.__k[r3] = "string" == typeof o3 || "number" == typeof o3 || "bigint" == typeof o3 || o3.constructor == String ? m(null, o3, null, null, null) : d(o3) ? m(k, { children: o3 }, null, null, null) : void 0 === o3.constructor && o3.__b > 0 ? m(o3.type, o3.props, o3.key, o3.ref ? o3.ref : null, o3.__v) : o3).__ = n2, o3.__b = n2.__b + 1, e4 = null, -1 !== (c3 = o3.__i = L(o3, u4, f4, a3)) && (a3--, (e4 = u4[c3]) && (e4.__u |= 2)), null == e4 || null === e4.__v ? (-1 == c3 && h4--, "function" != typeof o3.type && (o3.__u |= 4)) : c3 != f4 && (c3 == f4 - 1 ? h4-- : c3 == f4 + 1 ? h4++ : (c3 > f4 ? h4-- : h4++, o3.__u |= 4))) : n2.__k[r3] = null;
+  var r3, o3, e4, f4, c3, s3 = u4.length, a3 = s3, h3 = 0;
+  for (n2.__k = new Array(i4), r3 = 0; r3 < i4; r3++) null != (o3 = l3[r3]) && "boolean" != typeof o3 && "function" != typeof o3 ? (f4 = r3 + h3, (o3 = n2.__k[r3] = "string" == typeof o3 || "number" == typeof o3 || "bigint" == typeof o3 || o3.constructor == String ? m(null, o3, null, null, null) : d(o3) ? m(k, { children: o3 }, null, null, null) : void 0 === o3.constructor && o3.__b > 0 ? m(o3.type, o3.props, o3.key, o3.ref ? o3.ref : null, o3.__v) : o3).__ = n2, o3.__b = n2.__b + 1, e4 = null, -1 !== (c3 = o3.__i = L(o3, u4, f4, a3)) && (a3--, (e4 = u4[c3]) && (e4.__u |= 2)), null == e4 || null === e4.__v ? (-1 == c3 && h3--, "function" != typeof o3.type && (o3.__u |= 4)) : c3 != f4 && (c3 == f4 - 1 ? h3-- : c3 == f4 + 1 ? h3++ : (c3 > f4 ? h3-- : h3++, o3.__u |= 4))) : n2.__k[r3] = null;
   if (a3) for (r3 = 0; r3 < s3; r3++) null != (e4 = u4[r3]) && 0 == (2 & e4.__u) && (e4.__e == t3 && (t3 = C(e4)), q(e4, e4));
   return t3;
 }
@@ -144,30 +144,30 @@ function O(n2) {
   };
 }
 function j(n2, u4, t3, i4, r3, o3, e4, f4, c3, s3) {
-  var a3, h4, p3, v3, y3, g2, m3, b2, C3, S2, M2, P2, I2, A2, H2, L2, T2, F2 = u4.type;
+  var a3, h3, p3, v3, y3, g2, m3, b2, C3, S2, M2, P2, I2, A2, H2, L2, T2, F2 = u4.type;
   if (void 0 !== u4.constructor) return null;
   128 & t3.__u && (c3 = !!(32 & t3.__u), o3 = [f4 = u4.__e = t3.__e]), (a3 = l.__b) && a3(u4);
   n: if ("function" == typeof F2) try {
-    if (b2 = u4.props, C3 = "prototype" in F2 && F2.prototype.render, S2 = (a3 = F2.contextType) && i4[a3.__c], M2 = a3 ? S2 ? S2.props.value : a3.__ : i4, t3.__c ? m3 = (h4 = u4.__c = t3.__c).__ = h4.__E : (C3 ? u4.__c = h4 = new F2(b2, M2) : (u4.__c = h4 = new x(b2, M2), h4.constructor = F2, h4.render = B), S2 && S2.sub(h4), h4.props = b2, h4.state || (h4.state = {}), h4.context = M2, h4.__n = i4, p3 = h4.__d = true, h4.__h = [], h4._sb = []), C3 && null == h4.__s && (h4.__s = h4.state), C3 && null != F2.getDerivedStateFromProps && (h4.__s == h4.state && (h4.__s = w({}, h4.__s)), w(h4.__s, F2.getDerivedStateFromProps(b2, h4.__s))), v3 = h4.props, y3 = h4.state, h4.__v = u4, p3) C3 && null == F2.getDerivedStateFromProps && null != h4.componentWillMount && h4.componentWillMount(), C3 && null != h4.componentDidMount && h4.__h.push(h4.componentDidMount);
+    if (b2 = u4.props, C3 = "prototype" in F2 && F2.prototype.render, S2 = (a3 = F2.contextType) && i4[a3.__c], M2 = a3 ? S2 ? S2.props.value : a3.__ : i4, t3.__c ? m3 = (h3 = u4.__c = t3.__c).__ = h3.__E : (C3 ? u4.__c = h3 = new F2(b2, M2) : (u4.__c = h3 = new x(b2, M2), h3.constructor = F2, h3.render = B), S2 && S2.sub(h3), h3.props = b2, h3.state || (h3.state = {}), h3.context = M2, h3.__n = i4, p3 = h3.__d = true, h3.__h = [], h3._sb = []), C3 && null == h3.__s && (h3.__s = h3.state), C3 && null != F2.getDerivedStateFromProps && (h3.__s == h3.state && (h3.__s = w({}, h3.__s)), w(h3.__s, F2.getDerivedStateFromProps(b2, h3.__s))), v3 = h3.props, y3 = h3.state, h3.__v = u4, p3) C3 && null == F2.getDerivedStateFromProps && null != h3.componentWillMount && h3.componentWillMount(), C3 && null != h3.componentDidMount && h3.__h.push(h3.componentDidMount);
     else {
-      if (C3 && null == F2.getDerivedStateFromProps && b2 !== v3 && null != h4.componentWillReceiveProps && h4.componentWillReceiveProps(b2, M2), !h4.__e && (null != h4.shouldComponentUpdate && false === h4.shouldComponentUpdate(b2, h4.__s, M2) || u4.__v == t3.__v)) {
-        for (u4.__v != t3.__v && (h4.props = b2, h4.state = h4.__s, h4.__d = false), u4.__e = t3.__e, u4.__k = t3.__k, u4.__k.some(function(n3) {
+      if (C3 && null == F2.getDerivedStateFromProps && b2 !== v3 && null != h3.componentWillReceiveProps && h3.componentWillReceiveProps(b2, M2), !h3.__e && (null != h3.shouldComponentUpdate && false === h3.shouldComponentUpdate(b2, h3.__s, M2) || u4.__v == t3.__v)) {
+        for (u4.__v != t3.__v && (h3.props = b2, h3.state = h3.__s, h3.__d = false), u4.__e = t3.__e, u4.__k = t3.__k, u4.__k.some(function(n3) {
           n3 && (n3.__ = u4);
-        }), P2 = 0; P2 < h4._sb.length; P2++) h4.__h.push(h4._sb[P2]);
-        h4._sb = [], h4.__h.length && e4.push(h4);
+        }), P2 = 0; P2 < h3._sb.length; P2++) h3.__h.push(h3._sb[P2]);
+        h3._sb = [], h3.__h.length && e4.push(h3);
         break n;
       }
-      null != h4.componentWillUpdate && h4.componentWillUpdate(b2, h4.__s, M2), C3 && null != h4.componentDidUpdate && h4.__h.push(function() {
-        h4.componentDidUpdate(v3, y3, g2);
+      null != h3.componentWillUpdate && h3.componentWillUpdate(b2, h3.__s, M2), C3 && null != h3.componentDidUpdate && h3.__h.push(function() {
+        h3.componentDidUpdate(v3, y3, g2);
       });
     }
-    if (h4.context = M2, h4.props = b2, h4.__P = n2, h4.__e = false, I2 = l.__r, A2 = 0, C3) {
-      for (h4.state = h4.__s, h4.__d = false, I2 && I2(u4), a3 = h4.render(h4.props, h4.state, h4.context), H2 = 0; H2 < h4._sb.length; H2++) h4.__h.push(h4._sb[H2]);
-      h4._sb = [];
+    if (h3.context = M2, h3.props = b2, h3.__P = n2, h3.__e = false, I2 = l.__r, A2 = 0, C3) {
+      for (h3.state = h3.__s, h3.__d = false, I2 && I2(u4), a3 = h3.render(h3.props, h3.state, h3.context), H2 = 0; H2 < h3._sb.length; H2++) h3.__h.push(h3._sb[H2]);
+      h3._sb = [];
     } else do {
-      h4.__d = false, I2 && I2(u4), a3 = h4.render(h4.props, h4.state, h4.context), h4.state = h4.__s;
-    } while (h4.__d && ++A2 < 25);
-    h4.state = h4.__s, null != h4.getChildContext && (i4 = w(w({}, i4), h4.getChildContext())), C3 && !p3 && null != h4.getSnapshotBeforeUpdate && (g2 = h4.getSnapshotBeforeUpdate(v3, y3)), f4 = $(n2, d(L2 = null != a3 && a3.type === k && null == a3.key ? a3.props.children : a3) ? L2 : [L2], u4, t3, i4, r3, o3, e4, f4, c3, s3), h4.base = u4.__e, u4.__u &= -161, h4.__h.length && e4.push(h4), m3 && (h4.__E = h4.__ = null);
+      h3.__d = false, I2 && I2(u4), a3 = h3.render(h3.props, h3.state, h3.context), h3.state = h3.__s;
+    } while (h3.__d && ++A2 < 25);
+    h3.state = h3.__s, null != h3.getChildContext && (i4 = w(w({}, i4), h3.getChildContext())), C3 && !p3 && null != h3.getSnapshotBeforeUpdate && (g2 = h3.getSnapshotBeforeUpdate(v3, y3)), f4 = $(n2, d(L2 = null != a3 && a3.type === k && null == a3.key ? a3.props.children : a3) ? L2 : [L2], u4, t3, i4, r3, o3, e4, f4, c3, s3), h3.base = u4.__e, u4.__u &= -161, h3.__h.length && e4.push(h3), m3 && (h3.__E = h3.__ = null);
   } catch (n3) {
     if (u4.__v = null, c3 || null != o3) if (n3.then) {
       for (u4.__u |= c3 ? 160 : 128; f4 && 8 == f4.nodeType && f4.nextSibling; ) f4 = f4.nextSibling;
@@ -192,7 +192,7 @@ function z(n2, u4, t3) {
   });
 }
 function N(u4, t3, i4, r3, o3, e4, f4, c3, s3) {
-  var a3, h4, v3, y3, w3, g2, m3, b2 = i4.props, k3 = t3.props, x2 = t3.type;
+  var a3, h3, v3, y3, w3, g2, m3, b2 = i4.props, k3 = t3.props, x2 = t3.type;
   if ("svg" == x2 ? o3 = "http://www.w3.org/2000/svg" : "math" == x2 ? o3 = "http://www.w3.org/1998/Math/MathML" : o3 || (o3 = "http://www.w3.org/1999/xhtml"), null != e4) {
     for (a3 = 0; a3 < e4.length; a3++) if ((w3 = e4[a3]) && "setAttribute" in w3 == !!x2 && (x2 ? w3.localName == x2 : 3 == w3.nodeType)) {
       u4 = w3, e4[a3] = null;
@@ -212,8 +212,8 @@ function N(u4, t3, i4, r3, o3, e4, f4, c3, s3) {
       if ("value" == a3 && "defaultValue" in k3 || "checked" == a3 && "defaultChecked" in k3) continue;
       F(u4, a3, null, w3, o3);
     }
-    for (a3 in k3) w3 = k3[a3], "children" == a3 ? y3 = w3 : "dangerouslySetInnerHTML" == a3 ? h4 = w3 : "value" == a3 ? g2 = w3 : "checked" == a3 ? m3 = w3 : c3 && "function" != typeof w3 || b2[a3] === w3 || F(u4, a3, w3, b2[a3], o3);
-    if (h4) c3 || v3 && (h4.__html === v3.__html || h4.__html === u4.innerHTML) || (u4.innerHTML = h4.__html), t3.__k = [];
+    for (a3 in k3) w3 = k3[a3], "children" == a3 ? y3 = w3 : "dangerouslySetInnerHTML" == a3 ? h3 = w3 : "value" == a3 ? g2 = w3 : "checked" == a3 ? m3 = w3 : c3 && "function" != typeof w3 || b2[a3] === w3 || F(u4, a3, w3, b2[a3], o3);
+    if (h3) c3 || v3 && (h3.__html === v3.__html || h3.__html === u4.innerHTML) || (u4.innerHTML = h3.__html), t3.__k = [];
     else if (v3 && (u4.innerHTML = ""), $(u4, d(y3) ? y3 : [y3], t3, i4, r3, "foreignObject" == x2 ? "http://www.w3.org/1999/xhtml" : o3, e4, f4, e4 ? e4[0] : i4.__k && C(i4, 0), c3, s3), null != e4) for (a3 = e4.length; a3--; ) _(e4[a3]);
     c3 || (a3 = "value", "progress" == x2 && null == g2 ? u4.removeAttribute("value") : void 0 !== g2 && (g2 !== u4[a3] || "progress" == x2 && !g2 || "option" == x2 && g2 !== b2[a3]) && F(u4, a3, g2, b2[a3], o3), a3 = "checked", void 0 !== m3 && m3 !== u4[a3] && F(u4, a3, m3, b2[a3], o3));
   }
@@ -589,208 +589,21 @@ var init_NotFound = __esm({
 });
 
 // src/components/shared/BlobEditor/Blob.ts
-var Blob2;
+var Blob;
 var init_Blob = __esm({
   "src/components/shared/BlobEditor/Blob.ts"() {
     "use strict";
     init_preact_module();
-    Blob2 = class {
+    Blob = class {
+      id;
+      type;
+      title;
+      content;
       constructor(id, type, title, content) {
         this.id = id;
         this.type = type;
         this.title = title;
         this.content = content;
-      }
-    };
-  }
-});
-
-// src/components/shared/BlobEditor/BlobMenu.tsx
-var h2, render, Component, BlobMenu;
-var init_BlobMenu = __esm({
-  "src/components/shared/BlobEditor/BlobMenu.tsx"() {
-    "use strict";
-    init_preact_module();
-    ({ h: h2, render, Component } = window.preact);
-    BlobMenu = class extends Component {
-      constructor(props) {
-        super(props);
-        this.state = {
-          blobs: this.getAllBlobs()
-        };
-      }
-      getAllBlobs() {
-        const blobs = [];
-        for (let i4 = 0; i4 < localStorage.length; i4++) {
-          const key = localStorage.key(i4);
-          const blobData = JSON.parse(localStorage.getItem(key));
-          if (blobData) {
-            blobs.push(blobData);
-          }
-        }
-        return blobs;
-      }
-      handleChange(event) {
-        const selectedBlobId = event.target.value;
-        this.props.onBlobChange(selectedBlobId);
-      }
-      render() {
-        return h2(
-          "select",
-          { onChange: (e4) => this.handleChange(e4) },
-          this.state.blobs.map(
-            (blob) => h2("option", { value: blob.id }, blob.title)
-          )
-        );
-      }
-    };
-  }
-});
-
-// src/components/shared/BlobEditor/Editor.ts
-var WYSIWYGEditor;
-var init_Editor = __esm({
-  "src/components/shared/BlobEditor/Editor.ts"() {
-    "use strict";
-    init_preact_module();
-    WYSIWYGEditor = class {
-      constructor(container, initialBlob) {
-        this.container = container;
-        this.blob = initialBlob;
-        this.init();
-        this.throttledOnChange = this.throttle(this.onChange.bind(this), 2e3);
-      }
-      init() {
-        this.container.contentEditable = true;
-        this.container.innerHTML = this.parseContentToHTML(this.blob.content);
-        this.container.addEventListener("input", this.throttledOnChange);
-        this.container.addEventListener("contextmenu", this.showContextMenu.bind(this));
-      }
-      throttle(func, limit) {
-        let lastFunc;
-        let lastRan;
-        return function(...args) {
-          if (!lastRan) {
-            func.apply(this, args);
-            lastRan = Date.now();
-          } else {
-            clearTimeout(lastFunc);
-            lastFunc = setTimeout(() => {
-              if (Date.now() - lastRan >= limit) {
-                func.apply(this, args);
-                lastRan = Date.now();
-              }
-            }, limit - (Date.now() - lastRan));
-          }
-        };
-      }
-      onChange() {
-        this.applyEdits();
-        this.saveEdits();
-      }
-      parseContentToHTML(content) {
-        let html = "";
-        content.forEach((item) => {
-          html += this.parseElementToHTML(item);
-        });
-        return html;
-      }
-      parseElementToHTML(element) {
-        let attrs = "";
-        if (element.attributes) {
-          attrs = Object.entries(element.attributes).map(([key, value]) => `${key}="${value}"`).join(" ");
-        }
-        let children = "";
-        if (Array.isArray(element.children)) {
-          children = element.children.map((child) => this.parseElementToHTML(child)).join("");
-        } else {
-          children = element.children || "";
-        }
-        return `<${element.type} ${attrs}>${children}</${element.type}>`;
-      }
-      applyEdits() {
-        const content = this.parseHTMLToContent(this.container.innerHTML);
-        this.blob.content = content;
-      }
-      parseHTMLToContent(htmlString) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlString, "text/html");
-        return this.parseNodeToContent(doc.body);
-      }
-      parseNodeToContent(node) {
-        return Array.from(node.childNodes).map((child) => {
-          if (child.nodeType === Node.TEXT_NODE) {
-            return {
-              type: "text",
-              children: child.textContent
-            };
-          } else {
-            return {
-              type: child.tagName.toLowerCase(),
-              attributes: Array.from(child.attributes).reduce((acc, attr) => {
-                acc[attr.name] = attr.value;
-                return acc;
-              }, {}),
-              children: this.parseNodeToContent(child)
-            };
-          }
-        });
-      }
-      saveEdits() {
-        localStorage.setItem(this.blob.id, JSON.stringify(this.blob));
-        console.log("Saved Blob:", this.blob);
-      }
-      loadBlob(id) {
-        const blobData = JSON.parse(localStorage.getItem(id));
-        if (blobData) {
-          this.blob = new Blob(blobData.id, blobData.type, blobData.title, blobData.content);
-          this.container.innerHTML = this.parseContentToHTML(this.blob.content);
-        }
-      }
-      showContextMenu(event) {
-        event.preventDefault();
-        const menu = document.createElement("div");
-        menu.style.position = "absolute";
-        menu.style.left = `${event.pageX}px`;
-        menu.style.top = `${event.pageY}px`;
-        menu.style.backgroundColor = "white";
-        menu.style.border = "1px solid black";
-        menu.style.padding = "5px";
-        menu.innerHTML = `
-            <button onclick="editor.applyFormatting('bold')">B</button>
-            <button onclick="editor.applyFormatting('italic')">I</button>
-            <button onclick="editor.applyFormatting('ul')">UL</button>
-            <button onclick="editor.removeFormatting()">Remove Formatting</button>
-        `;
-        document.body.appendChild(menu);
-        setTimeout(() => document.body.removeChild(menu), 2e3);
-      }
-      applyFormatting(format) {
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-          const range = selection.getRangeAt(0);
-          const newNode = document.createElement(format === "ul" ? "ul" : "span");
-          newNode.style.fontWeight = format === "bold" ? "bold" : "normal";
-          newNode.style.fontStyle = format === "italic" ? "italic" : "normal";
-          if (format === "ul") {
-            const li = document.createElement("li");
-            li.appendChild(range.extractContents());
-            newNode.appendChild(li);
-          } else {
-            newNode.appendChild(range.extractContents());
-          }
-          range.insertNode(newNode);
-        }
-        this.applyEdits();
-      }
-      removeFormatting() {
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-          const range = selection.getRangeAt(0);
-          const text = range.extractContents().textContent;
-          range.insertNode(document.createTextNode(text));
-        }
-        this.applyEdits();
       }
     };
   }
@@ -802,7 +615,7 @@ function d2(n2, t3) {
   var u4 = r2.__H || (r2.__H = { __: [], __h: [] });
   return n2 >= u4.__.length && u4.__.push({}), u4.__[n2];
 }
-function h3(n2) {
+function h2(n2) {
   return o2 = 1, p2(D2, n2);
 }
 function p2(n2, u4, i4) {
@@ -930,6 +743,391 @@ var init_hooks_module = __esm({
   }
 });
 
+// src/components/shared/BlobEditor/BlobMenu.tsx
+function BlobMenu({ onBlobChange }) {
+  const [blobs, setBlobs] = h2([]);
+  function getAllBlobs() {
+    const _blobs = [];
+    for (let i4 = 0; i4 < localStorage.length; i4++) {
+      const key = localStorage.key(i4);
+      const blobData = JSON.parse(localStorage.getItem(key));
+      if (blobData) {
+        _blobs.push(blobData);
+      }
+    }
+    setBlobs(_blobs);
+  }
+  y2(() => {
+    getAllBlobs();
+  }, []);
+  function handleChange(event) {
+    const selectedBlobId = event.target.value;
+    onBlobChange(selectedBlobId);
+  }
+  return /* @__PURE__ */ u2("select", { onChange: handleChange, children: blobs.map(
+    (blob) => /* @__PURE__ */ u2("option", { value: blob.id, children: blob.title })
+  ) });
+}
+var init_BlobMenu = __esm({
+  "src/components/shared/BlobEditor/BlobMenu.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_hooks_module();
+    init_jsxRuntime_module();
+  }
+});
+
+// src/components/shared/BlobEditor/DragAndDropPlugin.ts
+var DragAndDropPlugin;
+var init_DragAndDropPlugin = __esm({
+  "src/components/shared/BlobEditor/DragAndDropPlugin.ts"() {
+    "use strict";
+    init_preact_module();
+    DragAndDropPlugin = class {
+      constructor(container, editor) {
+        this.container = container;
+        this.editor = editor;
+        this.init();
+      }
+      init() {
+        this.container.addEventListener("dragover", (e4) => {
+          e4.preventDefault();
+        });
+        this.container.addEventListener("drop", (e4) => {
+          e4.preventDefault();
+          const files = e4.dataTransfer.files;
+          if (files.length > 0) {
+            this.handleFiles(files);
+          }
+        });
+      }
+      async handleFiles(files) {
+        for (const file of files) {
+          const fileData = await this.readFile(file);
+          const preview = this.renderPreview(fileData);
+          if (preview) {
+            this.container.appendChild(preview);
+            this.saveFileToBlob(fileData);
+          }
+        }
+      }
+      readFile(file) {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            resolve({
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              data: reader.result
+            });
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+      renderPreview(fileData) {
+        const previewContainer = document.createElement("div");
+        previewContainer.style.width = "150px";
+        previewContainer.style.height = "150px";
+        previewContainer.style.margin = "5px";
+        previewContainer.style.display = "inline-block";
+        previewContainer.style.border = "1px solid #ccc";
+        if (fileData.type.startsWith("image/")) {
+          const img = document.createElement("img");
+          img.src = fileData.data;
+          img.style.width = "100%";
+          img.style.height = "100%";
+          img.style.objectFit = "cover";
+          previewContainer.appendChild(img);
+        } else if (fileData.type.startsWith("video/")) {
+          const video = document.createElement("video");
+          video.src = fileData.data;
+          video.controls = true;
+          video.style.width = "100%";
+          video.style.height = "100%";
+          previewContainer.appendChild(video);
+        } else if (fileData.type.startsWith("audio/")) {
+          const audio = document.createElement("audio");
+          audio.src = fileData.data;
+          audio.controls = true;
+          audio.style.width = "100%";
+          audio.style.height = "100%";
+          previewContainer.appendChild(audio);
+        } else if (fileData.type === "model/stl" || fileData.type === "application/sla") {
+          const canvas = document.createElement("canvas");
+          canvas.width = 150;
+          canvas.height = 150;
+          previewContainer.appendChild(canvas);
+          this.renderSTLPreview(canvas, fileData.data);
+        } else {
+          const unsupported = document.createElement("div");
+          unsupported.textContent = "Unsupported file type";
+          unsupported.style.textAlign = "center";
+          unsupported.style.lineHeight = "150px";
+          previewContainer.appendChild(unsupported);
+        }
+        return previewContainer;
+      }
+      renderSTLPreview(canvas, data) {
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#ccc";
+        ctx.font = "12px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("3D Preview", canvas.width / 2, canvas.height / 2);
+      }
+      saveFileToBlob(fileData) {
+        const fileObject = {
+          type: "file",
+          name: fileData.name,
+          mimeType: fileData.type,
+          size: fileData.size,
+          data: fileData.data
+        };
+        this.editor.blob.content.push(fileObject);
+        this.editor.saveEdits();
+      }
+    };
+  }
+});
+
+// src/components/shared/BlobEditor/Editor.ts
+var WYSIWYGEditor;
+var init_Editor = __esm({
+  "src/components/shared/BlobEditor/Editor.ts"() {
+    "use strict";
+    init_preact_module();
+    init_Blob();
+    init_DragAndDropPlugin();
+    WYSIWYGEditor = class {
+      constructor(container, titleContainer, initialBlob) {
+        this.container = container;
+        this.titleContainer = titleContainer;
+        this.throttledOnChange = this.throttle(this.onChange.bind(this), 2e3);
+        this.init();
+        this.dragAndDropPlugin = new DragAndDropPlugin(this.container, this);
+        if (initialBlob) {
+          this.loadBlob(initialBlob);
+        } else this.loadMostRecentBlob();
+      }
+      init() {
+        this.titleInput = document.createElement("input");
+        this.titleInput.type = "text";
+        this.titleInput.addEventListener("keyup", () => {
+          this.blob.title = this.titleInput.value;
+          this.saveEdits();
+        });
+        this.titleContainer.appendChild(this.titleInput);
+        this.container.contentEditable = true;
+        this.container.addEventListener("input", () => {
+          console.log("Input event fired");
+          this.throttledOnChange();
+        });
+        this.container.addEventListener("contextmenu", this.showContextMenu.bind(this));
+      }
+      loadMostRecentBlob() {
+        let mostRecentBlob = null;
+        let mostRecentDate = null;
+        for (let i4 = 0; i4 < localStorage.length; i4++) {
+          const key = localStorage.key(i4);
+          const blobData = JSON.parse(localStorage.getItem(key));
+          if (blobData && blobData.lastSaved) {
+            const blobDate = new Date(blobData.lastSaved);
+            if (!mostRecentDate || blobDate > mostRecentDate) {
+              mostRecentBlob = blobData;
+              mostRecentDate = blobDate;
+            }
+          }
+        }
+        if (mostRecentBlob) {
+          this.loadBlob(mostRecentBlob);
+          console.log("Loaded most recent Blob:", this.blob);
+        } else {
+          console.log("No Blobs found in localStorage.");
+        }
+      }
+      throttle(func, limit) {
+        let inThrottle;
+        return function(...args) {
+          if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+          }
+        };
+      }
+      triggerInputEvent() {
+        const event = new Event("input", { bubbles: true });
+        this.container.dispatchEvent(event);
+        this.applyEdits();
+      }
+      onChange() {
+        this.applyEdits();
+        this.saveEdits();
+      }
+      parseContentToHTML(content) {
+        let html = "";
+        content.forEach((item) => {
+          if (item.type === "file") {
+            html += this.renderFilePreview(item);
+          } else {
+            html += this.parseElementToHTML(item);
+          }
+        });
+        return html;
+      }
+      renderFilePreview(file) {
+        let previewHTML = "";
+        if (file.mimeType.startsWith("image/")) {
+          previewHTML = `<img src="${file.data}" style="width: 100%; height: 100%; object-fit: cover;" />`;
+        } else if (file.mimeType.startsWith("video/")) {
+          previewHTML = `<video src="${file.data}" controls style="width: 100%; height: 100%;"></video>`;
+        } else if (file.mimeType.startsWith("audio/")) {
+          previewHTML = `<audio src="${file.data}" controls style="width: 100%; height: 100%;"></audio>`;
+        } else if (file.mimeType === "model/stl" || file.mimeType === "application/sla") {
+          previewHTML = `<canvas width="150" height="150"></canvas>`;
+        } else {
+          previewHTML = `<div style="text-align: center; line-height: 150px;">Unsupported file type</div>`;
+        }
+        return `
+            <div style="width: 150px; height: 150px; margin: 5px; display: inline-block; border: 1px solid #ccc;">
+                ${previewHTML}
+            </div>
+        `;
+      }
+      parseElementToHTML(element) {
+        let attrs = "";
+        if (element.attributes) {
+          attrs = Object.entries(element.attributes).map(([key, value]) => `${key}="${value}"`).join(" ");
+        }
+        let children = "";
+        if (Array.isArray(element.children)) {
+          children = element.children.map((child) => this.parseElementToHTML(child)).join("");
+        } else {
+          children = element.children || "";
+        }
+        return `<${element.type} ${attrs}>${children}</${element.type}>`;
+      }
+      applyEdits() {
+        const content = this.parseHTMLToContent(this.container.innerHTML);
+        this.blob.content = content;
+      }
+      saveEdits() {
+        this.blob.lastSaved = (/* @__PURE__ */ new Date()).toISOString();
+        localStorage.setItem(this.blob.id, JSON.stringify(this.blob));
+        console.log("Saved Blob:", this.blob);
+      }
+      parseHTMLToContent(htmlString) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlString, "text/html");
+        return this.parseNodeToContent(doc.body);
+      }
+      parseNodeToContent(node) {
+        return Array.from(node.childNodes).map((child) => {
+          if (child.nodeType === Node.TEXT_NODE) {
+            return {
+              type: "text",
+              children: child.textContent
+            };
+          } else if (child.tagName.toLowerCase() === "img") {
+            return {
+              type: "file",
+              name: "image",
+              mimeType: "image/png",
+              // Placeholder
+              size: 0,
+              // Placeholder
+              data: child.src
+            };
+          } else if (child.tagName.toLowerCase() === "video") {
+            return {
+              type: "file",
+              name: "video",
+              mimeType: "video/mp4",
+              // Placeholder
+              size: 0,
+              // Placeholder
+              data: child.src
+            };
+          } else if (child.tagName.toLowerCase() === "audio") {
+            return {
+              type: "file",
+              name: "audio",
+              mimeType: "audio/mp3",
+              // Placeholder
+              size: 0,
+              // Placeholder
+              data: child.src
+            };
+          } else {
+            return {
+              type: child.tagName.toLowerCase(),
+              attributes: Array.from(child.attributes).reduce((acc, attr) => {
+                acc[attr.name] = attr.value;
+                return acc;
+              }, {}),
+              children: this.parseNodeToContent(child)
+            };
+          }
+        });
+      }
+      loadBlob(id) {
+        const blobData = JSON.parse(localStorage.getItem(id));
+        if (blobData) {
+          this.blob = new Blob(blobData.id, blobData.type, blobData.title, blobData.content);
+          this.titleInput.value = this.blob.title;
+          this.container.innerHTML = this.parseContentToHTML(this.blob.content);
+          console.log("Loaded Blob:", this.blob);
+        }
+      }
+      showContextMenu(event) {
+        event.preventDefault();
+        const menu = document.createElement("div");
+        menu.style.position = "absolute";
+        menu.style.left = `${event.pageX}px`;
+        menu.style.top = `${event.pageY}px`;
+        menu.style.backgroundColor = "white";
+        menu.style.border = "1px solid black";
+        menu.style.padding = "5px";
+        menu.innerHTML = `
+            <button onclick="editor.applyFormatting('bold')">B</button>
+            <button onclick="editor.applyFormatting('italic')">I</button>
+            <button onclick="editor.applyFormatting('ul')">UL</button>
+            <button onclick="editor.removeFormatting()">Remove Formatting</button>
+        `;
+        document.body.appendChild(menu);
+        setTimeout(() => document.body.removeChild(menu), 2e3);
+      }
+      applyFormatting(format) {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          const newNode = document.createElement(format === "ul" ? "ul" : "span");
+          newNode.style.fontWeight = format === "bold" ? "bold" : "normal";
+          newNode.style.fontStyle = format === "italic" ? "italic" : "normal";
+          if (format === "ul") {
+            const li = document.createElement("li");
+            li.appendChild(range.extractContents());
+            newNode.appendChild(li);
+          } else {
+            newNode.appendChild(range.extractContents());
+          }
+          range.insertNode(newNode);
+        }
+        this.triggerInputEvent();
+      }
+      removeFormatting() {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          const text = range.extractContents().textContent;
+          range.insertNode(document.createTextNode(text));
+        }
+        this.triggerInputEvent();
+      }
+    };
+  }
+});
+
 // node_modules/uuid/dist/esm-browser/stringify.js
 function unsafeStringify(arr, offset = 0) {
   return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
@@ -1036,7 +1234,7 @@ var init_BlobEditor = __esm({
     BlobEditor = (props) => {
       y2(() => {
         console.log(`BE`);
-        const initialBlob = new Blob2(v4_default(), "blob", "Initial Title", [
+        const initialBlob = new Blob(v4_default(), "blob", "Initial Title", [
           {
             type: "div",
             attributes: { class: "div-class" },
@@ -1054,16 +1252,15 @@ var init_BlobEditor = __esm({
             ]
           }
         ]);
-        const editor = new WYSIWYGEditor(document.getElementById("editor-container"), initialBlob);
-        console.log(`editor`, editor);
+        const editor = new WYSIWYGEditor(document.getElementById("editor-container"), document.getElementById("title-container"));
         window.editor = editor;
       }, []);
       function onBlobChange(b2) {
-        console.log(`change blob`, b2);
         window.editor.loadBlob(b2);
       }
       return /* @__PURE__ */ u2(k, { children: [
         /* @__PURE__ */ u2(BlobMenu, { onBlobChange }),
+        /* @__PURE__ */ u2("div", { id: "title-container" }),
         /* @__PURE__ */ u2("div", { id: "editor-container", children: "EDITOR" })
       ] });
     };
@@ -1131,7 +1328,7 @@ var init_Work = __esm({
     init_style7();
     init_jsxRuntime_module();
     WorkPage = (props) => {
-      const [filters, setFilters] = h3([]);
+      const [filters, setFilters] = h2([]);
       const entries = [];
       const clickSubnav = (f4) => {
         playSound("click");
@@ -1537,9 +1734,9 @@ var EventService_default = EventService;
 init_hooks_module();
 var ROUTE_CHANGE_EVENT = "route-change";
 function useRouter() {
-  const [route, setRoute] = h3(void 0);
-  const [routeParams, setRouteParams] = h3(void 0);
-  const [routeArgs, setRouteArgs] = h3(void 0);
+  const [route, setRoute] = h2(void 0);
+  const [routeParams, setRouteParams] = h2(void 0);
+  const [routeArgs, setRouteArgs] = h2(void 0);
   y2(() => {
     function handleRouteChange(e4) {
       setRoute(e4.target.route);
