@@ -1,37 +1,35 @@
-const { h, render, Component } = window.preact;
+import { useEffect, useState } from "preact/hooks";
 
-export class BlobMenu extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            blobs: this.getAllBlobs()
-        };
-    }
+export function BlobMenu({ onBlobChange }) {
+    const [blobs, setBlobs] = useState([]);
 
-    getAllBlobs() {
-        const blobs = [];
+    function getAllBlobs() {
+        const _blobs = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
             const blobData = JSON.parse(localStorage.getItem(key));
             if (blobData) {
-                blobs.push(blobData);
+                _blobs.push(blobData);
             }
         }
-        return blobs;
+        setBlobs(_blobs);
     }
 
-    handleChange(event) {
+    useEffect(() => {
+        getAllBlobs();
+    }, []);
+
+
+    function handleChange(event) {
         const selectedBlobId = event.target.value;
-        this.props.onBlobChange(selectedBlobId);
+        onBlobChange(selectedBlobId);
     }
 
-    render() {
-        return (
-            h('select', { onChange: (e) => this.handleChange(e) },
-                this.state.blobs.map(blob =>
-                    h('option', { value: blob.id }, blob.title)
-                )
-            )
-        );
-    }
+    return (
+        <select onChange={handleChange}>
+            {blobs.map(blob =>
+                <option value={blob.id}>{blob.title}</option>
+            )}
+        </select>
+    )
 }

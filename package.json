@@ -36,6 +36,7 @@
         "eventbusjs": "^0.2.0",
         "jsonwebtoken": "^9.0.2",
         "jwt-decode": "^4.0.0",
+        "local-storage-fallback": "^5.0.0",
         "moment-timezone": "^0.5.45",
         "plotly.js-dist": "^2.35.3",
         "preact": "^10.25.4",

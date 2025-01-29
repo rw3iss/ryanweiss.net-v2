@@ -75,13 +75,13 @@ function P() {
   P.__r = 0;
 }
 function $(n2, l3, u4, t3, i4, r3, o3, e4, f4, c3, s3) {
-  var a3, h4, y3, d3, w3, _2, g2 = t3 && t3.__k || v, m3 = l3.length;
-  for (f4 = I(u4, l3, g2, f4, m3), a3 = 0; a3 < m3; a3++) null != (y3 = u4.__k[a3]) && (h4 = -1 === y3.__i ? p : g2[y3.__i] || p, y3.__i = a3, _2 = j(n2, y3, h4, i4, r3, o3, e4, f4, c3, s3), d3 = y3.__e, y3.ref && h4.ref != y3.ref && (h4.ref && V(h4.ref, null, y3), s3.push(y3.ref, y3.__c || d3, y3)), null == w3 && null != d3 && (w3 = d3), 4 & y3.__u || h4.__k === y3.__k ? f4 = A(y3, f4, n2) : "function" == typeof y3.type && void 0 !== _2 ? f4 = _2 : d3 && (f4 = d3.nextSibling), y3.__u &= -7);
+  var a3, h3, y3, d3, w3, _2, g2 = t3 && t3.__k || v, m3 = l3.length;
+  for (f4 = I(u4, l3, g2, f4, m3), a3 = 0; a3 < m3; a3++) null != (y3 = u4.__k[a3]) && (h3 = -1 === y3.__i ? p : g2[y3.__i] || p, y3.__i = a3, _2 = j(n2, y3, h3, i4, r3, o3, e4, f4, c3, s3), d3 = y3.__e, y3.ref && h3.ref != y3.ref && (h3.ref && V(h3.ref, null, y3), s3.push(y3.ref, y3.__c || d3, y3)), null == w3 && null != d3 && (w3 = d3), 4 & y3.__u || h3.__k === y3.__k ? f4 = A(y3, f4, n2) : "function" == typeof y3.type && void 0 !== _2 ? f4 = _2 : d3 && (f4 = d3.nextSibling), y3.__u &= -7);
   return u4.__e = w3, f4;
 }
 function I(n2, l3, u4, t3, i4) {
-  var r3, o3, e4, f4, c3, s3 = u4.length, a3 = s3, h4 = 0;
-  for (n2.__k = new Array(i4), r3 = 0; r3 < i4; r3++) null != (o3 = l3[r3]) && "boolean" != typeof o3 && "function" != typeof o3 ? (f4 = r3 + h4, (o3 = n2.__k[r3] = "string" == typeof o3 || "number" == typeof o3 || "bigint" == typeof o3 || o3.constructor == String ? m(null, o3, null, null, null) : d(o3) ? m(k, { children: o3 }, null, null, null) : void 0 === o3.constructor && o3.__b > 0 ? m(o3.type, o3.props, o3.key, o3.ref ? o3.ref : null, o3.__v) : o3).__ = n2, o3.__b = n2.__b + 1, e4 = null, -1 !== (c3 = o3.__i = L(o3, u4, f4, a3)) && (a3--, (e4 = u4[c3]) && (e4.__u |= 2)), null == e4 || null === e4.__v ? (-1 == c3 && h4--, "function" != typeof o3.type && (o3.__u |= 4)) : c3 != f4 && (c3 == f4 - 1 ? h4-- : c3 == f4 + 1 ? h4++ : (c3 > f4 ? h4-- : h4++, o3.__u |= 4))) : n2.__k[r3] = null;
+  var r3, o3, e4, f4, c3, s3 = u4.length, a3 = s3, h3 = 0;
+  for (n2.__k = new Array(i4), r3 = 0; r3 < i4; r3++) null != (o3 = l3[r3]) && "boolean" != typeof o3 && "function" != typeof o3 ? (f4 = r3 + h3, (o3 = n2.__k[r3] = "string" == typeof o3 || "number" == typeof o3 || "bigint" == typeof o3 || o3.constructor == String ? m(null, o3, null, null, null) : d(o3) ? m(k, { children: o3 }, null, null, null) : void 0 === o3.constructor && o3.__b > 0 ? m(o3.type, o3.props, o3.key, o3.ref ? o3.ref : null, o3.__v) : o3).__ = n2, o3.__b = n2.__b + 1, e4 = null, -1 !== (c3 = o3.__i = L(o3, u4, f4, a3)) && (a3--, (e4 = u4[c3]) && (e4.__u |= 2)), null == e4 || null === e4.__v ? (-1 == c3 && h3--, "function" != typeof o3.type && (o3.__u |= 4)) : c3 != f4 && (c3 == f4 - 1 ? h3-- : c3 == f4 + 1 ? h3++ : (c3 > f4 ? h3-- : h3++, o3.__u |= 4))) : n2.__k[r3] = null;
   if (a3) for (r3 = 0; r3 < s3; r3++) null != (e4 = u4[r3]) && 0 == (2 & e4.__u) && (e4.__e == t3 && (t3 = C(e4)), q(e4, e4));
   return t3;
 }
@@ -144,35 +144,35 @@ function O(n2) {
   };
 }
 function j(n2, u4, t3, i4, r3, o3, e4, f4, c3, s3) {
-  var a3, h4, p3, v3, y3, g2, m3, b2, C3, S2, M2, P2, I2, A2, H2, L2, T2, F2 = u4.type;
+  var a3, h3, p3, v3, y3, g2, m3, b2, C3, S2, M2, P2, I2, A3, H2, L2, T3, F2 = u4.type;
   if (void 0 !== u4.constructor) return null;
   128 & t3.__u && (c3 = !!(32 & t3.__u), o3 = [f4 = u4.__e = t3.__e]), (a3 = l.__b) && a3(u4);
   n: if ("function" == typeof F2) try {
-    if (b2 = u4.props, C3 = "prototype" in F2 && F2.prototype.render, S2 = (a3 = F2.contextType) && i4[a3.__c], M2 = a3 ? S2 ? S2.props.value : a3.__ : i4, t3.__c ? m3 = (h4 = u4.__c = t3.__c).__ = h4.__E : (C3 ? u4.__c = h4 = new F2(b2, M2) : (u4.__c = h4 = new x(b2, M2), h4.constructor = F2, h4.render = B), S2 && S2.sub(h4), h4.props = b2, h4.state || (h4.state = {}), h4.context = M2, h4.__n = i4, p3 = h4.__d = true, h4.__h = [], h4._sb = []), C3 && null == h4.__s && (h4.__s = h4.state), C3 && null != F2.getDerivedStateFromProps && (h4.__s == h4.state && (h4.__s = w({}, h4.__s)), w(h4.__s, F2.getDerivedStateFromProps(b2, h4.__s))), v3 = h4.props, y3 = h4.state, h4.__v = u4, p3) C3 && null == F2.getDerivedStateFromProps && null != h4.componentWillMount && h4.componentWillMount(), C3 && null != h4.componentDidMount && h4.__h.push(h4.componentDidMount);
+    if (b2 = u4.props, C3 = "prototype" in F2 && F2.prototype.render, S2 = (a3 = F2.contextType) && i4[a3.__c], M2 = a3 ? S2 ? S2.props.value : a3.__ : i4, t3.__c ? m3 = (h3 = u4.__c = t3.__c).__ = h3.__E : (C3 ? u4.__c = h3 = new F2(b2, M2) : (u4.__c = h3 = new x(b2, M2), h3.constructor = F2, h3.render = B), S2 && S2.sub(h3), h3.props = b2, h3.state || (h3.state = {}), h3.context = M2, h3.__n = i4, p3 = h3.__d = true, h3.__h = [], h3._sb = []), C3 && null == h3.__s && (h3.__s = h3.state), C3 && null != F2.getDerivedStateFromProps && (h3.__s == h3.state && (h3.__s = w({}, h3.__s)), w(h3.__s, F2.getDerivedStateFromProps(b2, h3.__s))), v3 = h3.props, y3 = h3.state, h3.__v = u4, p3) C3 && null == F2.getDerivedStateFromProps && null != h3.componentWillMount && h3.componentWillMount(), C3 && null != h3.componentDidMount && h3.__h.push(h3.componentDidMount);
     else {
-      if (C3 && null == F2.getDerivedStateFromProps && b2 !== v3 && null != h4.componentWillReceiveProps && h4.componentWillReceiveProps(b2, M2), !h4.__e && (null != h4.shouldComponentUpdate && false === h4.shouldComponentUpdate(b2, h4.__s, M2) || u4.__v == t3.__v)) {
-        for (u4.__v != t3.__v && (h4.props = b2, h4.state = h4.__s, h4.__d = false), u4.__e = t3.__e, u4.__k = t3.__k, u4.__k.some(function(n3) {
+      if (C3 && null == F2.getDerivedStateFromProps && b2 !== v3 && null != h3.componentWillReceiveProps && h3.componentWillReceiveProps(b2, M2), !h3.__e && (null != h3.shouldComponentUpdate && false === h3.shouldComponentUpdate(b2, h3.__s, M2) || u4.__v == t3.__v)) {
+        for (u4.__v != t3.__v && (h3.props = b2, h3.state = h3.__s, h3.__d = false), u4.__e = t3.__e, u4.__k = t3.__k, u4.__k.some(function(n3) {
           n3 && (n3.__ = u4);
-        }), P2 = 0; P2 < h4._sb.length; P2++) h4.__h.push(h4._sb[P2]);
-        h4._sb = [], h4.__h.length && e4.push(h4);
+        }), P2 = 0; P2 < h3._sb.length; P2++) h3.__h.push(h3._sb[P2]);
+        h3._sb = [], h3.__h.length && e4.push(h3);
         break n;
       }
-      null != h4.componentWillUpdate && h4.componentWillUpdate(b2, h4.__s, M2), C3 && null != h4.componentDidUpdate && h4.__h.push(function() {
-        h4.componentDidUpdate(v3, y3, g2);
+      null != h3.componentWillUpdate && h3.componentWillUpdate(b2, h3.__s, M2), C3 && null != h3.componentDidUpdate && h3.__h.push(function() {
+        h3.componentDidUpdate(v3, y3, g2);
       });
     }
-    if (h4.context = M2, h4.props = b2, h4.__P = n2, h4.__e = false, I2 = l.__r, A2 = 0, C3) {
-      for (h4.state = h4.__s, h4.__d = false, I2 && I2(u4), a3 = h4.render(h4.props, h4.state, h4.context), H2 = 0; H2 < h4._sb.length; H2++) h4.__h.push(h4._sb[H2]);
-      h4._sb = [];
+    if (h3.context = M2, h3.props = b2, h3.__P = n2, h3.__e = false, I2 = l.__r, A3 = 0, C3) {
+      for (h3.state = h3.__s, h3.__d = false, I2 && I2(u4), a3 = h3.render(h3.props, h3.state, h3.context), H2 = 0; H2 < h3._sb.length; H2++) h3.__h.push(h3._sb[H2]);
+      h3._sb = [];
     } else do {
-      h4.__d = false, I2 && I2(u4), a3 = h4.render(h4.props, h4.state, h4.context), h4.state = h4.__s;
-    } while (h4.__d && ++A2 < 25);
-    h4.state = h4.__s, null != h4.getChildContext && (i4 = w(w({}, i4), h4.getChildContext())), C3 && !p3 && null != h4.getSnapshotBeforeUpdate && (g2 = h4.getSnapshotBeforeUpdate(v3, y3)), f4 = $(n2, d(L2 = null != a3 && a3.type === k && null == a3.key ? a3.props.children : a3) ? L2 : [L2], u4, t3, i4, r3, o3, e4, f4, c3, s3), h4.base = u4.__e, u4.__u &= -161, h4.__h.length && e4.push(h4), m3 && (h4.__E = h4.__ = null);
+      h3.__d = false, I2 && I2(u4), a3 = h3.render(h3.props, h3.state, h3.context), h3.state = h3.__s;
+    } while (h3.__d && ++A3 < 25);
+    h3.state = h3.__s, null != h3.getChildContext && (i4 = w(w({}, i4), h3.getChildContext())), C3 && !p3 && null != h3.getSnapshotBeforeUpdate && (g2 = h3.getSnapshotBeforeUpdate(v3, y3)), f4 = $(n2, d(L2 = null != a3 && a3.type === k && null == a3.key ? a3.props.children : a3) ? L2 : [L2], u4, t3, i4, r3, o3, e4, f4, c3, s3), h3.base = u4.__e, u4.__u &= -161, h3.__h.length && e4.push(h3), m3 && (h3.__E = h3.__ = null);
   } catch (n3) {
     if (u4.__v = null, c3 || null != o3) if (n3.then) {
       for (u4.__u |= c3 ? 160 : 128; f4 && 8 == f4.nodeType && f4.nextSibling; ) f4 = f4.nextSibling;
       o3[o3.indexOf(f4)] = null, u4.__e = f4;
-    } else for (T2 = o3.length; T2--; ) _(o3[T2]);
+    } else for (T3 = o3.length; T3--; ) _(o3[T3]);
     else u4.__e = t3.__e, u4.__k = t3.__k;
     l.__e(n3, u4, t3);
   }
@@ -192,7 +192,7 @@ function z(n2, u4, t3) {
   });
 }
 function N(u4, t3, i4, r3, o3, e4, f4, c3, s3) {
-  var a3, h4, v3, y3, w3, g2, m3, b2 = i4.props, k3 = t3.props, x2 = t3.type;
+  var a3, h3, v3, y3, w3, g2, m3, b2 = i4.props, k3 = t3.props, x2 = t3.type;
   if ("svg" == x2 ? o3 = "http://www.w3.org/2000/svg" : "math" == x2 ? o3 = "http://www.w3.org/1998/Math/MathML" : o3 || (o3 = "http://www.w3.org/1999/xhtml"), null != e4) {
     for (a3 = 0; a3 < e4.length; a3++) if ((w3 = e4[a3]) && "setAttribute" in w3 == !!x2 && (x2 ? w3.localName == x2 : 3 == w3.nodeType)) {
       u4 = w3, e4[a3] = null;
@@ -212,8 +212,8 @@ function N(u4, t3, i4, r3, o3, e4, f4, c3, s3) {
       if ("value" == a3 && "defaultValue" in k3 || "checked" == a3 && "defaultChecked" in k3) continue;
       F(u4, a3, null, w3, o3);
     }
-    for (a3 in k3) w3 = k3[a3], "children" == a3 ? y3 = w3 : "dangerouslySetInnerHTML" == a3 ? h4 = w3 : "value" == a3 ? g2 = w3 : "checked" == a3 ? m3 = w3 : c3 && "function" != typeof w3 || b2[a3] === w3 || F(u4, a3, w3, b2[a3], o3);
-    if (h4) c3 || v3 && (h4.__html === v3.__html || h4.__html === u4.innerHTML) || (u4.innerHTML = h4.__html), t3.__k = [];
+    for (a3 in k3) w3 = k3[a3], "children" == a3 ? y3 = w3 : "dangerouslySetInnerHTML" == a3 ? h3 = w3 : "value" == a3 ? g2 = w3 : "checked" == a3 ? m3 = w3 : c3 && "function" != typeof w3 || b2[a3] === w3 || F(u4, a3, w3, b2[a3], o3);
+    if (h3) c3 || v3 && (h3.__html === v3.__html || h3.__html === u4.innerHTML) || (u4.innerHTML = h3.__html), t3.__k = [];
     else if (v3 && (u4.innerHTML = ""), $(u4, d(y3) ? y3 : [y3], t3, i4, r3, "foreignObject" == x2 ? "http://www.w3.org/1999/xhtml" : o3, e4, f4, e4 ? e4[0] : i4.__k && C(i4, 0), c3, s3), null != e4) for (a3 = e4.length; a3--; ) _(e4[a3]);
     c3 || (a3 = "value", "progress" == x2 && null == g2 ? u4.removeAttribute("value") : void 0 !== g2 && (g2 !== u4[a3] || "progress" == x2 && !g2 || "option" == x2 && g2 !== b2[a3]) && F(u4, a3, g2, b2[a3], o3), a3 = "checked", void 0 !== m3 && m3 !== u4[a3] && F(u4, a3, m3, b2[a3], o3));
   }
@@ -588,210 +588,39 @@ var init_NotFound = __esm({
   }
 });
 
-// src/components/shared/BlobEditor/Blob.ts
-var Blob2;
-var init_Blob = __esm({
-  "src/components/shared/BlobEditor/Blob.ts"() {
+// src/components/shared/BlobEditor/plugins/TabPlugin.ts
+var TabPlugin;
+var init_TabPlugin = __esm({
+  "src/components/shared/BlobEditor/plugins/TabPlugin.ts"() {
     "use strict";
     init_preact_module();
-    Blob2 = class {
-      constructor(id, type, title, content) {
-        this.id = id;
-        this.type = type;
-        this.title = title;
-        this.content = content;
+    TabPlugin = class {
+      initialize(editor, container) {
+        container.addEventListener("keydown", this.handleTabKey, true);
+        return this;
       }
-    };
-  }
-});
-
-// src/components/shared/BlobEditor/BlobMenu.tsx
-var h2, render, Component, BlobMenu;
-var init_BlobMenu = __esm({
-  "src/components/shared/BlobEditor/BlobMenu.tsx"() {
-    "use strict";
-    init_preact_module();
-    ({ h: h2, render, Component } = window.preact);
-    BlobMenu = class extends Component {
-      constructor(props) {
-        super(props);
-        this.state = {
-          blobs: this.getAllBlobs()
-        };
-      }
-      getAllBlobs() {
-        const blobs = [];
-        for (let i4 = 0; i4 < localStorage.length; i4++) {
-          const key = localStorage.key(i4);
-          const blobData = JSON.parse(localStorage.getItem(key));
-          if (blobData) {
-            blobs.push(blobData);
+      handleTabKey = (e4) => {
+        if (e4.key === "Tab") {
+          e4.preventDefault();
+          e4.stopPropagation();
+          const selection = window.getSelection();
+          if (selection && selection.rangeCount) {
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+            const tabSpaces = document.createTextNode("\xA0\xA0\xA0\xA0");
+            range.insertNode(tabSpaces);
+            range.setStartAfter(tabSpaces);
+            range.setEndAfter(tabSpaces);
+            range.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            if (e4.target instanceof HTMLElement) {
+              const editor = e4.target.closest(".wysiwyg-container")?.["editor"];
+              if (editor) editor.applyChanges();
+            }
           }
         }
-        return blobs;
-      }
-      handleChange(event) {
-        const selectedBlobId = event.target.value;
-        this.props.onBlobChange(selectedBlobId);
-      }
-      render() {
-        return h2(
-          "select",
-          { onChange: (e4) => this.handleChange(e4) },
-          this.state.blobs.map(
-            (blob) => h2("option", { value: blob.id }, blob.title)
-          )
-        );
-      }
-    };
-  }
-});
-
-// src/components/shared/BlobEditor/Editor.ts
-var WYSIWYGEditor;
-var init_Editor = __esm({
-  "src/components/shared/BlobEditor/Editor.ts"() {
-    "use strict";
-    init_preact_module();
-    WYSIWYGEditor = class {
-      constructor(container, initialBlob) {
-        this.container = container;
-        this.blob = initialBlob;
-        this.init();
-        this.throttledOnChange = this.throttle(this.onChange.bind(this), 2e3);
-      }
-      init() {
-        this.container.contentEditable = true;
-        this.container.innerHTML = this.parseContentToHTML(this.blob.content);
-        this.container.addEventListener("input", this.throttledOnChange);
-        this.container.addEventListener("contextmenu", this.showContextMenu.bind(this));
-      }
-      throttle(func, limit) {
-        let lastFunc;
-        let lastRan;
-        return function(...args) {
-          if (!lastRan) {
-            func.apply(this, args);
-            lastRan = Date.now();
-          } else {
-            clearTimeout(lastFunc);
-            lastFunc = setTimeout(() => {
-              if (Date.now() - lastRan >= limit) {
-                func.apply(this, args);
-                lastRan = Date.now();
-              }
-            }, limit - (Date.now() - lastRan));
-          }
-        };
-      }
-      onChange() {
-        this.applyEdits();
-        this.saveEdits();
-      }
-      parseContentToHTML(content) {
-        let html = "";
-        content.forEach((item) => {
-          html += this.parseElementToHTML(item);
-        });
-        return html;
-      }
-      parseElementToHTML(element) {
-        let attrs = "";
-        if (element.attributes) {
-          attrs = Object.entries(element.attributes).map(([key, value]) => `${key}="${value}"`).join(" ");
-        }
-        let children = "";
-        if (Array.isArray(element.children)) {
-          children = element.children.map((child) => this.parseElementToHTML(child)).join("");
-        } else {
-          children = element.children || "";
-        }
-        return `<${element.type} ${attrs}>${children}</${element.type}>`;
-      }
-      applyEdits() {
-        const content = this.parseHTMLToContent(this.container.innerHTML);
-        this.blob.content = content;
-      }
-      parseHTMLToContent(htmlString) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlString, "text/html");
-        return this.parseNodeToContent(doc.body);
-      }
-      parseNodeToContent(node) {
-        return Array.from(node.childNodes).map((child) => {
-          if (child.nodeType === Node.TEXT_NODE) {
-            return {
-              type: "text",
-              children: child.textContent
-            };
-          } else {
-            return {
-              type: child.tagName.toLowerCase(),
-              attributes: Array.from(child.attributes).reduce((acc, attr) => {
-                acc[attr.name] = attr.value;
-                return acc;
-              }, {}),
-              children: this.parseNodeToContent(child)
-            };
-          }
-        });
-      }
-      saveEdits() {
-        localStorage.setItem(this.blob.id, JSON.stringify(this.blob));
-        console.log("Saved Blob:", this.blob);
-      }
-      loadBlob(id) {
-        const blobData = JSON.parse(localStorage.getItem(id));
-        if (blobData) {
-          this.blob = new Blob(blobData.id, blobData.type, blobData.title, blobData.content);
-          this.container.innerHTML = this.parseContentToHTML(this.blob.content);
-        }
-      }
-      showContextMenu(event) {
-        event.preventDefault();
-        const menu = document.createElement("div");
-        menu.style.position = "absolute";
-        menu.style.left = `${event.pageX}px`;
-        menu.style.top = `${event.pageY}px`;
-        menu.style.backgroundColor = "white";
-        menu.style.border = "1px solid black";
-        menu.style.padding = "5px";
-        menu.innerHTML = `
-            <button onclick="editor.applyFormatting('bold')">B</button>
-            <button onclick="editor.applyFormatting('italic')">I</button>
-            <button onclick="editor.applyFormatting('ul')">UL</button>
-            <button onclick="editor.removeFormatting()">Remove Formatting</button>
-        `;
-        document.body.appendChild(menu);
-        setTimeout(() => document.body.removeChild(menu), 2e3);
-      }
-      applyFormatting(format) {
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-          const range = selection.getRangeAt(0);
-          const newNode = document.createElement(format === "ul" ? "ul" : "span");
-          newNode.style.fontWeight = format === "bold" ? "bold" : "normal";
-          newNode.style.fontStyle = format === "italic" ? "italic" : "normal";
-          if (format === "ul") {
-            const li = document.createElement("li");
-            li.appendChild(range.extractContents());
-            newNode.appendChild(li);
-          } else {
-            newNode.appendChild(range.extractContents());
-          }
-          range.insertNode(newNode);
-        }
-        this.applyEdits();
-      }
-      removeFormatting() {
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-          const range = selection.getRangeAt(0);
-          const text = range.extractContents().textContent;
-          range.insertNode(document.createTextNode(text));
-        }
-        this.applyEdits();
-      }
+      };
     };
   }
 });
@@ -802,7 +631,7 @@ function d2(n2, t3) {
   var u4 = r2.__H || (r2.__H = { __: [], __h: [] });
   return n2 >= u4.__.length && u4.__.push({}), u4.__[n2];
 }
-function h3(n2) {
+function h2(n2) {
   return o2 = 1, p2(D2, n2);
 }
 function p2(n2, u4, i4) {
@@ -842,6 +671,15 @@ function p2(n2, u4, i4) {
 function y2(n2, u4) {
   var i4 = d2(t2++, 3);
   !c2.__s && C2(i4.__H, u4) && (i4.__ = n2, i4.i = u4, r2.__H.__h.push(i4));
+}
+function A2(n2) {
+  return o2 = 5, T2(function() {
+    return { current: n2 };
+  }, []);
+}
+function T2(n2, r3) {
+  var u4 = d2(t2++, 7);
+  return C2(u4.__H, r3) && (u4.__ = n2(), u4.__H = r3, u4.__h = n2), u4.__;
 }
 function j2() {
   for (var n2; n2 = f3.shift(); ) if (n2.__P && n2.__H) try {
@@ -1021,196 +859,55 @@ var init_esm_browser = __esm({
   }
 });
 
-// src/components/shared/BlobEditor/BlobEditor.tsx
-var BlobEditor, BlobEditor_default;
-var init_BlobEditor = __esm({
-  "src/components/shared/BlobEditor/BlobEditor.tsx"() {
+// src/lib/types/Blob.ts
+var Blob;
+var init_Blob = __esm({
+  "src/lib/types/Blob.ts"() {
     "use strict";
     init_preact_module();
-    init_Blob();
-    init_BlobMenu();
-    init_Editor();
-    init_hooks_module();
     init_esm_browser();
-    init_jsxRuntime_module();
-    BlobEditor = (props) => {
-      y2(() => {
-        console.log(`BE`);
-        const initialBlob = new Blob2(v4_default(), "blob", "Initial Title", [
-          {
-            type: "div",
-            attributes: { class: "div-class" },
-            children: "Some text"
-          },
-          {
-            type: "ul",
-            attributes: { class: "ul-class" },
-            children: [
-              {
-                type: "li",
-                attributes: { class: "li-class" },
-                children: "some text"
-              }
-            ]
-          }
-        ]);
-        const editor = new WYSIWYGEditor(document.getElementById("editor-container"), initialBlob);
-        console.log(`editor`, editor);
-        window.editor = editor;
-      }, []);
-      function onBlobChange(b2) {
-        console.log(`change blob`, b2);
-        window.editor.loadBlob(b2);
+    Blob = class {
+      id;
+      title;
+      dateUpdated;
+      content;
+      type;
+      constructor(params = {}) {
+        this.id = params.id || v4_default();
+        this.title = params.title || "";
+        this.content = params.content || { entries: [] };
+        this.dateUpdated = params.dateUpdated || /* @__PURE__ */ new Date();
+        this.type = params.type || "blob";
       }
-      return /* @__PURE__ */ u2(k, { children: [
-        /* @__PURE__ */ u2(BlobMenu, { onBlobChange }),
-        /* @__PURE__ */ u2("div", { id: "editor-container", children: "EDITOR" })
-      ] });
     };
-    BlobEditor_default = BlobEditor;
   }
 });
 
-// src/components/pages/Other/style.scss
-var init_style5 = __esm({
-  "src/components/pages/Other/style.scss"() {
-  }
-});
-
-// src/components/pages/Other/index.tsx
-var OtherPage, Other_default;
-var init_Other = __esm({
-  "src/components/pages/Other/index.tsx"() {
+// src/lib/utils/throttle.ts
+function throttle(func, limit) {
+  let lastFunc;
+  let lastRan;
+  return function(...args) {
+    const context = this;
+    const now = Date.now();
+    if (!lastRan) {
+      func.apply(context, args);
+      lastRan = now;
+    } else {
+      clearTimeout(lastFunc);
+      lastFunc = setTimeout(function() {
+        if (now - lastRan >= limit) {
+          func.apply(context, args);
+          lastRan = now;
+        }
+      }, limit - (now - lastRan));
+    }
+  };
+}
+var init_throttle = __esm({
+  "src/lib/utils/throttle.ts"() {
     "use strict";
     init_preact_module();
-    init_BlobEditor();
-    init_style5();
-    init_jsxRuntime_module();
-    OtherPage = (props) => {
-      return /* @__PURE__ */ u2("div", { className: "page", id: "entry", children: /* @__PURE__ */ u2(BlobEditor_default, {}) });
-    };
-    Other_default = OtherPage;
-  }
-});
-
-// src/components/pages/Play/style.scss
-var init_style6 = __esm({
-  "src/components/pages/Play/style.scss"() {
-  }
-});
-
-// src/components/pages/Play/index.tsx
-var PlayPage, Play_default;
-var init_Play = __esm({
-  "src/components/pages/Play/index.tsx"() {
-    "use strict";
-    init_preact_module();
-    init_style6();
-    init_jsxRuntime_module();
-    PlayPage = (props) => {
-      return /* @__PURE__ */ u2("div", { className: "page", id: "play", children: /* @__PURE__ */ u2("h1", { children: "Play" }) });
-    };
-    Play_default = PlayPage;
-  }
-});
-
-// src/components/pages/Work/style.scss
-var init_style7 = __esm({
-  "src/components/pages/Work/style.scss"() {
-  }
-});
-
-// src/components/pages/Work/index.tsx
-var WorkPage, Work_default;
-var init_Work = __esm({
-  "src/components/pages/Work/index.tsx"() {
-    "use strict";
-    init_preact_module();
-    init_hooks_module();
-    init_AudioManager();
-    init_style7();
-    init_jsxRuntime_module();
-    WorkPage = (props) => {
-      const [filters, setFilters] = h3([]);
-      const entries = [];
-      const clickSubnav = (f4) => {
-        playSound("click");
-        toggleFilter(f4);
-      };
-      const toggleFilter = (f4) => {
-        if (filters.includes(f4)) setFilters(filters.filter((_f) => _f != f4));
-        else setFilters([...filters, f4]);
-      };
-      const isFiltered = (f4) => {
-        return filters.includes(f4);
-      };
-      return /* @__PURE__ */ u2("div", { className: "page", id: "work", children: [
-        /* @__PURE__ */ u2("h1", { children: "Work" }),
-        /* @__PURE__ */ u2("div", { className: "sub-nav", children: [
-          /* @__PURE__ */ u2(
-            "a",
-            {
-              href: "#freelance",
-              onMouseEnter: (e4) => playSound("hover"),
-              onClick: (e4) => clickSubnav("freelance"),
-              className: isFiltered("freelance") ? " on" : "",
-              children: "Freelance"
-            }
-          ),
-          /* @__PURE__ */ u2(
-            "a",
-            {
-              href: "#fulltime",
-              onMouseEnter: (e4) => playSound("hover"),
-              onClick: (e4) => clickSubnav("fulltime"),
-              className: isFiltered("fulltime") ? " on" : "",
-              children: "Fulltime"
-            }
-          )
-        ] })
-      ] });
-    };
-    Work_default = WorkPage;
-  }
-});
-
-// src/config/routes.tsx
-var routes_default;
-var init_routes = __esm({
-  "src/config/routes.tsx"() {
-    "use strict";
-    init_preact_module();
-    init_Entry();
-    init_Home();
-    init_Info();
-    init_NotFound();
-    init_Other();
-    init_Play();
-    init_Work();
-    init_jsxRuntime_module();
-    routes_default = {
-      "/": (p3) => /* @__PURE__ */ u2(Home_default, {}),
-      "/work": (p3) => /* @__PURE__ */ u2(Work_default, {}),
-      "/play": (p3) => /* @__PURE__ */ u2(Play_default, {}),
-      "/info": (p3) => /* @__PURE__ */ u2(Info_default, {}),
-      "/other": (p3) => /* @__PURE__ */ u2(Other_default, {}),
-      "/entries/:slug": (p3) => /* @__PURE__ */ u2(Entry_default, {}),
-      "*": (p3) => /* @__PURE__ */ u2(NotFound_default, {})
-    };
-  }
-});
-
-// src/config/config.ts
-var require_config = __commonJS({
-  "src/config/config.ts"(exports, module) {
-    "use strict";
-    init_preact_module();
-    init_routes();
-    console.log(`R`, routes_default);
-    module.exports = {
-      DEFAUlT_ROUTE: "/roast",
-      routes: routes_default
-    };
   }
 });
 
@@ -1300,9 +997,1509 @@ var require_eventbus_min = __commonJS({
         }
         return str;
       } };
-      var EventBus = new EventBusClass();
-      return EventBus;
+      var EventBus2 = new EventBusClass();
+      return EventBus2;
     });
+  }
+});
+
+// src/components/shared/BlobEditor/ApiClient.ts
+var ApiClient;
+var init_ApiClient = __esm({
+  "src/components/shared/BlobEditor/ApiClient.ts"() {
+    "use strict";
+    init_preact_module();
+    ApiClient = class {
+      baseUrl = "your-api-endpoint-url";
+      // Replace with actual API endpoint
+      async fetchBlobs() {
+        const response = await fetch(`${this.baseUrl}/blobs`);
+        return await response.json();
+      }
+      async fetchBlob(id) {
+        const response = await fetch(`${this.baseUrl}/blobs/${id}`);
+        if (!response.ok) return null;
+        return await response.json();
+      }
+      async saveBlob(blob) {
+        await fetch(`${this.baseUrl}/blobs/${blob.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(blob)
+        });
+      }
+      async deleteBlob(id) {
+        await fetch(`${this.baseUrl}/blobs/${id}`, { method: "DELETE" });
+      }
+    };
+  }
+});
+
+// node_modules/local-storage-fallback/node_modules/cookie/dist/index.js
+var require_dist = __commonJS({
+  "node_modules/local-storage-fallback/node_modules/cookie/dist/index.js"(exports) {
+    "use strict";
+    init_preact_module();
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.parse = parse;
+    exports.serialize = serialize;
+    var cookieNameRegExp = /^[\u0021-\u003A\u003C\u003E-\u007E]+$/;
+    var cookieValueRegExp = /^[\u0021-\u003A\u003C-\u007E]*$/;
+    var domainValueRegExp = /^([.]?[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)([.][a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/i;
+    var pathValueRegExp = /^[\u0020-\u003A\u003D-\u007E]*$/;
+    var __toString = Object.prototype.toString;
+    var NullObject = /* @__PURE__ */ (() => {
+      const C3 = function() {
+      };
+      C3.prototype = /* @__PURE__ */ Object.create(null);
+      return C3;
+    })();
+    function parse(str, options) {
+      const obj = new NullObject();
+      const len = str.length;
+      if (len < 2)
+        return obj;
+      const dec = options?.decode || decode;
+      let index = 0;
+      do {
+        const eqIdx = str.indexOf("=", index);
+        if (eqIdx === -1)
+          break;
+        const colonIdx = str.indexOf(";", index);
+        const endIdx = colonIdx === -1 ? len : colonIdx;
+        if (eqIdx > endIdx) {
+          index = str.lastIndexOf(";", eqIdx - 1) + 1;
+          continue;
+        }
+        const keyStartIdx = startIndex(str, index, eqIdx);
+        const keyEndIdx = endIndex(str, eqIdx, keyStartIdx);
+        const key = str.slice(keyStartIdx, keyEndIdx);
+        if (obj[key] === void 0) {
+          let valStartIdx = startIndex(str, eqIdx + 1, endIdx);
+          let valEndIdx = endIndex(str, endIdx, valStartIdx);
+          const value = dec(str.slice(valStartIdx, valEndIdx));
+          obj[key] = value;
+        }
+        index = endIdx + 1;
+      } while (index < len);
+      return obj;
+    }
+    function startIndex(str, index, max) {
+      do {
+        const code = str.charCodeAt(index);
+        if (code !== 32 && code !== 9)
+          return index;
+      } while (++index < max);
+      return max;
+    }
+    function endIndex(str, index, min) {
+      while (index > min) {
+        const code = str.charCodeAt(--index);
+        if (code !== 32 && code !== 9)
+          return index + 1;
+      }
+      return min;
+    }
+    function serialize(name, val, options) {
+      const enc = options?.encode || encodeURIComponent;
+      if (!cookieNameRegExp.test(name)) {
+        throw new TypeError(`argument name is invalid: ${name}`);
+      }
+      const value = enc(val);
+      if (!cookieValueRegExp.test(value)) {
+        throw new TypeError(`argument val is invalid: ${val}`);
+      }
+      let str = name + "=" + value;
+      if (!options)
+        return str;
+      if (options.maxAge !== void 0) {
+        if (!Number.isInteger(options.maxAge)) {
+          throw new TypeError(`option maxAge is invalid: ${options.maxAge}`);
+        }
+        str += "; Max-Age=" + options.maxAge;
+      }
+      if (options.domain) {
+        if (!domainValueRegExp.test(options.domain)) {
+          throw new TypeError(`option domain is invalid: ${options.domain}`);
+        }
+        str += "; Domain=" + options.domain;
+      }
+      if (options.path) {
+        if (!pathValueRegExp.test(options.path)) {
+          throw new TypeError(`option path is invalid: ${options.path}`);
+        }
+        str += "; Path=" + options.path;
+      }
+      if (options.expires) {
+        if (!isDate(options.expires) || !Number.isFinite(options.expires.valueOf())) {
+          throw new TypeError(`option expires is invalid: ${options.expires}`);
+        }
+        str += "; Expires=" + options.expires.toUTCString();
+      }
+      if (options.httpOnly) {
+        str += "; HttpOnly";
+      }
+      if (options.secure) {
+        str += "; Secure";
+      }
+      if (options.partitioned) {
+        str += "; Partitioned";
+      }
+      if (options.priority) {
+        const priority = typeof options.priority === "string" ? options.priority.toLowerCase() : void 0;
+        switch (priority) {
+          case "low":
+            str += "; Priority=Low";
+            break;
+          case "medium":
+            str += "; Priority=Medium";
+            break;
+          case "high":
+            str += "; Priority=High";
+            break;
+          default:
+            throw new TypeError(`option priority is invalid: ${options.priority}`);
+        }
+      }
+      if (options.sameSite) {
+        const sameSite = typeof options.sameSite === "string" ? options.sameSite.toLowerCase() : options.sameSite;
+        switch (sameSite) {
+          case true:
+          case "strict":
+            str += "; SameSite=Strict";
+            break;
+          case "lax":
+            str += "; SameSite=Lax";
+            break;
+          case "none":
+            str += "; SameSite=None";
+            break;
+          default:
+            throw new TypeError(`option sameSite is invalid: ${options.sameSite}`);
+        }
+      }
+      return str;
+    }
+    function decode(str) {
+      if (str.indexOf("%") === -1)
+        return str;
+      try {
+        return decodeURIComponent(str);
+      } catch (e4) {
+        return str;
+      }
+    }
+    function isDate(val) {
+      return __toString.call(val) === "[object Date]";
+    }
+  }
+});
+
+// node_modules/local-storage-fallback/lib/CookieStorage.js
+var require_CookieStorage = __commonJS({
+  "node_modules/local-storage-fallback/lib/CookieStorage.js"(exports) {
+    "use strict";
+    init_preact_module();
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    exports["default"] = void 0;
+    exports.hasCookies = hasCookies;
+    var cookie = _interopRequireWildcard(require_dist());
+    function _getRequireWildcardCache(e4) {
+      if ("function" != typeof WeakMap) return null;
+      var r3 = /* @__PURE__ */ new WeakMap(), t3 = /* @__PURE__ */ new WeakMap();
+      return (_getRequireWildcardCache = function _getRequireWildcardCache2(e5) {
+        return e5 ? t3 : r3;
+      })(e4);
+    }
+    function _interopRequireWildcard(e4, r3) {
+      if (!r3 && e4 && e4.__esModule) return e4;
+      if (null === e4 || "object" != _typeof(e4) && "function" != typeof e4) return { "default": e4 };
+      var t3 = _getRequireWildcardCache(r3);
+      if (t3 && t3.has(e4)) return t3.get(e4);
+      var n2 = { __proto__: null }, a3 = Object.defineProperty && Object.getOwnPropertyDescriptor;
+      for (var u4 in e4) if ("default" !== u4 && {}.hasOwnProperty.call(e4, u4)) {
+        var i4 = a3 ? Object.getOwnPropertyDescriptor(e4, u4) : null;
+        i4 && (i4.get || i4.set) ? Object.defineProperty(n2, u4, i4) : n2[u4] = e4[u4];
+      }
+      return n2["default"] = e4, t3 && t3.set(e4, n2), n2;
+    }
+    function _typeof(o3) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o4) {
+        return typeof o4;
+      } : function(o4) {
+        return o4 && "function" == typeof Symbol && o4.constructor === Symbol && o4 !== Symbol.prototype ? "symbol" : typeof o4;
+      }, _typeof(o3);
+    }
+    function _classCallCheck(a3, n2) {
+      if (!(a3 instanceof n2)) throw new TypeError("Cannot call a class as a function");
+    }
+    function _defineProperties(e4, r3) {
+      for (var t3 = 0; t3 < r3.length; t3++) {
+        var o3 = r3[t3];
+        o3.enumerable = o3.enumerable || false, o3.configurable = true, "value" in o3 && (o3.writable = true), Object.defineProperty(e4, _toPropertyKey(o3.key), o3);
+      }
+    }
+    function _createClass(e4, r3, t3) {
+      return r3 && _defineProperties(e4.prototype, r3), t3 && _defineProperties(e4, t3), Object.defineProperty(e4, "prototype", { writable: false }), e4;
+    }
+    function _toPropertyKey(t3) {
+      var i4 = _toPrimitive(t3, "string");
+      return "symbol" == _typeof(i4) ? i4 : i4 + "";
+    }
+    function _toPrimitive(t3, r3) {
+      if ("object" != _typeof(t3) || !t3) return t3;
+      var e4 = t3[Symbol.toPrimitive];
+      if (void 0 !== e4) {
+        var i4 = e4.call(t3, r3 || "default");
+        if ("object" != _typeof(i4)) return i4;
+        throw new TypeError("@@toPrimitive must return a primitive value.");
+      }
+      return ("string" === r3 ? String : Number)(t3);
+    }
+    var prefix = "lS_";
+    var CookieStorage = exports["default"] = /* @__PURE__ */ function() {
+      function CookieStorage2() {
+        var options = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
+        _classCallCheck(this, CookieStorage2);
+        this.cookieOptions = Object.assign({
+          path: "/"
+        }, options);
+        prefix = options.prefix === void 0 ? prefix : options.prefix;
+      }
+      return _createClass(CookieStorage2, [{
+        key: "getItem",
+        value: function getItem(key) {
+          var cookies = cookie.parse(document.cookie);
+          if (!cookies || !cookies[prefix + key]) {
+            return null;
+          }
+          return cookies[prefix + key];
+        }
+      }, {
+        key: "setItem",
+        value: function setItem(key, value) {
+          document.cookie = cookie.serialize(prefix + key, value, this.cookieOptions);
+          return value;
+        }
+      }, {
+        key: "removeItem",
+        value: function removeItem(key) {
+          var options = Object.assign({}, this.cookieOptions, {
+            maxAge: -1
+          });
+          document.cookie = cookie.serialize(prefix + key, "", options);
+          return null;
+        }
+      }, {
+        key: "clear",
+        value: function clear() {
+          var cookies = cookie.parse(document.cookie);
+          for (var key in cookies) {
+            if (key.indexOf(prefix) === 0) {
+              this.removeItem(key.substr(prefix.length));
+            }
+          }
+          return null;
+        }
+      }]);
+    }();
+    function hasCookies() {
+      var storage = new CookieStorage();
+      try {
+        var TEST_KEY = "__test";
+        storage.setItem(TEST_KEY, "1");
+        var value = storage.getItem(TEST_KEY);
+        storage.removeItem(TEST_KEY);
+        return value === "1";
+      } catch (e4) {
+        return false;
+      }
+    }
+  }
+});
+
+// node_modules/local-storage-fallback/lib/isSupported.js
+var require_isSupported = __commonJS({
+  "node_modules/local-storage-fallback/lib/isSupported.js"(exports) {
+    "use strict";
+    init_preact_module();
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    exports["default"] = isSupported;
+    var _CookieStorage = require_CookieStorage();
+    var TEST_KEY = "__test";
+    function hasStorage(name) {
+      try {
+        var storage = window[name];
+        storage.setItem(TEST_KEY, "1");
+        storage.removeItem(TEST_KEY);
+        return true;
+      } catch (e4) {
+        return false;
+      }
+    }
+    function isSupported() {
+      var name = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "localStorage";
+      var storage = String(name).replace(/storage$/i, "").toLowerCase();
+      if (storage === "local") {
+        return hasStorage("localStorage");
+      }
+      if (storage === "session") {
+        return hasStorage("sessionStorage");
+      }
+      if (storage === "cookie") {
+        return (0, _CookieStorage.hasCookies)();
+      }
+      if (storage === "memory") {
+        return true;
+      }
+      throw new Error("Storage method `".concat(name, "` is not available.\n    Please use one of the following: localStorage, sessionStorage, cookieStorage, memoryStorage."));
+    }
+  }
+});
+
+// node_modules/local-storage-fallback/lib/MemoryStorage.js
+var require_MemoryStorage = __commonJS({
+  "node_modules/local-storage-fallback/lib/MemoryStorage.js"(exports) {
+    "use strict";
+    init_preact_module();
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    exports["default"] = void 0;
+    function _typeof(o3) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o4) {
+        return typeof o4;
+      } : function(o4) {
+        return o4 && "function" == typeof Symbol && o4.constructor === Symbol && o4 !== Symbol.prototype ? "symbol" : typeof o4;
+      }, _typeof(o3);
+    }
+    function _classCallCheck(a3, n2) {
+      if (!(a3 instanceof n2)) throw new TypeError("Cannot call a class as a function");
+    }
+    function _defineProperties(e4, r3) {
+      for (var t3 = 0; t3 < r3.length; t3++) {
+        var o3 = r3[t3];
+        o3.enumerable = o3.enumerable || false, o3.configurable = true, "value" in o3 && (o3.writable = true), Object.defineProperty(e4, _toPropertyKey(o3.key), o3);
+      }
+    }
+    function _createClass(e4, r3, t3) {
+      return r3 && _defineProperties(e4.prototype, r3), t3 && _defineProperties(e4, t3), Object.defineProperty(e4, "prototype", { writable: false }), e4;
+    }
+    function _toPropertyKey(t3) {
+      var i4 = _toPrimitive(t3, "string");
+      return "symbol" == _typeof(i4) ? i4 : i4 + "";
+    }
+    function _toPrimitive(t3, r3) {
+      if ("object" != _typeof(t3) || !t3) return t3;
+      var e4 = t3[Symbol.toPrimitive];
+      if (void 0 !== e4) {
+        var i4 = e4.call(t3, r3 || "default");
+        if ("object" != _typeof(i4)) return i4;
+        throw new TypeError("@@toPrimitive must return a primitive value.");
+      }
+      return ("string" === r3 ? String : Number)(t3);
+    }
+    var MemoryStorage = exports["default"] = /* @__PURE__ */ function() {
+      function MemoryStorage2() {
+        _classCallCheck(this, MemoryStorage2);
+        this._data = {};
+      }
+      return _createClass(MemoryStorage2, [{
+        key: "getItem",
+        value: function getItem(key) {
+          return this._data.hasOwnProperty(key) ? this._data[key] : null;
+        }
+      }, {
+        key: "setItem",
+        value: function setItem(key, value) {
+          return this._data[key] = String(value);
+        }
+      }, {
+        key: "removeItem",
+        value: function removeItem(key) {
+          return delete this._data[key];
+        }
+      }, {
+        key: "clear",
+        value: function clear() {
+          return this._data = {};
+        }
+      }]);
+    }();
+  }
+});
+
+// node_modules/local-storage-fallback/lib/index.js
+var require_lib = __commonJS({
+  "node_modules/local-storage-fallback/lib/index.js"(exports) {
+    "use strict";
+    init_preact_module();
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    Object.defineProperty(exports, "CookieStorage", {
+      enumerable: true,
+      get: function get() {
+        return _CookieStorage["default"];
+      }
+    });
+    Object.defineProperty(exports, "MemoryStorage", {
+      enumerable: true,
+      get: function get() {
+        return _MemoryStorage["default"];
+      }
+    });
+    exports["default"] = void 0;
+    Object.defineProperty(exports, "isSupported", {
+      enumerable: true,
+      get: function get() {
+        return _isSupported["default"];
+      }
+    });
+    exports.storage = void 0;
+    var _isSupported = _interopRequireDefault(require_isSupported());
+    var _CookieStorage = _interopRequireDefault(require_CookieStorage());
+    var _MemoryStorage = _interopRequireDefault(require_MemoryStorage());
+    function _interopRequireDefault(e4) {
+      return e4 && e4.__esModule ? e4 : { "default": e4 };
+    }
+    var storage = exports.storage = null;
+    if ((0, _isSupported["default"])("localStorage")) {
+      exports.storage = storage = window.localStorage;
+    } else if ((0, _isSupported["default"])("sessionStorage")) {
+      exports.storage = storage = window.sessionStorage;
+    } else if ((0, _isSupported["default"])("cookieStorage")) {
+      exports.storage = storage = new _CookieStorage["default"]();
+    } else {
+      exports.storage = storage = new _MemoryStorage["default"]();
+    }
+    var _default = exports["default"] = storage;
+  }
+});
+
+// src/components/shared/BlobEditor/CacheService.ts
+var import_local_storage_fallback, CacheService;
+var init_CacheService = __esm({
+  "src/components/shared/BlobEditor/CacheService.ts"() {
+    "use strict";
+    init_preact_module();
+    import_local_storage_fallback = __toESM(require_lib());
+    CacheService = class {
+      storage;
+      prefix;
+      constructor(prefix) {
+        this.storage = import_local_storage_fallback.default;
+        this.prefix = prefix;
+      }
+      get(key) {
+        const item = this.storage.getItem(this.getKey(key));
+        return item ? JSON.parse(item) : null;
+      }
+      set(key, value) {
+        this.storage.setItem(this.getKey(key), JSON.stringify(value));
+      }
+      remove(key) {
+        this.storage.removeItem(this.getKey(key));
+      }
+      getAll() {
+        const items = [];
+        for (let i4 = 0; i4 < this.storage.length; i4++) {
+          const key = this.storage.key(i4);
+          if (key && key.startsWith(this.prefix)) {
+            items.push(JSON.parse(this.storage.getItem(key) || "{}"));
+          }
+        }
+        return items;
+      }
+      setAll(items) {
+        items.forEach((item) => {
+          if ("id" in item) {
+            this.set(item.id, item);
+          }
+        });
+      }
+      clear() {
+        this.getAll().forEach((_2, index) => {
+          const key = this.storage.key(index);
+          if (key && key.startsWith(this.prefix)) {
+            this.storage.removeItem(key);
+          }
+        });
+      }
+      getKey(key) {
+        return `${this.prefix}:${key}`;
+      }
+    };
+  }
+});
+
+// src/components/shared/BlobEditor/BlobService.ts
+var import_eventbusjs, BlobService;
+var init_BlobService = __esm({
+  "src/components/shared/BlobEditor/BlobService.ts"() {
+    "use strict";
+    init_preact_module();
+    import_eventbusjs = __toESM(require_eventbus_min());
+    init_ApiClient();
+    init_CacheService();
+    BlobService = class {
+      apiClient;
+      cacheService;
+      eventBus = import_eventbusjs.default;
+      constructor() {
+        this.apiClient = new ApiClient();
+        this.cacheService = new CacheService("blobService");
+      }
+      async listBlobs() {
+        let blobs = this.cacheService.getAll();
+        if (!blobs || blobs.length === 0) {
+          blobs = await this.apiClient.fetchBlobs();
+          this.cacheService.setAll(blobs);
+        }
+        return blobs;
+      }
+      async getBlob(id) {
+        let blob = this.cacheService.get(id);
+        if (!blob) {
+          blob = await this.apiClient.fetchBlob(id);
+          if (blob) {
+            this.cacheService.set(id, blob);
+          }
+        }
+        return blob;
+      }
+      async saveBlob(blob) {
+        console.log(`save`, blob);
+        await this.apiClient.saveBlob(blob);
+        this.cacheService.set(blob.id, blob);
+        this.notifyEvent("blobUpdated", blob);
+      }
+      async deleteBlob(id) {
+        await this.apiClient.deleteBlob(id);
+        this.cacheService.remove(id);
+        this.notifyEvent("blobDeleted", { id });
+      }
+      notifyEvent(eventType, data) {
+        this.eventBus.dispatch(eventType, data);
+      }
+      clear() {
+        this.cacheService.clear();
+      }
+    };
+  }
+});
+
+// src/components/shared/BlobEditor/styles/BlobEditor.scss
+var init_BlobEditor = __esm({
+  "src/components/shared/BlobEditor/styles/BlobEditor.scss"() {
+  }
+});
+
+// src/components/shared/BlobEditor/ContentEntries.tsx
+var ContentEntry, TextEntry, GroupEntry, LinkEntry, HeaderEntry, FileEntry, CustomEntry, PreEntry, CodeEntry, BreakEntry, ContentEntries;
+var init_ContentEntries = __esm({
+  "src/components/shared/BlobEditor/ContentEntries.tsx"() {
+    "use strict";
+    init_preact_module();
+    ContentEntry = class {
+      static convertToHTML(entry, parent) {
+        throw new Error("Method not implemented");
+      }
+      static convertNodeToEntry(node) {
+        throw new Error("Method not implemented");
+      }
+    };
+    TextEntry = class _TextEntry extends ContentEntry {
+      type = "text";
+      attributes;
+      inner;
+      constructor(inner, attributes) {
+        super();
+        this.inner = inner;
+        this.attributes = attributes;
+      }
+      static convertToHTML(entry, parent) {
+        let textNode;
+        let wrapper = null;
+        if (entry.attributes) {
+          if (entry.attributes["bold"]) {
+            wrapper = document.createElement("b");
+          } else if (entry.attributes["italic"]) {
+            wrapper = document.createElement("i");
+          } else if (entry.attributes["span"]) {
+            wrapper = document.createElement("span");
+            if (entry.attributes["class"]) {
+              wrapper.className = entry.attributes["class"];
+            }
+          }
+        }
+        textNode = document.createTextNode(entry.inner);
+        if (wrapper) {
+          wrapper.appendChild(textNode);
+          if (wrapper.tagName === "SPAN") {
+            Object.entries(entry.attributes || {}).forEach(([key, value]) => {
+              if (key !== "span" && key !== "class") {
+                wrapper.setAttribute(key, value);
+              }
+            });
+          }
+          parent.appendChild(wrapper);
+        } else {
+          parent.appendChild(textNode);
+        }
+      }
+      static convertNodeToEntry(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return new _TextEntry(node.textContent || "");
+        } else if (node instanceof HTMLElement) {
+          let attributes = {};
+          let textContent = "";
+          if (node.tagName === "B") {
+            attributes["bold"] = "true";
+            textContent = node.textContent || "";
+          } else if (node.tagName === "I") {
+            attributes["italic"] = "true";
+            textContent = node.textContent || "";
+          } else if (node.tagName === "SPAN") {
+            attributes["span"] = "true";
+            textContent = node.textContent || "";
+            Array.from(node.attributes).forEach((attr) => {
+              attributes[attr.name] = attr.value;
+            });
+          } else {
+            return null;
+          }
+          return new _TextEntry(textContent, attributes);
+        }
+        return null;
+      }
+    };
+    GroupEntry = class _GroupEntry extends ContentEntry {
+      type = "group";
+      attributes;
+      inner;
+      constructor(attributes, inner = []) {
+        super();
+        this.attributes = attributes;
+        this.inner = inner;
+      }
+      static convertToHTML(entry, parent) {
+        const div = document.createElement("div");
+        if (entry.attributes) {
+          for (const [key, value] of Object.entries(entry.attributes)) {
+            div.setAttribute(key, value);
+          }
+        }
+        parent.appendChild(div);
+        if (Array.isArray(entry.inner)) {
+          entry.inner.forEach((child) => ContentEntries.convertToHTMLByType(child, div));
+        }
+      }
+      static convertNodeToEntry(node) {
+        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
+          acc[attr.name] = attr.value;
+          return acc;
+        }, {});
+        const inner = [];
+        Array.from(node.childNodes).forEach((childNode) => {
+          const childEntry = ContentEntries.convertNodeToEntry(childNode);
+          if (childEntry) inner.push(childEntry);
+        });
+        return new _GroupEntry(attributes, inner);
+      }
+    };
+    LinkEntry = class _LinkEntry extends ContentEntry {
+      type = "link";
+      attributes;
+      inner;
+      constructor(inner, attributes) {
+        super();
+        this.inner = inner;
+        this.attributes = attributes;
+      }
+      static convertToHTML(entry, parent) {
+        const a3 = document.createElement("a");
+        if (entry.attributes) {
+          for (const [key, value] of Object.entries(entry.attributes)) {
+            a3.setAttribute(key, value);
+          }
+        }
+        parent.appendChild(a3);
+        if (Array.isArray(entry.inner)) {
+          entry.inner.forEach((child) => ContentEntries.convertToHTMLByType(child, a3));
+        } else {
+          a3.textContent = entry.inner;
+        }
+      }
+      static convertNodeToEntry(node) {
+        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
+          acc[attr.name] = attr.value;
+          return acc;
+        }, {});
+        let inner;
+        if (node.childNodes.length > 0) {
+          if (node.childNodes.length === 1 && node.childNodes[0].nodeType === Node.TEXT_NODE) {
+            inner = node.textContent || "";
+          } else {
+            inner = Array.from(node.childNodes).map((childNode) => ContentEntries.convertNodeToEntry(childNode)).filter(Boolean);
+          }
+        } else {
+          inner = "";
+        }
+        return new _LinkEntry(inner, attributes);
+      }
+    };
+    HeaderEntry = class _HeaderEntry extends ContentEntry {
+      type = "header";
+      attributes;
+      inner;
+      constructor(inner, attributes) {
+        super();
+        this.inner = inner;
+        this.attributes = attributes;
+      }
+      static convertToHTML(entry, parent) {
+        const level = entry.attributes?.level || "1";
+        const h3 = document.createElement(`h${level}`);
+        h3.textContent = entry.inner;
+        if (entry.attributes) {
+          for (const [key, value] of Object.entries(entry.attributes)) {
+            if (key !== "level") {
+              h3.setAttribute(key, value);
+            }
+          }
+        }
+        parent.appendChild(h3);
+      }
+      static convertNodeToEntry(node) {
+        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
+          acc[attr.name] = attr.value;
+          return acc;
+        }, {});
+        return new _HeaderEntry(node.textContent || "", attributes);
+      }
+    };
+    FileEntry = class _FileEntry extends ContentEntry {
+      type = "file";
+      attributes;
+      inner;
+      constructor(inner, attributes) {
+        super();
+        this.inner = inner;
+        this.attributes = attributes;
+      }
+      static convertToHTML(entry, parent) {
+        const fileDiv = document.createElement("div");
+        fileDiv.textContent = entry.inner;
+        if (entry.attributes) {
+          for (const [key, value] of Object.entries(entry.attributes)) {
+            fileDiv.setAttribute(key, value);
+          }
+        }
+        parent.appendChild(fileDiv);
+      }
+      static convertNodeToEntry(node) {
+        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
+          acc[attr.name] = attr.value;
+          return acc;
+        }, {});
+        return new _FileEntry(node.textContent || "", attributes);
+      }
+    };
+    CustomEntry = class _CustomEntry extends ContentEntry {
+      type = "custom";
+      attributes;
+      inner;
+      constructor(attributes, inner = []) {
+        super();
+        this.attributes = attributes;
+        this.inner = inner;
+      }
+      static convertToHTML(entry, parent) {
+        const customDiv = document.createElement("div");
+        customDiv.setAttribute("custom", "true");
+        if (entry.attributes) {
+          for (const [key, value] of Object.entries(entry.attributes)) {
+            customDiv.setAttribute(key, value);
+          }
+        }
+        parent.appendChild(customDiv);
+        entry.inner.forEach((child) => ContentEntries.convertToHTMLByType(child, customDiv));
+      }
+      static convertNodeToEntry(node) {
+        if (node.getAttribute("custom") !== "true") return null;
+        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
+          acc[attr.name] = attr.value;
+          return acc;
+        }, {});
+        const inner = [];
+        Array.from(node.childNodes).forEach((childNode) => {
+          const childEntry = ContentEntries.convertNodeToEntry(childNode);
+          if (childEntry) inner.push(childEntry);
+        });
+        return new _CustomEntry(attributes, inner);
+      }
+    };
+    PreEntry = class _PreEntry extends ContentEntry {
+      type = "pre";
+      attributes;
+      inner;
+      constructor(attributes, inner = []) {
+        super();
+        this.attributes = attributes;
+        this.inner = inner;
+      }
+      static convertToHTML(entry, parent) {
+        const pre = document.createElement("pre");
+        if (entry.attributes) {
+          pre.setAttribute("type", entry.type);
+          for (const [key, value] of Object.entries(entry.attributes)) {
+            pre.setAttribute(key, value);
+          }
+        }
+        parent.appendChild(pre);
+        entry.inner.forEach((child) => ContentEntries.convertToHTMLByType(child, pre));
+      }
+      static convertNodeToEntry(node) {
+        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
+          acc[attr.name] = attr.value;
+          return acc;
+        }, {});
+        const inner = [];
+        Array.from(node.childNodes).forEach((childNode) => {
+          const childEntry = ContentEntries.convertNodeToEntry(childNode);
+          if (childEntry) inner.push(childEntry);
+        });
+        return new _PreEntry(attributes, inner);
+      }
+    };
+    CodeEntry = class _CodeEntry extends ContentEntry {
+      type = "code";
+      attributes;
+      inner;
+      constructor(attributes, inner = []) {
+        super();
+        this.attributes = attributes;
+        this.inner = inner;
+      }
+      static convertToHTML(entry, parent) {
+        const code = document.createElement("code");
+        if (entry.attributes) {
+          code.setAttribute("type", entry.type);
+          for (const [key, value] of Object.entries(entry.attributes)) {
+            code.setAttribute(key, value);
+          }
+        }
+        parent.appendChild(code);
+        entry.inner.forEach((child) => ContentEntries.convertToHTMLByType(child, code));
+      }
+      static convertNodeToEntry(node) {
+        if (node.tagName !== "CODE") return null;
+        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
+          acc[attr.name] = attr.value;
+          return acc;
+        }, {});
+        const inner = [];
+        Array.from(node.childNodes).forEach((childNode) => {
+          const childEntry = ContentEntries.convertNodeToEntry(childNode);
+          if (childEntry) inner.push(childEntry);
+        });
+        return new _CodeEntry(attributes, inner);
+      }
+    };
+    BreakEntry = class _BreakEntry extends ContentEntry {
+      type = "break";
+      attributes;
+      //inner?: ContentEntry[];
+      constructor(attributes) {
+        super();
+        this.attributes = attributes;
+      }
+      static convertToHTML(entry, parent) {
+        const br = document.createElement("br");
+        if (entry.attributes) {
+          for (const [key, value] of Object.entries(entry.attributes)) {
+            br.setAttribute(key, value);
+          }
+        }
+        parent.appendChild(br);
+      }
+      static convertNodeToEntry(node) {
+        if (node.tagName === "BR") {
+          const attributes = Array.from(node.attributes).reduce((acc, attr) => {
+            acc[attr.name] = attr.value;
+            return acc;
+          }, {});
+          return new _BreakEntry(attributes);
+        }
+        return null;
+      }
+    };
+    ContentEntries = class {
+      static convertToHTMLByType(entry, parent) {
+        switch (entry.type) {
+          case "text":
+            TextEntry.convertToHTML(entry, parent);
+            break;
+          case "group":
+            GroupEntry.convertToHTML(entry, parent);
+            break;
+          case "link":
+            LinkEntry.convertToHTML(entry, parent);
+            break;
+          case "header":
+            HeaderEntry.convertToHTML(entry, parent);
+            break;
+          case "file":
+            FileEntry.convertToHTML(entry, parent);
+            break;
+          case "custom":
+            CustomEntry.convertToHTML(entry, parent);
+            break;
+          case "pre":
+            PreEntry.convertToHTML(entry, parent);
+            break;
+          case "code":
+            CodeEntry.convertToHTML(entry, parent);
+            break;
+          case "break":
+            BreakEntry.convertToHTML(entry, parent);
+            break;
+          default:
+            console.warn("Unknown entry type:", entry.type);
+        }
+      }
+      static convertNodeToEntry(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return TextEntry.convertNodeToEntry(node);
+        }
+        if (node.nodeName === "DIV") {
+          const div = node;
+          if (div.getAttribute("custom") === "true") {
+            return CustomEntry.convertNodeToEntry(div);
+          }
+          return GroupEntry.convertNodeToEntry(div);
+        }
+        if (node.nodeName === "A") {
+          return LinkEntry.convertNodeToEntry(node);
+        }
+        if (/^H[1-6]$/.test(node.nodeName)) {
+          return HeaderEntry.convertNodeToEntry(node);
+        }
+        if (node.nodeName === "B" || node.nodeName === "I" || node.nodeName === "SPAN") {
+          return TextEntry.convertNodeToEntry(node);
+        }
+        if (node.nodeName === "PRE") {
+          return PreEntry.convertNodeToEntry(node);
+        }
+        if (node.nodeName === "CODE") {
+          return CodeEntry.convertNodeToEntry(node);
+        }
+        if (node.nodeName === "BR") {
+          return BreakEntry.convertNodeToEntry(node);
+        }
+        return null;
+      }
+    };
+  }
+});
+
+// src/components/shared/BlobEditor/WEditor.ts
+var CHANGE_TIMEOUT_MS, WEditor;
+var init_WEditor = __esm({
+  "src/components/shared/BlobEditor/WEditor.ts"() {
+    "use strict";
+    init_preact_module();
+    init_ContentEntries();
+    CHANGE_TIMEOUT_MS = 2e3;
+    WEditor = class {
+      container;
+      blob;
+      contentEditable;
+      onChangeHandler;
+      plugins;
+      applyChangesTimeoutId = null;
+      autoSaveTimeoutId = null;
+      constructor(container, blob, onChange, plugins = []) {
+        this.container = container;
+        this.blob = blob;
+        this.contentEditable = null;
+        this.onChangeHandler = onChange;
+        this.plugins = plugins || [];
+        this.initialize();
+        this.initPlugins();
+      }
+      initialize() {
+        if (!this.container) {
+          console.error("WEditor initialization failed: Container is null");
+          return;
+        }
+        if (!this.contentEditable) {
+          this.contentEditable = document.createElement("div");
+          this.contentEditable.setAttribute("contenteditable", "true");
+          this.container.appendChild(this.contentEditable);
+        }
+        this.loadBlob();
+        this.setupEventListeners();
+      }
+      initPlugins() {
+        if (!this.container) return;
+        this.plugins.forEach((plugin) => {
+          plugin.initialize(this, this.container);
+        });
+      }
+      setupEventListeners() {
+        if (!this.contentEditable) return;
+        this.contentEditable.addEventListener("input", this.handleContentChange);
+        this.contentEditable.addEventListener("keyup", this.handleContentChange);
+      }
+      handleContentChange = () => {
+        console.log(`change.`);
+        if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
+        this.applyChangesTimeoutId = setTimeout(() => {
+          console.log(`applyChangesTimeout`);
+          this.applyChanges();
+        }, CHANGE_TIMEOUT_MS);
+        if (!this.autoSaveTimeoutId) {
+          this.autoSaveTimeoutId = setTimeout(() => {
+            console.log(`autoSaveTimeout`);
+            this.applyChanges();
+          }, CHANGE_TIMEOUT_MS / 2);
+        }
+      };
+      loadBlob() {
+        if (!this.contentEditable) {
+          console.error("Cannot load blob: ContentEditable is null");
+          return;
+        }
+        this.contentEditable.innerHTML = "";
+        this.convertToHTML(this.blob.content, this.contentEditable);
+      }
+      convertToHTML(content, parent) {
+        content.entries.forEach((entry) => {
+          ContentEntries.convertToHTMLByType(entry, parent);
+        });
+      }
+      applyChanges() {
+        if (!this.contentEditable) {
+          console.error("Cannot apply changes: ContentEditable is null");
+          return null;
+        }
+        if (this.autoSaveTimeoutId) {
+          clearTimeout(this.autoSaveTimeoutId);
+          this.autoSaveTimeoutId = null;
+        }
+        const entries = [];
+        const nodes = Array.from(this.contentEditable.childNodes);
+        nodes.forEach((node) => {
+          const entry = ContentEntries.convertNodeToEntry(node);
+          if (entry) entries.push(entry);
+        });
+        const content = { entries };
+        this.onChangeHandler(content);
+        return content;
+      }
+      updateContent(newContent) {
+      }
+    };
+  }
+});
+
+// src/components/shared/BlobEditor/BlobEditor.tsx
+var BlobEditor;
+var init_BlobEditor2 = __esm({
+  "src/components/shared/BlobEditor/BlobEditor.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_TabPlugin();
+    init_hooks_module();
+    init_Blob();
+    init_throttle();
+    init_BlobService();
+    init_BlobEditor();
+    init_WEditor();
+    init_jsxRuntime_module();
+    BlobEditor = ({ blob: initialBlob }) => {
+      const [currentBlob, setCurrentBlob] = h2(initialBlob || null);
+      const editorRef = A2(null);
+      const containerRef = A2(null);
+      const blobService = new BlobService();
+      y2(() => {
+        const initBlob = async () => {
+          if (!initialBlob) {
+            try {
+              const blobs = await blobService.listBlobs();
+              const mostRecentBlob = blobs.reduce(
+                (latest, current) => !latest || current.dateUpdated > latest.dateUpdated ? current : latest,
+                null
+              );
+              if (mostRecentBlob) {
+                setCurrentBlob(mostRecentBlob);
+              } else {
+                setCurrentBlob(new Blob({}));
+              }
+            } catch (error3) {
+              console.error("Failed to load blobs:", error3);
+              setCurrentBlob(new Blob({}));
+            }
+          }
+        };
+        initBlob();
+      }, [initialBlob]);
+      y2(() => {
+        if (currentBlob && containerRef.current && !editorRef.current) {
+          editorRef.current = new WEditor(
+            containerRef.current,
+            currentBlob,
+            onContentChanged,
+            [new TabPlugin()]
+          );
+        }
+      }, [currentBlob]);
+      const saveBlob = (blob) => {
+        blobService.saveBlob(blob);
+      };
+      const saveBlobThrottled = A2(throttle(saveBlob, 2e3)).current;
+      const onContentChanged = (content) => {
+        if (currentBlob) {
+          currentBlob.content = content;
+          currentBlob.dateUpdated = /* @__PURE__ */ new Date();
+          saveBlobThrottled(currentBlob);
+          setCurrentBlob({ ...currentBlob });
+        }
+      };
+      const handleTitleChange = (e4) => {
+        if (e4.target instanceof HTMLInputElement && currentBlob) {
+          currentBlob.title = e4.target.value;
+          currentBlob.dateUpdated = /* @__PURE__ */ new Date();
+          saveBlobThrottled(currentBlob);
+          setCurrentBlob({ ...currentBlob });
+        }
+      };
+      if (!currentBlob) {
+        return /* @__PURE__ */ u2("p", { class: "error-message", children: "Loading..." });
+      }
+      return /* @__PURE__ */ u2("div", { class: "blob-editor", style: { width: "100%", height: "100%", display: "flex", flexDirection: "column" }, children: [
+        /* @__PURE__ */ u2("h2", { children: "Blob Editor" }),
+        /* @__PURE__ */ u2(
+          "input",
+          {
+            type: "text",
+            value: currentBlob.title,
+            onChange: handleTitleChange,
+            class: "blob-title"
+          }
+        ),
+        /* @__PURE__ */ u2("div", { ref: containerRef, class: "wysiwyg-container", style: { flexGrow: 1 } })
+      ] });
+    };
+  }
+});
+
+// src/components/pages/Other/style.scss
+var init_style5 = __esm({
+  "src/components/pages/Other/style.scss"() {
+  }
+});
+
+// src/components/pages/Other/index.tsx
+var OtherPage, Other_default;
+var init_Other = __esm({
+  "src/components/pages/Other/index.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_BlobEditor2();
+    init_style5();
+    init_jsxRuntime_module();
+    OtherPage = (props) => {
+      return /* @__PURE__ */ u2("div", { className: "page", id: "entry", children: /* @__PURE__ */ u2(BlobEditor, {}) });
+    };
+    Other_default = OtherPage;
+  }
+});
+
+// src/components/pages/Play/style.scss
+var init_style6 = __esm({
+  "src/components/pages/Play/style.scss"() {
+  }
+});
+
+// src/components/pages/Play/index.tsx
+var PlayPage, Play_default;
+var init_Play = __esm({
+  "src/components/pages/Play/index.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_style6();
+    init_jsxRuntime_module();
+    PlayPage = (props) => {
+      return /* @__PURE__ */ u2("div", { className: "page", id: "play", children: /* @__PURE__ */ u2("h1", { children: "Play" }) });
+    };
+    Play_default = PlayPage;
+  }
+});
+
+// src/components/pages/Timeline/Timeline.ts
+var events, categories, Timeline;
+var init_Timeline = __esm({
+  "src/components/pages/Timeline/Timeline.ts"() {
+    "use strict";
+    init_preact_module();
+    events = [
+      {
+        category: "work",
+        name: "Meeting with John",
+        notes: "Discussed project XYZ",
+        tags: ["project"],
+        time: /* @__PURE__ */ new Date("2022-01-01T12:00:00")
+      },
+      {
+        category: "work",
+        name: "Meeting with Bob",
+        notes: "Discussed project XYZ",
+        tags: ["project"],
+        time: /* @__PURE__ */ new Date("2022-01-04T12:00:00")
+      },
+      {
+        category: "work",
+        name: "Meeting with Jane",
+        notes: "Discussed project XYZ",
+        tags: ["project"],
+        time: /* @__PURE__ */ new Date("2022-01-09T13:00:00")
+      },
+      {
+        category: "personal",
+        name: "Birthday party",
+        notes: "Celebrating my birthday",
+        tags: ["party"],
+        time: /* @__PURE__ */ new Date("2022-01-12T17:00:00")
+      },
+      {
+        category: "personal",
+        name: "Birthday party",
+        notes: "Celebrating my birthday",
+        tags: ["party"],
+        time: /* @__PURE__ */ new Date("2022-01-11T17:00:00")
+      },
+      {
+        category: "other",
+        name: "Something Other",
+        notes: "Notes",
+        tags: ["something"],
+        time: /* @__PURE__ */ new Date("2022-01-03T13:00:00")
+      }
+      // ... more events here
+    ];
+    categories = {
+      "work": "#3498db",
+      "personal": "#e74c3c",
+      "other": "#2ecc71"
+    };
+    Timeline = class {
+      constructor(container, events2) {
+        this.container = container;
+        this.events = events2;
+        this.init();
+        if (this.events) this.drawTimeline();
+      }
+      canvas = null;
+      ctx = null;
+      init() {
+        if (!this.container) throw new Error("No container for timeline.");
+        this.canvas = document.createElement("canvas");
+        this.container.appendChild(this.canvas);
+        this.ctx = this.canvas.getContext("2d");
+        this.canvas.width = this.container.offsetWidth;
+        this.canvas.height = this.container.offsetHeight;
+        console.log(`container`, this.container.offsetWidth, this.container.offsetHeight);
+        this.ctx.fillStyle = "black";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.bindEvents();
+      }
+      bindEvents() {
+        this.canvas.addEventListener("wheel", (event) => {
+          const delta = event.deltaY * -1;
+          if (delta > 0) {
+            this.ctx.scale(0.9, 0.9);
+          } else {
+            this.ctx.scale(1.1, 1.1);
+          }
+          this.drawTimeline();
+        });
+        this.canvas.addEventListener("mousemove", (event) => {
+          const x2 = event.clientX - this.canvas.offsetLeft;
+          const y3 = event.clientY - this.canvas.offsetTop;
+          events.forEach((event2) => {
+            const eventX = Math.floor((event2.time - /* @__PURE__ */ new Date("2022-01-01T00:00:00")) / (365 * 24 * 60 * 60 * 1e3));
+            const eventY = Math.floor(event2.category);
+            if (x2 >= eventX - 10 && x2 <= eventX + 10 && y3 >= eventY - 10 && y3 <= eventY + 10) {
+              const popup = document.createElement("div");
+              popup.textContent = `${event2.name}: ${event2.notes}`;
+              popup.style.position = "absolute";
+              popup.style.left = `${x2 + 10}px`;
+              popup.style.top = `${y3 - 20}px`;
+              this.canvas.appendChild(popup);
+            }
+          });
+        });
+      }
+      // Define a function to calculate the x position for an event based on its time
+      getXPosition(event) {
+        return Math.floor((event.time - /* @__PURE__ */ new Date("2022-01-01T00:00:00")) / (365 * 24 * 60 * 60 * 1e3)) + 10;
+      }
+      // Draw the timeline
+      drawTimeline() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.events.forEach((event) => {
+          const x2 = this.getXPosition(event);
+          const y3 = Math.floor(event.category);
+          this.ctx.beginPath();
+          this.ctx.arc(x2, y3, 10, 0, Math.PI * 2);
+          this.ctx.fillStyle = categories[event.category];
+          this.ctx.fill();
+          const label = document.createElement("span");
+          label.textContent = event.name;
+          label.style.position = "absolute";
+          label.style.left = `${x2}px`;
+          label.style.top = `${y3 - 10}px`;
+          this.canvas.appendChild(label);
+        });
+      }
+    };
+  }
+});
+
+// src/components/pages/Timeline/style.scss
+var init_style7 = __esm({
+  "src/components/pages/Timeline/style.scss"() {
+  }
+});
+
+// src/components/pages/Timeline/index.tsx
+var TimelinePage, Timeline_default;
+var init_Timeline2 = __esm({
+  "src/components/pages/Timeline/index.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_Timeline();
+    init_hooks_module();
+    init_style7();
+    init_jsxRuntime_module();
+    TimelinePage = (props) => {
+      y2(() => {
+        const el = document.getElementById("timeline");
+        if (el) new Timeline(el, events);
+      }, []);
+      return /* @__PURE__ */ u2("div", { className: "page", id: "timeline-page", children: /* @__PURE__ */ u2("div", { id: "timeline" }) });
+    };
+    Timeline_default = TimelinePage;
+  }
+});
+
+// src/components/pages/Work/style.scss
+var init_style8 = __esm({
+  "src/components/pages/Work/style.scss"() {
+  }
+});
+
+// src/components/pages/Work/index.tsx
+var WorkPage, Work_default;
+var init_Work = __esm({
+  "src/components/pages/Work/index.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_hooks_module();
+    init_AudioManager();
+    init_style8();
+    init_jsxRuntime_module();
+    WorkPage = (props) => {
+      const [filters, setFilters] = h2([]);
+      const entries = [];
+      const clickSubnav = (f4) => {
+        playSound("click");
+        toggleFilter(f4);
+      };
+      const toggleFilter = (f4) => {
+        if (filters.includes(f4)) setFilters(filters.filter((_f) => _f != f4));
+        else setFilters([...filters, f4]);
+      };
+      const isFiltered = (f4) => {
+        return filters.includes(f4);
+      };
+      return /* @__PURE__ */ u2("div", { className: "page", id: "work", children: [
+        /* @__PURE__ */ u2("h1", { children: "Work" }),
+        /* @__PURE__ */ u2("div", { className: "sub-nav", children: [
+          /* @__PURE__ */ u2(
+            "a",
+            {
+              href: "#freelance",
+              onMouseEnter: (e4) => playSound("hover"),
+              onClick: (e4) => clickSubnav("freelance"),
+              className: isFiltered("freelance") ? " on" : "",
+              children: "Freelance"
+            }
+          ),
+          /* @__PURE__ */ u2(
+            "a",
+            {
+              href: "#fulltime",
+              onMouseEnter: (e4) => playSound("hover"),
+              onClick: (e4) => clickSubnav("fulltime"),
+              className: isFiltered("fulltime") ? " on" : "",
+              children: "Fulltime"
+            }
+          )
+        ] })
+      ] });
+    };
+    Work_default = WorkPage;
+  }
+});
+
+// src/config/routes.tsx
+var routes_default;
+var init_routes = __esm({
+  "src/config/routes.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_Entry();
+    init_Home();
+    init_Info();
+    init_NotFound();
+    init_Other();
+    init_Play();
+    init_Timeline2();
+    init_Work();
+    init_jsxRuntime_module();
+    routes_default = {
+      "/": (p3) => /* @__PURE__ */ u2(Home_default, {}),
+      "/work": (p3) => /* @__PURE__ */ u2(Work_default, {}),
+      "/play": (p3) => /* @__PURE__ */ u2(Play_default, {}),
+      "/info": (p3) => /* @__PURE__ */ u2(Info_default, {}),
+      "/editor": (p3) => /* @__PURE__ */ u2(Other_default, {}),
+      "/timeline": (p3) => /* @__PURE__ */ u2(Timeline_default, {}),
+      "/entries/:slug": (p3) => /* @__PURE__ */ u2(Entry_default, {}),
+      "*": (p3) => /* @__PURE__ */ u2(NotFound_default, {})
+    };
+  }
+});
+
+// src/config/config.ts
+var require_config = __commonJS({
+  "src/config/config.ts"(exports, module) {
+    "use strict";
+    init_preact_module();
+    init_routes();
+    module.exports = {
+      DEFAUlT_ROUTE: "/timeline",
+      routes: routes_default
+    };
   }
 });
 
@@ -1537,9 +2734,9 @@ var EventService_default = EventService;
 init_hooks_module();
 var ROUTE_CHANGE_EVENT = "route-change";
 function useRouter() {
-  const [route, setRoute] = h3(void 0);
-  const [routeParams, setRouteParams] = h3(void 0);
-  const [routeArgs, setRouteArgs] = h3(void 0);
+  const [route, setRoute] = h2(void 0);
+  const [routeParams, setRouteParams] = h2(void 0);
+  const [routeArgs, setRouteArgs] = h2(void 0);
   y2(() => {
     function handleRouteChange(e4) {
       setRoute(e4.target.route);

@@ -1,56 +1,95 @@
-import { Blob } from 'components/shared/BlobEditor/Blob';
-import { BlobMenu } from 'components/shared/BlobEditor/BlobMenu';
-import { WYSIWYGEditor } from 'components/shared/BlobEditor/Editor';
-import { useEffect } from 'preact/hooks';
-import { v4 as uuidv4 } from 'uuid';
+import { TabPlugin } from 'components/shared/BlobEditor/plugins/TabPlugin';
+import { useEffect, useRef, useState } from 'preact/hooks';
+import { Blob, BlobContent } from 'types/Blob';
+import { throttle } from 'utils/throttle';
+import { BlobService } from './BlobService'; // Assuming BlobService is in this path
+import './styles/BlobEditor.scss';
+import { WEditor } from './WEditor';
 
-const BlobEditor = (props) => {
+interface Props {
+    blob?: Blob;
+}
+
+export const BlobEditor: FunctionComponent<Props> = ({ blob: initialBlob }) => {
+    const [currentBlob, setCurrentBlob] = useState<Blob | null>(initialBlob || null);
+    const editorRef = useRef<WEditor | null>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const blobService = new BlobService();
 
     useEffect(() => {
-        console.log(`BE`)
-
-        const initialBlob = new Blob(uuidv4(), 'blob', 'Initial Title', [
-            {
-                type: 'div',
-                attributes: { class: 'div-class' },
-                children: 'Some text'
-            },
-            {
-                type: 'ul',
-                attributes: { class: 'ul-class' },
-                children: [
-                    {
-                        type: 'li',
-                        attributes: { class: 'li-class' },
-                        children: 'some text'
+        const initBlob = async () => {
+            if (!initialBlob) {
+                try {
+                    const blobs = await blobService.listBlobs();
+                    const mostRecentBlob = blobs.reduce((latest, current) =>
+                        !latest || (current.dateUpdated > latest.dateUpdated) ? current : latest,
+                        null as Blob | null
+                    );
+                    if (mostRecentBlob) {
+                        setCurrentBlob(mostRecentBlob);
+                    } else {
+                        // If no blobs exist, create a new one
+                        setCurrentBlob(new Blob({}));
                     }
-                ]
+                } catch (error) {
+                    console.error('Failed to load blobs:', error);
+                    // Handle error case, maybe set a default or empty blob
+                    setCurrentBlob(new Blob({}));
+                }
             }
-        ]);
+        };
+        initBlob();
+    }, [initialBlob]);
 
-        const editor = new WYSIWYGEditor(document.getElementById('editor-container'), initialBlob);
-        console.log(`editor`, editor)
-        window.editor = editor;
+    useEffect(() => {
+        if (currentBlob && containerRef.current && !editorRef.current) {
+            editorRef.current = new WEditor(
+                containerRef.current,
+                currentBlob,
+                onContentChanged,
+                [new TabPlugin()]
+            );
+        }
+    }, [currentBlob]);
 
-    }, [])
+    const saveBlob = (blob: Blob) => {
+        blobService.saveBlob(blob);
+    };
 
-    function onBlobChange(b) {
-        console.log(`change blob`, b)
-        window.editor.loadBlob(b);
+    const saveBlobThrottled = useRef(throttle(saveBlob, 2000)).current;
+
+    const onContentChanged = (content: BlobContent) => {
+        if (currentBlob) {
+            currentBlob.content = content;
+            currentBlob.dateUpdated = new Date();
+            saveBlobThrottled(currentBlob);
+            setCurrentBlob({ ...currentBlob }); // Shallow copy to trigger re-render
+        }
+    };
+
+    const handleTitleChange = (e: Event) => {
+        if (e.target instanceof HTMLInputElement && currentBlob) {
+            currentBlob.title = e.target.value;
+            currentBlob.dateUpdated = new Date();
+            saveBlobThrottled(currentBlob);
+            setCurrentBlob({ ...currentBlob });
+        }
+    };
+
+    if (!currentBlob) {
+        return <p class="error-message">Loading...</p>;
     }
 
     return (
-        <>
-            <BlobMenu onBlobChange={onBlobChange} />
-
-            <div id="editor-container">
-
-                EDITOR
-
-            </div>
-        </>
+        <div class="blob-editor" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <h2>Blob Editor</h2>
+            <input
+                type="text"
+                value={currentBlob.title}
+                onChange={handleTitleChange}
+                class="blob-title"
+            />
+            <div ref={containerRef} class="wysiwyg-container" style={{ flexGrow: 1 }}></div>
+        </div>
     );
 };
-
-export default BlobEditor;
-

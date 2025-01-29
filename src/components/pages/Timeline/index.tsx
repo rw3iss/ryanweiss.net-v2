@@ -1,22 +1,25 @@
-import { BlobEditor } from 'components/shared/BlobEditor/BlobEditor';
+import { Timeline, events } from 'components/pages/Timeline/Timeline';
+import { useEffect } from 'preact/hooks';
 import './style.scss';
 
-const OtherPage = (props) => {
+const TimelinePage = (props) => {
 
-    // useEffect(() => {
-    //     if (data) console.log(`got App data home`, data);
-    // }, [data])
+    useEffect(() => {
+        const el = document.getElementById('timeline');
+        if (el) new Timeline(el, events);
+    }, [])
 
     return (
-        <div className="page" id="entry">
+        <div className="page" id="timeline-page">
 
-            <BlobEditor />
+            <div id="timeline">
+            </div>
 
         </div>
     );
 };
 
-export default OtherPage;
+export default TimelinePage;
 
 
 // import { renderDate } from 'lib/utils/DateUtils';
