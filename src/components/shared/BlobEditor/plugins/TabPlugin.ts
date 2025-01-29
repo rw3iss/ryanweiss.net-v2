@@ -1,4 +1,4 @@
-import { WEditor } from '../WEditor';
+import { WEditor } from '../lib/WEditor';
 import { IPlugin } from './IPlugin.ts';
 
 export class TabPlugin implements IPlugin {

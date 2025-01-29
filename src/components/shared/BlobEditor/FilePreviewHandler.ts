@@ -1,4 +1,4 @@
-import { WEditor } from './WEditor';
+import { WEditor } from './lib/WEditor';
 
 export class FilePreviewHandler {
     private editor: WEditor;

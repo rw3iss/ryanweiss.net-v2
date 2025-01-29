@@ -1,5 +1,5 @@
-import { WEditor } from "../WEditor.ts";
+import { WEditor } from "../lib/WEditor.js";
 
 export interface IPlugin {
-    initialize(editor: WEditor, container: HTMLElement): IPlugin;
+    initialize(editor: WEditor, container: HTMLElement): void;
 }

@@ -8,7 +8,10 @@ export function RouteContext() {
 
     // tell the router to try to load the initial url
     useEffect(() => {
-        if (!route) navigate(DEFAULT_ROUTE || location.pathname);
+        console.log(`route to:`, location.pathname, DEFAULT_ROUTE);
+        let l = location.pathname;
+        if (l == '/' || l == '') l = DEFAULT_ROUTE;
+        if (!route) navigate(l);
     }, []);
 
     return (

@@ -588,6 +588,66 @@ var init_NotFound = __esm({
   }
 });
 
+// src/components/shared/BlobEditor/plugins/PastePlugin.ts
+var PastePlugin;
+var init_PastePlugin = __esm({
+  "src/components/shared/BlobEditor/plugins/PastePlugin.ts"() {
+    "use strict";
+    init_preact_module();
+    PastePlugin = class {
+      constructor() {
+      }
+      initialize(editor, container) {
+        container.addEventListener("paste", this.handlePaste);
+      }
+      handleToolbarPaste = (e4) => {
+        console.log(`toolbar paste click.`);
+      };
+      toolbar = {
+        type: "button",
+        icon: "/public/icons/icon-paste.svg",
+        label: "Paste",
+        onClick: this.handleToolbarPaste
+      };
+      handlePaste = (e4) => {
+        e4.preventDefault();
+        const clipboardData = e4.clipboardData || window.clipboardData;
+        if (!clipboardData) return;
+        let pastedContent = clipboardData.getData("text/html") || clipboardData.getData("text/plain");
+        console.log(`paste after`, pastedContent);
+        if (pastedContent && this.containsHTML(pastedContent)) {
+          pastedContent = this.sanitizeContent(pastedContent);
+        }
+        console.log(`paste after`, pastedContent);
+        this.insertSanitizedContent(pastedContent, e4.target);
+      };
+      containsHTML(content) {
+        return /<[^>]+>/i.test(content);
+      }
+      s;
+      sanitizeContent(content) {
+        return content.replace(/style=(["'])(?:(?=(\\?))\2.)*?\1/g, "");
+      }
+      insertSanitizedContent(content, target) {
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount) {
+          const range = selection.getRangeAt(0);
+          range.deleteContents();
+          const tempDiv = document.createElement("div");
+          tempDiv.innerHTML = content;
+          let node;
+          while (node = tempDiv.firstChild) {
+            range.insertNode(node);
+          }
+          range.collapse(false);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
+      }
+    };
+  }
+});
+
 // src/components/shared/BlobEditor/plugins/TabPlugin.ts
 var TabPlugin;
 var init_TabPlugin = __esm({
@@ -619,6 +679,106 @@ var init_TabPlugin = __esm({
               if (editor) editor.applyChanges();
             }
           }
+        }
+      };
+    };
+  }
+});
+
+// src/components/shared/BlobEditor/plugins/ToolbarPlugin.ts
+var ToolbarPlugin;
+var init_ToolbarPlugin = __esm({
+  "src/components/shared/BlobEditor/plugins/ToolbarPlugin.ts"() {
+    "use strict";
+    init_preact_module();
+    ToolbarPlugin = class {
+      editor;
+      toolbarContainer = null;
+      isVisible = false;
+      constructor() {
+      }
+      initialize(editor, container) {
+        this.editor = editor;
+        this.initUI(container);
+        container.addEventListener("mouseup", this.checkForSelection);
+        container.addEventListener("contextmenu", this.showToolbar);
+        document.addEventListener("keydown", this.handleEscapeKey);
+      }
+      initUI(container) {
+        if (!this.toolbarContainer) {
+          this.toolbarContainer = document.createElement("div");
+          this.toolbarContainer.className = "toolbar-container";
+          this.toolbarContainer.style.display = "none";
+          container.appendChild(this.toolbarContainer);
+        }
+        this.toolbarContainer.innerHTML = "";
+        let hasItems = false;
+        this.editor.plugins.forEach((plugin) => {
+          if ("toolbar" in plugin) {
+            this.createToolbarItem(plugin.toolbar);
+            hasItems = true;
+          }
+        });
+        if (!hasItems) {
+          this.toolbarContainer.style.display = "none";
+        }
+      }
+      createToolbarItem(item) {
+        if (item.type === "button") {
+          const button = document.createElement("button");
+          button.className = "toolbar-button";
+          if (item.icon) {
+            const icon = document.createElement("img");
+            icon.src = item.icon;
+            icon.alt = item.label;
+            button.appendChild(icon);
+          }
+          if (item.label) {
+            const label = document.createElement("span");
+            label.textContent = item.label;
+            button.appendChild(label);
+          }
+          if (item.onClick) {
+            button.addEventListener("click", () => {
+              item.onClick.call(this.editor);
+              this.hideToolbar();
+            });
+          }
+          this.toolbarContainer?.appendChild(button);
+        } else if (item.type === "group") {
+          const group = document.createElement("div");
+          group.className = "toolbar-group";
+          item.items.forEach((groupItem) => this.createToolbarItem(groupItem));
+          this.toolbarContainer?.appendChild(group);
+        }
+      }
+      checkForSelection = (e4) => {
+        if (window.getSelection()?.toString().length > 0) {
+          this.showToolbar(e4);
+        } else {
+          this.hideToolbar();
+        }
+      };
+      showToolbar = (e4) => {
+        if (!this.toolbarContainer || this.toolbarContainer.children.length === 0) return;
+        const rect = e4.target instanceof Element ? e4.target.getBoundingClientRect() : { top: 0, left: 0 };
+        const windowWidth = window.innerWidth;
+        this.toolbarContainer.style.top = `${rect.top - this.toolbarContainer.offsetHeight}px`;
+        this.toolbarContainer.style.left = `${e4.clientX}px`;
+        if (e4.clientX + this.toolbarContainer.offsetWidth > windowWidth) {
+          this.toolbarContainer.style.left = `${windowWidth - this.toolbarContainer.offsetWidth}px`;
+        }
+        this.toolbarContainer.style.display = "flex";
+        this.isVisible = true;
+      };
+      hideToolbar = () => {
+        if (!this.toolbarContainer) return;
+        this.toolbarContainer.style.display = "none";
+        this.isVisible = false;
+      };
+      handleEscapeKey = (e4) => {
+        if (e4.key === "Escape" && this.isVisible) {
+          this.hideToolbar();
         }
       };
     };
@@ -1003,10 +1163,10 @@ var require_eventbus_min = __commonJS({
   }
 });
 
-// src/components/shared/BlobEditor/ApiClient.ts
+// src/components/shared/BlobEditor/lib/ApiClient.ts
 var ApiClient;
 var init_ApiClient = __esm({
-  "src/components/shared/BlobEditor/ApiClient.ts"() {
+  "src/components/shared/BlobEditor/lib/ApiClient.ts"() {
     "use strict";
     init_preact_module();
     ApiClient = class {
@@ -1483,10 +1643,10 @@ var require_lib = __commonJS({
   }
 });
 
-// src/components/shared/BlobEditor/CacheService.ts
+// src/components/shared/BlobEditor/lib/CacheService.ts
 var import_local_storage_fallback, CacheService;
 var init_CacheService = __esm({
-  "src/components/shared/BlobEditor/CacheService.ts"() {
+  "src/components/shared/BlobEditor/lib/CacheService.ts"() {
     "use strict";
     init_preact_module();
     import_local_storage_fallback = __toESM(require_lib());
@@ -1539,10 +1699,10 @@ var init_CacheService = __esm({
   }
 });
 
-// src/components/shared/BlobEditor/BlobService.ts
+// src/components/shared/BlobEditor/lib/BlobService.ts
 var import_eventbusjs, BlobService;
 var init_BlobService = __esm({
-  "src/components/shared/BlobEditor/BlobService.ts"() {
+  "src/components/shared/BlobEditor/lib/BlobService.ts"() {
     "use strict";
     init_preact_module();
     import_eventbusjs = __toESM(require_eventbus_min());
@@ -1575,7 +1735,6 @@ var init_BlobService = __esm({
         return blob;
       }
       async saveBlob(blob) {
-        console.log(`save`, blob);
         await this.apiClient.saveBlob(blob);
         this.cacheService.set(blob.id, blob);
         this.notifyEvent("blobUpdated", blob);
@@ -1592,12 +1751,6 @@ var init_BlobService = __esm({
         this.cacheService.clear();
       }
     };
-  }
-});
-
-// src/components/shared/BlobEditor/styles/BlobEditor.scss
-var init_BlobEditor = __esm({
-  "src/components/shared/BlobEditor/styles/BlobEditor.scss"() {
   }
 });
 
@@ -2010,10 +2163,10 @@ var init_ContentEntries = __esm({
   }
 });
 
-// src/components/shared/BlobEditor/WEditor.ts
+// src/components/shared/BlobEditor/lib/WEditor.ts
 var CHANGE_TIMEOUT_MS, WEditor;
 var init_WEditor = __esm({
-  "src/components/shared/BlobEditor/WEditor.ts"() {
+  "src/components/shared/BlobEditor/lib/WEditor.ts"() {
     "use strict";
     init_preact_module();
     init_ContentEntries();
@@ -2057,18 +2210,15 @@ var init_WEditor = __esm({
       setupEventListeners() {
         if (!this.contentEditable) return;
         this.contentEditable.addEventListener("input", this.handleContentChange);
-        this.contentEditable.addEventListener("keyup", this.handleContentChange);
       }
       handleContentChange = () => {
         console.log(`change.`);
         if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
         this.applyChangesTimeoutId = setTimeout(() => {
-          console.log(`applyChangesTimeout`);
           this.applyChanges();
         }, CHANGE_TIMEOUT_MS);
         if (!this.autoSaveTimeoutId) {
           this.autoSaveTimeoutId = setTimeout(() => {
-            console.log(`autoSaveTimeout`);
             this.applyChanges();
           }, CHANGE_TIMEOUT_MS / 2);
         }
@@ -2202,8 +2352,27 @@ var init_DragDropPlugin = __esm({
         this.filePreviewHandler = new FilePreviewHandler(editor);
         container.addEventListener("dragover", this.handleDragOver);
         container.addEventListener("drop", this.handleDrop);
-        return this;
       }
+      handleToolbarFile = (e4) => {
+        console.log(`toolbar file click.`);
+      };
+      toolbar = {
+        type: "group",
+        items: [
+          {
+            type: "button",
+            icon: "/public/icons/icon-add-file.svg",
+            label: "+File",
+            onClick: this.handleToolbarFile
+          },
+          {
+            type: "button",
+            icon: "/public/icons/icon-test.svg",
+            label: "Test",
+            onClick: this.handleToolbarFile
+          }
+        ]
+      };
       handleDragOver = (e4) => {
         e4.preventDefault();
       };
@@ -2223,20 +2392,28 @@ var init_DragDropPlugin = __esm({
   }
 });
 
+// src/components/shared/BlobEditor/styles/BlobEditor.scss
+var init_BlobEditor = __esm({
+  "src/components/shared/BlobEditor/styles/BlobEditor.scss"() {
+  }
+});
+
 // src/components/shared/BlobEditor/BlobEditor.tsx
 var BlobEditor;
 var init_BlobEditor2 = __esm({
   "src/components/shared/BlobEditor/BlobEditor.tsx"() {
     "use strict";
     init_preact_module();
+    init_PastePlugin();
     init_TabPlugin();
+    init_ToolbarPlugin();
     init_hooks_module();
     init_Blob();
     init_throttle();
     init_BlobService();
-    init_BlobEditor();
     init_WEditor();
     init_DragDropPlugin();
+    init_BlobEditor();
     init_jsxRuntime_module();
     BlobEditor = ({ blob: initialBlob }) => {
       const [currentBlob, setCurrentBlob] = h2(initialBlob || null);
@@ -2272,8 +2449,10 @@ var init_BlobEditor2 = __esm({
             currentBlob,
             onContentChanged,
             [
+              new ToolbarPlugin(),
               new TabPlugin(),
-              new DragDropPlugin()
+              new DragDropPlugin(),
+              new PastePlugin()
             ]
           );
         }
@@ -2613,7 +2792,7 @@ var require_config = __commonJS({
     init_preact_module();
     init_routes();
     module.exports = {
-      DEFAUlT_ROUTE: "/timeline",
+      DEFAULT_ROUTE: "/editor",
       routes: routes_default
     };
   }
@@ -2877,7 +3056,10 @@ init_hooks_module();
 function RouteContext() {
   const { route, routeParams, navigate } = useRouter();
   y2(() => {
-    if (!route) navigate(import_config.DEFAULT_ROUTE || location.pathname);
+    console.log(`route to:`, location.pathname, import_config.DEFAULT_ROUTE);
+    let l3 = location.pathname;
+    if (l3 == "/" || l3 == "") l3 = import_config.DEFAULT_ROUTE;
+    if (!route) navigate(l3);
   }, []);
   return route ? typeof import_config.routes[route] != "undefined" ? import_config.routes[route](routeParams) : "Not found." : "";
 }
