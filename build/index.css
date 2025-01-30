@@ -1,5 +1,139 @@
 @charset "UTF-8";
 
+/* src/components/pages/Colors/ColorsPage.scss */
+.ColorPage {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100%;
+  height: 100vh;
+  background-color: #f4f4f4;
+  font-size: 16px;
+  color: #333;
+}
+.ColorPage .column {
+  flex: 1 0 33%;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  overflow-y: auto;
+  height: 100%;
+}
+.ColorPage .column button {
+  padding: 10px;
+  margin: 5px;
+  background-color: white;
+  border: 1px solid rgb(218.5, 218.5, 218.5);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.ColorPage .column button:hover {
+  background-color: white;
+}
+.ColorPage .column textarea {
+  font-family: monospace;
+  font-size: 16px;
+  padding: 10px;
+  border: 1px solid rgb(218.5, 218.5, 218.5);
+  border-radius: 4px;
+}
+.ColorPage .InputColumn textarea {
+  flex: 1;
+  resize: none;
+}
+.ColorPage .ColorEditColumn {
+  overflow-y: auto;
+}
+.ColorPage .ColorEditColumn .ColorEdit {
+  position: relative;
+  transition: background-color 0.3s ease;
+  min-height: 50px;
+}
+.ColorPage .ColorEditColumn .ColorEdit:hover {
+  background-color: white;
+}
+.ColorPage .OutputColumn {
+  overflow-y: auto;
+}
+.ColorPage .OutputColumn .tab-bar {
+  display: flex;
+  margin-bottom: 10px;
+}
+.ColorPage .OutputColumn .tab-bar button {
+  flex: 1;
+  text-align: center;
+  background-color: #f4f4f4;
+}
+.ColorPage .OutputColumn .tab-bar button.active {
+  background-color: white;
+}
+.ColorPage .OutputColumn .tab-content {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid rgb(218.5, 218.5, 218.5);
+  border-radius: 4px;
+}
+.ColorPage .OutputColumn .tab-content .color-swatches,
+.ColorPage .OutputColumn .tab-content .text-preview {
+  height: 100%;
+}
+.ColorPage .OutputColumn .tab-content .color-swatches {
+  display: flex;
+  flex-direction: column;
+}
+.ColorPage .OutputColumn .tab-content .color-swatches > div {
+  flex: 1;
+}
+.ColorPage .OutputColumn .tab-content .text-preview textarea {
+  width: 100%;
+  height: 100%;
+  resize: none;
+}
+.ColorPage .button-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+}
+.ColorPage .button-bar.top {
+  margin-bottom: 10px;
+}
+.ColorPage .button-bar.bottom {
+  margin-top: 10px;
+}
+.ColorPage .button-bar label {
+  display: flex;
+  align-items: center;
+}
+.ColorPage .button-bar label input[type=checkbox] {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+.ColorPage .button-bar label span {
+  font-size: 19.2px;
+  font-weight: bold;
+}
+.ColorPage .picker_wrapper {
+  z-index: 10000;
+}
+.color-swatch {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+.color-swatch .color-picker,
+.color-swatch .color-picker .popup {
+  z-index: 10000;
+  position: fixed;
+  display: block !important;
+}
+.color-swatch.non-clickable {
+  cursor: default;
+}
+
 /* src/components/pages/Entry/style.scss */
 @keyframes loader-ring {
   0% {
@@ -1512,15 +1646,6 @@ h5,
 h6 {
   margin: 0;
 }
-input,
-select,
-textarea,
-iframe {
-  border: none;
-  border-radius: 0;
-  -moz-appearance: none;
-  -webkit-appearance: none;
-}
 .btn {
   display: inline-flex;
   align-items: center;
@@ -1975,8 +2100,6 @@ iframe {
 }
 #app .content-wrapper .page {
   position: relative;
-  display: flex;
-  flex-direction: column;
   flex: 1;
   width: 100%;
   height: 100%;

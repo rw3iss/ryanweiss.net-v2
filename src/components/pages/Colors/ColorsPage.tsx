@@ -1,20 +1,41 @@
-import { useState } from 'preact/hooks';
+import { Component } from 'preact';
+import ColorEditColumn from './ColorEditColumn';
 import InputColumn from './InputColumn';
+import OutputColumn from './OutputColumn';
 
-const ColorsPage = () => {
-    const [colors, setColors] = useState([]);
+import './ColorsPage.scss';
 
-    const handleColorsParsed = (parsedColors) => {
-        setColors(parsedColors);
+interface ColorPageProps { }
+
+interface ColorPageState {
+    colors: { color: string, modifiedColor: string }[];
+}
+
+class ColorPage extends Component<ColorPageProps, ColorPageState> {
+    constructor(props: ColorPageProps) {
+        super(props);
+        this.state = {
+            colors: []
+        };
+    }
+
+    handleColorsParsed = (parsedColors: { color: string, modifiedColor: string }[]) => {
+        this.setState({ colors: parsedColors });
     };
 
-    return (
-        <div class="page" id="colors" style={{ display: 'flex', width: '100vw', height: '100vh' }}>
-            <InputColumn onColorsParsed={handleColorsParsed} />
-            {/* <ColorEditColumn colors={colors} />
-            <OutputColumn colors={colors} /> */}
-        </div>
-    );
-};
+    handleColorsChanged = (newColors: { color: string, modifiedColor: string }[]) => {
+        this.setState({ colors: newColors });
+    };
 
-export default ColorsPage;
+    render() {
+        return (
+            <div className="ColorPage">
+                <InputColumn onColorsParsed={this.handleColorsParsed} />
+                <ColorEditColumn colors={this.state.colors} onColorsChanged={this.handleColorsChanged} />
+                <OutputColumn colors={this.state.colors} />
+            </div>
+        );
+    }
+}
+
+export default ColorPage;

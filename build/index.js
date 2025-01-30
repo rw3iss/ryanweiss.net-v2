@@ -619,6 +619,805 @@ var init_hooks_module = __esm({
   }
 });
 
+// node_modules/vanilla-picker/dist/vanilla-picker.mjs
+function printNum(num) {
+  var decs = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 1;
+  var str = decs > 0 ? num.toFixed(decs).replace(/0+$/, "").replace(/\.$/, "") : num.toString();
+  return str || "0";
+}
+function parseHTML(htmlString) {
+  var div = document.createElement("div");
+  div.innerHTML = htmlString;
+  return div.firstElementChild;
+}
+function dragTrack(eventBucket, area, callback) {
+  var dragging = false;
+  function clamp(val, min, max) {
+    return Math.max(min, Math.min(val, max));
+  }
+  function onMove(e4, info, starting) {
+    if (starting) {
+      dragging = true;
+    }
+    if (!dragging) {
+      return;
+    }
+    e4.preventDefault();
+    var bounds = area.getBoundingClientRect(), w3 = bounds.width, h3 = bounds.height, x2 = info.clientX, y3 = info.clientY;
+    var relX = clamp(x2 - bounds.left, 0, w3), relY = clamp(y3 - bounds.top, 0, h3);
+    callback(relX / w3, relY / h3);
+  }
+  function onMouse(e4, starting) {
+    var button = e4.buttons === void 0 ? e4.which : e4.buttons;
+    if (button === 1) {
+      onMove(e4, e4, starting);
+    } else {
+      dragging = false;
+    }
+  }
+  function onTouch(e4, starting) {
+    if (e4.touches.length === 1) {
+      onMove(e4, e4.touches[0], starting);
+    } else {
+      dragging = false;
+    }
+  }
+  eventBucket.add(area, "mousedown", function(e4) {
+    onMouse(e4, true);
+  });
+  eventBucket.add(area, "touchstart", function(e4) {
+    onTouch(e4, true);
+  });
+  eventBucket.add(window, "mousemove", onMouse);
+  eventBucket.add(area, "touchmove", onTouch);
+  eventBucket.add(window, "mouseup", function(e4) {
+    dragging = false;
+  });
+  eventBucket.add(area, "touchend", function(e4) {
+    dragging = false;
+  });
+  eventBucket.add(area, "touchcancel", function(e4) {
+    dragging = false;
+  });
+}
+function $2(selector, context) {
+  return (context || document).querySelector(selector);
+}
+function stopEvent(e4) {
+  e4.preventDefault();
+  e4.stopPropagation();
+}
+function onKey(bucket, target, keys, handler, stop) {
+  bucket.add(target, EVENT_KEY, function(e4) {
+    if (keys.indexOf(e4.key) >= 0) {
+      if (stop) {
+        stopEvent(e4);
+      }
+      handler(e4);
+    }
+  });
+}
+var classCallCheck, createClass, slicedToArray, colorNames, Color, EventBucket, BG_TRANSP, HUES, EVENT_KEY, EVENT_CLICK_OUTSIDE, EVENT_TAB_MOVE, Picker, style;
+var init_vanilla_picker = __esm({
+  "node_modules/vanilla-picker/dist/vanilla-picker.mjs"() {
+    "use strict";
+    init_preact_module();
+    classCallCheck = function(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    };
+    createClass = /* @__PURE__ */ function() {
+      function defineProperties(target, props) {
+        for (var i4 = 0; i4 < props.length; i4++) {
+          var descriptor = props[i4];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ("value" in descriptor) descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps) defineProperties(Constructor.prototype, protoProps);
+        if (staticProps) defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    }();
+    slicedToArray = /* @__PURE__ */ function() {
+      function sliceIterator(arr, i4) {
+        var _arr = [];
+        var _n = true;
+        var _d = false;
+        var _e = void 0;
+        try {
+          for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+            _arr.push(_s.value);
+            if (i4 && _arr.length === i4) break;
+          }
+        } catch (err) {
+          _d = true;
+          _e = err;
+        } finally {
+          try {
+            if (!_n && _i["return"]) _i["return"]();
+          } finally {
+            if (_d) throw _e;
+          }
+        }
+        return _arr;
+      }
+      return function(arr, i4) {
+        if (Array.isArray(arr)) {
+          return arr;
+        } else if (Symbol.iterator in Object(arr)) {
+          return sliceIterator(arr, i4);
+        } else {
+          throw new TypeError("Invalid attempt to destructure non-iterable instance");
+        }
+      };
+    }();
+    String.prototype.startsWith = String.prototype.startsWith || function(needle) {
+      return this.indexOf(needle) === 0;
+    };
+    String.prototype.padStart = String.prototype.padStart || function(len, pad) {
+      var str = this;
+      while (str.length < len) {
+        str = pad + str;
+      }
+      return str;
+    };
+    colorNames = { cb: "0f8ff", tqw: "aebd7", q: "-ffff", qmrn: "7fffd4", zr: "0ffff", bg: "5f5dc", bsq: "e4c4", bck: "---", nch: "ebcd", b: "--ff", bvt: "8a2be2", brwn: "a52a2a", brw: "deb887", ctb: "5f9ea0", hrt: "7fff-", chcT: "d2691e", cr: "7f50", rnw: "6495ed", crns: "8dc", crms: "dc143c", cn: "-ffff", Db: "--8b", Dcn: "-8b8b", Dgnr: "b8860b", Dgr: "a9a9a9", Dgrn: "-64-", Dkhk: "bdb76b", Dmgn: "8b-8b", Dvgr: "556b2f", Drng: "8c-", Drch: "9932cc", Dr: "8b--", Dsmn: "e9967a", Dsgr: "8fbc8f", DsTb: "483d8b", DsTg: "2f4f4f", Dtrq: "-ced1", Dvt: "94-d3", ppnk: "1493", pskb: "-bfff", mgr: "696969", grb: "1e90ff", rbrc: "b22222", rwht: "af0", stg: "228b22", chs: "-ff", gnsb: "dcdcdc", st: "8f8ff", g: "d7-", gnr: "daa520", gr: "808080", grn: "-8-0", grnw: "adff2f", hnw: "0fff0", htpn: "69b4", nnr: "cd5c5c", ng: "4b-82", vr: "0", khk: "0e68c", vnr: "e6e6fa", nrb: "0f5", wngr: "7cfc-", mnch: "acd", Lb: "add8e6", Lcr: "08080", Lcn: "e0ffff", Lgnr: "afad2", Lgr: "d3d3d3", Lgrn: "90ee90", Lpnk: "b6c1", Lsmn: "a07a", Lsgr: "20b2aa", Lskb: "87cefa", LsTg: "778899", Lstb: "b0c4de", Lw: "e0", m: "-ff-", mgrn: "32cd32", nn: "af0e6", mgnt: "-ff", mrn: "8--0", mqm: "66cdaa", mmb: "--cd", mmrc: "ba55d3", mmpr: "9370db", msg: "3cb371", mmsT: "7b68ee", "": "-fa9a", mtr: "48d1cc", mmvt: "c71585", mnLb: "191970", ntc: "5fffa", mstr: "e4e1", mccs: "e4b5", vjw: "dead", nv: "--80", c: "df5e6", v: "808-0", vrb: "6b8e23", rng: "a5-", rngr: "45-", rch: "da70d6", pgnr: "eee8aa", pgrn: "98fb98", ptrq: "afeeee", pvtr: "db7093", ppwh: "efd5", pchp: "dab9", pr: "cd853f", pnk: "c0cb", pm: "dda0dd", pwrb: "b0e0e6", prp: "8-080", cc: "663399", r: "--", sbr: "bc8f8f", rb: "4169e1", sbrw: "8b4513", smn: "a8072", nbr: "4a460", sgrn: "2e8b57", ssh: "5ee", snn: "a0522d", svr: "c0c0c0", skb: "87ceeb", sTb: "6a5acd", sTgr: "708090", snw: "afa", n: "-ff7f", stb: "4682b4", tn: "d2b48c", t: "-8080", thst: "d8bfd8", tmT: "6347", trqs: "40e0d0", vt: "ee82ee", whT: "5deb3", wht: "", hts: "5f5f5", w: "-", wgrn: "9acd32" };
+    Color = function() {
+      function Color2(r3, g2, b2, a3) {
+        classCallCheck(this, Color2);
+        var that = this;
+        function parseString(input) {
+          if (input.startsWith("hsl")) {
+            var _input$match$map = input.match(/([\-\d\.e]+)/g).map(Number), _input$match$map2 = slicedToArray(_input$match$map, 4), h3 = _input$match$map2[0], s3 = _input$match$map2[1], l3 = _input$match$map2[2], _a = _input$match$map2[3];
+            if (_a === void 0) {
+              _a = 1;
+            }
+            h3 /= 360;
+            s3 /= 100;
+            l3 /= 100;
+            that.hsla = [h3, s3, l3, _a];
+          } else if (input.startsWith("rgb")) {
+            var _input$match$map3 = input.match(/([\-\d\.e]+)/g).map(Number), _input$match$map4 = slicedToArray(_input$match$map3, 4), _r = _input$match$map4[0], _g = _input$match$map4[1], _b = _input$match$map4[2], _a2 = _input$match$map4[3];
+            if (_a2 === void 0) {
+              _a2 = 1;
+            }
+            that.rgba = [_r, _g, _b, _a2];
+          } else {
+            if (input.startsWith("#")) {
+              that.rgba = Color2.hexToRgb(input);
+            } else {
+              that.rgba = Color2.nameToRgb(input) || Color2.hexToRgb(input);
+            }
+          }
+        }
+        if (r3 === void 0) ;
+        else if (Array.isArray(r3)) {
+          this.rgba = r3;
+        } else if (b2 === void 0) {
+          var color = r3 && "" + r3;
+          if (color) {
+            parseString(color.toLowerCase());
+          }
+        } else {
+          this.rgba = [r3, g2, b2, a3 === void 0 ? 1 : a3];
+        }
+      }
+      createClass(Color2, [{
+        key: "printRGB",
+        value: function printRGB(alpha) {
+          var rgb = alpha ? this.rgba : this.rgba.slice(0, 3), vals = rgb.map(function(x2, i4) {
+            return printNum(x2, i4 === 3 ? 3 : 0);
+          });
+          return alpha ? "rgba(" + vals + ")" : "rgb(" + vals + ")";
+        }
+      }, {
+        key: "printHSL",
+        value: function printHSL(alpha) {
+          var mults = [360, 100, 100, 1], suff = ["", "%", "%", ""];
+          var hsl = alpha ? this.hsla : this.hsla.slice(0, 3), vals = hsl.map(function(x2, i4) {
+            return printNum(x2 * mults[i4], i4 === 3 ? 3 : 1) + suff[i4];
+          });
+          return alpha ? "hsla(" + vals + ")" : "hsl(" + vals + ")";
+        }
+      }, {
+        key: "printHex",
+        value: function printHex(alpha) {
+          var hex = this.hex;
+          return alpha ? hex : hex.substring(0, 7);
+        }
+      }, {
+        key: "rgba",
+        get: function get() {
+          if (this._rgba) {
+            return this._rgba;
+          }
+          if (!this._hsla) {
+            throw new Error("No color is set");
+          }
+          return this._rgba = Color2.hslToRgb(this._hsla);
+        },
+        set: function set(rgb) {
+          if (rgb.length === 3) {
+            rgb[3] = 1;
+          }
+          this._rgba = rgb;
+          this._hsla = null;
+        }
+      }, {
+        key: "rgbString",
+        get: function get() {
+          return this.printRGB();
+        }
+      }, {
+        key: "rgbaString",
+        get: function get() {
+          return this.printRGB(true);
+        }
+      }, {
+        key: "hsla",
+        get: function get() {
+          if (this._hsla) {
+            return this._hsla;
+          }
+          if (!this._rgba) {
+            throw new Error("No color is set");
+          }
+          return this._hsla = Color2.rgbToHsl(this._rgba);
+        },
+        set: function set(hsl) {
+          if (hsl.length === 3) {
+            hsl[3] = 1;
+          }
+          this._hsla = hsl;
+          this._rgba = null;
+        }
+      }, {
+        key: "hslString",
+        get: function get() {
+          return this.printHSL();
+        }
+      }, {
+        key: "hslaString",
+        get: function get() {
+          return this.printHSL(true);
+        }
+      }, {
+        key: "hex",
+        get: function get() {
+          var rgb = this.rgba, hex = rgb.map(function(x2, i4) {
+            return i4 < 3 ? x2.toString(16) : Math.round(x2 * 255).toString(16);
+          });
+          return "#" + hex.map(function(x2) {
+            return x2.padStart(2, "0");
+          }).join("");
+        },
+        set: function set(hex) {
+          this.rgba = Color2.hexToRgb(hex);
+        }
+      }], [{
+        key: "hexToRgb",
+        value: function hexToRgb(input) {
+          var hex = (input.startsWith("#") ? input.slice(1) : input).replace(/^(\w{3})$/, "$1F").replace(/^(\w)(\w)(\w)(\w)$/, "$1$1$2$2$3$3$4$4").replace(/^(\w{6})$/, "$1FF");
+          if (!hex.match(/^([0-9a-fA-F]{8})$/)) {
+            throw new Error("Unknown hex color; " + input);
+          }
+          var rgba = hex.match(/^(\w\w)(\w\w)(\w\w)(\w\w)$/).slice(1).map(function(x2) {
+            return parseInt(x2, 16);
+          });
+          rgba[3] = rgba[3] / 255;
+          return rgba;
+        }
+      }, {
+        key: "nameToRgb",
+        value: function nameToRgb(input) {
+          var hash = input.toLowerCase().replace("at", "T").replace(/[aeiouyldf]/g, "").replace("ght", "L").replace("rk", "D").slice(-5, 4), hex = colorNames[hash];
+          return hex === void 0 ? hex : Color2.hexToRgb(hex.replace(/\-/g, "00").padStart(6, "f"));
+        }
+      }, {
+        key: "rgbToHsl",
+        value: function rgbToHsl(_ref) {
+          var _ref2 = slicedToArray(_ref, 4), r3 = _ref2[0], g2 = _ref2[1], b2 = _ref2[2], a3 = _ref2[3];
+          r3 /= 255;
+          g2 /= 255;
+          b2 /= 255;
+          var max = Math.max(r3, g2, b2), min = Math.min(r3, g2, b2);
+          var h3 = void 0, s3 = void 0, l3 = (max + min) / 2;
+          if (max === min) {
+            h3 = s3 = 0;
+          } else {
+            var d3 = max - min;
+            s3 = l3 > 0.5 ? d3 / (2 - max - min) : d3 / (max + min);
+            switch (max) {
+              case r3:
+                h3 = (g2 - b2) / d3 + (g2 < b2 ? 6 : 0);
+                break;
+              case g2:
+                h3 = (b2 - r3) / d3 + 2;
+                break;
+              case b2:
+                h3 = (r3 - g2) / d3 + 4;
+                break;
+            }
+            h3 /= 6;
+          }
+          return [h3, s3, l3, a3];
+        }
+      }, {
+        key: "hslToRgb",
+        value: function hslToRgb(_ref3) {
+          var _ref4 = slicedToArray(_ref3, 4), h3 = _ref4[0], s3 = _ref4[1], l3 = _ref4[2], a3 = _ref4[3];
+          var r3 = void 0, g2 = void 0, b2 = void 0;
+          if (s3 === 0) {
+            r3 = g2 = b2 = l3;
+          } else {
+            var hue2rgb = function hue2rgb2(p4, q4, t3) {
+              if (t3 < 0) t3 += 1;
+              if (t3 > 1) t3 -= 1;
+              if (t3 < 1 / 6) return p4 + (q4 - p4) * 6 * t3;
+              if (t3 < 1 / 2) return q4;
+              if (t3 < 2 / 3) return p4 + (q4 - p4) * (2 / 3 - t3) * 6;
+              return p4;
+            };
+            var q3 = l3 < 0.5 ? l3 * (1 + s3) : l3 + s3 - l3 * s3, p3 = 2 * l3 - q3;
+            r3 = hue2rgb(p3, q3, h3 + 1 / 3);
+            g2 = hue2rgb(p3, q3, h3);
+            b2 = hue2rgb(p3, q3, h3 - 1 / 3);
+          }
+          var rgba = [r3 * 255, g2 * 255, b2 * 255].map(Math.round);
+          rgba[3] = a3;
+          return rgba;
+        }
+      }]);
+      return Color2;
+    }();
+    EventBucket = function() {
+      function EventBucket2() {
+        classCallCheck(this, EventBucket2);
+        this._events = [];
+      }
+      createClass(EventBucket2, [{
+        key: "add",
+        value: function add(target, type, handler) {
+          target.addEventListener(type, handler, false);
+          this._events.push({
+            target,
+            type,
+            handler
+          });
+        }
+      }, {
+        key: "remove",
+        value: function remove(target, type, handler) {
+          this._events = this._events.filter(function(e4) {
+            var isMatch = true;
+            if (target && target !== e4.target) {
+              isMatch = false;
+            }
+            if (type && type !== e4.type) {
+              isMatch = false;
+            }
+            if (handler && handler !== e4.handler) {
+              isMatch = false;
+            }
+            if (isMatch) {
+              EventBucket2._doRemove(e4.target, e4.type, e4.handler);
+            }
+            return !isMatch;
+          });
+        }
+      }, {
+        key: "destroy",
+        value: function destroy() {
+          this._events.forEach(function(e4) {
+            return EventBucket2._doRemove(e4.target, e4.type, e4.handler);
+          });
+          this._events = [];
+        }
+      }], [{
+        key: "_doRemove",
+        value: function _doRemove(target, type, handler) {
+          target.removeEventListener(type, handler, false);
+        }
+      }]);
+      return EventBucket2;
+    }();
+    BG_TRANSP = "linear-gradient(45deg, lightgrey 25%, transparent 25%, transparent 75%, lightgrey 75%) 0 0 / 2em 2em,\n                   linear-gradient(45deg, lightgrey 25%,       white 25%,       white 75%, lightgrey 75%) 1em 1em / 2em 2em";
+    HUES = 360;
+    EVENT_KEY = "keydown";
+    EVENT_CLICK_OUTSIDE = "mousedown";
+    EVENT_TAB_MOVE = "focusin";
+    Picker = function() {
+      function Picker2(options) {
+        classCallCheck(this, Picker2);
+        this.settings = {
+          popup: "right",
+          layout: "default",
+          alpha: true,
+          editor: true,
+          editorFormat: "hex",
+          cancelButton: false,
+          defaultColor: "#0cf"
+        };
+        this._events = new EventBucket();
+        this.onChange = null;
+        this.onDone = null;
+        this.onOpen = null;
+        this.onClose = null;
+        this.setOptions(options);
+      }
+      createClass(Picker2, [{
+        key: "setOptions",
+        value: function setOptions(options) {
+          var _this = this;
+          if (!options) {
+            return;
+          }
+          var settings = this.settings;
+          function transfer(source, target, skipKeys) {
+            for (var key in source) {
+              if (skipKeys && skipKeys.indexOf(key) >= 0) {
+                continue;
+              }
+              target[key] = source[key];
+            }
+          }
+          if (options instanceof HTMLElement) {
+            settings.parent = options;
+          } else {
+            if (settings.parent && options.parent && settings.parent !== options.parent) {
+              this._events.remove(settings.parent);
+              this._popupInited = false;
+            }
+            transfer(options, settings);
+            if (options.onChange) {
+              this.onChange = options.onChange;
+            }
+            if (options.onDone) {
+              this.onDone = options.onDone;
+            }
+            if (options.onOpen) {
+              this.onOpen = options.onOpen;
+            }
+            if (options.onClose) {
+              this.onClose = options.onClose;
+            }
+            var col = options.color || options.colour;
+            if (col) {
+              this._setColor(col);
+            }
+          }
+          var parent = settings.parent;
+          if (parent && settings.popup && !this._popupInited) {
+            var openProxy = function openProxy2(e4) {
+              return _this.openHandler(e4);
+            };
+            this._events.add(parent, "click", openProxy);
+            onKey(this._events, parent, [" ", "Spacebar", "Enter"], openProxy);
+            this._popupInited = true;
+          } else if (options.parent && !settings.popup) {
+            this.show();
+          }
+        }
+      }, {
+        key: "openHandler",
+        value: function openHandler(e4) {
+          if (this.show()) {
+            e4 && e4.preventDefault();
+            this.settings.parent.style.pointerEvents = "none";
+            var toFocus = e4 && e4.type === EVENT_KEY ? this._domEdit : this.domElement;
+            setTimeout(function() {
+              return toFocus.focus();
+            }, 100);
+            if (this.onOpen) {
+              this.onOpen(this.colour);
+            }
+          }
+        }
+      }, {
+        key: "closeHandler",
+        value: function closeHandler(e4) {
+          var event = e4 && e4.type;
+          var doHide = false;
+          if (!e4) {
+            doHide = true;
+          } else if (event === EVENT_CLICK_OUTSIDE || event === EVENT_TAB_MOVE) {
+            var knownTime = (this.__containedEvent || 0) + 100;
+            if (e4.timeStamp > knownTime) {
+              doHide = true;
+            }
+          } else {
+            stopEvent(e4);
+            doHide = true;
+          }
+          if (doHide && this.hide()) {
+            this.settings.parent.style.pointerEvents = "";
+            if (event !== EVENT_CLICK_OUTSIDE) {
+              this.settings.parent.focus();
+            }
+            if (this.onClose) {
+              this.onClose(this.colour);
+            }
+          }
+        }
+      }, {
+        key: "movePopup",
+        value: function movePopup(options, open) {
+          this.closeHandler();
+          this.setOptions(options);
+          if (open) {
+            this.openHandler();
+          }
+        }
+      }, {
+        key: "setColor",
+        value: function setColor(color, silent) {
+          this._setColor(color, { silent });
+        }
+      }, {
+        key: "_setColor",
+        value: function _setColor(color, flags) {
+          if (typeof color === "string") {
+            color = color.trim();
+          }
+          if (!color) {
+            return;
+          }
+          flags = flags || {};
+          var c3 = void 0;
+          try {
+            c3 = new Color(color);
+          } catch (ex) {
+            if (flags.failSilently) {
+              return;
+            }
+            throw ex;
+          }
+          if (!this.settings.alpha) {
+            var hsla = c3.hsla;
+            hsla[3] = 1;
+            c3.hsla = hsla;
+          }
+          this.colour = this.color = c3;
+          this._setHSLA(null, null, null, null, flags);
+        }
+      }, {
+        key: "setColour",
+        value: function setColour(colour, silent) {
+          this.setColor(colour, silent);
+        }
+      }, {
+        key: "show",
+        value: function show() {
+          var parent = this.settings.parent;
+          if (!parent) {
+            return false;
+          }
+          if (this.domElement) {
+            var toggled = this._toggleDOM(true);
+            this._setPosition();
+            return toggled;
+          }
+          var html = this.settings.template || '<div class="picker_wrapper" tabindex="-1"><div class="picker_arrow"></div><div class="picker_hue picker_slider"><div class="picker_selector"></div></div><div class="picker_sl"><div class="picker_selector"></div></div><div class="picker_alpha picker_slider"><div class="picker_selector"></div></div><div class="picker_editor"><input aria-label="Type a color name or hex value"/></div><div class="picker_sample"></div><div class="picker_done"><button>Ok</button></div><div class="picker_cancel"><button>Cancel</button></div></div>';
+          var wrapper = parseHTML(html);
+          this.domElement = wrapper;
+          this._domH = $2(".picker_hue", wrapper);
+          this._domSL = $2(".picker_sl", wrapper);
+          this._domA = $2(".picker_alpha", wrapper);
+          this._domEdit = $2(".picker_editor input", wrapper);
+          this._domSample = $2(".picker_sample", wrapper);
+          this._domOkay = $2(".picker_done button", wrapper);
+          this._domCancel = $2(".picker_cancel button", wrapper);
+          wrapper.classList.add("layout_" + this.settings.layout);
+          if (!this.settings.alpha) {
+            wrapper.classList.add("no_alpha");
+          }
+          if (!this.settings.editor) {
+            wrapper.classList.add("no_editor");
+          }
+          if (!this.settings.cancelButton) {
+            wrapper.classList.add("no_cancel");
+          }
+          this._ifPopup(function() {
+            return wrapper.classList.add("popup");
+          });
+          this._setPosition();
+          if (this.colour) {
+            this._updateUI();
+          } else {
+            this._setColor(this.settings.defaultColor);
+          }
+          this._bindEvents();
+          return true;
+        }
+      }, {
+        key: "hide",
+        value: function hide() {
+          return this._toggleDOM(false);
+        }
+      }, {
+        key: "destroy",
+        value: function destroy() {
+          this._events.destroy();
+          if (this.domElement) {
+            this.settings.parent.removeChild(this.domElement);
+          }
+        }
+      }, {
+        key: "_bindEvents",
+        value: function _bindEvents() {
+          var _this2 = this;
+          var that = this, dom = this.domElement, events2 = this._events;
+          function addEvent(target, type, handler) {
+            events2.add(target, type, handler);
+          }
+          addEvent(dom, "click", function(e4) {
+            return e4.preventDefault();
+          });
+          dragTrack(events2, this._domH, function(x2, y3) {
+            return that._setHSLA(x2);
+          });
+          dragTrack(events2, this._domSL, function(x2, y3) {
+            return that._setHSLA(null, x2, 1 - y3);
+          });
+          if (this.settings.alpha) {
+            dragTrack(events2, this._domA, function(x2, y3) {
+              return that._setHSLA(null, null, null, 1 - y3);
+            });
+          }
+          var editInput = this._domEdit;
+          {
+            addEvent(editInput, "input", function(e4) {
+              that._setColor(this.value, { fromEditor: true, failSilently: true });
+            });
+            addEvent(editInput, "focus", function(e4) {
+              var input = this;
+              if (input.selectionStart === input.selectionEnd) {
+                input.select();
+              }
+            });
+          }
+          this._ifPopup(function() {
+            var popupCloseProxy = function popupCloseProxy2(e4) {
+              return _this2.closeHandler(e4);
+            };
+            addEvent(window, EVENT_CLICK_OUTSIDE, popupCloseProxy);
+            addEvent(window, EVENT_TAB_MOVE, popupCloseProxy);
+            onKey(events2, dom, ["Esc", "Escape"], popupCloseProxy);
+            var timeKeeper = function timeKeeper2(e4) {
+              _this2.__containedEvent = e4.timeStamp;
+            };
+            addEvent(dom, EVENT_CLICK_OUTSIDE, timeKeeper);
+            addEvent(dom, EVENT_TAB_MOVE, timeKeeper);
+            addEvent(_this2._domCancel, "click", popupCloseProxy);
+          });
+          var onDoneProxy = function onDoneProxy2(e4) {
+            _this2._ifPopup(function() {
+              return _this2.closeHandler(e4);
+            });
+            if (_this2.onDone) {
+              _this2.onDone(_this2.colour);
+            }
+          };
+          addEvent(this._domOkay, "click", onDoneProxy);
+          onKey(events2, dom, ["Enter"], onDoneProxy);
+        }
+      }, {
+        key: "_setPosition",
+        value: function _setPosition() {
+          var parent = this.settings.parent, elm = this.domElement;
+          if (parent !== elm.parentNode) {
+            parent.appendChild(elm);
+          }
+          this._ifPopup(function(popup) {
+            if (getComputedStyle(parent).position === "static") {
+              parent.style.position = "relative";
+            }
+            var cssClass = popup === true ? "popup_right" : "popup_" + popup;
+            ["popup_top", "popup_bottom", "popup_left", "popup_right"].forEach(function(c3) {
+              if (c3 === cssClass) {
+                elm.classList.add(c3);
+              } else {
+                elm.classList.remove(c3);
+              }
+            });
+            elm.classList.add(cssClass);
+          });
+        }
+      }, {
+        key: "_setHSLA",
+        value: function _setHSLA(h3, s3, l3, a3, flags) {
+          flags = flags || {};
+          var col = this.colour, hsla = col.hsla;
+          [h3, s3, l3, a3].forEach(function(x2, i4) {
+            if (x2 || x2 === 0) {
+              hsla[i4] = x2;
+            }
+          });
+          col.hsla = hsla;
+          this._updateUI(flags);
+          if (this.onChange && !flags.silent) {
+            this.onChange(col);
+          }
+        }
+      }, {
+        key: "_updateUI",
+        value: function _updateUI(flags) {
+          if (!this.domElement) {
+            return;
+          }
+          flags = flags || {};
+          var col = this.colour, hsl = col.hsla, cssHue = "hsl(" + hsl[0] * HUES + ", 100%, 50%)", cssHSL = col.hslString, cssHSLA = col.hslaString;
+          var uiH = this._domH, uiSL = this._domSL, uiA = this._domA, thumbH = $2(".picker_selector", uiH), thumbSL = $2(".picker_selector", uiSL), thumbA = $2(".picker_selector", uiA);
+          function posX(parent, child, relX) {
+            child.style.left = relX * 100 + "%";
+          }
+          function posY(parent, child, relY) {
+            child.style.top = relY * 100 + "%";
+          }
+          posX(uiH, thumbH, hsl[0]);
+          this._domSL.style.backgroundColor = this._domH.style.color = cssHue;
+          posX(uiSL, thumbSL, hsl[1]);
+          posY(uiSL, thumbSL, 1 - hsl[2]);
+          uiSL.style.color = cssHSL;
+          posY(uiA, thumbA, 1 - hsl[3]);
+          var opaque = cssHSL, transp = opaque.replace("hsl", "hsla").replace(")", ", 0)"), bg = "linear-gradient(" + [opaque, transp] + ")";
+          this._domA.style.background = bg + ", " + BG_TRANSP;
+          if (!flags.fromEditor) {
+            var format = this.settings.editorFormat, alpha = this.settings.alpha;
+            var value = void 0;
+            switch (format) {
+              case "rgb":
+                value = col.printRGB(alpha);
+                break;
+              case "hsl":
+                value = col.printHSL(alpha);
+                break;
+              default:
+                value = col.printHex(alpha);
+            }
+            this._domEdit.value = value;
+          }
+          this._domSample.style.color = cssHSLA;
+        }
+      }, {
+        key: "_ifPopup",
+        value: function _ifPopup(actionIf, actionElse) {
+          if (this.settings.parent && this.settings.popup) {
+            actionIf && actionIf(this.settings.popup);
+          } else {
+            actionElse && actionElse();
+          }
+        }
+      }, {
+        key: "_toggleDOM",
+        value: function _toggleDOM(toVisible) {
+          var dom = this.domElement;
+          if (!dom) {
+            return false;
+          }
+          var displayStyle = toVisible ? "" : "none", toggle = dom.style.display !== displayStyle;
+          if (toggle) {
+            dom.style.display = displayStyle;
+          }
+          return toggle;
+        }
+      }]);
+      return Picker2;
+    }();
+    {
+      style = document.createElement("style");
+      style.textContent = '.picker_wrapper.no_alpha .picker_alpha{display:none}.picker_wrapper.no_editor .picker_editor{position:absolute;z-index:-1;opacity:0}.picker_wrapper.no_cancel .picker_cancel{display:none}.layout_default.picker_wrapper{display:flex;flex-flow:row wrap;justify-content:space-between;align-items:stretch;font-size:10px;width:25em;padding:.5em}.layout_default.picker_wrapper input,.layout_default.picker_wrapper button{font-size:1rem}.layout_default.picker_wrapper>*{margin:.5em}.layout_default.picker_wrapper::before{content:"";display:block;width:100%;height:0;order:1}.layout_default .picker_slider,.layout_default .picker_selector{padding:1em}.layout_default .picker_hue{width:100%}.layout_default .picker_sl{flex:1 1 auto}.layout_default .picker_sl::before{content:"";display:block;padding-bottom:100%}.layout_default .picker_editor{order:1;width:6.5rem}.layout_default .picker_editor input{width:100%;height:100%}.layout_default .picker_sample{order:1;flex:1 1 auto}.layout_default .picker_done,.layout_default .picker_cancel{order:1}.picker_wrapper{box-sizing:border-box;background:#f2f2f2;box-shadow:0 0 0 1px silver;cursor:default;font-family:sans-serif;color:#444;pointer-events:auto}.picker_wrapper:focus{outline:none}.picker_wrapper button,.picker_wrapper input{box-sizing:border-box;border:none;box-shadow:0 0 0 1px silver;outline:none}.picker_wrapper button:focus,.picker_wrapper button:active,.picker_wrapper input:focus,.picker_wrapper input:active{box-shadow:0 0 2px 1px #1e90ff}.picker_wrapper button{padding:.4em .6em;cursor:pointer;background-color:#f5f5f5;background-image:linear-gradient(0deg, gainsboro, transparent)}.picker_wrapper button:active{background-image:linear-gradient(0deg, transparent, gainsboro)}.picker_wrapper button:hover{background-color:#fff}.picker_selector{position:absolute;z-index:1;display:block;-webkit-transform:translate(-50%, -50%);transform:translate(-50%, -50%);border:2px solid #fff;border-radius:100%;box-shadow:0 0 3px 1px #67b9ff;background:currentColor;cursor:pointer}.picker_slider .picker_selector{border-radius:2px}.picker_hue{position:relative;background-image:linear-gradient(90deg, red, yellow, lime, cyan, blue, magenta, red);box-shadow:0 0 0 1px silver}.picker_sl{position:relative;box-shadow:0 0 0 1px silver;background-image:linear-gradient(180deg, white, rgba(255, 255, 255, 0) 50%),linear-gradient(0deg, black, rgba(0, 0, 0, 0) 50%),linear-gradient(90deg, #808080, rgba(128, 128, 128, 0))}.picker_alpha,.picker_sample{position:relative;background:linear-gradient(45deg, lightgrey 25%, transparent 25%, transparent 75%, lightgrey 75%) 0 0/2em 2em,linear-gradient(45deg, lightgrey 25%, white 25%, white 75%, lightgrey 75%) 1em 1em/2em 2em;box-shadow:0 0 0 1px silver}.picker_alpha .picker_selector,.picker_sample .picker_selector{background:none}.picker_editor input{font-family:monospace;padding:.2em .4em}.picker_sample::before{content:"";position:absolute;display:block;width:100%;height:100%;background:currentColor}.picker_arrow{position:absolute;z-index:-1}.picker_wrapper.popup{position:absolute;z-index:2;margin:1.5em}.picker_wrapper.popup,.picker_wrapper.popup .picker_arrow::before,.picker_wrapper.popup .picker_arrow::after{background:#f2f2f2;box-shadow:0 0 10px 1px rgba(0,0,0,.4)}.picker_wrapper.popup .picker_arrow{width:3em;height:3em;margin:0}.picker_wrapper.popup .picker_arrow::before,.picker_wrapper.popup .picker_arrow::after{content:"";display:block;position:absolute;top:0;left:0;z-index:-99}.picker_wrapper.popup .picker_arrow::before{width:100%;height:100%;-webkit-transform:skew(45deg);transform:skew(45deg);-webkit-transform-origin:0 100%;transform-origin:0 100%}.picker_wrapper.popup .picker_arrow::after{width:150%;height:150%;box-shadow:none}.popup.popup_top{bottom:100%;left:0}.popup.popup_top .picker_arrow{bottom:0;left:0;-webkit-transform:rotate(-90deg);transform:rotate(-90deg)}.popup.popup_bottom{top:100%;left:0}.popup.popup_bottom .picker_arrow{top:0;left:0;-webkit-transform:rotate(90deg) scale(1, -1);transform:rotate(90deg) scale(1, -1)}.popup.popup_left{top:0;right:100%}.popup.popup_left .picker_arrow{top:0;right:0;-webkit-transform:scale(-1, 1);transform:scale(-1, 1)}.popup.popup_right{top:0;left:100%}.popup.popup_right .picker_arrow{top:0;left:0}';
+      document.documentElement.firstElementChild.appendChild(style);
+      Picker.StyleElement = style;
+    }
+  }
+});
+
 // node_modules/preact/jsx-runtime/dist/jsxRuntime.module.js
 function u3(e4, t3, n2, o3, i4, u4) {
   t3 || (t3 = {});
@@ -640,23 +1439,214 @@ var init_jsxRuntime_module = __esm({
   }
 });
 
-// src/components/pages/Colors/CodeMirror.tsx
-var CodeMirror, CodeMirror_default;
-var init_CodeMirror = __esm({
-  "src/components/pages/Colors/CodeMirror.tsx"() {
+// src/components/pages/Colors/ColorEdit.tsx
+var ColorEdit, ColorEdit_default;
+var init_ColorEdit = __esm({
+  "src/components/pages/Colors/ColorEdit.tsx"() {
     "use strict";
     init_preact_module();
     init_hooks_module();
+    init_vanilla_picker();
     init_jsxRuntime_module();
-    CodeMirror = ({ initialDoc, onChange }) => {
+    ColorEdit = ({ color, onChange }) => {
+      const [currentColor, setCurrentColor] = h2(color.modifiedColor);
+      const colorPickerRef = A2(null);
+      const containerRef = A2(null);
       y2(() => {
-        console.log(`here`);
-        const editor = CodeMirror.fromTextArea(document.getElementById("code-text"), {});
-        console.log(`editor`, editor);
+        if (containerRef.current && !colorPickerRef.current) {
+          colorPickerRef.current = new Picker({
+            parent: containerRef.current,
+            color: currentColor,
+            popup: "bottom",
+            editor: {
+              className: "color-picker"
+            },
+            editorFormat: "rgb",
+            onChange: (color2) => {
+              setCurrentColor(color2.rgbaString);
+            },
+            // Remove onDone since changes are not immediately applied
+            onShow: () => {
+              adjustPosition();
+            }
+          });
+        }
+        return () => {
+          if (colorPickerRef.current) {
+            colorPickerRef.current.destroy();
+          }
+        };
+      }, [currentColor]);
+      const adjustPosition = q2(() => {
+        if (colorPickerRef.current?.popup) {
+          const { popup } = colorPickerRef.current;
+          const rect = containerRef.current.getBoundingClientRect();
+          const popupRect = popup.getBoundingClientRect();
+          const { innerWidth, innerHeight } = window;
+          let left = rect.left;
+          let top = rect.bottom;
+          if (left + popupRect.width > innerWidth) left = Math.max(0, innerWidth - popupRect.width);
+          if (top + popupRect.height > innerHeight) top = innerHeight - popupRect.height;
+          if (left < 0) left = 0;
+          if (top < 0) top = 0;
+          popup.style.left = `${left}px`;
+          popup.style.top = `${top}px`;
+          popup.style.position = "fixed";
+          popup.style.display = "block";
+        }
       }, []);
-      return /* @__PURE__ */ u3("textarea", { id: "code-text" });
+      const handleClick = q2(() => {
+        if (colorPickerRef.current) {
+          colorPickerRef.current.show();
+        }
+      }, []);
+      return /* @__PURE__ */ u3(
+        "div",
+        {
+          ref: containerRef,
+          className: "color-swatch ColorEdit",
+          style: { backgroundColor: currentColor },
+          onClick: handleClick
+        }
+      );
     };
-    CodeMirror_default = CodeMirror;
+    ColorEdit_default = ColorEdit;
+  }
+});
+
+// src/components/pages/Colors/ColorEditColumn.tsx
+var ColorEditColumn, ColorEditColumn_default;
+var init_ColorEditColumn = __esm({
+  "src/components/pages/Colors/ColorEditColumn.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_hooks_module();
+    init_ColorEdit();
+    init_jsxRuntime_module();
+    ColorEditColumn = ({ colors, onColorsChanged }) => {
+      const [modifiedColors, setModifiedColors] = h2(colors);
+      y2(() => {
+        setModifiedColors(colors);
+      }, [colors]);
+      const handleColorChange = q2((index, newColor) => {
+        setModifiedColors(
+          (prevColors) => prevColors.map((c3, i4) => i4 === index ? { ...c3, modifiedColor: newColor } : c3)
+        );
+      }, []);
+      const handleApply = q2(() => {
+        onColorsChanged(modifiedColors);
+      }, [modifiedColors, onColorsChanged]);
+      return /* @__PURE__ */ u3("div", { className: "column ColorEditColumn", children: [
+        modifiedColors.map((color, index) => /* @__PURE__ */ u3(
+          ColorEdit_default,
+          {
+            color,
+            onChange: (newColor) => handleColorChange(index, newColor)
+          },
+          index
+        )),
+        /* @__PURE__ */ u3("div", { className: "button-bar", children: /* @__PURE__ */ u3("button", { onClick: handleApply, children: "Apply" }) })
+      ] });
+    };
+    ColorEditColumn_default = ColorEditColumn;
+  }
+});
+
+// src/components/pages/Colors/utils.ts
+function hexToRgba(hex) {
+  let r3 = 0, g2 = 0, b2 = 0, a3 = 1;
+  if (hex.length === 4) {
+    r3 = parseInt(hex[1] + hex[1], 16);
+    g2 = parseInt(hex[2] + hex[2], 16);
+    b2 = parseInt(hex[3] + hex[3], 16);
+  } else if (hex.length === 7 || hex.length === 9) {
+    r3 = parseInt(hex.slice(1, 3), 16);
+    g2 = parseInt(hex.slice(3, 5), 16);
+    b2 = parseInt(hex.slice(5, 7), 16);
+    if (hex.length === 9) {
+      a3 = parseInt(hex.slice(7, 9), 16) / 255;
+    }
+  } else {
+    return null;
+  }
+  return `rgba(${r3},${g2},${b2},${a3.toFixed(2)})`;
+}
+function isValidColor(color) {
+  const isNumberInRange = (num, min, max) => {
+    const n2 = Number(num);
+    return !isNaN(n2) && n2 >= min && n2 <= max;
+  };
+  if (color.startsWith("#")) {
+    const hexChars = color.slice(1);
+    return /^[0-9A-Fa-f]+$/.test(hexChars) && [3, 6, 8].includes(hexChars.length);
+  }
+  const rgbPattern = /^rgba?\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)$/;
+  const match = color.match(rgbPattern);
+  if (match) {
+    const [, r3, g2, b2, a3] = match;
+    if (!isNumberInRange(r3, 0, 255) || !isNumberInRange(g2, 0, 255) || !isNumberInRange(b2, 0, 255)) {
+      return false;
+    }
+    if (a3 !== void 0) {
+      const alpha = parseFloat(a3);
+      return !isNaN(alpha) && alpha >= 0 && alpha <= 1;
+    }
+    return true;
+  }
+  return false;
+}
+function normalizeColor(color) {
+  if (color.startsWith("#")) {
+    return hexToRgba(color);
+  } else {
+    const match = color.match(/^rgba?\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)$/);
+    if (match) {
+      const [, r3, g2, b2, a3] = match;
+      return `rgba(${r3},${g2},${b2},${a3 ? parseFloat(a3).toFixed(2) : "1.00"})`;
+    }
+  }
+  return null;
+}
+function parseColors(text, combineSimilar = false) {
+  const hexRegexes = [
+    /#(?:[0-9a-fA-F]{8})(?=[,\s;]|$)/gi,
+    // 8 characters
+    /#(?:[0-9a-fA-F]{6})(?=[,\s;]|$)/gi,
+    // 6 characters
+    /#(?:[0-9a-fA-F]{3})(?=[,\s;]|$)/gi
+    // 3 characters
+  ];
+  const rgbRegex = /rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)(?=[,\s;]|$)/gi;
+  const colors = [];
+  for (const regex of hexRegexes) {
+    let match2;
+    while ((match2 = regex.exec(text)) !== null) {
+      const hexColor = match2[0];
+      if (isValidColor(hexColor)) {
+        const normalized = normalizeColor(hexColor);
+        if (normalized && !colors.some((c3) => c3.color.toLowerCase() === hexColor.toLowerCase())) {
+          colors.push({ color: hexColor, modifiedColor: normalized });
+        }
+      }
+    }
+  }
+  let match;
+  while ((match = rgbRegex.exec(text)) !== null) {
+    const rgbColor = match[0];
+    if (isValidColor(rgbColor)) {
+      const normalized = normalizeColor(rgbColor);
+      const uniquenessCheck = combineSimilar ? !colors.some((c3) => c3.modifiedColor.toLowerCase() === normalized.toLowerCase()) : !colors.some((c3) => c3.color.toLowerCase() === rgbColor.toLowerCase());
+      if (normalized && uniquenessCheck) {
+        colors.push({ color: rgbColor, modifiedColor: normalized });
+      }
+    }
+  }
+  return colors;
+}
+var init_utils = __esm({
+  "src/components/pages/Colors/utils.ts"() {
+    "use strict";
+    init_preact_module();
   }
 });
 
@@ -667,72 +1657,136 @@ var init_InputColumn = __esm({
     "use strict";
     init_preact_module();
     init_hooks_module();
-    init_CodeMirror();
+    init_utils();
     init_jsxRuntime_module();
     InputColumn = ({ onColorsParsed }) => {
       const [text, setText] = h2("");
+      const [combineSimilar, setCombineSimilar] = h2(false);
       const handleFileImport = q2((event) => {
         const target = event.target;
         if (target && target.files && target.files[0]) {
           const file = target.files[0];
           const reader = new FileReader();
           reader.onload = (e4) => {
-            setText(e4.target.result);
+            const fileContent = e4.target.result;
+            setText(fileContent);
+            localStorage.setItem("inputText", fileContent);
           };
           reader.readAsText(file);
         }
       }, []);
       const handleClear = q2(() => {
         setText("");
+        localStorage.setItem("inputText", "");
       }, []);
       const handleParseColors = q2(() => {
-        const regex = /(#[0-9A-Fa-f]{3,8}|rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)|rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*(0(\.\d+)?|1(\.0+)?)\s*\))/g;
-        const colors = [];
-        let match;
-        while ((match = regex.exec(text)) !== null) {
-          if (!colors.some((color) => color.color === match[0])) {
-            colors.push({ color: match[0], modifiedColor: match[0] });
-          }
+        const textareaContent = document.querySelector("textarea").value;
+        if (textareaContent.trim() !== "") {
+          setText(textareaContent);
+          const colors = parseColors(textareaContent, combineSimilar);
+          onColorsParsed(colors);
+          localStorage.setItem("inputText", textareaContent);
         }
-        onColorsParsed(colors);
-      }, [text, onColorsParsed]);
-      return /* @__PURE__ */ u3("div", { style: { flex: "1 1 33%", display: "flex", flexDirection: "column" }, children: [
-        /* @__PURE__ */ u3("div", { children: [
+      }, [onColorsParsed, combineSimilar]);
+      y2(() => {
+        const savedText = localStorage.getItem("inputText");
+        if (savedText && savedText.trim() !== "") {
+          setText(savedText);
+          handleParseColors();
+        }
+      }, []);
+      return /* @__PURE__ */ u3("div", { className: "column InputColumn", children: [
+        /* @__PURE__ */ u3("div", { className: "button-bar top", children: [
           /* @__PURE__ */ u3("button", { onClick: () => document.getElementById("fileInput")?.click(), children: "Import File" }),
           /* @__PURE__ */ u3("input", { type: "file", id: "fileInput", style: { display: "none" }, onChange: handleFileImport }),
-          /* @__PURE__ */ u3("button", { onClick: handleClear, children: "Clear" })
+          /* @__PURE__ */ u3("button", { onClick: handleClear, children: "Clear" }),
+          /* @__PURE__ */ u3("label", { children: [
+            /* @__PURE__ */ u3(
+              "input",
+              {
+                type: "checkbox",
+                checked: combineSimilar,
+                onChange: (e4) => setCombineSimilar(e4.target.checked)
+              }
+            ),
+            "Combine Similar"
+          ] })
         ] }),
         /* @__PURE__ */ u3(
-          CodeMirror_default,
+          "textarea",
           {
-            initialDoc: text,
-            onChange: (value) => setText(value)
+            value: text
           }
         ),
-        /* @__PURE__ */ u3("div", { children: /* @__PURE__ */ u3("button", { onClick: handleParseColors, children: "Parse Colors" }) })
+        /* @__PURE__ */ u3("div", { className: "button-bar bottom", children: /* @__PURE__ */ u3("button", { onClick: handleParseColors, children: "Parse Colors" }) })
       ] });
     };
     InputColumn_default = InputColumn;
   }
 });
 
-// src/components/pages/Colors/ColorsPage.tsx
-var ColorsPage, ColorsPage_default;
-var init_ColorsPage = __esm({
-  "src/components/pages/Colors/ColorsPage.tsx"() {
+// src/components/pages/Colors/OutputColumn.tsx
+var OutputColumn, OutputColumn_default;
+var init_OutputColumn = __esm({
+  "src/components/pages/Colors/OutputColumn.tsx"() {
     "use strict";
     init_preact_module();
     init_hooks_module();
-    init_InputColumn();
     init_jsxRuntime_module();
-    ColorsPage = () => {
-      const [colors, setColors] = h2([]);
-      const handleColorsParsed = (parsedColors) => {
-        setColors(parsedColors);
-      };
-      return /* @__PURE__ */ u3("div", { class: "page", id: "colors", style: { display: "flex", width: "100vw", height: "100vh" }, children: /* @__PURE__ */ u3(InputColumn_default, { onColorsParsed: handleColorsParsed }) });
+    OutputColumn = ({ colors }) => {
+      const [activeTab, setActiveTab] = h2("swatches");
+      return /* @__PURE__ */ u3("div", { class: "column OutputColumn", children: [
+        /* @__PURE__ */ u3("div", { class: "tab-bar", children: [
+          /* @__PURE__ */ u3("button", { class: activeTab === "swatches" ? "active" : "", onClick: () => setActiveTab("swatches"), children: "Swatches" }),
+          /* @__PURE__ */ u3("button", { class: activeTab === "text" ? "active" : "", onClick: () => setActiveTab("text"), children: "Text" })
+        ] }),
+        /* @__PURE__ */ u3("div", { class: "tab-content", children: activeTab === "swatches" ? /* @__PURE__ */ u3("div", { class: "color-swatches", children: colors.map((color, index) => /* @__PURE__ */ u3("div", { style: { backgroundColor: color.modifiedColor } }, index)) }) : /* @__PURE__ */ u3("div", { class: "text-preview", children: /* @__PURE__ */ u3("textarea", { readOnly: true, value: colors.map((c3) => c3.modifiedColor).join("\n\n") }) }) })
+      ] });
     };
-    ColorsPage_default = ColorsPage;
+    OutputColumn_default = OutputColumn;
+  }
+});
+
+// src/components/pages/Colors/ColorsPage.scss
+var init_ColorsPage = __esm({
+  "src/components/pages/Colors/ColorsPage.scss"() {
+  }
+});
+
+// src/components/pages/Colors/ColorsPage.tsx
+var ColorPage, ColorsPage_default;
+var init_ColorsPage2 = __esm({
+  "src/components/pages/Colors/ColorsPage.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_preact_module();
+    init_ColorEditColumn();
+    init_InputColumn();
+    init_OutputColumn();
+    init_ColorsPage();
+    init_jsxRuntime_module();
+    ColorPage = class extends x {
+      constructor(props) {
+        super(props);
+        this.state = {
+          colors: []
+        };
+      }
+      handleColorsParsed = (parsedColors) => {
+        this.setState({ colors: parsedColors });
+      };
+      handleColorsChanged = (newColors) => {
+        this.setState({ colors: newColors });
+      };
+      render() {
+        return /* @__PURE__ */ u3("div", { className: "ColorPage", children: [
+          /* @__PURE__ */ u3(InputColumn_default, { onColorsParsed: this.handleColorsParsed }),
+          /* @__PURE__ */ u3(ColorEditColumn_default, { colors: this.state.colors, onColorsChanged: this.handleColorsChanged }),
+          /* @__PURE__ */ u3(OutputColumn_default, { colors: this.state.colors })
+        ] });
+      }
+    };
+    ColorsPage_default = ColorPage;
   }
 });
 
@@ -3043,7 +4097,7 @@ var init_routes = __esm({
   "src/config/routes.tsx"() {
     "use strict";
     init_preact_module();
-    init_ColorsPage();
+    init_ColorsPage2();
     init_Entry();
     init_Home();
     init_Info();
@@ -3360,4 +4414,15 @@ var initApp = async () => {
   D(/* @__PURE__ */ u3(App_default, {}), document.body);
 };
 initApp();
+/*! Bundled license information:
+
+vanilla-picker/dist/vanilla-picker.mjs:
+  (*!
+   * vanilla-picker v2.12.3
+   * https://vanilla-picker.js.org
+   *
+   * Copyright 2017-2024 Andreas Borgen (https://github.com/Sphinxxxx), Adam Brooks (https://github.com/dissimulate)
+   * Released under the ISC license.
+   *)
+*/
 //# sourceMappingURL=index.js.map

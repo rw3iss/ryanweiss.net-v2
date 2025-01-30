@@ -1,7 +1,6 @@
-// InputColumn.tsx
 import { FunctionalComponent } from 'preact';
-import { useCallback, useState } from 'preact/hooks';
-import CodeMirror from './CodeMirror';
+import { useCallback, useEffect, useState } from 'preact/hooks';
+import { parseColors } from './utils';
 
 interface InputColumnProps {
     onColorsParsed: (colors: { color: string, modifiedColor: string }[]) => void;
@@ -9,6 +8,7 @@ interface InputColumnProps {
 
 const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsParsed }) => {
     const [text, setText] = useState('');
+    const [combineSimilar, setCombineSimilar] = useState(false);
 
     const handleFileImport = useCallback((event: Event) => {
         const target = event.target as HTMLInputElement;
@@ -16,7 +16,9 @@ const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsParsed }) 
             const file = target.files[0];
             const reader = new FileReader();
             reader.onload = (e) => {
-                setText(e.target!.result as string);
+                const fileContent = e.target!.result as string;
+                setText(fileContent);
+                localStorage.setItem('inputText', fileContent);
             };
             reader.readAsText(file);
         }
@@ -24,34 +26,46 @@ const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsParsed }) 
 
     const handleClear = useCallback(() => {
         setText('');
+        localStorage.setItem('inputText', '');
     }, []);
 
     const handleParseColors = useCallback(() => {
-        const regex = /(#[0-9A-Fa-f]{3,8}|rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)|rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*(0(\.\d+)?|1(\.0+)?)\s*\))/g;
-        const colors: { color: string; modifiedColor: string }[] = [];
-        let match;
-
-        while ((match = regex.exec(text)) !== null) {
-            if (!colors.some(color => color.color === match[0])) {
-                colors.push({ color: match[0], modifiedColor: match[0] });
-            }
+        const textareaContent = (document.querySelector('textarea') as HTMLTextAreaElement).value;
+        if (textareaContent.trim() !== '') {
+            setText(textareaContent);
+            const colors = parseColors(textareaContent, combineSimilar);
+            onColorsParsed(colors); // This updates the parent's state
+            localStorage.setItem('inputText', textareaContent);
         }
+    }, [onColorsParsed, combineSimilar]);
 
-        onColorsParsed(colors);
-    }, [text, onColorsParsed]);
+    useEffect(() => {
+        const savedText = localStorage.getItem('inputText');
+        if (savedText && savedText.trim() !== '') {
+            setText(savedText);
+            handleParseColors(); // Parse the saved text if it exists
+        }
+    }, []); // Load saved text only once on mount
 
     return (
-        <div style={{ flex: '1 1 33%', display: 'flex', flexDirection: 'column' }}>
-            <div>
+        <div className="column InputColumn">
+            <div className="button-bar top">
                 <button onClick={() => document.getElementById('fileInput')?.click()}>Import File</button>
                 <input type="file" id="fileInput" style={{ display: 'none' }} onChange={handleFileImport} />
                 <button onClick={handleClear}>Clear</button>
+                <label>
+                    <input
+                        type="checkbox"
+                        checked={combineSimilar}
+                        onChange={(e) => setCombineSimilar(e.target.checked)}
+                    />
+                    Combine Similar
+                </label>
             </div>
-            <CodeMirror
-                initialDoc={text}
-                onChange={(value) => setText(value)}
+            <textarea
+                value={text}
             />
-            <div>
+            <div className="button-bar bottom">
                 <button onClick={handleParseColors}>Parse Colors</button>
             </div>
         </div>

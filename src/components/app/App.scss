@@ -149,7 +149,6 @@
 
         .page {
             position: relative;
-            @include flex-col;
             flex: 1; //0.618 0 61.8%;
             width: 100%;
             height: 100%;
