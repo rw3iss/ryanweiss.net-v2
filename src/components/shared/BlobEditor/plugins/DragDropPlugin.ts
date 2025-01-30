@@ -40,6 +40,7 @@ export class DragDropPlugin implements IPlugin {
 
 
     private handleDragOver = (e: DragEvent) => {
+        console.log(`drag over`)
         e.preventDefault();
     };
 

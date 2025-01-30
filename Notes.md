@@ -1,0 +1,2 @@
+So there should be some method to order the plugins by some given configuration order. The toolbar plugin and any plugin can take a "config" optional property on the constructor, and if it exists, the plugin can define some configuration about it, and should save the config to a private variable, or if none is given it should be set to an empty object {}.
+The config can define a 'sort' property that is either a number or a string. When the ToolbarPlugin

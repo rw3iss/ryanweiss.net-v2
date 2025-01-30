@@ -685,13 +685,127 @@ var init_TabPlugin = __esm({
   }
 });
 
+// src/components/shared/BlobEditor/plugins/Dropdown.ts
+var Dropdown;
+var init_Dropdown = __esm({
+  "src/components/shared/BlobEditor/plugins/Dropdown.ts"() {
+    "use strict";
+    init_preact_module();
+    Dropdown = class {
+      dropdownButton;
+      dropdownMenu;
+      items;
+      hideTimeout = null;
+      isVisible = false;
+      constructor(button, items) {
+        this.dropdownButton = button;
+        this.items = items;
+        this.dropdownMenu = this.createDropdownMenu();
+      }
+      createDropdownMenu() {
+        const menu = document.createElement("div");
+        menu.className = "dropdown-menu";
+        menu.style.display = "none";
+        this.items.forEach((item) => {
+          if (item.type === "button") {
+            const button = document.createElement("button");
+            button.className = "dropdown-item";
+            if (item.icon) {
+              const icon = document.createElement("img");
+              icon.src = item.icon;
+              icon.alt = item.label;
+              button.appendChild(icon);
+            }
+            if (item.label) {
+              const label = document.createElement("span");
+              label.textContent = item.label;
+              button.appendChild(label);
+            }
+            if (item.onClick) {
+              button.addEventListener("click", item.onClick);
+            }
+            menu.appendChild(button);
+          } else if (item.type === "group" || item.type === "dropdown") {
+            this.createToolbarItem(item, menu);
+          }
+        });
+        document.body.appendChild(menu);
+        return menu;
+      }
+      show() {
+        if (!this.isVisible) {
+          this.positionDropdown();
+          this.dropdownMenu.style.display = "flex";
+          this.dropdownMenu.style.opacity = "1";
+          this.isVisible = true;
+        }
+        this.dropdownMenu.addEventListener("mouseleave", this.startHideTimer.bind(this));
+        this.dropdownMenu.addEventListener("mouseenter", this.clearHideTimer.bind(this));
+      }
+      positionDropdown() {
+        if (!this.isVisible) {
+          const buttonRect = this.dropdownButton.getBoundingClientRect();
+          const windowWidth = window.innerWidth;
+          this.dropdownMenu.style.top = `${buttonRect.bottom + parseFloat(getComputedStyle(this.dropdownMenu).getPropertyValue("--dropdown-y-offset"))}px`;
+          this.dropdownMenu.style.left = `${buttonRect.left + parseFloat(getComputedStyle(this.dropdownMenu).getPropertyValue("--dropdown-x-offset"))}px`;
+          if (buttonRect.left + this.dropdownMenu.offsetWidth > windowWidth) {
+            this.dropdownMenu.style.left = `${windowWidth - this.dropdownMenu.offsetWidth - parseFloat(getComputedStyle(this.dropdownMenu).getPropertyValue("--dropdown-x-offset"))}px`;
+          }
+        }
+      }
+      startHideTimer() {
+        this.hideTimeout = window.setTimeout(() => {
+          this.hideDropdown();
+        }, 500);
+      }
+      clearHideTimer() {
+        if (this.hideTimeout) {
+          clearTimeout(this.hideTimeout);
+          this.hideTimeout = null;
+        }
+      }
+      hideDropdown() {
+        this.dropdownMenu.style.display = "none";
+        this.dropdownMenu.style.opacity = "0";
+        this.isVisible = false;
+      }
+      createToolbarItem(item, parent) {
+        if (item.type === "group") {
+          const group = document.createElement("div");
+          group.className = "toolbar-group";
+          parent.appendChild(group);
+          if (Array.isArray(item.items)) {
+            item.items.forEach((groupItem) => this.createToolbarItem(groupItem, group));
+          }
+        } else if (item.type === "dropdown") {
+          const nestedDropdownButton = document.createElement("button");
+          nestedDropdownButton.className = "toolbar-dropdown-button nested";
+          if (item.icon) {
+            const icon = document.createElement("img");
+            icon.src = item.icon;
+            icon.alt = item.label;
+            nestedDropdownButton.appendChild(icon);
+          }
+          if (item.label) {
+            const label = document.createElement("span");
+            label.textContent = item.label;
+            nestedDropdownButton.appendChild(label);
+          }
+          parent.appendChild(nestedDropdownButton);
+        }
+      }
+    };
+  }
+});
+
 // src/components/shared/BlobEditor/plugins/ToolbarPlugin.ts
 var ToolbarPlugin;
 var init_ToolbarPlugin = __esm({
   "src/components/shared/BlobEditor/plugins/ToolbarPlugin.ts"() {
     "use strict";
     init_preact_module();
-    ToolbarPlugin = class {
+    init_Dropdown();
+    ToolbarPlugin = class _ToolbarPlugin {
       editor;
       toolbarContainer = null;
       isVisible = false;
@@ -714,16 +828,21 @@ var init_ToolbarPlugin = __esm({
         this.toolbarContainer.innerHTML = "";
         let hasItems = false;
         this.editor.plugins.forEach((plugin) => {
+          if (plugin instanceof _ToolbarPlugin) return;
           if ("toolbar" in plugin) {
-            this.createToolbarItem(plugin.toolbar);
+            this.toolbar.items.unshift(plugin.toolbar);
             hasItems = true;
           }
         });
-        if (!hasItems) {
+        hasItems = hasItems || this.toolbar.items.length > 0;
+        console.log(`creating toolbar`, this.toolbar);
+        if (hasItems) {
+          this.createToolbarItem(this.toolbar);
+        } else {
           this.toolbarContainer.style.display = "none";
         }
       }
-      createToolbarItem(item) {
+      createToolbarItem(item, parent) {
         if (item.type === "button") {
           const button = document.createElement("button");
           button.className = "toolbar-button";
@@ -744,12 +863,34 @@ var init_ToolbarPlugin = __esm({
               this.hideToolbar();
             });
           }
-          this.toolbarContainer?.appendChild(button);
+          (parent || this.toolbarContainer)?.appendChild(button);
+        } else if (item.type === "dropdown") {
+          const dropdownButton = document.createElement("button");
+          dropdownButton.className = "toolbar-dropdown-button";
+          if (item.icon) {
+            const icon = document.createElement("img");
+            icon.src = item.icon;
+            icon.alt = item.label;
+            dropdownButton.appendChild(icon);
+          }
+          if (item.label) {
+            const label = document.createElement("span");
+            label.textContent = item.label;
+            dropdownButton.appendChild(label);
+          }
+          const arrow = document.createElement("span");
+          arrow.textContent = "\u25BC";
+          dropdownButton.appendChild(arrow);
+          const dropdown = new Dropdown(dropdownButton, item.items);
+          dropdownButton.addEventListener("click", () => dropdown.show());
+          (parent || this.toolbarContainer)?.appendChild(dropdownButton);
         } else if (item.type === "group") {
           const group = document.createElement("div");
           group.className = "toolbar-group";
-          item.items.forEach((groupItem) => this.createToolbarItem(groupItem));
-          this.toolbarContainer?.appendChild(group);
+          (parent || this.toolbarContainer)?.appendChild(group);
+          if (Array.isArray(item.items)) {
+            item.items.forEach((groupItem) => this.createToolbarItem(groupItem, group));
+          }
         }
       }
       checkForSelection = (e4) => {
@@ -760,6 +901,7 @@ var init_ToolbarPlugin = __esm({
         }
       };
       showToolbar = (e4) => {
+        console.log(`show`);
         if (!this.toolbarContainer || this.toolbarContainer.children.length === 0) return;
         const rect = e4.target instanceof Element ? e4.target.getBoundingClientRect() : { top: 0, left: 0 };
         const windowWidth = window.innerWidth;
@@ -780,6 +922,36 @@ var init_ToolbarPlugin = __esm({
         if (e4.key === "Escape" && this.isVisible) {
           this.hideToolbar();
         }
+      };
+      toolbar = {
+        type: "group",
+        items: [
+          {
+            type: "dropdown",
+            icon: "/public/icons/icon-cog.svg",
+            label: "Config",
+            items: [
+              {
+                type: "button",
+                icon: "/public/icons/icon-theme.svg",
+                label: "Theme",
+                onClick: () => console.log("Theme button clicked")
+              },
+              {
+                type: "button",
+                icon: "/public/icons/icon-history.svg",
+                label: "History",
+                onClick: () => console.log("History button clicked")
+              }
+            ]
+          },
+          {
+            type: "button",
+            icon: "/public/icons/icon-close.svg",
+            label: "Close",
+            onClick: this.hideToolbar
+          }
+        ]
       };
     };
   }
@@ -2374,6 +2546,7 @@ var init_DragDropPlugin = __esm({
         ]
       };
       handleDragOver = (e4) => {
+        console.log(`drag over`);
         e4.preventDefault();
       };
       handleDrop = (e4) => {

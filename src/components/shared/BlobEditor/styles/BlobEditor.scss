@@ -86,8 +86,6 @@ $padding: 20px; // General padding for elements
                 margin-bottom: 0.5em;
             }
         }
-
-        @import "./ToolbarPlugin.scss";
     }
 
     .error-message {
@@ -96,3 +94,5 @@ $padding: 20px; // General padding for elements
         padding: $padding;
     }
 }
+
+@import "./ToolbarPlugin.scss";
