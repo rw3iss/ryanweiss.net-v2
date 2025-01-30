@@ -1,6 +1,6 @@
-import { IPlugin } from './IPlugin';
 import { WEditor } from '../lib/WEditor';
 import { Dropdown } from './Dropdown'; // Assuming Dropdown class is in this file
+import { IPlugin } from './IPlugin';
 
 export class ToolbarPlugin implements IPlugin {
     private editor: WEditor;
@@ -119,9 +119,9 @@ export class ToolbarPlugin implements IPlugin {
     };
 
     private showToolbar = (e: MouseEvent) => {
-        console.log(`show`)
         if (!this.toolbarContainer || this.toolbarContainer.children.length === 0) return;
 
+        // Calculate initial position but do not reposition on item clicks
         const rect = e.target instanceof Element ? e.target.getBoundingClientRect() : { top: 0, left: 0 };
         const windowWidth = window.innerWidth;
 
@@ -142,6 +142,12 @@ export class ToolbarPlugin implements IPlugin {
 
         this.toolbarContainer.style.display = 'none';
         this.isVisible = false;
+
+        // Hide all dropdowns when toolbar is hidden
+        Array.from(this.toolbarContainer.querySelectorAll('.dropdown-menu')).forEach(menu => {
+            menu.style.display = 'none';
+            menu.style.opacity = '0';
+        });
     };
 
     private handleEscapeKey = (e: KeyboardEvent) => {

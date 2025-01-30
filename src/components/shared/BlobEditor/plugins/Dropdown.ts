@@ -1,4 +1,3 @@
-import { IPlugin } from './IPlugin';
 
 export class Dropdown {
     private dropdownButton: HTMLElement;
@@ -34,11 +33,13 @@ export class Dropdown {
                     button.appendChild(label);
                 }
                 if (item.onClick) {
-                    button.addEventListener('click', item.onClick);
+                    button.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent event from bubbling up to toolbar
+                        item.onClick();
+                    });
                 }
                 menu.appendChild(button);
-            } else if (item.type === 'group' || item.type === 'dropdown') {
-                // Recursively handle nested groups or dropdowns
+            } else {
                 this.createToolbarItem(item, menu);
             }
         });
@@ -53,9 +54,9 @@ export class Dropdown {
             this.dropdownMenu.style.display = 'flex';
             this.dropdownMenu.style.opacity = '1';
             this.isVisible = true;
+            this.dropdownMenu.addEventListener('mouseleave', this.startHideTimer.bind(this));
+            this.dropdownMenu.addEventListener('mouseenter', this.clearHideTimer.bind(this));
         }
-        this.dropdownMenu.addEventListener('mouseleave', this.startHideTimer.bind(this));
-        this.dropdownMenu.addEventListener('mouseenter', this.clearHideTimer.bind(this));
     }
 
     private positionDropdown() {
@@ -92,6 +93,7 @@ export class Dropdown {
         this.dropdownMenu.style.opacity = '0';
         this.isVisible = false;
     }
+
 
     private createToolbarItem(item: any, parent: HTMLElement) {
         if (item.type === 'group') {

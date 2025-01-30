@@ -471,30 +471,274 @@ var init_AudioManager = __esm({
   }
 });
 
-// src/components/pages/Entry/style.scss
-var init_style = __esm({
-  "src/components/pages/Entry/style.scss"() {
+// node_modules/preact/hooks/dist/hooks.module.js
+function d2(n2, t3) {
+  c2.__h && c2.__h(r2, n2, o2 || t3), o2 = 0;
+  var u4 = r2.__H || (r2.__H = { __: [], __h: [] });
+  return n2 >= u4.__.length && u4.__.push({}), u4.__[n2];
+}
+function h2(n2) {
+  return o2 = 1, p2(D2, n2);
+}
+function p2(n2, u4, i4) {
+  var o3 = d2(t2++, 2);
+  if (o3.t = n2, !o3.__c && (o3.__ = [i4 ? i4(u4) : D2(void 0, u4), function(n3) {
+    var t3 = o3.__N ? o3.__N[0] : o3.__[0], r3 = o3.t(t3, n3);
+    t3 !== r3 && (o3.__N = [r3, o3.__[1]], o3.__c.setState({}));
+  }], o3.__c = r2, !r2.u)) {
+    var f4 = function(n3, t3, r3) {
+      if (!o3.__c.__H) return true;
+      var u5 = o3.__c.__H.__.filter(function(n4) {
+        return !!n4.__c;
+      });
+      if (u5.every(function(n4) {
+        return !n4.__N;
+      })) return !c3 || c3.call(this, n3, t3, r3);
+      var i5 = o3.__c.props !== n3;
+      return u5.forEach(function(n4) {
+        if (n4.__N) {
+          var t4 = n4.__[0];
+          n4.__ = n4.__N, n4.__N = void 0, t4 !== n4.__[0] && (i5 = true);
+        }
+      }), c3 && c3.call(this, n3, t3, r3) || i5;
+    };
+    r2.u = true;
+    var c3 = r2.shouldComponentUpdate, e4 = r2.componentWillUpdate;
+    r2.componentWillUpdate = function(n3, t3, r3) {
+      if (this.__e) {
+        var u5 = c3;
+        c3 = void 0, f4(n3, t3, r3), c3 = u5;
+      }
+      e4 && e4.call(this, n3, t3, r3);
+    }, r2.shouldComponentUpdate = f4;
+  }
+  return o3.__N || o3.__;
+}
+function y2(n2, u4) {
+  var i4 = d2(t2++, 3);
+  !c2.__s && C2(i4.__H, u4) && (i4.__ = n2, i4.i = u4, r2.__H.__h.push(i4));
+}
+function A2(n2) {
+  return o2 = 5, T2(function() {
+    return { current: n2 };
+  }, []);
+}
+function T2(n2, r3) {
+  var u4 = d2(t2++, 7);
+  return C2(u4.__H, r3) && (u4.__ = n2(), u4.__H = r3, u4.__h = n2), u4.__;
+}
+function q2(n2, t3) {
+  return o2 = 8, T2(function() {
+    return n2;
+  }, t3);
+}
+function j2() {
+  for (var n2; n2 = f2.shift(); ) if (n2.__P && n2.__H) try {
+    n2.__H.__h.forEach(z2), n2.__H.__h.forEach(B2), n2.__H.__h = [];
+  } catch (t3) {
+    n2.__H.__h = [], c2.__e(t3, n2.__v);
+  }
+}
+function w2(n2) {
+  var t3, r3 = function() {
+    clearTimeout(u4), k2 && cancelAnimationFrame(t3), setTimeout(n2);
+  }, u4 = setTimeout(r3, 100);
+  k2 && (t3 = requestAnimationFrame(r3));
+}
+function z2(n2) {
+  var t3 = r2, u4 = n2.__c;
+  "function" == typeof u4 && (n2.__c = void 0, u4()), r2 = t3;
+}
+function B2(n2) {
+  var t3 = r2;
+  n2.__c = n2.__(), r2 = t3;
+}
+function C2(n2, t3) {
+  return !n2 || n2.length !== t3.length || t3.some(function(t4, r3) {
+    return t4 !== n2[r3];
+  });
+}
+function D2(n2, t3) {
+  return "function" == typeof t3 ? t3(n2) : t3;
+}
+var t2, r2, u2, i2, o2, f2, c2, e3, a2, v2, l2, m2, s2, k2;
+var init_hooks_module = __esm({
+  "node_modules/preact/hooks/dist/hooks.module.js"() {
+    "use strict";
+    init_preact_module();
+    init_preact_module();
+    o2 = 0;
+    f2 = [];
+    c2 = l;
+    e3 = c2.__b;
+    a2 = c2.__r;
+    v2 = c2.diffed;
+    l2 = c2.__c;
+    m2 = c2.unmount;
+    s2 = c2.__;
+    c2.__b = function(n2) {
+      r2 = null, e3 && e3(n2);
+    }, c2.__ = function(n2, t3) {
+      n2 && t3.__k && t3.__k.__m && (n2.__m = t3.__k.__m), s2 && s2(n2, t3);
+    }, c2.__r = function(n2) {
+      a2 && a2(n2), t2 = 0;
+      var i4 = (r2 = n2.__c).__H;
+      i4 && (u2 === r2 ? (i4.__h = [], r2.__h = [], i4.__.forEach(function(n3) {
+        n3.__N && (n3.__ = n3.__N), n3.i = n3.__N = void 0;
+      })) : (i4.__h.forEach(z2), i4.__h.forEach(B2), i4.__h = [], t2 = 0)), u2 = r2;
+    }, c2.diffed = function(n2) {
+      v2 && v2(n2);
+      var t3 = n2.__c;
+      t3 && t3.__H && (t3.__H.__h.length && (1 !== f2.push(t3) && i2 === c2.requestAnimationFrame || ((i2 = c2.requestAnimationFrame) || w2)(j2)), t3.__H.__.forEach(function(n3) {
+        n3.i && (n3.__H = n3.i), n3.i = void 0;
+      })), u2 = r2 = null;
+    }, c2.__c = function(n2, t3) {
+      t3.some(function(n3) {
+        try {
+          n3.__h.forEach(z2), n3.__h = n3.__h.filter(function(n4) {
+            return !n4.__ || B2(n4);
+          });
+        } catch (r3) {
+          t3.some(function(n4) {
+            n4.__h && (n4.__h = []);
+          }), t3 = [], c2.__e(r3, n3.__v);
+        }
+      }), l2 && l2(n2, t3);
+    }, c2.unmount = function(n2) {
+      m2 && m2(n2);
+      var t3, r3 = n2.__c;
+      r3 && r3.__H && (r3.__H.__.forEach(function(n3) {
+        try {
+          z2(n3);
+        } catch (n4) {
+          t3 = n4;
+        }
+      }), r3.__H = void 0, t3 && c2.__e(t3, r3.__v));
+    };
+    k2 = "function" == typeof requestAnimationFrame;
   }
 });
 
 // node_modules/preact/jsx-runtime/dist/jsxRuntime.module.js
-function u2(e4, t3, n2, o3, i4, u4) {
+function u3(e4, t3, n2, o3, i4, u4) {
   t3 || (t3 = {});
   var a3, c3, p3 = t3;
   if ("ref" in p3) for (c3 in p3 = {}, t3) "ref" == c3 ? a3 = t3[c3] : p3[c3] = t3[c3];
-  var l3 = { type: e4, props: p3, key: n2, ref: a3, __k: null, __: null, __b: 0, __e: null, __c: null, constructor: void 0, __v: --f2, __i: -1, __u: 0, __source: i4, __self: u4 };
+  var l3 = { type: e4, props: p3, key: n2, ref: a3, __k: null, __: null, __b: 0, __e: null, __c: null, constructor: void 0, __v: --f3, __i: -1, __u: 0, __source: i4, __self: u4 };
   if ("function" == typeof e4 && (a3 = e4.defaultProps)) for (c3 in a3) void 0 === p3[c3] && (p3[c3] = a3[c3]);
   return l.vnode && l.vnode(l3), l3;
 }
-var f2, i2;
+var f3, i3;
 var init_jsxRuntime_module = __esm({
   "node_modules/preact/jsx-runtime/dist/jsxRuntime.module.js"() {
     "use strict";
     init_preact_module();
     init_preact_module();
     init_preact_module();
-    f2 = 0;
-    i2 = Array.isArray;
+    f3 = 0;
+    i3 = Array.isArray;
+  }
+});
+
+// src/components/pages/Colors/CodeMirror.tsx
+var CodeMirror, CodeMirror_default;
+var init_CodeMirror = __esm({
+  "src/components/pages/Colors/CodeMirror.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_hooks_module();
+    init_jsxRuntime_module();
+    CodeMirror = ({ initialDoc, onChange }) => {
+      y2(() => {
+        console.log(`here`);
+        const editor = CodeMirror.fromTextArea(document.getElementById("code-text"), {});
+        console.log(`editor`, editor);
+      }, []);
+      return /* @__PURE__ */ u3("textarea", { id: "code-text" });
+    };
+    CodeMirror_default = CodeMirror;
+  }
+});
+
+// src/components/pages/Colors/InputColumn.tsx
+var InputColumn, InputColumn_default;
+var init_InputColumn = __esm({
+  "src/components/pages/Colors/InputColumn.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_hooks_module();
+    init_CodeMirror();
+    init_jsxRuntime_module();
+    InputColumn = ({ onColorsParsed }) => {
+      const [text, setText] = h2("");
+      const handleFileImport = q2((event) => {
+        const target = event.target;
+        if (target && target.files && target.files[0]) {
+          const file = target.files[0];
+          const reader = new FileReader();
+          reader.onload = (e4) => {
+            setText(e4.target.result);
+          };
+          reader.readAsText(file);
+        }
+      }, []);
+      const handleClear = q2(() => {
+        setText("");
+      }, []);
+      const handleParseColors = q2(() => {
+        const regex = /(#[0-9A-Fa-f]{3,8}|rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)|rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*(0(\.\d+)?|1(\.0+)?)\s*\))/g;
+        const colors = [];
+        let match;
+        while ((match = regex.exec(text)) !== null) {
+          if (!colors.some((color) => color.color === match[0])) {
+            colors.push({ color: match[0], modifiedColor: match[0] });
+          }
+        }
+        onColorsParsed(colors);
+      }, [text, onColorsParsed]);
+      return /* @__PURE__ */ u3("div", { style: { flex: "1 1 33%", display: "flex", flexDirection: "column" }, children: [
+        /* @__PURE__ */ u3("div", { children: [
+          /* @__PURE__ */ u3("button", { onClick: () => document.getElementById("fileInput")?.click(), children: "Import File" }),
+          /* @__PURE__ */ u3("input", { type: "file", id: "fileInput", style: { display: "none" }, onChange: handleFileImport }),
+          /* @__PURE__ */ u3("button", { onClick: handleClear, children: "Clear" })
+        ] }),
+        /* @__PURE__ */ u3(
+          CodeMirror_default,
+          {
+            initialDoc: text,
+            onChange: (value) => setText(value)
+          }
+        ),
+        /* @__PURE__ */ u3("div", { children: /* @__PURE__ */ u3("button", { onClick: handleParseColors, children: "Parse Colors" }) })
+      ] });
+    };
+    InputColumn_default = InputColumn;
+  }
+});
+
+// src/components/pages/Colors/ColorsPage.tsx
+var ColorsPage, ColorsPage_default;
+var init_ColorsPage = __esm({
+  "src/components/pages/Colors/ColorsPage.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_hooks_module();
+    init_InputColumn();
+    init_jsxRuntime_module();
+    ColorsPage = () => {
+      const [colors, setColors] = h2([]);
+      const handleColorsParsed = (parsedColors) => {
+        setColors(parsedColors);
+      };
+      return /* @__PURE__ */ u3("div", { class: "page", id: "colors", style: { display: "flex", width: "100vw", height: "100vh" }, children: /* @__PURE__ */ u3(InputColumn_default, { onColorsParsed: handleColorsParsed }) });
+    };
+    ColorsPage_default = ColorsPage;
+  }
+});
+
+// src/components/pages/Entry/style.scss
+var init_style = __esm({
+  "src/components/pages/Entry/style.scss"() {
   }
 });
 
@@ -507,7 +751,7 @@ var init_Entry = __esm({
     init_style();
     init_jsxRuntime_module();
     EntryPage = (props) => {
-      return /* @__PURE__ */ u2("div", { className: "page", id: "entry", children: "Entry" });
+      return /* @__PURE__ */ u3("div", { className: "page", id: "entry", children: "Entry" });
     };
     Entry_default = EntryPage;
   }
@@ -528,7 +772,7 @@ var init_Home = __esm({
     init_style2();
     init_jsxRuntime_module();
     HomePage = (props) => {
-      return /* @__PURE__ */ u2("div", { className: "page", id: "home" });
+      return /* @__PURE__ */ u3("div", { className: "page", id: "home" });
     };
     Home_default = HomePage;
   }
@@ -542,16 +786,16 @@ var init_style3 = __esm({
 
 // src/components/pages/Info/index.tsx
 function InfoPage() {
-  return /* @__PURE__ */ u2("div", { className: "page", id: "info", children: [
-    /* @__PURE__ */ u2("h1", { children: "Info" }),
-    /* @__PURE__ */ u2("div", { className: "bio", children: [
-      /* @__PURE__ */ u2("div", { className: "section", children: [
+  return /* @__PURE__ */ u3("div", { className: "page", id: "info", children: [
+    /* @__PURE__ */ u3("h1", { children: "Info" }),
+    /* @__PURE__ */ u3("div", { className: "bio", children: [
+      /* @__PURE__ */ u3("div", { className: "section", children: [
         "E-mail: ",
-        /* @__PURE__ */ u2("a", { href: "mailto:rw3iss@gmail.com", children: "rw3iss@gmail.com" })
+        /* @__PURE__ */ u3("a", { href: "mailto:rw3iss@gmail.com", children: "rw3iss@gmail.com" })
       ] }),
-      /* @__PURE__ */ u2("div", { className: "section", children: [
+      /* @__PURE__ */ u3("div", { className: "section", children: [
         "Resume: ",
-        /* @__PURE__ */ u2("a", { href: "/files/resume-ryan-weiss.pdf", target: "_blank", children: "View" })
+        /* @__PURE__ */ u3("a", { href: "/files/resume-ryan-weiss.pdf", target: "_blank", children: "View" })
       ] })
     ] })
   ] });
@@ -582,7 +826,7 @@ var init_NotFound = __esm({
     init_style4();
     init_jsxRuntime_module();
     NotFoundPage = (props) => {
-      return /* @__PURE__ */ u2("div", { className: "page center", id: "not-found", children: /* @__PURE__ */ u2("h4", { children: "Page Not Found" }) });
+      return /* @__PURE__ */ u3("div", { className: "page center", id: "not-found", children: /* @__PURE__ */ u3("h4", { children: "Page Not Found" }) });
     };
     NotFound_default = NotFoundPage;
   }
@@ -722,10 +966,13 @@ var init_Dropdown = __esm({
               button.appendChild(label);
             }
             if (item.onClick) {
-              button.addEventListener("click", item.onClick);
+              button.addEventListener("click", (e4) => {
+                e4.stopPropagation();
+                item.onClick();
+              });
             }
             menu.appendChild(button);
-          } else if (item.type === "group" || item.type === "dropdown") {
+          } else {
             this.createToolbarItem(item, menu);
           }
         });
@@ -738,9 +985,9 @@ var init_Dropdown = __esm({
           this.dropdownMenu.style.display = "flex";
           this.dropdownMenu.style.opacity = "1";
           this.isVisible = true;
+          this.dropdownMenu.addEventListener("mouseleave", this.startHideTimer.bind(this));
+          this.dropdownMenu.addEventListener("mouseenter", this.clearHideTimer.bind(this));
         }
-        this.dropdownMenu.addEventListener("mouseleave", this.startHideTimer.bind(this));
-        this.dropdownMenu.addEventListener("mouseenter", this.clearHideTimer.bind(this));
       }
       positionDropdown() {
         if (!this.isVisible) {
@@ -901,7 +1148,6 @@ var init_ToolbarPlugin = __esm({
         }
       };
       showToolbar = (e4) => {
-        console.log(`show`);
         if (!this.toolbarContainer || this.toolbarContainer.children.length === 0) return;
         const rect = e4.target instanceof Element ? e4.target.getBoundingClientRect() : { top: 0, left: 0 };
         const windowWidth = window.innerWidth;
@@ -917,6 +1163,10 @@ var init_ToolbarPlugin = __esm({
         if (!this.toolbarContainer) return;
         this.toolbarContainer.style.display = "none";
         this.isVisible = false;
+        Array.from(this.toolbarContainer.querySelectorAll(".dropdown-menu")).forEach((menu) => {
+          menu.style.display = "none";
+          menu.style.opacity = "0";
+        });
       };
       handleEscapeKey = (e4) => {
         if (e4.key === "Escape" && this.isVisible) {
@@ -954,149 +1204,6 @@ var init_ToolbarPlugin = __esm({
         ]
       };
     };
-  }
-});
-
-// node_modules/preact/hooks/dist/hooks.module.js
-function d2(n2, t3) {
-  c2.__h && c2.__h(r2, n2, o2 || t3), o2 = 0;
-  var u4 = r2.__H || (r2.__H = { __: [], __h: [] });
-  return n2 >= u4.__.length && u4.__.push({}), u4.__[n2];
-}
-function h2(n2) {
-  return o2 = 1, p2(D2, n2);
-}
-function p2(n2, u4, i4) {
-  var o3 = d2(t2++, 2);
-  if (o3.t = n2, !o3.__c && (o3.__ = [i4 ? i4(u4) : D2(void 0, u4), function(n3) {
-    var t3 = o3.__N ? o3.__N[0] : o3.__[0], r3 = o3.t(t3, n3);
-    t3 !== r3 && (o3.__N = [r3, o3.__[1]], o3.__c.setState({}));
-  }], o3.__c = r2, !r2.u)) {
-    var f4 = function(n3, t3, r3) {
-      if (!o3.__c.__H) return true;
-      var u5 = o3.__c.__H.__.filter(function(n4) {
-        return !!n4.__c;
-      });
-      if (u5.every(function(n4) {
-        return !n4.__N;
-      })) return !c3 || c3.call(this, n3, t3, r3);
-      var i5 = o3.__c.props !== n3;
-      return u5.forEach(function(n4) {
-        if (n4.__N) {
-          var t4 = n4.__[0];
-          n4.__ = n4.__N, n4.__N = void 0, t4 !== n4.__[0] && (i5 = true);
-        }
-      }), c3 && c3.call(this, n3, t3, r3) || i5;
-    };
-    r2.u = true;
-    var c3 = r2.shouldComponentUpdate, e4 = r2.componentWillUpdate;
-    r2.componentWillUpdate = function(n3, t3, r3) {
-      if (this.__e) {
-        var u5 = c3;
-        c3 = void 0, f4(n3, t3, r3), c3 = u5;
-      }
-      e4 && e4.call(this, n3, t3, r3);
-    }, r2.shouldComponentUpdate = f4;
-  }
-  return o3.__N || o3.__;
-}
-function y2(n2, u4) {
-  var i4 = d2(t2++, 3);
-  !c2.__s && C2(i4.__H, u4) && (i4.__ = n2, i4.i = u4, r2.__H.__h.push(i4));
-}
-function A2(n2) {
-  return o2 = 5, T2(function() {
-    return { current: n2 };
-  }, []);
-}
-function T2(n2, r3) {
-  var u4 = d2(t2++, 7);
-  return C2(u4.__H, r3) && (u4.__ = n2(), u4.__H = r3, u4.__h = n2), u4.__;
-}
-function j2() {
-  for (var n2; n2 = f3.shift(); ) if (n2.__P && n2.__H) try {
-    n2.__H.__h.forEach(z2), n2.__H.__h.forEach(B2), n2.__H.__h = [];
-  } catch (t3) {
-    n2.__H.__h = [], c2.__e(t3, n2.__v);
-  }
-}
-function w2(n2) {
-  var t3, r3 = function() {
-    clearTimeout(u4), k2 && cancelAnimationFrame(t3), setTimeout(n2);
-  }, u4 = setTimeout(r3, 100);
-  k2 && (t3 = requestAnimationFrame(r3));
-}
-function z2(n2) {
-  var t3 = r2, u4 = n2.__c;
-  "function" == typeof u4 && (n2.__c = void 0, u4()), r2 = t3;
-}
-function B2(n2) {
-  var t3 = r2;
-  n2.__c = n2.__(), r2 = t3;
-}
-function C2(n2, t3) {
-  return !n2 || n2.length !== t3.length || t3.some(function(t4, r3) {
-    return t4 !== n2[r3];
-  });
-}
-function D2(n2, t3) {
-  return "function" == typeof t3 ? t3(n2) : t3;
-}
-var t2, r2, u3, i3, o2, f3, c2, e3, a2, v2, l2, m2, s2, k2;
-var init_hooks_module = __esm({
-  "node_modules/preact/hooks/dist/hooks.module.js"() {
-    "use strict";
-    init_preact_module();
-    init_preact_module();
-    o2 = 0;
-    f3 = [];
-    c2 = l;
-    e3 = c2.__b;
-    a2 = c2.__r;
-    v2 = c2.diffed;
-    l2 = c2.__c;
-    m2 = c2.unmount;
-    s2 = c2.__;
-    c2.__b = function(n2) {
-      r2 = null, e3 && e3(n2);
-    }, c2.__ = function(n2, t3) {
-      n2 && t3.__k && t3.__k.__m && (n2.__m = t3.__k.__m), s2 && s2(n2, t3);
-    }, c2.__r = function(n2) {
-      a2 && a2(n2), t2 = 0;
-      var i4 = (r2 = n2.__c).__H;
-      i4 && (u3 === r2 ? (i4.__h = [], r2.__h = [], i4.__.forEach(function(n3) {
-        n3.__N && (n3.__ = n3.__N), n3.i = n3.__N = void 0;
-      })) : (i4.__h.forEach(z2), i4.__h.forEach(B2), i4.__h = [], t2 = 0)), u3 = r2;
-    }, c2.diffed = function(n2) {
-      v2 && v2(n2);
-      var t3 = n2.__c;
-      t3 && t3.__H && (t3.__H.__h.length && (1 !== f3.push(t3) && i3 === c2.requestAnimationFrame || ((i3 = c2.requestAnimationFrame) || w2)(j2)), t3.__H.__.forEach(function(n3) {
-        n3.i && (n3.__H = n3.i), n3.i = void 0;
-      })), u3 = r2 = null;
-    }, c2.__c = function(n2, t3) {
-      t3.some(function(n3) {
-        try {
-          n3.__h.forEach(z2), n3.__h = n3.__h.filter(function(n4) {
-            return !n4.__ || B2(n4);
-          });
-        } catch (r3) {
-          t3.some(function(n4) {
-            n4.__h && (n4.__h = []);
-          }), t3 = [], c2.__e(r3, n3.__v);
-        }
-      }), l2 && l2(n2, t3);
-    }, c2.unmount = function(n2) {
-      m2 && m2(n2);
-      var t3, r3 = n2.__c;
-      r3 && r3.__H && (r3.__H.__.forEach(function(n3) {
-        try {
-          z2(n3);
-        } catch (n4) {
-          t3 = n4;
-        }
-      }), r3.__H = void 0, t3 && c2.__e(t3, r3.__v));
-    };
-    k2 = "function" == typeof requestAnimationFrame;
   }
 });
 
@@ -2651,11 +2758,11 @@ var init_BlobEditor2 = __esm({
         }
       };
       if (!currentBlob) {
-        return /* @__PURE__ */ u2("p", { class: "error-message", children: "Loading..." });
+        return /* @__PURE__ */ u3("p", { class: "error-message", children: "Loading..." });
       }
-      return /* @__PURE__ */ u2("div", { class: "blob-editor", style: { width: "100%", height: "100%", display: "flex", flexDirection: "column" }, children: [
-        /* @__PURE__ */ u2("h2", { children: "Blob Editor" }),
-        /* @__PURE__ */ u2(
+      return /* @__PURE__ */ u3("div", { class: "blob-editor", style: { width: "100%", height: "100%", display: "flex", flexDirection: "column" }, children: [
+        /* @__PURE__ */ u3("h2", { children: "Blob Editor" }),
+        /* @__PURE__ */ u3(
           "input",
           {
             type: "text",
@@ -2664,7 +2771,7 @@ var init_BlobEditor2 = __esm({
             class: "blob-title"
           }
         ),
-        /* @__PURE__ */ u2("div", { ref: containerRef, class: "wysiwyg-container", style: { flexGrow: 1 } })
+        /* @__PURE__ */ u3("div", { ref: containerRef, class: "wysiwyg-container", style: { flexGrow: 1 } })
       ] });
     };
   }
@@ -2686,7 +2793,7 @@ var init_Other = __esm({
     init_style5();
     init_jsxRuntime_module();
     OtherPage = (props) => {
-      return /* @__PURE__ */ u2("div", { className: "page", id: "entry", children: /* @__PURE__ */ u2(BlobEditor, {}) });
+      return /* @__PURE__ */ u3("div", { className: "page", id: "entry", children: /* @__PURE__ */ u3(BlobEditor, {}) });
     };
     Other_default = OtherPage;
   }
@@ -2707,7 +2814,7 @@ var init_Play = __esm({
     init_style6();
     init_jsxRuntime_module();
     PlayPage = (props) => {
-      return /* @__PURE__ */ u2("div", { className: "page", id: "play", children: /* @__PURE__ */ u2("h1", { children: "Play" }) });
+      return /* @__PURE__ */ u3("div", { className: "page", id: "play", children: /* @__PURE__ */ u3("h1", { children: "Play" }) });
     };
     Play_default = PlayPage;
   }
@@ -2864,7 +2971,7 @@ var init_Timeline2 = __esm({
         const el = document.getElementById("timeline");
         if (el) new Timeline(el, events);
       }, []);
-      return /* @__PURE__ */ u2("div", { className: "page", id: "timeline-page", children: /* @__PURE__ */ u2("div", { id: "timeline" }) });
+      return /* @__PURE__ */ u3("div", { className: "page", id: "timeline-page", children: /* @__PURE__ */ u3("div", { id: "timeline" }) });
     };
     Timeline_default = TimelinePage;
   }
@@ -2900,10 +3007,10 @@ var init_Work = __esm({
       const isFiltered = (f4) => {
         return filters.includes(f4);
       };
-      return /* @__PURE__ */ u2("div", { className: "page", id: "work", children: [
-        /* @__PURE__ */ u2("h1", { children: "Work" }),
-        /* @__PURE__ */ u2("div", { className: "sub-nav", children: [
-          /* @__PURE__ */ u2(
+      return /* @__PURE__ */ u3("div", { className: "page", id: "work", children: [
+        /* @__PURE__ */ u3("h1", { children: "Work" }),
+        /* @__PURE__ */ u3("div", { className: "sub-nav", children: [
+          /* @__PURE__ */ u3(
             "a",
             {
               href: "#freelance",
@@ -2913,7 +3020,7 @@ var init_Work = __esm({
               children: "Freelance"
             }
           ),
-          /* @__PURE__ */ u2(
+          /* @__PURE__ */ u3(
             "a",
             {
               href: "#fulltime",
@@ -2936,6 +3043,7 @@ var init_routes = __esm({
   "src/config/routes.tsx"() {
     "use strict";
     init_preact_module();
+    init_ColorsPage();
     init_Entry();
     init_Home();
     init_Info();
@@ -2946,14 +3054,15 @@ var init_routes = __esm({
     init_Work();
     init_jsxRuntime_module();
     routes_default = {
-      "/": (p3) => /* @__PURE__ */ u2(Home_default, {}),
-      "/work": (p3) => /* @__PURE__ */ u2(Work_default, {}),
-      "/play": (p3) => /* @__PURE__ */ u2(Play_default, {}),
-      "/info": (p3) => /* @__PURE__ */ u2(Info_default, {}),
-      "/editor": (p3) => /* @__PURE__ */ u2(Other_default, {}),
-      "/timeline": (p3) => /* @__PURE__ */ u2(Timeline_default, {}),
-      "/entries/:slug": (p3) => /* @__PURE__ */ u2(Entry_default, {}),
-      "*": (p3) => /* @__PURE__ */ u2(NotFound_default, {})
+      "/": (p3) => /* @__PURE__ */ u3(Home_default, {}),
+      "/work": (p3) => /* @__PURE__ */ u3(Work_default, {}),
+      "/play": (p3) => /* @__PURE__ */ u3(Play_default, {}),
+      "/info": (p3) => /* @__PURE__ */ u3(Info_default, {}),
+      "/editor": (p3) => /* @__PURE__ */ u3(Other_default, {}),
+      "/colors": (p3) => /* @__PURE__ */ u3(ColorsPage_default, {}),
+      "/timeline": (p3) => /* @__PURE__ */ u3(Timeline_default, {}),
+      "/entries/:slug": (p3) => /* @__PURE__ */ u3(Entry_default, {}),
+      "*": (p3) => /* @__PURE__ */ u3(NotFound_default, {})
     };
   }
 });
@@ -2965,7 +3074,7 @@ var require_config = __commonJS({
     init_preact_module();
     init_routes();
     module.exports = {
-      DEFAULT_ROUTE: "/editor",
+      DEFAULT_ROUTE: "/colors",
       routes: routes_default
     };
   }
@@ -3240,7 +3349,7 @@ function RouteContext() {
 // src/components/app/App.tsx
 init_jsxRuntime_module();
 var App = (props) => {
-  return /* @__PURE__ */ u2("main", { id: "app", children: /* @__PURE__ */ u2("div", { className: "content-wrapper", children: /* @__PURE__ */ u2("div", { className: "page", children: /* @__PURE__ */ u2("div", { className: "container", children: /* @__PURE__ */ u2("div", { className: "stage", children: /* @__PURE__ */ u2("div", { className: "stage-content", children: /* @__PURE__ */ u2(RouteContext, {}) }) }) }) }) }) });
+  return /* @__PURE__ */ u3("main", { id: "app", children: /* @__PURE__ */ u3("div", { className: "content-wrapper", children: /* @__PURE__ */ u3("div", { className: "page", children: /* @__PURE__ */ u3("div", { className: "container", children: /* @__PURE__ */ u3("div", { className: "stage", children: /* @__PURE__ */ u3("div", { className: "stage-content", children: /* @__PURE__ */ u3(RouteContext, {}) }) }) }) }) }) });
 };
 var App_default = App;
 
@@ -3248,7 +3357,7 @@ var App_default = App;
 init_jsxRuntime_module();
 var initApp = async () => {
   await Application_default.init();
-  D(/* @__PURE__ */ u2(App_default, {}), document.body);
+  D(/* @__PURE__ */ u3(App_default, {}), document.body);
 };
 initApp();
 //# sourceMappingURL=index.js.map

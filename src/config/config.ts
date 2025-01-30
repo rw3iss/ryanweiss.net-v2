@@ -1,6 +1,6 @@
 import routes from './routes';
 
 module.exports = {
-    DEFAULT_ROUTE: "/editor",
+    DEFAULT_ROUTE: "/colors",
     routes
 };
