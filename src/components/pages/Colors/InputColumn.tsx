@@ -10,7 +10,6 @@ interface InputColumnProps {
 export const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsParsed, onDarkModeChange }) => {
     const [text, setText] = useState('');
     const [combineSimilar, setCombineSimilar] = useState(false);
-
     const [fileName, setFileName] = useState<string | undefined>(undefined);
     const [darkMode, setDarkMode] = useState(false);
 
