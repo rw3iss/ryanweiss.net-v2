@@ -29,8 +29,6 @@ export function isValidColor(color: string): boolean {
     // Check for hex color
     if (color.startsWith('#')) {
         const hexChars = color.slice(1);
-
-        // Check if all characters are valid hex digits and length is correct
         return /^[0-9A-Fa-f]+$/.test(hexChars) && [3, 6, 8].includes(hexChars.length);
     }
 
@@ -59,47 +57,39 @@ export function normalizeColor(color: string): string | null {
         const match = color.match(/^rgba?\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)$/);
         if (match) {
             const [, r, g, b, a] = match;
-            return `rgba(${r},${g},${b},${(a ? parseFloat(a).toFixed(2) : '1.00')})`;
+            return `rgba(${r},${g},${b},${a ? parseFloat(a).toFixed(2) : '1.00'})`;
         }
     }
     return null;
 }
-export function parseColors(text: string, combineSimilar: boolean = false): { color: string; modifiedColor: string }[] {
-    const hexRegexes = [
-        /#(?:[0-9a-fA-F]{8})(?=[,\s;]|$)/gi, // 8 characters
-        /#(?:[0-9a-fA-F]{6})(?=[,\s;]|$)/gi, // 6 characters
-        /#(?:[0-9a-fA-F]{3})(?=[,\s;]|$)/gi  // 3 characters
-    ];
+
+export function parseColors(text: string): { color: string; modifiedColor: string }[] {
+    // Regex to match hex colors
+    const hexRegex = /#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})(?=[,\s;]|$)/gi;
+
+    // Regex to match RGB and RGBA colors
     const rgbRegex = /rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)(?=[,\s;]|$)/gi;
+
     const colors: { color: string; modifiedColor: string }[] = [];
 
-    // Process hex colors from longest to shortest
-    for (const regex of hexRegexes) {
-        let match;
-        while ((match = regex.exec(text)) !== null) {
-            const hexColor = match[0];
-            if (isValidColor(hexColor)) {
-                const normalized = normalizeColor(hexColor);
-                if (normalized && !colors.some(c => c.color.toLowerCase() === hexColor.toLowerCase())) {
-                    colors.push({ color: hexColor, modifiedColor: normalized });
-                }
+    let match;
+    // Match hex colors
+    while ((match = hexRegex.exec(text)) !== null) {
+        const hexColor = match[0];
+        if (isValidColor(hexColor)) {
+            const normalized = normalizeColor(hexColor);
+            if (normalized && !colors.some(c => c.modifiedColor.toLowerCase() === normalized.toLowerCase())) {
+                colors.push({ color: hexColor, modifiedColor: normalized });
             }
         }
     }
 
-    // Process RGB/RGBA colors
-    let match;
+    // Match RGB/RGBA colors
     while ((match = rgbRegex.exec(text)) !== null) {
         const rgbColor = match[0];
         if (isValidColor(rgbColor)) {
             const normalized = normalizeColor(rgbColor);
-
-            // Check uniqueness based on the original color string or modified color based on combineSimilar setting
-            const uniquenessCheck = combineSimilar
-                ? !colors.some(c => c.modifiedColor.toLowerCase() === normalized!.toLowerCase())
-                : !colors.some(c => c.color.toLowerCase() === rgbColor.toLowerCase());
-
-            if (normalized && uniquenessCheck) {
+            if (normalized && !colors.some(c => c.modifiedColor.toLowerCase() === normalized.toLowerCase())) {
                 colors.push({ color: rgbColor, modifiedColor: normalized });
             }
         }

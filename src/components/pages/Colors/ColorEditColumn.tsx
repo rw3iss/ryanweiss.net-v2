@@ -1,24 +1,32 @@
 import { FunctionalComponent } from 'preact';
 import { useCallback, useEffect, useState } from 'preact/hooks';
-import ColorEdit from './ColorEdit';
+import { ColorEdit } from './ColorEdit';
 
 interface ColorEditColumnProps {
     colors: { color: string, modifiedColor: string }[];
     onColorsChanged: (newColors: { color: string, modifiedColor: string }[]) => void;
 }
 
-const ColorEditColumn: FunctionalComponent<ColorEditColumnProps> = ({ colors, onColorsChanged }) => {
+export const ColorEditColumn: FunctionalComponent<ColorEditColumnProps> = ({ colors, onColorsChanged }) => {
     const [modifiedColors, setModifiedColors] = useState(colors);
 
     useEffect(() => {
-        // Reset modifiedColors to match incoming colors
-        setModifiedColors(colors);
+        console.log(`colors change.`)
+        setModifiedColors([...colors]);
     }, [colors]);
 
     const handleColorChange = useCallback((index: number, newColor: string) => {
         setModifiedColors(prevColors =>
             prevColors.map((c, i) => i === index ? { ...c, modifiedColor: newColor } : c)
         );
+    }, []);
+
+    const hideOtherPickers = useCallback(() => {
+        // Hide all pickers by destroying them, they'll be recreated on next show
+        document.querySelectorAll('.color-picker .popup').forEach(popup => {
+            const picker = (popup as any).picker; // VanillaPicker adds this property
+            if (picker) picker.destroy();
+        });
     }, []);
 
     const handleApply = useCallback(() => {
@@ -32,6 +40,7 @@ const ColorEditColumn: FunctionalComponent<ColorEditColumnProps> = ({ colors, on
                     key={index}
                     color={color}
                     onChange={(newColor: string) => handleColorChange(index, newColor)}
+                    hideOtherPickers={hideOtherPickers}
                 />
             ))}
             <div className="button-bar">
@@ -40,5 +49,3 @@ const ColorEditColumn: FunctionalComponent<ColorEditColumnProps> = ({ colors, on
         </div>
     );
 };
-
-export default ColorEditColumn;

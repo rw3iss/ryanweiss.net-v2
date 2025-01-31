@@ -1,139 +1,5 @@
 @charset "UTF-8";
 
-/* src/components/pages/Colors/ColorsPage.scss */
-.ColorPage {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  width: 100%;
-  height: 100vh;
-  background-color: #f4f4f4;
-  font-size: 16px;
-  color: #333;
-}
-.ColorPage .column {
-  flex: 1 0 33%;
-  display: flex;
-  flex-direction: column;
-  padding: 15px;
-  overflow-y: auto;
-  height: 100%;
-}
-.ColorPage .column button {
-  padding: 10px;
-  margin: 5px;
-  background-color: white;
-  border: 1px solid rgb(218.5, 218.5, 218.5);
-  border-radius: 4px;
-  cursor: pointer;
-}
-.ColorPage .column button:hover {
-  background-color: white;
-}
-.ColorPage .column textarea {
-  font-family: monospace;
-  font-size: 16px;
-  padding: 10px;
-  border: 1px solid rgb(218.5, 218.5, 218.5);
-  border-radius: 4px;
-}
-.ColorPage .InputColumn textarea {
-  flex: 1;
-  resize: none;
-}
-.ColorPage .ColorEditColumn {
-  overflow-y: auto;
-}
-.ColorPage .ColorEditColumn .ColorEdit {
-  position: relative;
-  transition: background-color 0.3s ease;
-  min-height: 50px;
-}
-.ColorPage .ColorEditColumn .ColorEdit:hover {
-  background-color: white;
-}
-.ColorPage .OutputColumn {
-  overflow-y: auto;
-}
-.ColorPage .OutputColumn .tab-bar {
-  display: flex;
-  margin-bottom: 10px;
-}
-.ColorPage .OutputColumn .tab-bar button {
-  flex: 1;
-  text-align: center;
-  background-color: #f4f4f4;
-}
-.ColorPage .OutputColumn .tab-bar button.active {
-  background-color: white;
-}
-.ColorPage .OutputColumn .tab-content {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid rgb(218.5, 218.5, 218.5);
-  border-radius: 4px;
-}
-.ColorPage .OutputColumn .tab-content .color-swatches,
-.ColorPage .OutputColumn .tab-content .text-preview {
-  height: 100%;
-}
-.ColorPage .OutputColumn .tab-content .color-swatches {
-  display: flex;
-  flex-direction: column;
-}
-.ColorPage .OutputColumn .tab-content .color-swatches > div {
-  flex: 1;
-}
-.ColorPage .OutputColumn .tab-content .text-preview textarea {
-  width: 100%;
-  height: 100%;
-  resize: none;
-}
-.ColorPage .button-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 0;
-}
-.ColorPage .button-bar.top {
-  margin-bottom: 10px;
-}
-.ColorPage .button-bar.bottom {
-  margin-top: 10px;
-}
-.ColorPage .button-bar label {
-  display: flex;
-  align-items: center;
-}
-.ColorPage .button-bar label input[type=checkbox] {
-  width: 24px;
-  height: 24px;
-  margin-right: 8px;
-}
-.ColorPage .button-bar label span {
-  font-size: 19.2px;
-  font-weight: bold;
-}
-.ColorPage .picker_wrapper {
-  z-index: 10000;
-}
-.color-swatch {
-  width: 100%;
-  height: 100%;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  cursor: pointer;
-}
-.color-swatch .color-picker,
-.color-swatch .color-picker .popup {
-  z-index: 10000;
-  position: fixed;
-  display: block !important;
-}
-.color-swatch.non-clickable {
-  cursor: default;
-}
-
 /* src/components/pages/Entry/style.scss */
 @keyframes loader-ring {
   0% {
@@ -1250,6 +1116,172 @@
     width: 100%;
     text-align: center;
   }
+}
+
+/* src/components/pages/Colors/ColorPage.scss */
+:root {
+  --background-color: #f4f4f4;
+  --text-color: #333;
+  --item-padding: 10px;
+  --column-padding: 15px;
+  --base-font-size: 16px;
+  --button-bg: #3498db;
+  --button-text: #fff;
+  --button-hover-bg: lighten(#3498db, 10%);
+  --button-hover-bg2: lighten(#3498db, 20%);
+  --textarea-bg: #fff;
+  --textarea-border: darken(#f4f4f4, 10%);
+}
+.dark-mode {
+  --background-color: #012;
+  --text-color: #fed;
+  --button-bg: #3498db;
+  --button-text: #000;
+  --button-hover-bg: lighten(#3498db, 10%);
+  --button-hover-bg2: lighten(#3498db, 20%);
+  --textarea-bg: #012;
+  --textarea-border: darken(#012, 10%);
+}
+.ColorPage {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100%;
+  height: 100vh;
+  background-color: #f4f4f4;
+  background-color: var(--background-color);
+  font-size: 16px;
+  font-size: var(--base-font-size);
+  color: #333;
+  color: var(--text-color);
+}
+.ColorPage .column {
+  flex: 1 0 33%;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  padding: var(--column-padding);
+  height: 100%;
+}
+.ColorPage .column button {
+  padding: 10px;
+  padding: var(--item-padding);
+  margin: calc(10px / 2);
+  margin: calc(var(--item-padding) / 2);
+  background-color: #3498db;
+  background-color: var(--button-bg);
+  color: #fff;
+  color: var(--button-text);
+  border: 1px solid #3498db;
+  border: 1px solid var(--button-bg);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.ColorPage .column button:hover {
+  background-color: lighten(#3498db, 10%);
+  background-color: var(--button-hover-bg);
+}
+.ColorPage .column textarea {
+  flex: 1;
+  font-family: monospace;
+  font-size: 16px;
+  font-size: var(--base-font-size);
+  padding: 10px;
+  padding: var(--item-padding);
+  background-color: #fff;
+  background-color: var(--textarea-bg);
+  color: #333;
+  color: var(--text-color);
+  border: 1px solid darken(#f4f4f4, 10%);
+  border: 1px solid var(--textarea-border);
+  border-radius: 4px;
+  resize: none;
+}
+.ColorPage .InputColumn textarea {
+  flex: 1;
+}
+.ColorPage .ColorEditColumn .color-list,
+.ColorPage .OutputColumn .color-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.ColorPage .ColorEditColumn .color-list .color-swatch,
+.ColorPage .OutputColumn .color-list .color-swatch {
+  flex: 1;
+  height: 100%;
+  min-height: 50px;
+  margin-bottom: 10px;
+  margin-bottom: var(--item-padding);
+  border-radius: 4px;
+}
+.ColorPage .ColorEditColumn .color-list .color-swatch {
+  position: relative;
+}
+.ColorPage .ColorEditColumn .color-list .color-swatch:hover {
+  background-color: lighten(#3498db, 20%);
+  background-color: var(--button-hover-bg2);
+}
+.ColorPage .ColorEditColumn .button-bar {
+  margin-top: auto;
+}
+.ColorPage .OutputColumn .tab-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  padding: var(--item-padding);
+  border: 1px solid darken(#f4f4f4, 10%);
+  border: 1px solid var(--textarea-border);
+  border-radius: 4px;
+}
+.ColorPage .OutputColumn .tab-content .color-swatches,
+.ColorPage .OutputColumn .tab-content .text-preview {
+  flex: 1;
+  overflow-y: auto;
+}
+.ColorPage .OutputColumn .tab-content .text-preview div {
+  flex: 1;
+  height: 100%;
+  font-family: monospace;
+  font-size: 16px;
+  font-size: var(--base-font-size);
+  padding: 10px;
+  padding: var(--item-padding);
+  color: #333;
+  color: var(--text-color);
+  white-space: pre-wrap;
+  overflow-y: auto;
+}
+.ColorPage .button-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(10px / 2) 0;
+  padding: calc(var(--item-padding) / 2) 0;
+}
+.ColorPage .button-bar.top {
+  margin-bottom: 10px;
+  margin-bottom: var(--item-padding);
+}
+.ColorPage .button-bar.bottom {
+  margin-top: 10px;
+  margin-top: var(--item-padding);
+}
+.ColorPage .button-bar label {
+  display: flex;
+  align-items: center;
+}
+.ColorPage .button-bar label input[type=checkbox] {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+.ColorPage .button-bar label span {
+  font-size: calc(16px * 1.2);
+  font-size: calc(var(--base-font-size) * 1.2);
+  font-weight: bold;
 }
 
 /* src/components/app/App.scss */

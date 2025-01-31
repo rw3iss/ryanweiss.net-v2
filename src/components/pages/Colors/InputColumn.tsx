@@ -4,11 +4,21 @@ import { parseColors } from './utils';
 
 interface InputColumnProps {
     onColorsParsed: (colors: { color: string, modifiedColor: string }[]) => void;
+    onDarkModeChange: (isDarkMode: boolean) => void; // Added prop
 }
 
-const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsParsed }) => {
+export const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsParsed, onDarkModeChange }) => {
     const [text, setText] = useState('');
     const [combineSimilar, setCombineSimilar] = useState(false);
+    const [darkMode, setDarkMode] = useState(false);
+
+    useEffect(() => {
+        const savedText = localStorage.getItem('inputText');
+        if (savedText) {
+            setText(savedText);
+            handleParseColors();
+        }
+    }, []);
 
     const handleFileImport = useCallback((event: Event) => {
         const target = event.target as HTMLInputElement;
@@ -33,19 +43,12 @@ const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsParsed }) 
         const textareaContent = (document.querySelector('textarea') as HTMLTextAreaElement).value;
         if (textareaContent.trim() !== '') {
             setText(textareaContent);
-            const colors = parseColors(textareaContent, combineSimilar);
-            onColorsParsed(colors); // This updates the parent's state
+            onColorsParsed(parseColors(textareaContent, combineSimilar));
             localStorage.setItem('inputText', textareaContent);
+        } else {
+            onColorsParsed([]); // Clear colors if text is empty
         }
     }, [onColorsParsed, combineSimilar]);
-
-    useEffect(() => {
-        const savedText = localStorage.getItem('inputText');
-        if (savedText && savedText.trim() !== '') {
-            setText(savedText);
-            handleParseColors(); // Parse the saved text if it exists
-        }
-    }, []); // Load saved text only once on mount
 
     return (
         <div className="column InputColumn">
@@ -61,6 +64,18 @@ const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsParsed }) 
                     />
                     Combine Similar
                 </label>
+                <label>
+                    <input
+                        type="checkbox"
+                        checked={darkMode}
+                        onChange={(e) => {
+                            const isDarkMode = e.target.checked;
+                            setDarkMode(isDarkMode);
+                            onDarkModeChange(isDarkMode); // Call the prop with the new dark mode state
+                        }}
+                    />
+                    Dark Mode
+                </label>
             </div>
             <textarea
                 value={text}
@@ -71,5 +86,3 @@ const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsParsed }) 
         </div>
     );
 };
-
-export default InputColumn;

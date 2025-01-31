@@ -1,4 +1,3 @@
-import ColorsPage from 'components/pages/Colors/ColorsPage';
 import EntryPage from 'components/pages/Entry';
 import HomePage from 'components/pages/Home';
 import InfoPage from 'components/pages/Info';
@@ -7,6 +6,7 @@ import OtherPage from 'components/pages/Other/index';
 import PlayPage from 'components/pages/Play';
 import TimelinePage from 'components/pages/Timeline/index';
 import WorkPage from 'components/pages/Work';
+import { ColorPage } from '../components/pages/Colors/ColorPage';
 
 export default {
     "/": (p?) => <HomePage />,
@@ -14,7 +14,7 @@ export default {
     "/play": (p?) => <PlayPage />,
     "/info": (p?) => <InfoPage />,
     "/editor": (p?) => <OtherPage />,
-    "/colors": (p?) => <ColorsPage />,
+    "/colors": (p?) => <ColorPage />,
     "/timeline": (p?) => <TimelinePage />,
     "/entries/:slug": (p?) => <EntryPage />,
     "*": (p?) => <NotFoundPage />
