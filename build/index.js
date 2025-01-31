@@ -4148,6 +4148,7 @@ var init_ColorPage2 = __esm({
       const [colors, setColors] = h2([]);
       const [darkMode, setDarkMode] = h2(false);
       const handleColorsParsed = (parsedColors) => {
+        console.log(`colors`, parsedColors);
         setColors(parsedColors);
       };
       const handleColorsChanged = (newColors) => {

@@ -13,6 +13,7 @@ export const ColorPage: FunctionalComponent<ColorPageProps> = () => {
     const [darkMode, setDarkMode] = useState(false);
 
     const handleColorsParsed = (parsedColors: { color: string, modifiedColor: string }[]) => {
+        console.log(`colors`, parsedColors)
         setColors(parsedColors);
     };
 
