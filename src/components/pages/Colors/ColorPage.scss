@@ -6,11 +6,9 @@
     --base-font-size: 16px;
     --button-bg: #3498db;
     --button-text: #fff;
-    --button-text-hover: #000;
-    --button-hover-bg: lighten(#3498db, 10%);
-    --button-hover-bg2: lighten(#3498db, 20%);
+    --button-hover-text: #000; // Default button hover text color
     --textarea-bg: #fff;
-    --textarea-border: darken(#f4f4f4, 10%);
+    --textarea-border: #ddd;
 }
 
 .dark-mode {
@@ -18,11 +16,9 @@
     --text-color: #fed;
     --button-bg: #3498db;
     --button-text: #000;
-    --button-text-hover: #fff;
-    --button-hover-bg: lighten(#3498db, 10%);
-    --button-hover-bg2: lighten(#3498db, 20%);
+    --button-hover-text: #fff; // Dark mode button hover text color
     --textarea-bg: #012;
-    --textarea-border: darken(#012, 10%);
+    --textarea-border: #222;
 }
 
 .ColorPage {
@@ -52,38 +48,8 @@
             cursor: pointer;
 
             &:hover {
-                background-color: var(--button-hover-bg);
-            }
-        }
-
-        .button-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: calc(var(--item-padding) / 2) 0;
-
-            &.top {
-                margin-bottom: var(--item-padding);
-            }
-
-            &.bottom {
-                margin-top: var(--item-padding);
-            }
-
-            label {
-                display: flex;
-                align-items: center;
-
-                input[type="checkbox"] {
-                    width: 24px;
-                    height: 24px;
-                    margin-right: 8px;
-                }
-
-                span {
-                    font-size: calc(var(--base-font-size) * 1.2);
-                    font-weight: bold;
-                }
+                color: var(--button-hover-text);
+                background-color: lighten(#3498db, 10%); // Hard-coded color for lighten function
             }
         }
 
@@ -118,83 +84,94 @@
             .ColorEdit {
                 flex-grow: 1;
                 min-height: 50px;
-                //margin-bottom: var(--item-padding);
                 border-radius: 4px;
             }
         }
     }
 
+    .ColorEditColumn {
+        .button-bar {
+            margin-top: auto;
+        }
+    }
+
     .OutputColumn {
-        .color-swatches {
-            .color-swatch {
-                margin-bottom: 0; // Remove spacing between swatches
+        .tab-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: var(--item-padding);
+            border: 1px solid var(--textarea-border);
+            border-radius: 4px;
+
+            .color-swatches,
+            .text-preview,
+            .output-preview {
+                flex: 1; // Take up full height available
+                overflow-y: auto; // Scroll if content overflows
+            }
+
+            .color-swatches {
+                .color-swatch {
+                    flex-grow: 1;
+                    min-height: 50px;
+                    border-radius: 4px;
+                }
+            }
+
+            .text-preview {
+                div {
+                    padding: 5px 0 2px 0;
+                }
+            }
+
+            .output-preview {
+                textarea {
+                    width: 100%;
+                    flex: 1; // Fill both height and width of the container
+                }
             }
         }
 
-        .tab-content {
-            display: flex;
-            flex: 1;
-            width: 100%;
+        .button-bar {
+            margin-top: auto;
+        }
 
-            .output-preview {
-                flex: 1;
-                display: flex;
-                textarea {
-                    height: 100%; // Ensure textarea fills the height of the column
-                    width: 100%;
-                }
+        .tab-bar {
+            button:last-child {
+                margin-left: auto;
             }
         }
     }
 
-    // .OutputColumn {
-    //     .tab-content {
-    //         flex: 1;
-    //         overflow-y: auto;
-    //         display: flex;
-    //         flex-direction: column;
-    //         padding: var(--item-padding);
-    //         border: 1px solid var(--textarea-border);
-    //         border-radius: 4px;
+    .button-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: calc(var(--item-padding) / 2) 0;
 
-    //         .color-swatches,
-    //         .text-preview,
-    //         .output-preview {
-    //             flex: 1;
-    //             overflow-y: auto; // Ensures all content areas are scrollable
-    //         }
+        &.top {
+            margin-bottom: var(--item-padding);
+        }
 
-    //         .text-preview {
-    //             div {
-    //                 // Lines of text in the text tab
-    //                 padding: calc(var(--item-padding) / 2) 0;
-    //                 min-height: unset;
-    //                 height: auto;
-    //             }
-    //         }
+        &.bottom {
+            margin-top: var(--item-padding);
+        }
 
-    //         .output-preview {
-    //             display: flex;
-    //             flex-direction: column;
+        label {
+            display: flex;
+            align-items: center;
 
-    //             textarea {
-    //                 flex: 1; // Fill height
-    //                 width: 100%; // Fill width
-    //                 font-family: monospace;
-    //                 font-size: var(--base-font-size);
-    //                 padding: var(--item-padding);
-    //                 background-color: var(--textarea-bg);
-    //                 color: var(--text-color);
-    //                 border: 1px solid var(--textarea-border);
-    //                 border-radius: 4px;
-    //                 resize: none;
-    //                 overflow-y: auto;
-    //             }
+            input[type="checkbox"] {
+                width: 24px;
+                height: 24px;
+                margin-right: 8px;
+            }
 
-    //             .button-bar {
-    //                 margin-top: auto; // Push the button bar to the bottom
-    //             }
-    //         }
-    //     }
-    // }
+            span {
+                font-size: calc(var(--base-font-size) * 1.2);
+                font-weight: bold;
+            }
+        }
+    }
 }

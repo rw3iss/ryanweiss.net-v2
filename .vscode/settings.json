@@ -16,5 +16,6 @@
     "**/node_modules": false,
     ".eslintrc.cjs": false
 },
-"explorerExclude.backup": {}
+"explorerExclude.backup": {},
+"CodeGPT.apiKey": "CodeGPT Plus Beta"
 }

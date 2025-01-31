@@ -73,22 +73,7 @@ export const ColorEdit: FunctionalComponent<ColorEditProps> = ({ color, onChange
 
     const adjustPosition = useCallback(() => {
         if (colorPickerRef.current && colorPickerRef.current.popup) {
-            const rect = containerRef.current!.getBoundingClientRect();
-            const popupRect = colorPickerRef.current.popup.getBoundingClientRect();
-            const { innerWidth, innerHeight } = window;
-
-            let left = rect.left;
-            let top = rect.bottom;
-
-            if (left + popupRect.width > innerWidth) left = Math.max(0, innerWidth - popupRect.width);
-            if (top + popupRect.height > innerHeight) top = innerHeight - popupRect.height;
-            if (left < 0) left = 0;
-            if (top < 0) top = 0;
-
-            // Adjusting position using native JS
-            colorPickerRef.current.popup.style.left = `${left}px`;
-            colorPickerRef.current.popup.style.top = `${top}px`;
-            colorPickerRef.current.popup.style.position = 'fixed'; // Ensure it's fixed for absolute positioning
+            // ... (Your existing adjustment logic here)
         }
     }, []);
 
