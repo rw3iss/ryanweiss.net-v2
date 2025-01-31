@@ -138,30 +138,19 @@ export function replaceColors(text: string, colors: ColorWithPosition[]): string
     return lines.join('\n');
 }
 
+
 export function formatColor(color: string, modifiedColor: string): string {
+    // Determine the original format and convert modifiedColor accordingly
     if (color.startsWith('#')) {
-        // If hex, ensure we're not losing alpha information
-        if (color.length === 9) {
-            return modifiedColor;
-        } else {
-            // If no alpha in original hex, add full opacity if modified doesn't have it
-            return modifiedColor.length === 9 ? modifiedColor : modifiedColor + 'FF';
-        }
+        return modifiedColor; // Assuming modifiedColor is in hex format
     } else if (color.startsWith('rgb')) {
-        // Handle RGB and RGBA
-        if (color.startsWith('rgba')) {
-            // Ensure the alpha value is retained or set to 1 if missing
-            const [, originalAlpha] = color.match(/rgba\((.+?),\s*([\d.]+)\)/) || [, '1'];
-            const [, alpha] = modifiedColor.match(/rgba\((.+?),\s*([\d.]+)\)/) || [, '1'];
-            return modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, `rgba($1,${alpha})`);
-        } else if (modifiedColor.startsWith('rgba')) {
-            // Original was rgb, modified is rgba, remove alpha if it was 1, otherwise keep it
-            const [, alpha] = modifiedColor.match(/rgba\((.+?),\s*([\d.]+)\)/) || [, '1'];
-            return alpha === '1' ? modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, 'rgb($1)') : modifiedColor;
-        } else {
-            // Both are rgb, ensure alpha is 1 if not present
-            return modifiedColor;
+        // Convert rgba to rgb if necessary
+        if (modifiedColor.startsWith('rgba')) {
+            return modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, 'rgb($1)');
         }
+        return modifiedColor;
+    } else if (color.startsWith('rgba')) {
+        return modifiedColor; // Already in rgba format
     }
     return modifiedColor; // Fallback
 }

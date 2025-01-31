@@ -1128,7 +1128,7 @@ var init_stringify = __esm({
 });
 
 // node_modules/uuid/dist/esm-browser/rng.js
-function rng() {
+function rng2() {
   if (!getRandomValues) {
     if (typeof crypto === "undefined" || !crypto.getRandomValues) {
       throw new Error("crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported");
@@ -1163,7 +1163,7 @@ function v4(options, buf, offset) {
     return native_default.randomUUID();
   }
   options = options || {};
-  const rnds = options.random ?? options.rng?.() ?? rng();
+  const rnds = options.random ?? options.rng?.() ?? rng2();
   if (rnds.length < 16) {
     throw new Error("Random bytes length must be >= 16");
   }
@@ -3961,61 +3961,16 @@ function parseColors(text) {
   }
   return colors;
 }
-function parseColorsWithPosition(text) {
-  const lines = text.split("\n");
-  const colorsWithPosition = [];
-  const regex = /(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\))/gi;
-  lines.forEach((line, lineIndex) => {
-    let match;
-    while ((match = regex.exec(line)) !== null) {
-      const color = match[0];
-      if (isValidColor(color)) {
-        const start = match.index;
-        const end = start + color.length;
-        const normalized = normalizeColor(color) || color;
-        colorsWithPosition.push({
-          color,
-          modifiedColor: normalized,
-          line: lineIndex,
-          start,
-          end
-        });
-      }
-    }
-  });
-  return colorsWithPosition.sort((a3, b2) => {
-    if (a3.line !== b2.line) return b2.line - a3.line;
-    return b2.start - a3.start;
-  });
-}
-function replaceColors(text, colors) {
-  const lines = text.split("\n");
-  colors.forEach((color) => {
-    const line = lines[color.line];
-    if (line) {
-      lines[color.line] = line.slice(0, color.start) + formatColor(color.color, color.modifiedColor) + line.slice(color.end);
-    }
-  });
-  return lines.join("\n");
-}
 function formatColor(color, modifiedColor) {
   if (color.startsWith("#")) {
-    if (color.length === 9) {
-      return modifiedColor;
-    } else {
-      return modifiedColor.length === 9 ? modifiedColor : modifiedColor + "FF";
-    }
+    return modifiedColor;
   } else if (color.startsWith("rgb")) {
-    if (color.startsWith("rgba")) {
-      const [, originalAlpha] = color.match(/rgba\((.+?),\s*([\d.]+)\)/) || [, "1"];
-      const [, alpha] = modifiedColor.match(/rgba\((.+?),\s*([\d.]+)\)/) || [, "1"];
-      return modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, `rgba($1,${alpha})`);
-    } else if (modifiedColor.startsWith("rgba")) {
-      const [, alpha] = modifiedColor.match(/rgba\((.+?),\s*([\d.]+)\)/) || [, "1"];
-      return alpha === "1" ? modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, "rgb($1)") : modifiedColor;
-    } else {
-      return modifiedColor;
+    if (modifiedColor.startsWith("rgba")) {
+      return modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, "rgb($1)");
     }
+    return modifiedColor;
+  } else if (color.startsWith("rgba")) {
+    return modifiedColor;
   }
   return modifiedColor;
 }
@@ -4119,751 +4074,31 @@ var init_InputColumn = __esm({
   }
 });
 
-// node_modules/seedrandom/lib/alea.js
-var require_alea = __commonJS({
-  "node_modules/seedrandom/lib/alea.js"(exports, module) {
-    "use strict";
-    init_preact_module();
-    (function(global, module2, define2) {
-      function Alea(seed) {
-        var me = this, mash = Mash();
-        me.next = function() {
-          var t3 = 2091639 * me.s0 + me.c * 23283064365386963e-26;
-          me.s0 = me.s1;
-          me.s1 = me.s2;
-          return me.s2 = t3 - (me.c = t3 | 0);
-        };
-        me.c = 1;
-        me.s0 = mash(" ");
-        me.s1 = mash(" ");
-        me.s2 = mash(" ");
-        me.s0 -= mash(seed);
-        if (me.s0 < 0) {
-          me.s0 += 1;
-        }
-        me.s1 -= mash(seed);
-        if (me.s1 < 0) {
-          me.s1 += 1;
-        }
-        me.s2 -= mash(seed);
-        if (me.s2 < 0) {
-          me.s2 += 1;
-        }
-        mash = null;
-      }
-      function copy(f4, t3) {
-        t3.c = f4.c;
-        t3.s0 = f4.s0;
-        t3.s1 = f4.s1;
-        t3.s2 = f4.s2;
-        return t3;
-      }
-      function impl(seed, opts) {
-        var xg = new Alea(seed), state = opts && opts.state, prng = xg.next;
-        prng.int32 = function() {
-          return xg.next() * 4294967296 | 0;
-        };
-        prng.double = function() {
-          return prng() + (prng() * 2097152 | 0) * 11102230246251565e-32;
-        };
-        prng.quick = prng;
-        if (state) {
-          if (typeof state == "object") copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
-        }
-        return prng;
-      }
-      function Mash() {
-        var n2 = 4022871197;
-        var mash = function(data) {
-          data = String(data);
-          for (var i4 = 0; i4 < data.length; i4++) {
-            n2 += data.charCodeAt(i4);
-            var h3 = 0.02519603282416938 * n2;
-            n2 = h3 >>> 0;
-            h3 -= n2;
-            h3 *= n2;
-            n2 = h3 >>> 0;
-            h3 -= n2;
-            n2 += h3 * 4294967296;
-          }
-          return (n2 >>> 0) * 23283064365386963e-26;
-        };
-        return mash;
-      }
-      if (module2 && module2.exports) {
-        module2.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.alea = impl;
-      }
-    })(
-      exports,
-      typeof module == "object" && module,
-      // present in node.js
-      typeof define == "function" && define
-      // present with an AMD loader
-    );
-  }
-});
-
-// node_modules/seedrandom/lib/xor128.js
-var require_xor128 = __commonJS({
-  "node_modules/seedrandom/lib/xor128.js"(exports, module) {
-    "use strict";
-    init_preact_module();
-    (function(global, module2, define2) {
-      function XorGen(seed) {
-        var me = this, strseed = "";
-        me.x = 0;
-        me.y = 0;
-        me.z = 0;
-        me.w = 0;
-        me.next = function() {
-          var t3 = me.x ^ me.x << 11;
-          me.x = me.y;
-          me.y = me.z;
-          me.z = me.w;
-          return me.w ^= me.w >>> 19 ^ t3 ^ t3 >>> 8;
-        };
-        if (seed === (seed | 0)) {
-          me.x = seed;
-        } else {
-          strseed += seed;
-        }
-        for (var k3 = 0; k3 < strseed.length + 64; k3++) {
-          me.x ^= strseed.charCodeAt(k3) | 0;
-          me.next();
-        }
-      }
-      function copy(f4, t3) {
-        t3.x = f4.x;
-        t3.y = f4.y;
-        t3.z = f4.z;
-        t3.w = f4.w;
-        return t3;
-      }
-      function impl(seed, opts) {
-        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
-          return (xg.next() >>> 0) / 4294967296;
-        };
-        prng.double = function() {
-          do {
-            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
-          } while (result === 0);
-          return result;
-        };
-        prng.int32 = xg.next;
-        prng.quick = prng;
-        if (state) {
-          if (typeof state == "object") copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
-        }
-        return prng;
-      }
-      if (module2 && module2.exports) {
-        module2.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.xor128 = impl;
-      }
-    })(
-      exports,
-      typeof module == "object" && module,
-      // present in node.js
-      typeof define == "function" && define
-      // present with an AMD loader
-    );
-  }
-});
-
-// node_modules/seedrandom/lib/xorwow.js
-var require_xorwow = __commonJS({
-  "node_modules/seedrandom/lib/xorwow.js"(exports, module) {
-    "use strict";
-    init_preact_module();
-    (function(global, module2, define2) {
-      function XorGen(seed) {
-        var me = this, strseed = "";
-        me.next = function() {
-          var t3 = me.x ^ me.x >>> 2;
-          me.x = me.y;
-          me.y = me.z;
-          me.z = me.w;
-          me.w = me.v;
-          return (me.d = me.d + 362437 | 0) + (me.v = me.v ^ me.v << 4 ^ (t3 ^ t3 << 1)) | 0;
-        };
-        me.x = 0;
-        me.y = 0;
-        me.z = 0;
-        me.w = 0;
-        me.v = 0;
-        if (seed === (seed | 0)) {
-          me.x = seed;
-        } else {
-          strseed += seed;
-        }
-        for (var k3 = 0; k3 < strseed.length + 64; k3++) {
-          me.x ^= strseed.charCodeAt(k3) | 0;
-          if (k3 == strseed.length) {
-            me.d = me.x << 10 ^ me.x >>> 4;
-          }
-          me.next();
-        }
-      }
-      function copy(f4, t3) {
-        t3.x = f4.x;
-        t3.y = f4.y;
-        t3.z = f4.z;
-        t3.w = f4.w;
-        t3.v = f4.v;
-        t3.d = f4.d;
-        return t3;
-      }
-      function impl(seed, opts) {
-        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
-          return (xg.next() >>> 0) / 4294967296;
-        };
-        prng.double = function() {
-          do {
-            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
-          } while (result === 0);
-          return result;
-        };
-        prng.int32 = xg.next;
-        prng.quick = prng;
-        if (state) {
-          if (typeof state == "object") copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
-        }
-        return prng;
-      }
-      if (module2 && module2.exports) {
-        module2.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.xorwow = impl;
-      }
-    })(
-      exports,
-      typeof module == "object" && module,
-      // present in node.js
-      typeof define == "function" && define
-      // present with an AMD loader
-    );
-  }
-});
-
-// node_modules/seedrandom/lib/xorshift7.js
-var require_xorshift7 = __commonJS({
-  "node_modules/seedrandom/lib/xorshift7.js"(exports, module) {
-    "use strict";
-    init_preact_module();
-    (function(global, module2, define2) {
-      function XorGen(seed) {
-        var me = this;
-        me.next = function() {
-          var X = me.x, i4 = me.i, t3, v3, w3;
-          t3 = X[i4];
-          t3 ^= t3 >>> 7;
-          v3 = t3 ^ t3 << 24;
-          t3 = X[i4 + 1 & 7];
-          v3 ^= t3 ^ t3 >>> 10;
-          t3 = X[i4 + 3 & 7];
-          v3 ^= t3 ^ t3 >>> 3;
-          t3 = X[i4 + 4 & 7];
-          v3 ^= t3 ^ t3 << 7;
-          t3 = X[i4 + 7 & 7];
-          t3 = t3 ^ t3 << 13;
-          v3 ^= t3 ^ t3 << 9;
-          X[i4] = v3;
-          me.i = i4 + 1 & 7;
-          return v3;
-        };
-        function init(me2, seed2) {
-          var j3, w3, X = [];
-          if (seed2 === (seed2 | 0)) {
-            w3 = X[0] = seed2;
-          } else {
-            seed2 = "" + seed2;
-            for (j3 = 0; j3 < seed2.length; ++j3) {
-              X[j3 & 7] = X[j3 & 7] << 15 ^ seed2.charCodeAt(j3) + X[j3 + 1 & 7] << 13;
-            }
-          }
-          while (X.length < 8) X.push(0);
-          for (j3 = 0; j3 < 8 && X[j3] === 0; ++j3) ;
-          if (j3 == 8) w3 = X[7] = -1;
-          else w3 = X[j3];
-          me2.x = X;
-          me2.i = 0;
-          for (j3 = 256; j3 > 0; --j3) {
-            me2.next();
-          }
-        }
-        init(me, seed);
-      }
-      function copy(f4, t3) {
-        t3.x = f4.x.slice();
-        t3.i = f4.i;
-        return t3;
-      }
-      function impl(seed, opts) {
-        if (seed == null) seed = +/* @__PURE__ */ new Date();
-        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
-          return (xg.next() >>> 0) / 4294967296;
-        };
-        prng.double = function() {
-          do {
-            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
-          } while (result === 0);
-          return result;
-        };
-        prng.int32 = xg.next;
-        prng.quick = prng;
-        if (state) {
-          if (state.x) copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
-        }
-        return prng;
-      }
-      if (module2 && module2.exports) {
-        module2.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.xorshift7 = impl;
-      }
-    })(
-      exports,
-      typeof module == "object" && module,
-      // present in node.js
-      typeof define == "function" && define
-      // present with an AMD loader
-    );
-  }
-});
-
-// node_modules/seedrandom/lib/xor4096.js
-var require_xor4096 = __commonJS({
-  "node_modules/seedrandom/lib/xor4096.js"(exports, module) {
-    "use strict";
-    init_preact_module();
-    (function(global, module2, define2) {
-      function XorGen(seed) {
-        var me = this;
-        me.next = function() {
-          var w3 = me.w, X = me.X, i4 = me.i, t3, v3;
-          me.w = w3 = w3 + 1640531527 | 0;
-          v3 = X[i4 + 34 & 127];
-          t3 = X[i4 = i4 + 1 & 127];
-          v3 ^= v3 << 13;
-          t3 ^= t3 << 17;
-          v3 ^= v3 >>> 15;
-          t3 ^= t3 >>> 12;
-          v3 = X[i4] = v3 ^ t3;
-          me.i = i4;
-          return v3 + (w3 ^ w3 >>> 16) | 0;
-        };
-        function init(me2, seed2) {
-          var t3, v3, i4, j3, w3, X = [], limit = 128;
-          if (seed2 === (seed2 | 0)) {
-            v3 = seed2;
-            seed2 = null;
-          } else {
-            seed2 = seed2 + "\0";
-            v3 = 0;
-            limit = Math.max(limit, seed2.length);
-          }
-          for (i4 = 0, j3 = -32; j3 < limit; ++j3) {
-            if (seed2) v3 ^= seed2.charCodeAt((j3 + 32) % seed2.length);
-            if (j3 === 0) w3 = v3;
-            v3 ^= v3 << 10;
-            v3 ^= v3 >>> 15;
-            v3 ^= v3 << 4;
-            v3 ^= v3 >>> 13;
-            if (j3 >= 0) {
-              w3 = w3 + 1640531527 | 0;
-              t3 = X[j3 & 127] ^= v3 + w3;
-              i4 = 0 == t3 ? i4 + 1 : 0;
-            }
-          }
-          if (i4 >= 128) {
-            X[(seed2 && seed2.length || 0) & 127] = -1;
-          }
-          i4 = 127;
-          for (j3 = 4 * 128; j3 > 0; --j3) {
-            v3 = X[i4 + 34 & 127];
-            t3 = X[i4 = i4 + 1 & 127];
-            v3 ^= v3 << 13;
-            t3 ^= t3 << 17;
-            v3 ^= v3 >>> 15;
-            t3 ^= t3 >>> 12;
-            X[i4] = v3 ^ t3;
-          }
-          me2.w = w3;
-          me2.X = X;
-          me2.i = i4;
-        }
-        init(me, seed);
-      }
-      function copy(f4, t3) {
-        t3.i = f4.i;
-        t3.w = f4.w;
-        t3.X = f4.X.slice();
-        return t3;
-      }
-      ;
-      function impl(seed, opts) {
-        if (seed == null) seed = +/* @__PURE__ */ new Date();
-        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
-          return (xg.next() >>> 0) / 4294967296;
-        };
-        prng.double = function() {
-          do {
-            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
-          } while (result === 0);
-          return result;
-        };
-        prng.int32 = xg.next;
-        prng.quick = prng;
-        if (state) {
-          if (state.X) copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
-        }
-        return prng;
-      }
-      if (module2 && module2.exports) {
-        module2.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.xor4096 = impl;
-      }
-    })(
-      exports,
-      // window object or global
-      typeof module == "object" && module,
-      // present in node.js
-      typeof define == "function" && define
-      // present with an AMD loader
-    );
-  }
-});
-
-// node_modules/seedrandom/lib/tychei.js
-var require_tychei = __commonJS({
-  "node_modules/seedrandom/lib/tychei.js"(exports, module) {
-    "use strict";
-    init_preact_module();
-    (function(global, module2, define2) {
-      function XorGen(seed) {
-        var me = this, strseed = "";
-        me.next = function() {
-          var b2 = me.b, c3 = me.c, d3 = me.d, a3 = me.a;
-          b2 = b2 << 25 ^ b2 >>> 7 ^ c3;
-          c3 = c3 - d3 | 0;
-          d3 = d3 << 24 ^ d3 >>> 8 ^ a3;
-          a3 = a3 - b2 | 0;
-          me.b = b2 = b2 << 20 ^ b2 >>> 12 ^ c3;
-          me.c = c3 = c3 - d3 | 0;
-          me.d = d3 << 16 ^ c3 >>> 16 ^ a3;
-          return me.a = a3 - b2 | 0;
-        };
-        me.a = 0;
-        me.b = 0;
-        me.c = 2654435769 | 0;
-        me.d = 1367130551;
-        if (seed === Math.floor(seed)) {
-          me.a = seed / 4294967296 | 0;
-          me.b = seed | 0;
-        } else {
-          strseed += seed;
-        }
-        for (var k3 = 0; k3 < strseed.length + 20; k3++) {
-          me.b ^= strseed.charCodeAt(k3) | 0;
-          me.next();
-        }
-      }
-      function copy(f4, t3) {
-        t3.a = f4.a;
-        t3.b = f4.b;
-        t3.c = f4.c;
-        t3.d = f4.d;
-        return t3;
-      }
-      ;
-      function impl(seed, opts) {
-        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
-          return (xg.next() >>> 0) / 4294967296;
-        };
-        prng.double = function() {
-          do {
-            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
-          } while (result === 0);
-          return result;
-        };
-        prng.int32 = xg.next;
-        prng.quick = prng;
-        if (state) {
-          if (typeof state == "object") copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
-        }
-        return prng;
-      }
-      if (module2 && module2.exports) {
-        module2.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.tychei = impl;
-      }
-    })(
-      exports,
-      typeof module == "object" && module,
-      // present in node.js
-      typeof define == "function" && define
-      // present with an AMD loader
-    );
-  }
-});
-
-// (disabled):crypto
-var require_crypto = __commonJS({
-  "(disabled):crypto"() {
-    "use strict";
-    init_preact_module();
-  }
-});
-
-// node_modules/seedrandom/seedrandom.js
-var require_seedrandom = __commonJS({
-  "node_modules/seedrandom/seedrandom.js"(exports, module) {
-    "use strict";
-    init_preact_module();
-    (function(global, pool, math) {
-      var width = 256, chunks = 6, digits = 52, rngname = "random", startdenom = math.pow(width, chunks), significance = math.pow(2, digits), overflow = significance * 2, mask = width - 1, nodecrypto;
-      function seedrandom2(seed, options, callback) {
-        var key = [];
-        options = options == true ? { entropy: true } : options || {};
-        var shortseed = mixkey(flatten(
-          options.entropy ? [seed, tostring(pool)] : seed == null ? autoseed() : seed,
-          3
-        ), key);
-        var arc4 = new ARC4(key);
-        var prng = function() {
-          var n2 = arc4.g(chunks), d3 = startdenom, x2 = 0;
-          while (n2 < significance) {
-            n2 = (n2 + x2) * width;
-            d3 *= width;
-            x2 = arc4.g(1);
-          }
-          while (n2 >= overflow) {
-            n2 /= 2;
-            d3 /= 2;
-            x2 >>>= 1;
-          }
-          return (n2 + x2) / d3;
-        };
-        prng.int32 = function() {
-          return arc4.g(4) | 0;
-        };
-        prng.quick = function() {
-          return arc4.g(4) / 4294967296;
-        };
-        prng.double = prng;
-        mixkey(tostring(arc4.S), pool);
-        return (options.pass || callback || function(prng2, seed2, is_math_call, state) {
-          if (state) {
-            if (state.S) {
-              copy(state, arc4);
-            }
-            prng2.state = function() {
-              return copy(arc4, {});
-            };
-          }
-          if (is_math_call) {
-            math[rngname] = prng2;
-            return seed2;
-          } else return prng2;
-        })(
-          prng,
-          shortseed,
-          "global" in options ? options.global : this == math,
-          options.state
-        );
-      }
-      function ARC4(key) {
-        var t3, keylen = key.length, me = this, i4 = 0, j3 = me.i = me.j = 0, s3 = me.S = [];
-        if (!keylen) {
-          key = [keylen++];
-        }
-        while (i4 < width) {
-          s3[i4] = i4++;
-        }
-        for (i4 = 0; i4 < width; i4++) {
-          s3[i4] = s3[j3 = mask & j3 + key[i4 % keylen] + (t3 = s3[i4])];
-          s3[j3] = t3;
-        }
-        (me.g = function(count) {
-          var t4, r3 = 0, i5 = me.i, j4 = me.j, s4 = me.S;
-          while (count--) {
-            t4 = s4[i5 = mask & i5 + 1];
-            r3 = r3 * width + s4[mask & (s4[i5] = s4[j4 = mask & j4 + t4]) + (s4[j4] = t4)];
-          }
-          me.i = i5;
-          me.j = j4;
-          return r3;
-        })(width);
-      }
-      function copy(f4, t3) {
-        t3.i = f4.i;
-        t3.j = f4.j;
-        t3.S = f4.S.slice();
-        return t3;
-      }
-      ;
-      function flatten(obj, depth) {
-        var result = [], typ = typeof obj, prop;
-        if (depth && typ == "object") {
-          for (prop in obj) {
-            try {
-              result.push(flatten(obj[prop], depth - 1));
-            } catch (e4) {
-            }
-          }
-        }
-        return result.length ? result : typ == "string" ? obj : obj + "\0";
-      }
-      function mixkey(seed, key) {
-        var stringseed = seed + "", smear, j3 = 0;
-        while (j3 < stringseed.length) {
-          key[mask & j3] = mask & (smear ^= key[mask & j3] * 19) + stringseed.charCodeAt(j3++);
-        }
-        return tostring(key);
-      }
-      function autoseed() {
-        try {
-          var out;
-          if (nodecrypto && (out = nodecrypto.randomBytes)) {
-            out = out(width);
-          } else {
-            out = new Uint8Array(width);
-            (global.crypto || global.msCrypto).getRandomValues(out);
-          }
-          return tostring(out);
-        } catch (e4) {
-          var browser = global.navigator, plugins = browser && browser.plugins;
-          return [+/* @__PURE__ */ new Date(), global, plugins, global.screen, tostring(pool)];
-        }
-      }
-      function tostring(a3) {
-        return String.fromCharCode.apply(0, a3);
-      }
-      mixkey(math.random(), pool);
-      if (typeof module == "object" && module.exports) {
-        module.exports = seedrandom2;
-        try {
-          nodecrypto = require_crypto();
-        } catch (ex) {
-        }
-      } else if (typeof define == "function" && define.amd) {
-        define(function() {
-          return seedrandom2;
-        });
-      } else {
-        math["seed" + rngname] = seedrandom2;
-      }
-    })(
-      // global: `self` in browsers (including strict mode and web workers),
-      // otherwise `this` in Node and other environments
-      typeof self !== "undefined" ? self : exports,
-      [],
-      // pool: entropy pool starts empty
-      Math
-      // math: package containing random, pow, and seedrandom
-    );
-  }
-});
-
-// node_modules/seedrandom/index.js
-var require_seedrandom2 = __commonJS({
-  "node_modules/seedrandom/index.js"(exports, module) {
-    "use strict";
-    init_preact_module();
-    var alea = require_alea();
-    var xor128 = require_xor128();
-    var xorwow = require_xorwow();
-    var xorshift7 = require_xorshift7();
-    var xor4096 = require_xor4096();
-    var tychei = require_tychei();
-    var sr = require_seedrandom();
-    sr.alea = alea;
-    sr.xor128 = xor128;
-    sr.xorwow = xorwow;
-    sr.xorshift7 = xorshift7;
-    sr.xor4096 = xor4096;
-    sr.tychei = tychei;
-    module.exports = sr;
-  }
-});
-
 // src/components/pages/Colors/OutputColumn.tsx
-var import_seedrandom, OutputColumn;
+var OutputColumn;
 var init_OutputColumn = __esm({
   "src/components/pages/Colors/OutputColumn.tsx"() {
     "use strict";
     init_preact_module();
     init_hooks_module();
-    import_seedrandom = __toESM(require_seedrandom2());
     init_utils();
     init_jsxRuntime_module();
     OutputColumn = ({ colors, inputText, importedFileName }) => {
       const [activeTab, setActiveTab] = h2("swatches");
-      const [outputTextModified, setOutputTextModified] = h2("");
-      const [colorsWithPosition, setColorsWithPosition] = h2([]);
-      const sessionSeed = T2(() => Math.random().toString(36).substring(7), []);
-      const rng2 = T2(() => (0, import_seedrandom.default)(sessionSeed), [sessionSeed]);
-      const generateRandomWords = T2(() => {
-        const words = ["Hello", "World", "Color", "Sample", "Text", "Display", "View", "Edit", "Change", "Apply"];
-        return Array.from({ length: colors.length }, () => words[Math.floor(rng2() * words.length)]);
-      }, [colors.length, rng2]);
+      const [outputText, setOutputText] = h2("");
       y2(() => {
-        const parsedColors = parseColorsWithPosition(inputText);
-        setColorsWithPosition(parsedColors);
-        const updatedColorsWithPosition = parsedColors.map((parsed) => {
-          const match = colors.find((c3) => c3.color === parsed.color);
-          return match ? { ...parsed, modifiedColor: match.modifiedColor } : parsed;
+        let modifiedText = inputText;
+        colors.forEach(({ color, modifiedColor }) => {
+          const formattedColor = formatColor(color, modifiedColor);
+          const regex = new RegExp(color, "g");
+          modifiedText = modifiedText.replace(regex, formattedColor);
         });
-        const modifiedText = replaceColors(inputText, updatedColorsWithPosition);
-        setOutputTextModified(modifiedText);
+        setOutputText(modifiedText);
       }, [colors, inputText]);
+      const generateRandomWord = () => {
+        const words = ["Hello", "World", "Color", "Sample", "Text", "Display", "View", "Edit", "Change", "Apply"];
+        return Array.from({ length: colors.length }, () => words[Math.floor(rng() * words.length)]);
+      };
       const handleSave = q2(() => {
         const blob = new Blob([outputTextModified], { type: "text/plain" });
         const link = document.createElement("a");
@@ -4875,7 +4110,7 @@ var init_OutputColumn = __esm({
         link.download = fileName;
         link.click();
         URL.revokeObjectURL(link.href);
-      }, [outputTextModified, importedFileName]);
+      }, [outputText, importedFileName]);
       return /* @__PURE__ */ u2("div", { className: "column OutputColumn", children: [
         /* @__PURE__ */ u2("div", { className: "tab-bar", children: [
           /* @__PURE__ */ u2(
@@ -4912,15 +4147,16 @@ var init_OutputColumn = __esm({
             }
           )
         ] }),
-        /* @__PURE__ */ u2("div", { className: "tab-content", children: activeTab === "swatches" ? /* @__PURE__ */ u2("div", { className: "color-swatches color-list", style: { display: "flex" }, children: colors.map((color, index) => /* @__PURE__ */ u2("div", { className: "color-swatch", style: { backgroundColor: color.modifiedColor, marginBottom: 0 } }, index)) }) : activeTab === "text" || activeTab === "original" ? /* @__PURE__ */ u2("div", { className: "text-preview", children: colors.map((color, index) => /* @__PURE__ */ u2("div", { style: { color: activeTab === "original" ? color.color : color.modifiedColor, padding: "5px 0 2px 0" }, children: generateRandomWords[index] }, index)) }) : /* @__PURE__ */ u2("div", { className: "output-preview", children: /* @__PURE__ */ u2(
-          "textarea",
-          {
-            value: outputTextModified,
-            readOnly: true,
-            style: { flex: 1, width: "100%", padding: "var(--item-padding)" }
-          }
-        ) }) }),
-        /* @__PURE__ */ u2("div", { className: "button-bar", children: /* @__PURE__ */ u2("button", { onClick: handleSave, children: "Save" }) })
+        /* @__PURE__ */ u2("div", { className: "tab-content", children: activeTab === "swatches" ? /* @__PURE__ */ u2("div", { className: "color-swatches color-list", children: colors.map((color, index) => /* @__PURE__ */ u2("div", { className: "color-swatch", style: { backgroundColor: color.modifiedColor } }, index)) }) : activeTab === "text" ? /* @__PURE__ */ u2("div", { className: "text-preview", children: colors.map((color, index) => /* @__PURE__ */ u2("div", { style: { color: color.modifiedColor }, children: generateRandomWord() }, index)) }) : /* @__PURE__ */ u2("div", { className: "output-preview", children: [
+          /* @__PURE__ */ u2(
+            "textarea",
+            {
+              value: outputText,
+              readOnly: true
+            }
+          ),
+          /* @__PURE__ */ u2("div", { className: "button-bar", children: /* @__PURE__ */ u2("button", { onClick: handleSave, children: "Save" }) })
+        ] }) })
       ] });
     };
   }
