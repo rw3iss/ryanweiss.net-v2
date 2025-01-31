@@ -1203,13 +1203,13 @@ var init_esm_browser = __esm({
 });
 
 // src/lib/types/Blob.ts
-var Blob;
+var Blob2;
 var init_Blob = __esm({
   "src/lib/types/Blob.ts"() {
     "use strict";
     init_preact_module();
     init_esm_browser();
-    Blob = class {
+    Blob2 = class {
       id;
       title;
       dateUpdated;
@@ -2616,11 +2616,11 @@ var init_BlobEditor2 = __esm({
               if (mostRecentBlob) {
                 setCurrentBlob(mostRecentBlob);
               } else {
-                setCurrentBlob(new Blob({}));
+                setCurrentBlob(new Blob2({}));
               }
             } catch (error3) {
               console.error("Failed to load blobs:", error3);
-              setCurrentBlob(new Blob({}));
+              setCurrentBlob(new Blob2({}));
             }
           }
         };
@@ -3764,7 +3764,6 @@ var init_ColorEdit = __esm({
             editor: true,
             cancelButton: true,
             editorFormat: "hex",
-            // Changed to 'hex'
             onChange: (color2) => {
               setCurrentColor(color2.hex);
             },
@@ -3846,7 +3845,7 @@ var init_ColorEdit = __esm({
             "div",
             {
               className: "color-swatch",
-              style: { backgroundColor: currentColor },
+              style: { backgroundColor: currentColor, height: "100%" },
               onClick: handleClick
             }
           )
@@ -3868,36 +3867,41 @@ var init_ColorEditColumn = __esm({
     ColorEditColumn = ({ colors, onColorsChanged }) => {
       const [modifiedColors, setModifiedColors] = h2(colors);
       y2(() => {
-        console.log(`colors change.`);
-        setModifiedColors([...colors]);
+        setModifiedColors(colors);
       }, [colors]);
       const handleColorChange = q2((index, newColor) => {
         setModifiedColors(
           (prevColors) => prevColors.map((c3, i4) => i4 === index ? { ...c3, modifiedColor: newColor } : c3)
         );
       }, []);
+      const handleApply = q2(() => {
+        onColorsChanged(modifiedColors);
+      }, [modifiedColors, onColorsChanged]);
       const hideOtherPickers = q2(() => {
         document.querySelectorAll(".color-picker .popup").forEach((popup) => {
           const picker = popup.picker;
           if (picker) picker.destroy();
         });
       }, []);
-      const handleApply = q2(() => {
-        onColorsChanged(modifiedColors);
-      }, [modifiedColors, onColorsChanged]);
       return /* @__PURE__ */ u2("div", { className: "column ColorEditColumn", children: [
-        modifiedColors.map((color, index) => /* @__PURE__ */ u2(
+        /* @__PURE__ */ u2("div", { className: "color-list", children: modifiedColors.map((color, index) => /* @__PURE__ */ u2(
           ColorEdit,
           {
             color,
             onChange: (newColor) => handleColorChange(index, newColor),
             hideOtherPickers
           },
-          index
-        )),
+          `index#${Math.random()}`
+        )) }),
         /* @__PURE__ */ u2("div", { className: "button-bar", children: /* @__PURE__ */ u2("button", { onClick: handleApply, children: "Apply" }) })
       ] });
     };
+  }
+});
+
+// src/components/pages/Colors/ColorPage.scss
+var init_ColorPage = __esm({
+  "src/components/pages/Colors/ColorPage.scss"() {
   }
 });
 
@@ -3957,29 +3961,34 @@ function normalizeColor(color) {
   return null;
 }
 function parseColors(text) {
-  const hexRegex = /#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})(?=[,\s;]|$)/gi;
-  const rgbRegex = /rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)(?=[,\s;]|$)/gi;
   const colors = [];
+  const colorRegex = /#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)/gi;
+  console.log(`text`, text);
   let match;
-  while ((match = hexRegex.exec(text)) !== null) {
-    const hexColor = match[0];
-    if (isValidColor(hexColor)) {
-      const normalized = normalizeColor(hexColor);
+  while ((match = colorRegex.exec(text)) !== null) {
+    console.log(`m`, match);
+    const color = match[0];
+    if (isValidColor(color)) {
+      const normalized = normalizeColor(color);
       if (normalized && !colors.some((c3) => c3.modifiedColor.toLowerCase() === normalized.toLowerCase())) {
-        colors.push({ color: hexColor, modifiedColor: normalized });
-      }
-    }
-  }
-  while ((match = rgbRegex.exec(text)) !== null) {
-    const rgbColor = match[0];
-    if (isValidColor(rgbColor)) {
-      const normalized = normalizeColor(rgbColor);
-      if (normalized && !colors.some((c3) => c3.modifiedColor.toLowerCase() === normalized.toLowerCase())) {
-        colors.push({ color: rgbColor, modifiedColor: normalized });
+        colors.push({ color, modifiedColor: normalized });
       }
     }
   }
   return colors;
+}
+function formatColor(color, modifiedColor) {
+  if (color.startsWith("#")) {
+    return modifiedColor;
+  } else if (color.startsWith("rgb")) {
+    if (modifiedColor.startsWith("rgba")) {
+      return modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, "rgb($1)");
+    }
+    return modifiedColor;
+  } else if (color.startsWith("rgba")) {
+    return modifiedColor;
+  }
+  return modifiedColor;
 }
 var init_utils = __esm({
   "src/components/pages/Colors/utils.ts"() {
@@ -4000,6 +4009,7 @@ var init_InputColumn = __esm({
     InputColumn = ({ onColorsParsed, onDarkModeChange }) => {
       const [text, setText] = h2("");
       const [combineSimilar, setCombineSimilar] = h2(false);
+      const [fileName, setFileName] = h2(void 0);
       const [darkMode, setDarkMode] = h2(false);
       y2(() => {
         const savedText = localStorage.getItem("inputText");
@@ -4012,6 +4022,8 @@ var init_InputColumn = __esm({
         const target = event.target;
         if (target && target.files && target.files[0]) {
           const file = target.files[0];
+          setFileName;
+          setFileName(file.name);
           const reader = new FileReader();
           reader.onload = (e4) => {
             const fileContent = e4.target.result;
@@ -4021,20 +4033,21 @@ var init_InputColumn = __esm({
           reader.readAsText(file);
         }
       }, []);
-      const handleClear = q2(() => {
-        setText("");
-        localStorage.setItem("inputText", "");
-      }, []);
       const handleParseColors = q2(() => {
         const textareaContent = document.querySelector("textarea").value;
         if (textareaContent.trim() !== "") {
           setText(textareaContent);
-          onColorsParsed(parseColors(textareaContent, combineSimilar));
+          const colors = parseColors(textareaContent, combineSimilar);
+          onColorsParsed(colors, textareaContent, fileName);
           localStorage.setItem("inputText", textareaContent);
         } else {
-          onColorsParsed([]);
+          onColorsParsed([], textareaContent, fileName);
         }
-      }, [onColorsParsed, combineSimilar]);
+      }, [onColorsParsed, combineSimilar, fileName]);
+      const handleClear = q2(() => {
+        setText("");
+        localStorage.setItem("inputText", "");
+      }, []);
       return /* @__PURE__ */ u2("div", { className: "column InputColumn", children: [
         /* @__PURE__ */ u2("div", { className: "button-bar top", children: [
           /* @__PURE__ */ u2("button", { onClick: () => document.getElementById("fileInput")?.click(), children: "Import File" }),
@@ -4086,9 +4099,32 @@ var init_OutputColumn = __esm({
     "use strict";
     init_preact_module();
     init_hooks_module();
+    init_utils();
     init_jsxRuntime_module();
-    OutputColumn = ({ colors }) => {
+    OutputColumn = ({ colors, inputText, importedFileName }) => {
       const [activeTab, setActiveTab] = h2("swatches");
+      const [outputText, setOutputText] = h2("");
+      y2(() => {
+        let modifiedText = inputText;
+        colors.forEach(({ color, modifiedColor }) => {
+          const formattedColor = formatColor(color, modifiedColor);
+          const regex = new RegExp(color, "g");
+          modifiedText = modifiedText.replace(regex, formattedColor);
+        });
+        setOutputText(modifiedText);
+      }, [colors, inputText]);
+      const handleSave = q2(() => {
+        const blob = new Blob([outputText], { type: "text/plain" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        let fileName = "output.txt";
+        if (importedFileName) {
+          fileName = importedFileName.replace(/\.[^/.]+$/, "") + "_modified.txt";
+        }
+        link.download = fileName;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }, [outputText, importedFileName]);
       const generateRandomWord = () => {
         const words = ["Hello", "World", "Color", "Sample", "Text", "Display", "View", "Edit", "Change", "Apply"];
         return words[Math.floor(Math.random() * words.length)];
@@ -4110,25 +4146,28 @@ var init_OutputColumn = __esm({
               onClick: () => setActiveTab("text"),
               children: "Text"
             }
+          ),
+          /* @__PURE__ */ u2(
+            "button",
+            {
+              className: activeTab === "output" ? "active" : "",
+              onClick: () => setActiveTab("output"),
+              children: "Output"
+            }
           )
         ] }),
-        /* @__PURE__ */ u2("div", { className: "tab-content", children: activeTab === "swatches" ? /* @__PURE__ */ u2("div", { className: "color-swatches", children: colors.map((color, index) => /* @__PURE__ */ u2("div", { className: "color-swatch", style: { backgroundColor: color.modifiedColor } }, index)) }) : /* @__PURE__ */ u2("div", { className: "text-preview", style: {
-          border: "1px solid #ddd",
-          borderRadius: "4px",
-          padding: "10px",
-          fontFamily: "monospace",
-          whiteSpace: "pre-wrap",
-          overflowY: "auto",
-          height: "100%"
-        }, children: colors.map((color, index) => /* @__PURE__ */ u2("div", { style: { color: color.modifiedColor, marginBottom: "10px" }, children: generateRandomWord() }, index)) }) })
+        /* @__PURE__ */ u2("div", { className: "tab-content", children: activeTab === "swatches" ? /* @__PURE__ */ u2("div", { className: "color-swatches color-list", children: colors.map((color, index) => /* @__PURE__ */ u2("div", { className: "color-swatch", style: { backgroundColor: color.modifiedColor } }, index)) }) : activeTab === "text" ? /* @__PURE__ */ u2("div", { className: "text-preview", children: colors.map((color, index) => /* @__PURE__ */ u2("div", { style: { color: color.modifiedColor }, children: generateRandomWord() }, index)) }) : /* @__PURE__ */ u2("div", { className: "output-preview", children: [
+          /* @__PURE__ */ u2(
+            "textarea",
+            {
+              value: outputText,
+              readOnly: true
+            }
+          ),
+          /* @__PURE__ */ u2("div", { className: "button-bar", children: /* @__PURE__ */ u2("button", { onClick: handleSave, children: "Save" }) })
+        ] }) })
       ] });
     };
-  }
-});
-
-// src/components/pages/Colors/ColorPage.scss
-var init_ColorPage = __esm({
-  "src/components/pages/Colors/ColorPage.scss"() {
   }
 });
 
@@ -4140,18 +4179,22 @@ var init_ColorPage2 = __esm({
     init_preact_module();
     init_hooks_module();
     init_ColorEditColumn();
+    init_ColorPage();
     init_InputColumn();
     init_OutputColumn();
-    init_ColorPage();
     init_jsxRuntime_module();
     ColorPage = () => {
       const [colors, setColors] = h2([]);
+      const [modifiedColors, setModifiedColors] = h2([]);
       const [darkMode, setDarkMode] = h2(false);
-      const handleColorsParsed = (parsedColors) => {
+      const [inputText, setInputText] = h2("");
+      const handleColorsParsed = (parsedColors, text) => {
         setColors(parsedColors);
+        setModifiedColors(parsedColors);
+        setInputText(text);
       };
       const handleColorsChanged = (newColors) => {
-        setColors(newColors);
+        setModifiedColors(newColors);
       };
       const handleDarkModeChange = (isDarkMode) => {
         setDarkMode(isDarkMode);
@@ -4164,8 +4207,8 @@ var init_ColorPage2 = __esm({
             onDarkModeChange: handleDarkModeChange
           }
         ),
-        /* @__PURE__ */ u2(ColorEditColumn, { colors, onColorsChanged: handleColorsChanged }),
-        /* @__PURE__ */ u2(OutputColumn, { colors })
+        /* @__PURE__ */ u2(ColorEditColumn, { colors: modifiedColors, onColorsChanged: handleColorsChanged }),
+        /* @__PURE__ */ u2(OutputColumn, { colors: modifiedColors, inputText })
       ] });
     };
   }

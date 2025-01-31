@@ -10,6 +10,8 @@ interface InputColumnProps {
 export const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsParsed, onDarkModeChange }) => {
     const [text, setText] = useState('');
     const [combineSimilar, setCombineSimilar] = useState(false);
+
+    const [fileName, setFileName] = useState<string | undefined>(undefined);
     const [darkMode, setDarkMode] = useState(false);
 
     useEffect(() => {
@@ -23,7 +25,8 @@ export const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsPar
     const handleFileImport = useCallback((event: Event) => {
         const target = event.target as HTMLInputElement;
         if (target && target.files && target.files[0]) {
-            const file = target.files[0];
+            const file = target.files[0]; setFileName
+            setFileName(file.name); // Save the file name
             const reader = new FileReader();
             reader.onload = (e) => {
                 const fileContent = e.target!.result as string;
@@ -34,21 +37,23 @@ export const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsPar
         }
     }, []);
 
-    const handleClear = useCallback(() => {
-        setText('');
-        localStorage.setItem('inputText', '');
-    }, []);
-
     const handleParseColors = useCallback(() => {
         const textareaContent = (document.querySelector('textarea') as HTMLTextAreaElement).value;
         if (textareaContent.trim() !== '') {
             setText(textareaContent);
-            onColorsParsed(parseColors(textareaContent, combineSimilar));
+            const colors = parseColors(textareaContent, combineSimilar);
+            onColorsParsed(colors, textareaContent, fileName); // Pass text and fileName
             localStorage.setItem('inputText', textareaContent);
         } else {
-            onColorsParsed([]); // Clear colors if text is empty
+            onColorsParsed([], textareaContent, fileName);
         }
-    }, [onColorsParsed, combineSimilar]);
+    }, [onColorsParsed, combineSimilar, fileName]);
+
+
+    const handleClear = useCallback(() => {
+        setText('');
+        localStorage.setItem('inputText', '');
+    }, []);
 
     return (
         <div className="column InputColumn">

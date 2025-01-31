@@ -1,6 +1,6 @@
 import { FunctionalComponent } from 'preact';
 import { useCallback, useEffect, useState } from 'preact/hooks';
-import { ColorEdit } from './ColorEdit';
+import { ColorEdit } from './ColorEdit'; // Assuming you have a separate ColorEdit.tsx file
 
 interface ColorEditColumnProps {
     colors: { color: string, modifiedColor: string }[];
@@ -11,8 +11,7 @@ export const ColorEditColumn: FunctionalComponent<ColorEditColumnProps> = ({ col
     const [modifiedColors, setModifiedColors] = useState(colors);
 
     useEffect(() => {
-        console.log(`colors change.`)
-        setModifiedColors([...colors]);
+        setModifiedColors(colors);
     }, [colors]);
 
     const handleColorChange = useCallback((index: number, newColor: string) => {
@@ -21,28 +20,29 @@ export const ColorEditColumn: FunctionalComponent<ColorEditColumnProps> = ({ col
         );
     }, []);
 
+    const handleApply = useCallback(() => {
+        onColorsChanged(modifiedColors);
+    }, [modifiedColors, onColorsChanged]);
+
     const hideOtherPickers = useCallback(() => {
-        // Hide all pickers by destroying them, they'll be recreated on next show
         document.querySelectorAll('.color-picker .popup').forEach(popup => {
             const picker = (popup as any).picker; // VanillaPicker adds this property
             if (picker) picker.destroy();
         });
     }, []);
 
-    const handleApply = useCallback(() => {
-        onColorsChanged(modifiedColors);
-    }, [modifiedColors, onColorsChanged]);
-
     return (
         <div className="column ColorEditColumn">
-            {modifiedColors.map((color, index) => (
-                <ColorEdit
-                    key={index}
-                    color={color}
-                    onChange={(newColor: string) => handleColorChange(index, newColor)}
-                    hideOtherPickers={hideOtherPickers}
-                />
-            ))}
+            <div className="color-list">
+                {modifiedColors.map((color, index) => (
+                    <ColorEdit
+                        key={`index#${Math.random()}`}
+                        color={color}
+                        onChange={(newColor: string) => handleColorChange(index, newColor)}
+                        hideOtherPickers={hideOtherPickers}
+                    />
+                ))}
+            </div>
             <div className="button-bar">
                 <button onClick={handleApply}>Apply</button>
             </div>

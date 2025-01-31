@@ -23,7 +23,7 @@ export const ColorEdit: FunctionalComponent<ColorEditProps> = ({ color, onChange
                 popup: 'bottom',
                 editor: true,
                 cancelButton: true,
-                editorFormat: 'hex', // Changed to 'hex'
+                editorFormat: 'hex',
                 onChange: (color: { hex: string }) => {
                     setCurrentColor(color.hex);
                 },
@@ -115,10 +115,9 @@ export const ColorEdit: FunctionalComponent<ColorEditProps> = ({ color, onChange
         >
             <div
                 className="color-swatch"
-                style={{ backgroundColor: currentColor }}
+                style={{ backgroundColor: currentColor, height: '100%' }}
                 onClick={handleClick}
-            >
-            </div>
+            />
         </div>
     );
 };

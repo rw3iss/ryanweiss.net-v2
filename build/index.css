@@ -1127,6 +1127,7 @@
   --base-font-size: 16px;
   --button-bg: #3498db;
   --button-text: #fff;
+  --button-text-hover: #000;
   --button-hover-bg: lighten(#3498db, 10%);
   --button-hover-bg2: lighten(#3498db, 20%);
   --textarea-bg: #fff;
@@ -1137,6 +1138,7 @@
   --text-color: #fed;
   --button-bg: #3498db;
   --button-text: #000;
+  --button-text-hover: #fff;
   --button-hover-bg: lighten(#3498db, 10%);
   --button-hover-bg2: lighten(#3498db, 20%);
   --textarea-bg: #012;
@@ -1181,6 +1183,35 @@
   background-color: lighten(#3498db, 10%);
   background-color: var(--button-hover-bg);
 }
+.ColorPage .column .button-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(10px / 2) 0;
+  padding: calc(var(--item-padding) / 2) 0;
+}
+.ColorPage .column .button-bar.top {
+  margin-bottom: 10px;
+  margin-bottom: var(--item-padding);
+}
+.ColorPage .column .button-bar.bottom {
+  margin-top: 10px;
+  margin-top: var(--item-padding);
+}
+.ColorPage .column .button-bar label {
+  display: flex;
+  align-items: center;
+}
+.ColorPage .column .button-bar label input[type=checkbox] {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+.ColorPage .column .button-bar label span {
+  font-size: calc(16px * 1.2);
+  font-size: calc(var(--base-font-size) * 1.2);
+  font-weight: bold;
+}
 .ColorPage .column textarea {
   flex: 1;
   font-family: monospace;
@@ -1201,6 +1232,26 @@
   flex: 1;
 }
 .ColorPage .ColorEditColumn .color-list,
+.ColorPage .ColorEditColumn .color-swatches,
+.ColorPage .OutputColumn .color-list,
+.ColorPage .OutputColumn .color-swatches {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.ColorPage .ColorEditColumn .color-list .color-swatch,
+.ColorPage .ColorEditColumn .color-swatches .color-swatch,
+.ColorPage .OutputColumn .color-list .color-swatch,
+.ColorPage .OutputColumn .color-swatches .color-swatch {
+  flex: 1;
+  height: 100%;
+  min-height: 50px;
+  margin-bottom: 10px;
+  margin-bottom: var(--item-padding);
+  border-radius: 4px;
+}
+.ColorPage .ColorEditColumn .color-list,
 .ColorPage .OutputColumn .color-list {
   flex: 1;
   overflow-y: auto;
@@ -1210,24 +1261,14 @@
 .ColorPage .ColorEditColumn .color-list .color-swatch,
 .ColorPage .OutputColumn .color-list .color-swatch {
   flex: 1;
-  height: 100%;
   min-height: 50px;
   margin-bottom: 10px;
   margin-bottom: var(--item-padding);
   border-radius: 4px;
 }
-.ColorPage .ColorEditColumn .color-list .color-swatch {
-  position: relative;
-}
-.ColorPage .ColorEditColumn .color-list .color-swatch:hover {
-  background-color: lighten(#3498db, 20%);
-  background-color: var(--button-hover-bg2);
-}
-.ColorPage .ColorEditColumn .button-bar {
-  margin-top: auto;
-}
 .ColorPage .OutputColumn .tab-content {
   flex: 1;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   padding: 10px;
@@ -1237,51 +1278,42 @@
   border-radius: 4px;
 }
 .ColorPage .OutputColumn .tab-content .color-swatches,
-.ColorPage .OutputColumn .tab-content .text-preview {
+.ColorPage .OutputColumn .tab-content .text-preview,
+.ColorPage .OutputColumn .tab-content .output-preview {
   flex: 1;
   overflow-y: auto;
 }
 .ColorPage .OutputColumn .tab-content .text-preview div {
+  padding: calc(10px / 2) 0;
+  padding: calc(var(--item-padding) / 2) 0;
+  min-height: 0;
+  min-height: initial;
+  height: auto;
+}
+.ColorPage .OutputColumn .tab-content .output-preview {
+  display: flex;
+  flex-direction: column;
+}
+.ColorPage .OutputColumn .tab-content .output-preview textarea {
   flex: 1;
-  height: 100%;
+  width: 100%;
   font-family: monospace;
   font-size: 16px;
   font-size: var(--base-font-size);
   padding: 10px;
   padding: var(--item-padding);
+  background-color: #fff;
+  background-color: var(--textarea-bg);
   color: #333;
   color: var(--text-color);
-  white-space: pre-wrap;
+  border: 1px solid darken(#f4f4f4, 10%);
+  border: 1px solid var(--textarea-border);
+  border-radius: 4px;
+  resize: none;
   overflow-y: auto;
 }
-.ColorPage .button-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: calc(10px / 2) 0;
-  padding: calc(var(--item-padding) / 2) 0;
-}
-.ColorPage .button-bar.top {
-  margin-bottom: 10px;
-  margin-bottom: var(--item-padding);
-}
-.ColorPage .button-bar.bottom {
-  margin-top: 10px;
-  margin-top: var(--item-padding);
-}
-.ColorPage .button-bar label {
-  display: flex;
-  align-items: center;
-}
-.ColorPage .button-bar label input[type=checkbox] {
-  width: 24px;
-  height: 24px;
-  margin-right: 8px;
-}
-.ColorPage .button-bar label span {
-  font-size: calc(16px * 1.2);
-  font-size: calc(var(--base-font-size) * 1.2);
-  font-weight: bold;
+.ColorPage .OutputColumn .tab-content .output-preview .button-bar {
+  margin-top: auto;
 }
 
 /* src/components/app/App.scss */

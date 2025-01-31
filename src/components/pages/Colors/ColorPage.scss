@@ -6,6 +6,7 @@
     --base-font-size: 16px;
     --button-bg: #3498db;
     --button-text: #fff;
+    --button-text-hover: #000;
     --button-hover-bg: lighten(#3498db, 10%);
     --button-hover-bg2: lighten(#3498db, 20%);
     --textarea-bg: #fff;
@@ -17,6 +18,7 @@
     --text-color: #fed;
     --button-bg: #3498db;
     --button-text: #000;
+    --button-text-hover: #fff;
     --button-hover-bg: lighten(#3498db, 10%);
     --button-hover-bg2: lighten(#3498db, 20%);
     --textarea-bg: #012;
@@ -54,6 +56,37 @@
             }
         }
 
+        .button-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: calc(var(--item-padding) / 2) 0;
+
+            &.top {
+                margin-bottom: var(--item-padding);
+            }
+
+            &.bottom {
+                margin-top: var(--item-padding);
+            }
+
+            label {
+                display: flex;
+                align-items: center;
+
+                input[type="checkbox"] {
+                    width: 24px;
+                    height: 24px;
+                    margin-right: 8px;
+                }
+
+                span {
+                    font-size: calc(var(--base-font-size) * 1.2);
+                    font-weight: bold;
+                }
+            }
+        }
+
         textarea {
             flex: 1;
             font-family: monospace;
@@ -75,7 +108,8 @@
 
     .ColorEditColumn,
     .OutputColumn {
-        .color-list {
+        .color-list,
+        .color-swatches {
             flex: 1;
             overflow-y: auto;
             display: flex;
@@ -90,26 +124,27 @@
             }
         }
     }
-
-    .ColorEditColumn {
+    .ColorEditColumn,
+    .OutputColumn {
         .color-list {
+            flex: 1;
+            overflow-y: auto; // This ensures the color-list scrolls
+            display: flex;
+            flex-direction: column;
+
             .color-swatch {
-                position: relative;
-
-                &:hover {
-                    background-color: var(--button-hover-bg2);
-                }
+                flex: 1;
+                min-height: 50px;
+                margin-bottom: var(--item-padding);
+                border-radius: 4px;
             }
-        }
-
-        .button-bar {
-            margin-top: auto; // Pushes the button bar to the bottom
         }
     }
 
     .OutputColumn {
         .tab-content {
             flex: 1;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             padding: var(--item-padding);
@@ -117,62 +152,42 @@
             border-radius: 4px;
 
             .color-swatches,
-            .text-preview {
+            .text-preview,
+            .output-preview {
                 flex: 1;
-                overflow-y: auto;
-            }
-
-            .color-swatches {
-                .color-list {
-                    .color-swatch {
-                        // No additional styles needed as they inherit from .color-list .color-swatch
-                    }
-                }
+                overflow-y: auto; // Ensures all content areas are scrollable
             }
 
             .text-preview {
                 div {
-                    // Replaced textarea with div for text preview
-                    flex: 1; // Changed to flex: 1 for full height
-                    height: 100%; // Ensure full height of parent
+                    // Lines of text in the text tab
+                    padding: calc(var(--item-padding) / 2) 0;
+                    min-height: unset;
+                    height: auto;
+                }
+            }
+
+            .output-preview {
+                display: flex;
+                flex-direction: column;
+
+                textarea {
+                    flex: 1; // Fill height
+                    width: 100%; // Fill width
                     font-family: monospace;
                     font-size: var(--base-font-size);
                     padding: var(--item-padding);
+                    background-color: var(--textarea-bg);
                     color: var(--text-color);
-                    white-space: pre-wrap;
+                    border: 1px solid var(--textarea-border);
+                    border-radius: 4px;
+                    resize: none;
                     overflow-y: auto;
                 }
-            }
-        }
-    }
 
-    .button-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: calc(var(--item-padding) / 2) 0;
-
-        &.top {
-            margin-bottom: var(--item-padding);
-        }
-
-        &.bottom {
-            margin-top: var(--item-padding);
-        }
-
-        label {
-            display: flex;
-            align-items: center;
-
-            input[type="checkbox"] {
-                width: 24px;
-                height: 24px;
-                margin-right: 8px;
-            }
-
-            span {
-                font-size: calc(var(--base-font-size) * 1.2);
-                font-weight: bold;
+                .button-bar {
+                    margin-top: auto; // Push the button bar to the bottom
+                }
             }
         }
     }

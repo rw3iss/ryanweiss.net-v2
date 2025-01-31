@@ -64,38 +64,43 @@ export function normalizeColor(color: string): string | null {
 }
 
 export function parseColors(text: string): { color: string; modifiedColor: string }[] {
-    // Regex to match hex colors
-    const hexRegex = /#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})(?=[,\s;]|$)/gi;
-
-    // Regex to match RGB and RGBA colors
-    const rgbRegex = /rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)(?=[,\s;]|$)/gi;
-
     const colors: { color: string; modifiedColor: string }[] = [];
 
-    let match;
-    // Match hex colors
-    while ((match = hexRegex.exec(text)) !== null) {
-        const hexColor = match[0];
-        if (isValidColor(hexColor)) {
-            const normalized = normalizeColor(hexColor);
-            if (normalized && !colors.some(c => c.modifiedColor.toLowerCase() === normalized.toLowerCase())) {
-                colors.push({ color: hexColor, modifiedColor: normalized });
-            }
-        }
-    }
+    // Regex to match hex colors, RGB, and RGBA
+    const colorRegex = /#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)/gi;
 
-    // Match RGB/RGBA colors
-    while ((match = rgbRegex.exec(text)) !== null) {
-        const rgbColor = match[0];
-        if (isValidColor(rgbColor)) {
-            const normalized = normalizeColor(rgbColor);
+    console.log(`text`, text)
+    // Extract all matches
+    let match;
+    while ((match = colorRegex.exec(text)) !== null) {
+        console.log(`m`, match)
+        const color = match[0];
+        if (isValidColor(color)) {
+            const normalized = normalizeColor(color);
             if (normalized && !colors.some(c => c.modifiedColor.toLowerCase() === normalized.toLowerCase())) {
-                colors.push({ color: rgbColor, modifiedColor: normalized });
+                colors.push({ color: color, modifiedColor: normalized });
             }
         }
     }
 
     return colors;
+}
+
+
+export function formatColor(color: string, modifiedColor: string): string {
+    // Determine the original format and convert modifiedColor accordingly
+    if (color.startsWith('#')) {
+        return modifiedColor; // Assuming modifiedColor is in hex format
+    } else if (color.startsWith('rgb')) {
+        // Convert rgba to rgb if necessary
+        if (modifiedColor.startsWith('rgba')) {
+            return modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, 'rgb($1)');
+        }
+        return modifiedColor;
+    } else if (color.startsWith('rgba')) {
+        return modifiedColor; // Already in rgba format
+    }
+    return modifiedColor; // Fallback
 }
 
 export const readFile = (file) => {
