@@ -69,11 +69,9 @@ export function parseColors(text: string): { color: string; modifiedColor: strin
     // Regex to match hex colors, RGB, and RGBA
     const colorRegex = /#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)/gi;
 
-    console.log(`text`, text)
     // Extract all matches
     let match;
     while ((match = colorRegex.exec(text)) !== null) {
-        console.log(`m`, match)
         const color = match[0];
         if (isValidColor(color)) {
             const normalized = normalizeColor(color);
@@ -86,19 +84,84 @@ export function parseColors(text: string): { color: string; modifiedColor: strin
     return colors;
 }
 
+interface ColorWithPosition {
+    color: string;
+    modifiedColor: string;
+    line: number;
+    start: number;
+    end: number;
+}
+
+export function parseColorsWithPosition(text: string): ColorWithPosition[] {
+    const lines = text.split('\n');
+    const colorsWithPosition: ColorWithPosition[] = [];
+    const regex = /(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\))/gi;
+
+    lines.forEach((line, lineIndex) => {
+        let match;
+        while ((match = regex.exec(line)) !== null) {
+            const color = match[0];
+            if (isValidColor(color)) {
+                const start = match.index;
+                const end = start + color.length;
+                const normalized = normalizeColor(color) || color; // Use original if normalization fails
+                colorsWithPosition.push({
+                    color: color,
+                    modifiedColor: normalized,
+                    line: lineIndex,
+                    start: start,
+                    end: end
+                });
+            }
+        }
+    });
+
+    // Sort by line number, then by character position, in reverse order for replacement
+    return colorsWithPosition.sort((a, b) => {
+        if (a.line !== b.line) return b.line - a.line;
+        return b.start - a.start;
+    });
+}
+
+export function replaceColors(text: string, colors: ColorWithPosition[]): string {
+    const lines = text.split('\n');
+
+    colors.forEach(color => {
+        const line = lines[color.line];
+        if (line) {
+            lines[color.line] = line.slice(0, color.start) +
+                formatColor(color.color, color.modifiedColor) +
+                line.slice(color.end);
+        }
+    });
+
+    return lines.join('\n');
+}
 
 export function formatColor(color: string, modifiedColor: string): string {
-    // Determine the original format and convert modifiedColor accordingly
     if (color.startsWith('#')) {
-        return modifiedColor; // Assuming modifiedColor is in hex format
-    } else if (color.startsWith('rgb')) {
-        // Convert rgba to rgb if necessary
-        if (modifiedColor.startsWith('rgba')) {
-            return modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, 'rgb($1)');
+        // If hex, ensure we're not losing alpha information
+        if (color.length === 9) {
+            return modifiedColor;
+        } else {
+            // If no alpha in original hex, add full opacity if modified doesn't have it
+            return modifiedColor.length === 9 ? modifiedColor : modifiedColor + 'FF';
         }
-        return modifiedColor;
-    } else if (color.startsWith('rgba')) {
-        return modifiedColor; // Already in rgba format
+    } else if (color.startsWith('rgb')) {
+        // Handle RGB and RGBA
+        if (color.startsWith('rgba')) {
+            // Ensure the alpha value is retained or set to 1 if missing
+            const [, originalAlpha] = color.match(/rgba\((.+?),\s*([\d.]+)\)/) || [, '1'];
+            const [, alpha] = modifiedColor.match(/rgba\((.+?),\s*([\d.]+)\)/) || [, '1'];
+            return modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, `rgba($1,${alpha})`);
+        } else if (modifiedColor.startsWith('rgba')) {
+            // Original was rgb, modified is rgba, remove alpha if it was 1, otherwise keep it
+            const [, alpha] = modifiedColor.match(/rgba\((.+?),\s*([\d.]+)\)/) || [, '1'];
+            return alpha === '1' ? modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, 'rgb($1)') : modifiedColor;
+        } else {
+            // Both are rgb, ensure alpha is 1 if not present
+            return modifiedColor;
+        }
     }
     return modifiedColor; // Fallback
 }

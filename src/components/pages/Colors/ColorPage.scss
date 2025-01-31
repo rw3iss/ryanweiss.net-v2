@@ -108,87 +108,93 @@
 
     .ColorEditColumn,
     .OutputColumn {
-        .color-list,
-        .color-swatches {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-
-            .color-swatch {
-                flex: 1; // Changed from flex-grow to flex for full height
-                height: 100%; // Ensure full height of parent
-                min-height: 50px;
-                margin-bottom: var(--item-padding);
-                border-radius: 4px;
-            }
-        }
-    }
-    .ColorEditColumn,
-    .OutputColumn {
         .color-list {
             flex: 1;
-            overflow-y: auto; // This ensures the color-list scrolls
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
 
-            .color-swatch {
-                flex: 1;
+            .color-swatch,
+            .ColorEdit {
+                flex-grow: 1;
                 min-height: 50px;
-                margin-bottom: var(--item-padding);
+                //margin-bottom: var(--item-padding);
                 border-radius: 4px;
             }
         }
     }
 
     .OutputColumn {
-        .tab-content {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            padding: var(--item-padding);
-            border: 1px solid var(--textarea-border);
-            border-radius: 4px;
+        .color-swatches {
+            .color-swatch {
+                margin-bottom: 0; // Remove spacing between swatches
+            }
+        }
 
-            .color-swatches,
-            .text-preview,
+        .tab-content {
+            display: flex;
+            flex: 1;
+            width: 100%;
+
             .output-preview {
                 flex: 1;
-                overflow-y: auto; // Ensures all content areas are scrollable
-            }
-
-            .text-preview {
-                div {
-                    // Lines of text in the text tab
-                    padding: calc(var(--item-padding) / 2) 0;
-                    min-height: unset;
-                    height: auto;
-                }
-            }
-
-            .output-preview {
                 display: flex;
-                flex-direction: column;
-
                 textarea {
-                    flex: 1; // Fill height
-                    width: 100%; // Fill width
-                    font-family: monospace;
-                    font-size: var(--base-font-size);
-                    padding: var(--item-padding);
-                    background-color: var(--textarea-bg);
-                    color: var(--text-color);
-                    border: 1px solid var(--textarea-border);
-                    border-radius: 4px;
-                    resize: none;
-                    overflow-y: auto;
-                }
-
-                .button-bar {
-                    margin-top: auto; // Push the button bar to the bottom
+                    height: 100%; // Ensure textarea fills the height of the column
+                    width: 100%;
                 }
             }
         }
     }
+
+    // .OutputColumn {
+    //     .tab-content {
+    //         flex: 1;
+    //         overflow-y: auto;
+    //         display: flex;
+    //         flex-direction: column;
+    //         padding: var(--item-padding);
+    //         border: 1px solid var(--textarea-border);
+    //         border-radius: 4px;
+
+    //         .color-swatches,
+    //         .text-preview,
+    //         .output-preview {
+    //             flex: 1;
+    //             overflow-y: auto; // Ensures all content areas are scrollable
+    //         }
+
+    //         .text-preview {
+    //             div {
+    //                 // Lines of text in the text tab
+    //                 padding: calc(var(--item-padding) / 2) 0;
+    //                 min-height: unset;
+    //                 height: auto;
+    //             }
+    //         }
+
+    //         .output-preview {
+    //             display: flex;
+    //             flex-direction: column;
+
+    //             textarea {
+    //                 flex: 1; // Fill height
+    //                 width: 100%; // Fill width
+    //                 font-family: monospace;
+    //                 font-size: var(--base-font-size);
+    //                 padding: var(--item-padding);
+    //                 background-color: var(--textarea-bg);
+    //                 color: var(--text-color);
+    //                 border: 1px solid var(--textarea-border);
+    //                 border-radius: 4px;
+    //                 resize: none;
+    //                 overflow-y: auto;
+    //             }
+
+    //             .button-bar {
+    //                 margin-top: auto; // Push the button bar to the bottom
+    //             }
+    //         }
+    //     }
+    // }
 }

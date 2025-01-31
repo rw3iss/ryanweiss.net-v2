@@ -49,6 +49,7 @@
         "preact": "^10.25.4",
         "query-string": "^9.1.0",
         "routes": "^2.1.0",
+        "seedrandom": "^3.0.5",
         "three": "^0.172.0",
         "use-sound": "^4.0.3",
         "uuid": "^11.0.5",

@@ -103,10 +103,10 @@ export const ColorEdit: FunctionalComponent<ColorEditProps> = ({ color, onChange
         }
     }, [showPopup, adjustPosition]);
 
-    const handleClick = useCallback(() => {
+    const handleClick = useCallback((event: MouseEvent) => {
         hideOtherPickers();
-        setShowPopup(!showPopup);
-    }, [showPopup, hideOtherPickers]);
+        setShowPopup((prevState) => !prevState); // Toggle popup state
+    }, [hideOtherPickers]);
 
     return (
         <div

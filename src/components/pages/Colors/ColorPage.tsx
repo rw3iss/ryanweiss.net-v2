@@ -10,7 +10,7 @@ interface ColorPageProps { }
 export const ColorPage: FunctionalComponent<ColorPageProps> = () => {
     const [colors, setColors] = useState<{ color: string, modifiedColor: string }[]>([]);
     const [modifiedColors, setModifiedColors] = useState<{ color: string, modifiedColor: string }[]>([]);
-    const [darkMode, setDarkMode] = useState(false);
+    const [darkMode, setDarkMode] = useState(true);
     const [inputText, setInputText] = useState('');
 
     const handleColorsParsed = (parsedColors: { color: string, modifiedColor: string }[], text: string) => {

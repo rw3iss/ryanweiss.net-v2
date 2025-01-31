@@ -3,15 +3,15 @@ import { useCallback, useEffect, useState } from 'preact/hooks';
 import { parseColors } from './utils';
 
 interface InputColumnProps {
-    onColorsParsed: (colors: { color: string, modifiedColor: string }[]) => void;
-    onDarkModeChange: (isDarkMode: boolean) => void; // Added prop
+    onColorsParsed: (colors: { color: string, modifiedColor: string }[], text: string, fileName?: string) => void;
+    onDarkModeChange: (isDarkMode: boolean) => void;
 }
 
 export const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsParsed, onDarkModeChange }) => {
     const [text, setText] = useState('');
     const [combineSimilar, setCombineSimilar] = useState(false);
+    const [darkMode, setDarkMode] = useState(true); // Default to checked
     const [fileName, setFileName] = useState<string | undefined>(undefined);
-    const [darkMode, setDarkMode] = useState(false);
 
     useEffect(() => {
         const savedText = localStorage.getItem('inputText');
@@ -24,7 +24,7 @@ export const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsPar
     const handleFileImport = useCallback((event: Event) => {
         const target = event.target as HTMLInputElement;
         if (target && target.files && target.files[0]) {
-            const file = target.files[0]; setFileName
+            const file = target.files[0];
             setFileName(file.name); // Save the file name
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -36,23 +36,22 @@ export const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsPar
         }
     }, []);
 
+    const handleClear = useCallback(() => {
+        setText('');
+        localStorage.setItem('inputText', '');
+    }, []);
+
     const handleParseColors = useCallback(() => {
         const textareaContent = (document.querySelector('textarea') as HTMLTextAreaElement).value;
         if (textareaContent.trim() !== '') {
             setText(textareaContent);
             const colors = parseColors(textareaContent, combineSimilar);
-            onColorsParsed(colors, textareaContent, fileName); // Pass text and fileName
+            onColorsParsed(colors, textareaContent, fileName);
             localStorage.setItem('inputText', textareaContent);
         } else {
             onColorsParsed([], textareaContent, fileName);
         }
     }, [onColorsParsed, combineSimilar, fileName]);
-
-
-    const handleClear = useCallback(() => {
-        setText('');
-        localStorage.setItem('inputText', '');
-    }, []);
 
     return (
         <div className="column InputColumn">
@@ -73,9 +72,8 @@ export const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsPar
                         type="checkbox"
                         checked={darkMode}
                         onChange={(e) => {
-                            const isDarkMode = e.target.checked;
-                            setDarkMode(isDarkMode);
-                            onDarkModeChange(isDarkMode); // Call the prop with the new dark mode state
+                            setDarkMode(e.target.checked);
+                            onDarkModeChange(e.target.checked);
                         }}
                     />
                     Dark Mode
