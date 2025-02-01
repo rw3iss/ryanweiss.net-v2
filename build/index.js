@@ -4828,11 +4828,24 @@ var init_OutputColumn = __esm({
       const [activeTab, setActiveTab] = h2("swatches");
       const [outputTextModified, setOutputTextModified] = h2("");
       const [colorsWithPosition, setColorsWithPosition] = h2([]);
+      const [showOriginal, setShowOriginal] = h2(false);
+      const [showModified, setShowModified] = h2(true);
       const sessionSeed = T2(() => Math.random().toString(36).substring(7), []);
       const rng2 = T2(() => (0, import_seedrandom.default)(sessionSeed), [sessionSeed]);
-      const generateRandomWords = T2(() => {
-        const words = ["Hello", "World", "Color", "Sample", "Text", "Display", "View", "Edit", "Change", "Apply"];
-        return Array.from({ length: colors.length }, () => words[Math.floor(rng2() * words.length)]);
+      const generateRandomSentences = T2(() => {
+        const sentences = [
+          "The quick brown fox jumps over the lazy dog.",
+          "Now is the time for all good men to come to the aid of the party.",
+          "Pack my box with five dozen liquor jugs.",
+          "Sphinx of black quartz, judge my vow.",
+          "How razorback-jumping frogs can level six piqued gymnasts!",
+          "Waltz, bad nymph, for quick jigs vex!",
+          "The five boxing wizards jump quickly.",
+          "A quick movement of the enemy will jeopardize six gunboats.",
+          "Crazy Fredericka bought many very exquisite opal jewels.",
+          "The job requires extra pluck and zeal from every young wage earner."
+        ];
+        return Array.from({ length: colors.length }, () => sentences[Math.floor(rng2() * sentences.length)]);
       }, [colors.length, rng2]);
       y2(() => {
         const parsedColors = parseColorsWithPosition(inputText);
@@ -4856,8 +4869,9 @@ var init_OutputColumn = __esm({
         link.click();
         URL.revokeObjectURL(link.href);
       }, [outputTextModified, importedFileName]);
+      const renderColumn = (isOriginal) => /* @__PURE__ */ u2("div", { className: activeTab === "text" ? "text-content" : "column-content", style: { flex: 1, overflowY: "auto" }, children: activeTab === "swatches" ? colors.map((color, index) => /* @__PURE__ */ u2("div", { className: "color-swatch", style: { backgroundColor: isOriginal ? color.color : color.modifiedColor } }, index)) : colors.map((color, index) => /* @__PURE__ */ u2("div", { style: { color: isOriginal ? color.color : color.modifiedColor }, children: generateRandomSentences[index] }, index)) });
       return /* @__PURE__ */ u2("div", { className: "column OutputColumn", children: [
-        /* @__PURE__ */ u2("div", { className: "tab-bar", children: [
+        /* @__PURE__ */ u2("div", { className: "tab-bar", children: /* @__PURE__ */ u2("div", { className: "tab-bar", children: [
           /* @__PURE__ */ u2(
             "button",
             {
@@ -4877,30 +4891,48 @@ var init_OutputColumn = __esm({
           /* @__PURE__ */ u2(
             "button",
             {
-              className: activeTab === "original" ? "active" : "",
-              onClick: () => setActiveTab("original"),
-              children: "Original"
-            }
-          ),
-          /* @__PURE__ */ u2(
-            "button",
-            {
               className: activeTab === "output" ? "active" : "",
               onClick: () => setActiveTab("output"),
               style: { marginLeft: "auto" },
               children: "Output"
             }
           )
-        ] }),
-        /* @__PURE__ */ u2("div", { className: "tab-content", children: activeTab === "swatches" ? /* @__PURE__ */ u2("div", { className: "color-swatches color-list", style: { display: "flex" }, children: colors.map((color, index) => /* @__PURE__ */ u2("div", { className: "color-swatch", style: { backgroundColor: color.modifiedColor, marginBottom: 0 } }, index)) }) : activeTab === "text" || activeTab === "original" ? /* @__PURE__ */ u2("div", { className: "text-preview", style: { flex: 1, overflowY: "auto" }, children: colors.map((color, index) => /* @__PURE__ */ u2("div", { style: {
-          color: activeTab === "original" ? color.color : color.modifiedColor,
-          padding: "5px 0 2px 0"
-        }, children: generateRandomWords[index] }, index)) }) : /* @__PURE__ */ u2("div", { className: "output-preview", children: /* @__PURE__ */ u2(
+        ] }) }),
+        /* @__PURE__ */ u2("div", { className: "tab-content", children: activeTab !== "output" ? /* @__PURE__ */ u2("div", { style: { display: "flex", flexDirection: "column", height: "100%" }, children: [
+          /* @__PURE__ */ u2("div", { className: "checkbox-container", children: [
+            /* @__PURE__ */ u2("label", { children: [
+              /* @__PURE__ */ u2(
+                "input",
+                {
+                  type: "checkbox",
+                  checked: showOriginal,
+                  onChange: () => setShowOriginal(!showOriginal)
+                }
+              ),
+              "Original"
+            ] }),
+            /* @__PURE__ */ u2("label", { children: [
+              /* @__PURE__ */ u2(
+                "input",
+                {
+                  type: "checkbox",
+                  checked: showModified,
+                  onChange: () => setShowModified(!showModified)
+                }
+              ),
+              "Modified"
+            ] })
+          ] }),
+          /* @__PURE__ */ u2("div", { style: { display: "flex", flex: 1 }, children: [
+            showOriginal && renderColumn(true),
+            showModified && renderColumn(false)
+          ] })
+        ] }) : /* @__PURE__ */ u2("div", { className: "output-preview", style: { height: "100%" }, children: /* @__PURE__ */ u2(
           "textarea",
           {
             value: outputTextModified,
             readOnly: true,
-            style: { flex: 1, width: "100%", padding: "var(--item-padding)" }
+            style: { width: "100%", height: "100%", padding: "var(--item-padding)" }
           }
         ) }) }),
         /* @__PURE__ */ u2("div", { className: "button-bar", children: /* @__PURE__ */ u2("button", { onClick: handleSave, children: "Save" }) })

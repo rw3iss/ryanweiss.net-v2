@@ -97,49 +97,47 @@
 
     .OutputColumn {
         .tab-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: var(--item-padding);
-            border: 1px solid var(--textarea-border);
-            border-radius: 4px;
+            height: 100%;
+            overflow-y: auto;
 
-            .color-swatches,
-            .text-preview,
-            .output-preview {
-                flex: 1; // Take up full height available
-                overflow-y: auto; // Scroll if content overflows
+            .checkbox-container {
+                display: flex;
+                justify-content: space-around;
+                margin-bottom: var(--item-padding);
             }
 
-            .color-swatches {
-                .color-swatch {
-                    flex-grow: 1;
-                    min-height: 50px;
-                    border-radius: 4px;
-                }
+            .column-content {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
             }
 
-            .text-preview {
+            .color-swatch {
+                flex: 1;
+                min-height: 50px;
+                margin-bottom: var(--item-padding);
+                border-radius: 4px;
+            }
+
+            // Adjusting text tab content
+            .text-content {
+                flex: 1;
+                overflow-y: auto;
+
                 div {
-                    padding: 5px 0 2px 0;
+                    padding: 2px 0; // Reduced padding for each line of text
+                    line-height: 1.2; // Reduced line height
                 }
             }
 
             .output-preview {
+                flex: 1;
+
                 textarea {
                     width: 100%;
-                    flex: 1; // Fill both height and width of the container
+                    height: 100%;
+                    padding: var(--item-padding);
                 }
-            }
-        }
-
-        .button-bar {
-            margin-top: auto;
-        }
-
-        .tab-bar {
-            button:last-child {
-                margin-left: auto;
             }
         }
     }

@@ -1218,38 +1218,43 @@
   margin-top: auto;
 }
 .ColorPage .OutputColumn .tab-content {
+  height: 100%;
+  overflow-y: auto;
+}
+.ColorPage .OutputColumn .tab-content .checkbox-container {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 10px;
+  margin-bottom: var(--item-padding);
+}
+.ColorPage .OutputColumn .tab-content .column-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 10px;
-  padding: var(--item-padding);
-  border: 1px solid #ddd;
-  border: 1px solid var(--textarea-border);
+}
+.ColorPage .OutputColumn .tab-content .color-swatch {
+  flex: 1;
+  min-height: 50px;
+  margin-bottom: 10px;
+  margin-bottom: var(--item-padding);
   border-radius: 4px;
 }
-.ColorPage .OutputColumn .tab-content .color-swatches,
-.ColorPage .OutputColumn .tab-content .text-preview,
-.ColorPage .OutputColumn .tab-content .output-preview {
+.ColorPage .OutputColumn .tab-content .text-content {
   flex: 1;
   overflow-y: auto;
 }
-.ColorPage .OutputColumn .tab-content .color-swatches .color-swatch {
-  flex-grow: 1;
-  min-height: 50px;
-  border-radius: 4px;
+.ColorPage .OutputColumn .tab-content .text-content div {
+  padding: 2px 0;
+  line-height: 1.2;
 }
-.ColorPage .OutputColumn .tab-content .text-preview div {
-  padding: 5px 0 2px 0;
+.ColorPage .OutputColumn .tab-content .output-preview {
+  flex: 1;
 }
 .ColorPage .OutputColumn .tab-content .output-preview textarea {
   width: 100%;
-  flex: 1;
-}
-.ColorPage .OutputColumn .button-bar {
-  margin-top: auto;
-}
-.ColorPage .OutputColumn .tab-bar button:last-child {
-  margin-left: auto;
+  height: 100%;
+  padding: 10px;
+  padding: var(--item-padding);
 }
 .ColorPage .button-bar {
   display: flex;

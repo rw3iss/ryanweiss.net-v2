@@ -13,13 +13,26 @@ export const OutputColumn: FunctionalComponent<OutputColumnProps> = ({ colors, i
     const [activeTab, setActiveTab] = useState('swatches');
     const [outputTextModified, setOutputTextModified] = useState('');
     const [colorsWithPosition, setColorsWithPosition] = useState<ReturnType<typeof parseColorsWithPosition>>([]);
+    const [showOriginal, setShowOriginal] = useState(false);
+    const [showModified, setShowModified] = useState(true);
 
     const sessionSeed = useMemo(() => Math.random().toString(36).substring(7), []);
     const rng = useMemo(() => seedrandom(sessionSeed), [sessionSeed]);
 
-    const generateRandomWords = useMemo(() => {
-        const words = ["Hello", "World", "Color", "Sample", "Text", "Display", "View", "Edit", "Change", "Apply"];
-        return Array.from({ length: colors.length }, () => words[Math.floor(rng() * words.length)]);
+    const generateRandomSentences = useMemo(() => {
+        const sentences = [
+            "The quick brown fox jumps over the lazy dog.",
+            "Now is the time for all good men to come to the aid of the party.",
+            "Pack my box with five dozen liquor jugs.",
+            "Sphinx of black quartz, judge my vow.",
+            "How razorback-jumping frogs can level six piqued gymnasts!",
+            "Waltz, bad nymph, for quick jigs vex!",
+            "The five boxing wizards jump quickly.",
+            "A quick movement of the enemy will jeopardize six gunboats.",
+            "Crazy Fredericka bought many very exquisite opal jewels.",
+            "The job requires extra pluck and zeal from every young wage earner."
+        ];
+        return Array.from({ length: colors.length }, () => sentences[Math.floor(rng() * sentences.length)]);
     }, [colors.length, rng]);
 
     useEffect(() => {
@@ -48,59 +61,80 @@ export const OutputColumn: FunctionalComponent<OutputColumnProps> = ({ colors, i
         URL.revokeObjectURL(link.href);
     }, [outputTextModified, importedFileName]);
 
+    const renderColumn = (isOriginal: boolean) => (
+        <div className={activeTab === 'text' ? 'text-content' : 'column-content'} style={{ flex: 1, overflowY: 'auto' }}>
+            {activeTab === 'swatches' ?
+                colors.map((color, index) => (
+                    <div key={index} className="color-swatch" style={{ backgroundColor: isOriginal ? color.color : color.modifiedColor }}></div>
+                ))
+                :
+                colors.map((color, index) => (
+                    <div key={index} style={{ color: isOriginal ? color.color : color.modifiedColor }}>
+                        {generateRandomSentences[index]}
+                    </div>
+                ))
+            }
+        </div>
+    );
+
     return (
         <div className="column OutputColumn">
             <div className="tab-bar">
-                <button
-                    className={activeTab === 'swatches' ? 'active' : ''}
-                    onClick={() => setActiveTab('swatches')}
-                >
-                    Swatches
-                </button>
-                <button
-                    className={activeTab === 'text' ? 'active' : ''}
-                    onClick={() => setActiveTab('text')}
-                >
-                    Text
-                </button>
-                <button
-                    className={activeTab === 'original' ? 'active' : ''}
-                    onClick={() => setActiveTab('original')}
-                >
-                    Original
-                </button>
-                <button
-                    className={activeTab === 'output' ? 'active' : ''}
-                    onClick={() => setActiveTab('output')}
-                    style={{ marginLeft: 'auto' }}
-                >
-                    Output
-                </button>
+                <div className="tab-bar">
+                    <button
+                        className={activeTab === 'swatches' ? 'active' : ''}
+                        onClick={() => setActiveTab('swatches')}
+                    >
+                        Swatches
+                    </button>
+                    <button
+                        className={activeTab === 'text' ? 'active' : ''}
+                        onClick={() => setActiveTab('text')}
+                    >
+                        Text
+                    </button>
+                    <button
+                        className={activeTab === 'output' ? 'active' : ''}
+                        onClick={() => setActiveTab('output')}
+                        style={{ marginLeft: 'auto' }}
+                    >
+                        Output
+                    </button>
+                </div>
+
             </div>
             <div className="tab-content">
-                {activeTab === 'swatches' ? (
-                    <div className="color-swatches color-list" style={{ display: 'flex' }}>
-                        {colors.map((color, index) => (
-                            <div key={index} className="color-swatch" style={{ backgroundColor: color.modifiedColor, marginBottom: 0 }}></div>
-                        ))}
-                    </div>
-                ) : activeTab === 'text' || activeTab === 'original' ? (
-                    <div className="text-preview" style={{ flex: 1, overflowY: 'auto' }}>
-                        {colors.map((color, index) => (
-                            <div key={index} style={{
-                                color: activeTab === 'original' ? color.color : color.modifiedColor,
-                                padding: '5px 0 2px 0'
-                            }}>
-                                {generateRandomWords[index]}
-                            </div>
-                        ))}
+                {activeTab !== 'output' ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                        <div className="checkbox-container">
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={showOriginal}
+                                    onChange={() => setShowOriginal(!showOriginal)}
+                                />
+                                Original
+                            </label>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={showModified}
+                                    onChange={() => setShowModified(!showModified)}
+                                />
+                                Modified
+                            </label>
+                        </div>
+                        <div style={{ display: 'flex', flex: 1 }}>
+                            {showOriginal && renderColumn(true)}
+                            {showModified && renderColumn(false)}
+                        </div>
                     </div>
                 ) : (
-                    <div className="output-preview">
+                    <div className="output-preview" style={{ height: '100%' }}>
                         <textarea
                             value={outputTextModified}
                             readOnly
-                            style={{ flex: 1, width: '100%', padding: 'var(--item-padding)' }}
+                            style={{ width: '100%', height: '100%', padding: 'var(--item-padding)' }}
                         />
                     </div>
                 )}
