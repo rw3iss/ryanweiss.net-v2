@@ -1,18 +1,29 @@
-import { h, FunctionalComponent } from 'preact';
-import { useState } from 'preact/hooks';
-import { InputColumn } from './InputColumn';
+import { FunctionalComponent } from 'preact';
+import { useEffect, useState } from 'preact/hooks';
 import { ColorEditColumn } from './ColorEditColumn';
-import { OutputColumn } from './OutputColumn';
 import './ColorPage.scss';
+import { InputColumn } from './InputColumn';
+import { OutputColumn } from './OutputColumn';
 
 interface ColorPageProps { }
 
 export const ColorPage: FunctionalComponent<ColorPageProps> = () => {
     const [colors, setColors] = useState<{ id: number; color: string; modifiedColor: string }[]>([]);
     const [modifiedColors, setModifiedColors] = useState<{ id: number; color: string; modifiedColor: string }[]>([]);
-    const [darkMode, setDarkMode] = useState(true);
     const [tokenizedText, setTokenizedText] = useState('');
-    const [backgroundColor, setBackgroundColor] = useState('#f4f4f4');
+    const [config, setConfig] = useState({
+        combineSimilar: false,
+        colorMode: 'dark',
+        backgroundColor: '#123',
+        fontColor: '#fed'
+    });
+
+    useEffect(() => {
+        const savedConfig = localStorage.getItem('config');
+        if (savedConfig) {
+            setConfig(JSON.parse(savedConfig));
+        }
+    }, []);
 
     const handleColorsParsed = (parsedColors: { id: number; color: string; modifiedColor: string }[], text: string) => {
         setColors(parsedColors);
@@ -24,25 +35,23 @@ export const ColorPage: FunctionalComponent<ColorPageProps> = () => {
         setModifiedColors(newColors);
     };
 
-    const handleDarkModeChange = (isDarkMode: boolean) => {
-        setDarkMode(isDarkMode);
-    };
-
-    const handleBackgroundColorChange = (color: string) => {
-        setBackgroundColor(color);
-        // Here you might want to update the CSS variable or apply the color change to the DOM
-        document.documentElement.style.setProperty('--background-color', color);
+    const handleConfigChange = (newConfig: Partial<typeof config>) => {
+        setConfig(prev => ({ ...prev, ...newConfig }));
+        localStorage.setItem('config', JSON.stringify({ ...config, ...newConfig }));
     };
 
     return (
         <div
-            className={`ColorPage ${darkMode ? 'dark-mode' : ''}`}
-            style={{ backgroundColor: backgroundColor }} // Inline style for dynamic background color
+            className={`ColorPage ${config.colorMode === 'dark' ? 'dark-mode' : ''}`}
+            style={{
+                backgroundColor: config.backgroundColor,
+                color: config.fontColor
+            }}
         >
             <InputColumn
                 onColorsParsed={handleColorsParsed}
-                onDarkModeChange={handleDarkModeChange}
-                onBackgroundColorChange={handleBackgroundColorChange}
+                config={config}
+                onConfigChange={handleConfigChange}
             />
             <ColorEditColumn colors={modifiedColors} onColorsChanged={handleColorsChanged} />
             <OutputColumn colors={modifiedColors} tokenizedText={tokenizedText} />

@@ -5,36 +5,38 @@ interface ColorWithID {
 }
 
 export function parseAndTokenizeColors(text: string, combineSimilar: boolean): { colors: ColorWithID[], tokenizedText: string } {
+    if (text.trim() === '') {
+        return { colors: [], tokenizedText: '' };
+    }
+
     const regex = /(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\))/gi;
     const colors: ColorWithID[] = [];
     let tokenizedText = text;
     let idCounter = 0;
+    const colorMap = new Map<string, number>();
 
-    const normalizeColorValue = (color: string): string => {
+    const normalizeColor = (color: string): string => {
         let normalized = color.toLowerCase();
         if (normalized.startsWith('rgba')) {
-            normalized = normalized.replace(/(rgba\(.+?),(\d+\.?\d*)\)/, (_, rgbPart, alpha) => {
+            return normalized.replace(/(rgba\(.+?),(\d+\.?\d*)\)/, (_, rgbPart, alpha) => {
                 return `${rgbPart},${parseFloat(alpha).toFixed(2)})`; // Normalize alpha to 2 decimal places
             });
         }
         return normalized;
     };
 
-    const colorMap = new Map<string, number>();
-
     let match;
     while ((match = regex.exec(text)) !== null) {
         const originalColor = match[0];
-        let normalizedColor = normalizeColorValue(originalColor);
+        const normalizedColor = normalizeColor(originalColor);
 
         let id: number;
         if (combineSimilar) {
-            if (!colorMap.has(normalizedColor)) {
-                id = idCounter++;
-                colorMap.set(normalizedColor, id);
-            } else {
-                id = colorMap.get(normalizedColor)!;
-            }
+            id = colorMap.get(normalizedColor) ?? (() => {
+                const newId = idCounter++;
+                colorMap.set(normalizedColor, newId);
+                return newId;
+            })();
         } else {
             id = idCounter++;
         }
@@ -43,11 +45,29 @@ export function parseAndTokenizeColors(text: string, combineSimilar: boolean): {
             colors.push({ id, color: originalColor, modifiedColor: originalColor });
         }
 
-        tokenizedText = tokenizedText.replace(originalColor, `%%${id}%%`);
+        tokenizedText = tokenizedText.slice(0, match.index) + `%%${id}%%` + tokenizedText.slice(match.index + originalColor.length);
         regex.lastIndex = 0; // Reset regex index as we're modifying the string
     }
 
     return { colors, tokenizedText };
+}
+
+export function replaceColors(tokenizedText: string, colors: ColorWithID[]): string {
+    if (tokenizedText.trim() === '') {
+        return '';
+    }
+
+    // Sort by ID descending to replace from highest to lowest, preventing substring issues
+    const sortedColors = [...colors].sort((a, b) => b.id - a.id);
+    let outputText = tokenizedText;
+
+    for (const { id, color, modifiedColor } of sortedColors) {
+        const token = `%%${id}%%`;
+        const formattedColor = formatColor(color, modifiedColor);
+        outputText = outputText.replace(new RegExp(token, 'g'), formattedColor);
+    }
+
+    return outputText;
 }
 
 export function formatColor(color: string, modifiedColor: string): string {
@@ -55,15 +75,12 @@ export function formatColor(color: string, modifiedColor: string): string {
         if (color.length === 9) { // Handle 8-digit hex with alpha
             const rgba = hexToRgba(modifiedColor);
             if (rgba) {
-                const parts = rgba.match(/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
-                if (parts) {
-                    const [, r, g, b, a] = parts;
-                    const newAlpha = Math.round(parseFloat(a) * 255).toString(16).padStart(2, '0');
-                    return `#${r}${g}${b}${newAlpha}`;
-                }
+                const [, r, g, b, a] = rgba.match(/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/)!;
+                const newAlpha = Math.round(parseFloat(a) * 255).toString(16).padStart(2, '0');
+                return `#${r}${g}${b}${newAlpha}`;
             }
         }
-        return modifiedColor.slice(0, 7); // For 6 or 3 digit hex, just return modifiedColor if it's hex
+        return modifiedColor.slice(0, 7); // For 6 or 3 digit hex, just return the first 7 characters
     } else if (color.startsWith('rgb')) {
         if (color.startsWith('rgba')) {
             return modifiedColor; // Already in rgba format
@@ -72,11 +89,10 @@ export function formatColor(color: string, modifiedColor: string): string {
             return modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, 'rgb($1)');
         }
     }
-    return modifiedColor; // Fallback
+    return modifiedColor; // Fallback for unrecognized formats
 }
 
-
-export function hexToRgba(hex: string): string | null {
+function hexToRgba(hex: string): string | null {
     let r = 0, g = 0, b = 0, a = 1;
 
     if (hex.length === 4) {
@@ -200,22 +216,6 @@ export function parseColorsWithPosition(text: string): ColorWithPosition[] {
         if (a.line !== b.line) return b.line - a.line;
         return b.start - a.start;
     });
-}
-
-export function replaceColors(text: string, colors: ColorWithPosition[]): string {
-    if (!text) return '';
-    const lines = text.split('\n');
-
-    colors.forEach(color => {
-        const line = lines[color.line];
-        if (line) {
-            lines[color.line] = line.slice(0, color.start) +
-                formatColor(color.color, color.modifiedColor) +
-                line.slice(color.end);
-        }
-    });
-
-    return lines.join('\n');
 }
 
 

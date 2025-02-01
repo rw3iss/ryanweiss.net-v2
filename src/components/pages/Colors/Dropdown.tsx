@@ -1,5 +1,5 @@
-import { h, FunctionalComponent, Ref } from 'preact';
-import { useState, useCallback, useRef, useEffect } from 'preact/hooks';
+import { FunctionalComponent, h } from 'preact';
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 
 interface DropdownProps {
     children: h.JSX.Element;
@@ -22,9 +22,9 @@ export const Dropdown: FunctionalComponent<DropdownProps> = ({ children }) => {
     }, []);
 
     const handleMouseLeave = useCallback(() => {
-        hoverTimeout.current = window.setTimeout(() => {
-            setIsOpen(false);
-        }, 500);
+        // hoverTimeout.current = window.setTimeout(() => {
+        //     setIsOpen(false);
+        // }, 5000);
     }, []);
 
     useEffect(() => {

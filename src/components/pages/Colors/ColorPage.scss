@@ -1,29 +1,22 @@
 :root {
     --background-color: #f4f4f4;
     --text-color: #333;
+    --button-bg: #3498db;
+    --button-text: #fff;
+    --button-hover-bg: lighten(#3498db, 10%);
+    --button-hover-text: #000;
     --item-padding: 10px;
     --column-padding: 15px;
     --base-font-size: 16px;
-    --button-bg: #3498db;
-    --button-text: #fff;
-    --button-hover-text: #000;
-    --textarea-bg: #fff;
-    --textarea-border: #ddd;
-    --textarea-font-size: 12px; // New variable for textarea font size
-    --textarea-padding: 15px; // New variable for textarea padding
-    --text-line-padding: 5px; // New variable for text line padding
-    --output-text-font-size: 12px;
-    --output-text-padding: 5px;
 }
 
 .dark-mode {
-    --background-color: #012;
+    --background-color: #123; // Default dark background
     --text-color: #fed;
     --button-bg: #3498db;
     --button-text: #000;
+    --button-hover-bg: lighten(#3498db, 20%);
     --button-hover-text: #fff;
-    --textarea-bg: #012;
-    --textarea-border: #222;
 }
 
 .ColorPage {
@@ -187,77 +180,88 @@
             }
         }
     }
-}
 
-.color-picker,
-.color-picker .popup {
-    z-index: 10000;
-    position: fixed;
-}
-
-.color-picker .popup {
-    border: 1px solid var(--textarea-border);
-    border-radius: 4px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    background-color: var(--background-color);
-    color: var(--text-color);
-}
-
-// Adjustments for the color picker UI elements
-.color-picker .picker_editor {
-    padding: var(--item-padding);
-}
-
-.color-picker .picker_editor input[type="text"] {
-    width: 100%;
-    padding: calc(var(--item-padding) / 2);
-    margin-bottom: calc(var(--item-padding) / 2);
-    border: 1px solid var(--textarea-border);
-    border-radius: 4px;
-    background-color: var(--textarea-bg);
-    color: var(--text-color);
-}
-
-// Button styles within the color picker
-.color-picker button {
-    background-color: var(--button-bg);
-    color: var(--button-text);
-    border: 1px solid var(--button-bg);
-    border-radius: 4px;
-    padding: calc(var(--item-padding) / 2);
-    cursor: pointer;
-    margin: 0 calc(var(--item-padding) / 2) calc(var(--item-padding) / 2) 0;
-
-    &:hover {
-        background-color: lighten(#3498db, 10%);
-        color: var(--button-hover-text);
-    }
-}
-
-.dropdown-container {
-    position: relative;
-    display: inline-block;
-
-    .dropdown-button {
-        background: none;
-        border: none;
-        color: var(--text-color);
+    button {
+        padding: var(--item-padding);
+        margin: calc(var(--item-padding) / 2);
+        background-color: var(--button-bg);
+        color: var(--button-text);
+        border: 1px solid var(--button-bg);
+        border-radius: 4px;
         cursor: pointer;
-        padding: 5px;
-        font-size: 16px;
+        transition:
+            background-color 0.3s,
+            color 0.3s;
 
         &:hover {
-            text-decoration: underline;
+            background-color: var(--button-hover-bg);
+            color: var(--button-hover-text);
         }
     }
 
-    .dropdown-menu {
-        background-color: var(--textarea-bg);
+    // Adjust the dropdown button to match other buttons
+    .dropdown-container {
+        .dropdown-button {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: 1px solid var(--button-bg);
+            border-radius: 4px;
+            padding: var(--item-padding);
+            margin: calc(var(--item-padding) / 2);
+            cursor: pointer;
+            transition:
+                background-color 0.3s,
+                color 0.3s;
+
+            &:hover {
+                background-color: var(--button-hover-bg);
+                color: var(--button-hover-text);
+            }
+        }
+    }
+
+    .color-picker,
+    .color-picker .popup {
+        z-index: 10000;
+        position: fixed;
+    }
+
+    .color-picker .popup {
         border: 1px solid var(--textarea-border);
         border-radius: 4px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        background-color: var(--background-color);
         color: var(--text-color);
-        padding: 10px;
-        width: 200px; // Adjust as needed
+    }
+
+    // Adjustments for the color picker UI elements
+    .color-picker .picker_editor {
+        padding: var(--item-padding);
+    }
+
+    .color-picker .picker_editor input[type="text"] {
+        width: 100%;
+        padding: calc(var(--item-padding) / 2);
+        margin-bottom: calc(var(--item-padding) / 2);
+        border: 1px solid var(--textarea-border);
+        border-radius: 4px;
+        background-color: var(--textarea-bg);
+        color: var(--text-color);
+    }
+
+    // Button styles within the color picker
+    .color-picker button {
+        background-color: var(--button-bg);
+        color: var(--button-text);
+        border: 1px solid var(--button-bg);
+        border-radius: 4px;
+        padding: calc(var(--item-padding) / 2);
+        cursor: pointer;
+        margin: 0 calc(var(--item-padding) / 2) calc(var(--item-padding) / 2) 0;
+
+        &:hover {
+            background-color: lighten(#3498db, 10%);
+            color: var(--button-hover-text);
+        }
     }
 }

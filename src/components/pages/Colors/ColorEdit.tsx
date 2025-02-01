@@ -1,10 +1,10 @@
-import { h, FunctionalComponent, Ref } from 'preact';
-import { useState, useCallback, useRef, useEffect } from 'preact/hooks';
+import { FunctionalComponent } from 'preact';
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import VanillaPicker from 'vanilla-picker';
 
 interface ColorEditProps {
-    color: { color: string, modifiedColor: string };
-    onChange: (newColor: string) => void;
+    color: { id: number; color: string; modifiedColor: string };
+    onChange: (id: number, newColor: string) => void;
     hideOtherPickers: () => void;
 }
 
@@ -28,7 +28,7 @@ export const ColorEdit: FunctionalComponent<ColorEditProps> = ({ color, onChange
                     setCurrentColor(color.hex);
                 },
                 onDone: (color: { hex: string }) => {
-                    onChange(color.hex);
+                    onChange(color.id, color.hex);
                 },
                 onOpen: () => {
                     if (colorPickerRef.current) {
@@ -73,32 +73,22 @@ export const ColorEdit: FunctionalComponent<ColorEditProps> = ({ color, onChange
 
     const adjustPosition = useCallback(() => {
         if (colorPickerRef.current && colorPickerRef.current.popup) {
-            const { popup } = colorPickerRef.current;
             const rect = containerRef.current!.getBoundingClientRect();
-            const popupRect = popup.getBoundingClientRect();
+            const popupRect = colorPickerRef.current.popup.getBoundingClientRect();
             const { innerWidth, innerHeight } = window;
 
             let left = rect.left;
             let top = rect.bottom;
 
-            // Check if it's going outside bottom
-            if (top + popupRect.height > innerHeight) {
-                top = rect.top - popupRect.height;
-                // If it goes off top as well, center it vertically
-                if (top < 0) {
-                    top = (innerHeight - popupRect.height) / 2;
-                }
-            }
+            if (left + popupRect.width > innerWidth) left = Math.max(0, innerWidth - popupRect.width);
+            if (top + popupRect.height > innerHeight) top = innerHeight - popupRect.height;
+            if (left < 0) left = 0;
+            if (top < 0) top = 0;
 
-            // Check if it's going outside right
-            if (left + popupRect.width > innerWidth) {
-                left = innerWidth - popupRect.width;
-                if (left < 0) left = 0;
-            }
-
-            popup.style.left = `${left}px`;
-            popup.style.top = `${top}px`;
-            popup.style.position = 'fixed';
+            // Adjusting position using native JS
+            colorPickerRef.current.popup.style.left = `${left}px`;
+            colorPickerRef.current.popup.style.top = `${top}px`;
+            colorPickerRef.current.popup.style.position = 'fixed'; // Ensure it's fixed for absolute positioning
         }
     }, []);
 
@@ -113,9 +103,9 @@ export const ColorEdit: FunctionalComponent<ColorEditProps> = ({ color, onChange
         }
     }, [showPopup, adjustPosition]);
 
-    const handleClick = useCallback((event: MouseEvent) => {
+    const handleClick = useCallback(() => {
         hideOtherPickers();
-        setShowPopup((prevState) => !prevState);
+        setShowPopup(prevState => !prevState);
     }, [hideOtherPickers]);
 
     return (
