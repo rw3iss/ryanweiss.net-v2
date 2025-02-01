@@ -1,5 +1,5 @@
-import { FunctionalComponent } from 'preact';
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+import { h, FunctionalComponent, Ref } from 'preact';
+import { useState, useCallback, useRef, useEffect } from 'preact/hooks';
 import VanillaPicker from 'vanilla-picker';
 
 interface ColorEditProps {
@@ -73,7 +73,32 @@ export const ColorEdit: FunctionalComponent<ColorEditProps> = ({ color, onChange
 
     const adjustPosition = useCallback(() => {
         if (colorPickerRef.current && colorPickerRef.current.popup) {
-            // ... (Your existing adjustment logic here)
+            const { popup } = colorPickerRef.current;
+            const rect = containerRef.current!.getBoundingClientRect();
+            const popupRect = popup.getBoundingClientRect();
+            const { innerWidth, innerHeight } = window;
+
+            let left = rect.left;
+            let top = rect.bottom;
+
+            // Check if it's going outside bottom
+            if (top + popupRect.height > innerHeight) {
+                top = rect.top - popupRect.height;
+                // If it goes off top as well, center it vertically
+                if (top < 0) {
+                    top = (innerHeight - popupRect.height) / 2;
+                }
+            }
+
+            // Check if it's going outside right
+            if (left + popupRect.width > innerWidth) {
+                left = innerWidth - popupRect.width;
+                if (left < 0) left = 0;
+            }
+
+            popup.style.left = `${left}px`;
+            popup.style.top = `${top}px`;
+            popup.style.position = 'fixed';
         }
     }, []);
 
@@ -90,7 +115,7 @@ export const ColorEdit: FunctionalComponent<ColorEditProps> = ({ color, onChange
 
     const handleClick = useCallback((event: MouseEvent) => {
         hideOtherPickers();
-        setShowPopup((prevState) => !prevState); // Toggle popup state
+        setShowPopup((prevState) => !prevState);
     }, [hideOtherPickers]);
 
     return (

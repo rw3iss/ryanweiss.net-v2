@@ -1,7 +1,7 @@
-import { FunctionalComponent } from 'preact';
-import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
+import { h, FunctionalComponent } from 'preact';
+import { useState, useCallback, useEffect, useMemo } from 'preact/hooks';
+import { parseColorsWithPosition, replaceColors, formatColor } from './utils';
 import seedrandom from 'seedrandom';
-import { parseColorsWithPosition, replaceColors } from './utils';
 
 interface OutputColumnProps {
     colors: { color: string, modifiedColor: string }[];
@@ -13,6 +13,8 @@ export const OutputColumn: FunctionalComponent<OutputColumnProps> = ({ colors, i
     const [activeTab, setActiveTab] = useState('swatches');
     const [outputTextModified, setOutputTextModified] = useState('');
     const [colorsWithPosition, setColorsWithPosition] = useState<ReturnType<typeof parseColorsWithPosition>>([]);
+    const [showOriginal, setShowOriginal] = useState(false);
+    const [showModified, setShowModified] = useState(true);
 
     const sessionSeed = useMemo(() => Math.random().toString(36).substring(7), []);
     const rng = useMemo(() => seedrandom(sessionSeed), [sessionSeed]);
@@ -48,6 +50,22 @@ export const OutputColumn: FunctionalComponent<OutputColumnProps> = ({ colors, i
         URL.revokeObjectURL(link.href);
     }, [outputTextModified, importedFileName]);
 
+    const renderColumn = (isOriginal: boolean) => (
+        <div className="column-content" style={{ flex: 1, overflowY: 'auto' }}>
+            {activeTab === 'swatches' ?
+                colors.map((color, index) => (
+                    <div key={index} className="color-swatch" style={{ backgroundColor: isOriginal ? color.color : color.modifiedColor }}></div>
+                ))
+                :
+                colors.map((color, index) => (
+                    <div key={index} style={{ color: isOriginal ? color.color : color.modifiedColor, padding: '5px 0 2px 0' }}>
+                        {generateRandomWords[index]}
+                    </div>
+                ))
+            }
+        </div>
+    );
+
     return (
         <div className="column OutputColumn">
             <div className="tab-bar">
@@ -64,12 +82,6 @@ export const OutputColumn: FunctionalComponent<OutputColumnProps> = ({ colors, i
                     Text
                 </button>
                 <button
-                    className={activeTab === 'original' ? 'active' : ''}
-                    onClick={() => setActiveTab('original')}
-                >
-                    Original
-                </button>
-                <button
                     className={activeTab === 'output' ? 'active' : ''}
                     onClick={() => setActiveTab('output')}
                     style={{ marginLeft: 'auto' }}
@@ -77,30 +89,38 @@ export const OutputColumn: FunctionalComponent<OutputColumnProps> = ({ colors, i
                     Output
                 </button>
             </div>
-            <div className="tab-content">
-                {activeTab === 'swatches' ? (
-                    <div className="color-swatches color-list" style={{ display: 'flex' }}>
-                        {colors.map((color, index) => (
-                            <div key={index} className="color-swatch" style={{ backgroundColor: color.modifiedColor, marginBottom: 0 }}></div>
-                        ))}
-                    </div>
-                ) : activeTab === 'text' || activeTab === 'original' ? (
-                    <div className="text-preview" style={{ flex: 1, overflowY: 'auto' }}>
-                        {colors.map((color, index) => (
-                            <div key={index} style={{
-                                color: activeTab === 'original' ? color.color : color.modifiedColor,
-                                padding: '5px 0 2px 0'
-                            }}>
-                                {generateRandomWords[index]}
-                            </div>
-                        ))}
+            <div className="tab-content" style={{ height: '100%', overflowY: 'auto' }}>
+                {activeTab !== 'output' ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                        <div className="checkbox-container">
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={showOriginal}
+                                    onChange={() => setShowOriginal(!showOriginal)}
+                                />
+                                Original
+                            </label>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={showModified}
+                                    onChange={() => setShowModified(!showModified)}
+                                />
+                                Modified
+                            </label>
+                        </div>
+                        <div style={{ display: 'flex', flex: 1 }}>
+                            {showOriginal && renderColumn(true)}
+                            {showModified && renderColumn(false)}
+                        </div>
                     </div>
                 ) : (
-                    <div className="output-preview">
+                    <div className="output-preview" style={{ height: '100%' }}>
                         <textarea
                             value={outputTextModified}
                             readOnly
-                            style={{ flex: 1, width: '100%', padding: 'var(--item-padding)' }}
+                            style={{ width: '100%', height: '100%', padding: 'var(--item-padding)' }}
                         />
                     </div>
                 )}

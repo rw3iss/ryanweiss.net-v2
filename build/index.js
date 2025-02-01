@@ -3808,6 +3808,25 @@ var init_ColorEdit = __esm({
       }, [currentColor, onChange, hideOtherPickers]);
       const adjustPosition = q2(() => {
         if (colorPickerRef.current && colorPickerRef.current.popup) {
+          const { popup } = colorPickerRef.current;
+          const rect = containerRef.current.getBoundingClientRect();
+          const popupRect = popup.getBoundingClientRect();
+          const { innerWidth, innerHeight } = window;
+          let left = rect.left;
+          let top = rect.bottom;
+          if (top + popupRect.height > innerHeight) {
+            top = rect.top - popupRect.height;
+            if (top < 0) {
+              top = (innerHeight - popupRect.height) / 2;
+            }
+          }
+          if (left + popupRect.width > innerWidth) {
+            left = innerWidth - popupRect.width;
+            if (left < 0) left = 0;
+          }
+          popup.style.left = `${left}px`;
+          popup.style.top = `${top}px`;
+          popup.style.position = "fixed";
         }
       }, []);
       y2(() => {
@@ -4821,13 +4840,15 @@ var init_OutputColumn = __esm({
     "use strict";
     init_preact_module();
     init_hooks_module();
-    import_seedrandom = __toESM(require_seedrandom2());
     init_utils();
+    import_seedrandom = __toESM(require_seedrandom2());
     init_jsxRuntime_module();
     OutputColumn = ({ colors, inputText, importedFileName }) => {
       const [activeTab, setActiveTab] = h2("swatches");
       const [outputTextModified, setOutputTextModified] = h2("");
       const [colorsWithPosition, setColorsWithPosition] = h2([]);
+      const [showOriginal, setShowOriginal] = h2(false);
+      const [showModified, setShowModified] = h2(true);
       const sessionSeed = T2(() => Math.random().toString(36).substring(7), []);
       const rng2 = T2(() => (0, import_seedrandom.default)(sessionSeed), [sessionSeed]);
       const generateRandomWords = T2(() => {
@@ -4856,6 +4877,7 @@ var init_OutputColumn = __esm({
         link.click();
         URL.revokeObjectURL(link.href);
       }, [outputTextModified, importedFileName]);
+      const renderColumn = (isOriginal) => /* @__PURE__ */ u2("div", { className: "column-content", style: { flex: 1, overflowY: "auto" }, children: activeTab === "swatches" ? colors.map((color, index) => /* @__PURE__ */ u2("div", { className: "color-swatch", style: { backgroundColor: isOriginal ? color.color : color.modifiedColor } }, index)) : colors.map((color, index) => /* @__PURE__ */ u2("div", { style: { color: isOriginal ? color.color : color.modifiedColor, padding: "5px 0 2px 0" }, children: generateRandomWords[index] }, index)) });
       return /* @__PURE__ */ u2("div", { className: "column OutputColumn", children: [
         /* @__PURE__ */ u2("div", { className: "tab-bar", children: [
           /* @__PURE__ */ u2(
@@ -4877,14 +4899,6 @@ var init_OutputColumn = __esm({
           /* @__PURE__ */ u2(
             "button",
             {
-              className: activeTab === "original" ? "active" : "",
-              onClick: () => setActiveTab("original"),
-              children: "Original"
-            }
-          ),
-          /* @__PURE__ */ u2(
-            "button",
-            {
               className: activeTab === "output" ? "active" : "",
               onClick: () => setActiveTab("output"),
               style: { marginLeft: "auto" },
@@ -4892,15 +4906,41 @@ var init_OutputColumn = __esm({
             }
           )
         ] }),
-        /* @__PURE__ */ u2("div", { className: "tab-content", children: activeTab === "swatches" ? /* @__PURE__ */ u2("div", { className: "color-swatches color-list", style: { display: "flex" }, children: colors.map((color, index) => /* @__PURE__ */ u2("div", { className: "color-swatch", style: { backgroundColor: color.modifiedColor, marginBottom: 0 } }, index)) }) : activeTab === "text" || activeTab === "original" ? /* @__PURE__ */ u2("div", { className: "text-preview", style: { flex: 1, overflowY: "auto" }, children: colors.map((color, index) => /* @__PURE__ */ u2("div", { style: {
-          color: activeTab === "original" ? color.color : color.modifiedColor,
-          padding: "5px 0 2px 0"
-        }, children: generateRandomWords[index] }, index)) }) : /* @__PURE__ */ u2("div", { className: "output-preview", children: /* @__PURE__ */ u2(
+        /* @__PURE__ */ u2("div", { className: "tab-content", style: { height: "100%", overflowY: "auto" }, children: activeTab !== "output" ? /* @__PURE__ */ u2("div", { style: { display: "flex", flexDirection: "column", height: "100%" }, children: [
+          /* @__PURE__ */ u2("div", { className: "checkbox-container", children: [
+            /* @__PURE__ */ u2("label", { children: [
+              /* @__PURE__ */ u2(
+                "input",
+                {
+                  type: "checkbox",
+                  checked: showOriginal,
+                  onChange: () => setShowOriginal(!showOriginal)
+                }
+              ),
+              "Original"
+            ] }),
+            /* @__PURE__ */ u2("label", { children: [
+              /* @__PURE__ */ u2(
+                "input",
+                {
+                  type: "checkbox",
+                  checked: showModified,
+                  onChange: () => setShowModified(!showModified)
+                }
+              ),
+              "Modified"
+            ] })
+          ] }),
+          /* @__PURE__ */ u2("div", { style: { display: "flex", flex: 1 }, children: [
+            showOriginal && renderColumn(true),
+            showModified && renderColumn(false)
+          ] })
+        ] }) : /* @__PURE__ */ u2("div", { className: "output-preview", style: { height: "100%" }, children: /* @__PURE__ */ u2(
           "textarea",
           {
             value: outputTextModified,
             readOnly: true,
-            style: { flex: 1, width: "100%", padding: "var(--item-padding)" }
+            style: { width: "100%", height: "100%", padding: "var(--item-padding)" }
           }
         ) }) }),
         /* @__PURE__ */ u2("div", { className: "button-bar", children: /* @__PURE__ */ u2("button", { onClick: handleSave, children: "Save" }) })

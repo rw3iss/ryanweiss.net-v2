@@ -97,49 +97,36 @@
 
     .OutputColumn {
         .tab-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: var(--item-padding);
-            border: 1px solid var(--textarea-border);
-            border-radius: 4px;
+            height: 100%;
+            overflow-y: auto;
 
-            .color-swatches,
-            .text-preview,
-            .output-preview {
-                flex: 1; // Take up full height available
-                overflow-y: auto; // Scroll if content overflows
+            .checkbox-container {
+                display: flex;
+                justify-content: space-around;
+                margin-bottom: var(--item-padding);
             }
 
-            .color-swatches {
-                .color-swatch {
-                    flex-grow: 1;
-                    min-height: 50px;
-                    border-radius: 4px;
-                }
+            .column-content {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
             }
 
-            .text-preview {
-                div {
-                    padding: 5px 0 2px 0;
-                }
+            .color-swatch {
+                flex: 1;
+                min-height: 50px;
+                margin-bottom: var(--item-padding);
+                border-radius: 4px;
             }
 
             .output-preview {
+                flex: 1;
+
                 textarea {
                     width: 100%;
-                    flex: 1; // Fill both height and width of the container
+                    height: 100%;
+                    padding: var(--item-padding);
                 }
-            }
-        }
-
-        .button-bar {
-            margin-top: auto;
-        }
-
-        .tab-bar {
-            button:last-child {
-                margin-left: auto;
             }
         }
     }
@@ -173,5 +160,50 @@
                 font-weight: bold;
             }
         }
+    }
+}
+
+.color-picker,
+.color-picker .popup {
+    z-index: 10000;
+    position: fixed;
+}
+
+.color-picker .popup {
+    border: 1px solid var(--textarea-border);
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+// Adjustments for the color picker UI elements
+.color-picker .picker_editor {
+    padding: var(--item-padding);
+}
+
+.color-picker .picker_editor input[type="text"] {
+    width: 100%;
+    padding: calc(var(--item-padding) / 2);
+    margin-bottom: calc(var(--item-padding) / 2);
+    border: 1px solid var(--textarea-border);
+    border-radius: 4px;
+    background-color: var(--textarea-bg);
+    color: var(--text-color);
+}
+
+// Button styles within the color picker
+.color-picker button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--button-bg);
+    border-radius: 4px;
+    padding: calc(var(--item-padding) / 2);
+    cursor: pointer;
+    margin: 0 calc(var(--item-padding) / 2) calc(var(--item-padding) / 2) 0;
+
+    &:hover {
+        background-color: lighten(#3498db, 10%);
+        color: var(--button-hover-text);
     }
 }
