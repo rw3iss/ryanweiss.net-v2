@@ -10,6 +10,7 @@ interface OutputColumnProps {
 }
 
 export const OutputColumn: FunctionalComponent<OutputColumnProps> = ({ colors, inputText, importedFileName }) => {
+
     const [activeTab, setActiveTab] = useState('swatches');
     const [outputTextModified, setOutputTextModified] = useState('');
     const [colorsWithPosition, setColorsWithPosition] = useState<ReturnType<typeof parseColorsWithPosition>>([]);
@@ -19,9 +20,20 @@ export const OutputColumn: FunctionalComponent<OutputColumnProps> = ({ colors, i
     const sessionSeed = useMemo(() => Math.random().toString(36).substring(7), []);
     const rng = useMemo(() => seedrandom(sessionSeed), [sessionSeed]);
 
-    const generateRandomWords = useMemo(() => {
-        const words = ["Hello", "World", "Color", "Sample", "Text", "Display", "View", "Edit", "Change", "Apply"];
-        return Array.from({ length: colors.length }, () => words[Math.floor(rng() * words.length)]);
+    const generateRandomSentences = useMemo(() => {
+        const sentences = [
+            "The quick brown fox jumps.",
+            "Now is the time for all.",
+            "Pack my box with five.",
+            "Sphinx of black quartz, judge.",
+            "Razorback frogs level six.",
+            "Waltz, nymph, for quick jigs.",
+            "Five boxing wizards jump.",
+            "Extra pluck and zeal from.",
+            "Fredericka bought exquisite opal.",
+            "The job requires young wage."
+        ];
+        return Array.from({ length: colors.length }, () => sentences[Math.floor(rng() * sentences.length)]);
     }, [colors.length, rng]);
 
     useEffect(() => {
@@ -51,15 +63,15 @@ export const OutputColumn: FunctionalComponent<OutputColumnProps> = ({ colors, i
     }, [outputTextModified, importedFileName]);
 
     const renderColumn = (isOriginal: boolean) => (
-        <div className="column-content" style={{ flex: 1, overflowY: 'auto' }}>
+        <div className={activeTab === 'text' ? 'text-content' : 'column-content'} style={{ flex: 1, overflowY: 'auto' }}>
             {activeTab === 'swatches' ?
                 colors.map((color, index) => (
                     <div key={index} className="color-swatch" style={{ backgroundColor: isOriginal ? color.color : color.modifiedColor }}></div>
                 ))
                 :
                 colors.map((color, index) => (
-                    <div key={index} style={{ color: isOriginal ? color.color : color.modifiedColor, padding: '5px 0 2px 0' }}>
-                        {generateRandomWords[index]}
+                    <div key={index} style={{ color: isOriginal ? color.color : color.modifiedColor }}>
+                        {generateRandomSentences[index]}
                     </div>
                 ))
             }

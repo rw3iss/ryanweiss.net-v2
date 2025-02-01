@@ -1,25 +1,26 @@
-import { FunctionalComponent } from 'preact';
+import { h, FunctionalComponent } from 'preact';
 import { useState } from 'preact/hooks';
-import { ColorEditColumn } from './ColorEditColumn';
-import './ColorPage.scss';
 import { InputColumn } from './InputColumn';
+import { ColorEditColumn } from './ColorEditColumn';
 import { OutputColumn } from './OutputColumn';
+import './ColorPage.scss';
 
 interface ColorPageProps { }
 
 export const ColorPage: FunctionalComponent<ColorPageProps> = () => {
-    const [colors, setColors] = useState<{ color: string, modifiedColor: string }[]>([]);
-    const [modifiedColors, setModifiedColors] = useState<{ color: string, modifiedColor: string }[]>([]);
+    const [colors, setColors] = useState<{ id: number; color: string; modifiedColor: string }[]>([]);
+    const [modifiedColors, setModifiedColors] = useState<{ id: number; color: string; modifiedColor: string }[]>([]);
     const [darkMode, setDarkMode] = useState(true);
-    const [inputText, setInputText] = useState('');
+    const [tokenizedText, setTokenizedText] = useState('');
+    const [backgroundColor, setBackgroundColor] = useState('#f4f4f4');
 
-    const handleColorsParsed = (parsedColors: { color: string, modifiedColor: string }[], text: string) => {
+    const handleColorsParsed = (parsedColors: { id: number; color: string; modifiedColor: string }[], text: string) => {
         setColors(parsedColors);
         setModifiedColors(parsedColors);
-        setInputText(text);
+        setTokenizedText(text);
     };
 
-    const handleColorsChanged = (newColors: { color: string, modifiedColor: string }[]) => {
+    const handleColorsChanged = (newColors: { id: number; color: string; modifiedColor: string }[]) => {
         setModifiedColors(newColors);
     };
 
@@ -27,14 +28,24 @@ export const ColorPage: FunctionalComponent<ColorPageProps> = () => {
         setDarkMode(isDarkMode);
     };
 
+    const handleBackgroundColorChange = (color: string) => {
+        setBackgroundColor(color);
+        // Here you might want to update the CSS variable or apply the color change to the DOM
+        document.documentElement.style.setProperty('--background-color', color);
+    };
+
     return (
-        <div className={`ColorPage ${darkMode ? 'dark-mode' : ''}`}>
+        <div
+            className={`ColorPage ${darkMode ? 'dark-mode' : ''}`}
+            style={{ backgroundColor: backgroundColor }} // Inline style for dynamic background color
+        >
             <InputColumn
                 onColorsParsed={handleColorsParsed}
                 onDarkModeChange={handleDarkModeChange}
+                onBackgroundColorChange={handleBackgroundColorChange}
             />
             <ColorEditColumn colors={modifiedColors} onColorsChanged={handleColorsChanged} />
-            <OutputColumn colors={modifiedColors} inputText={inputText} />
+            <OutputColumn colors={modifiedColors} tokenizedText={tokenizedText} />
         </div>
     );
 };

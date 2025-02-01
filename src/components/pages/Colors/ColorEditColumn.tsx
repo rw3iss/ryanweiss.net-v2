@@ -1,29 +1,36 @@
-import { FunctionalComponent } from 'preact';
+import { h, FunctionalComponent } from 'preact';
 import { useCallback } from 'preact/hooks';
 import { ColorEdit } from './ColorEdit';
 
 interface ColorEditColumnProps {
-    colors: { color: string, modifiedColor: string }[];
-    onColorsChanged: (newColors: { color: string, modifiedColor: string }[]) => void;
+    colors: { id: number; color: string; modifiedColor: string }[];
+    onColorsChanged: (newColors: { id: number; color: string; modifiedColor: string }[]) => void;
 }
 
 export const ColorEditColumn: FunctionalComponent<ColorEditColumnProps> = ({ colors, onColorsChanged }) => {
-    const handleColorChange = useCallback((index: number, newColor: string) => {
-        const newColors = colors.map((c, i) =>
-            i === index ? { ...c, modifiedColor: newColor } : c
+    const handleColorChange = useCallback((id: number, newColor: string) => {
+        const newColors = colors.map(c =>
+            c.id === id ? { ...c, modifiedColor: newColor } : c
         );
-        onColorsChanged(newColors); // Immediately update colors without an apply button
+        onColorsChanged(newColors);
     }, [colors, onColorsChanged]);
+
+    const hideOtherPickers = useCallback(() => {
+        document.querySelectorAll('.color-picker .popup').forEach(popup => {
+            const picker = (popup as any).picker; // VanillaPicker adds this property
+            if (picker) picker.destroy();
+        });
+    }, []);
 
     return (
         <div className="column ColorEditColumn">
             <div className="color-list">
-                {colors.map((color, index) => (
+                {colors.map((color) => (
                     <ColorEdit
-                        key={`index#${Math.random()}`}
+                        key={color.id}
                         color={color}
-                        onChange={(newColor: string) => handleColorChange(index, newColor)}
-                        hideOtherPickers={() => { }} // Empty function since no other pickers to hide
+                        onChange={(newColor: string) => handleColorChange(color.id, newColor)}
+                        hideOtherPickers={hideOtherPickers}
                     />
                 ))}
             </div>

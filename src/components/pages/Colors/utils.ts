@@ -1,3 +1,81 @@
+interface ColorWithID {
+    id: number;
+    color: string;
+    modifiedColor: string;
+}
+
+export function parseAndTokenizeColors(text: string, combineSimilar: boolean): { colors: ColorWithID[], tokenizedText: string } {
+    const regex = /(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\))/gi;
+    const colors: ColorWithID[] = [];
+    let tokenizedText = text;
+    let idCounter = 0;
+
+    const normalizeColorValue = (color: string): string => {
+        let normalized = color.toLowerCase();
+        if (normalized.startsWith('rgba')) {
+            normalized = normalized.replace(/(rgba\(.+?),(\d+\.?\d*)\)/, (_, rgbPart, alpha) => {
+                return `${rgbPart},${parseFloat(alpha).toFixed(2)})`; // Normalize alpha to 2 decimal places
+            });
+        }
+        return normalized;
+    };
+
+    const colorMap = new Map<string, number>();
+
+    let match;
+    while ((match = regex.exec(text)) !== null) {
+        const originalColor = match[0];
+        let normalizedColor = normalizeColorValue(originalColor);
+
+        let id: number;
+        if (combineSimilar) {
+            if (!colorMap.has(normalizedColor)) {
+                id = idCounter++;
+                colorMap.set(normalizedColor, id);
+            } else {
+                id = colorMap.get(normalizedColor)!;
+            }
+        } else {
+            id = idCounter++;
+        }
+
+        if (!colors.some(c => c.id === id)) {
+            colors.push({ id, color: originalColor, modifiedColor: originalColor });
+        }
+
+        tokenizedText = tokenizedText.replace(originalColor, `%%${id}%%`);
+        regex.lastIndex = 0; // Reset regex index as we're modifying the string
+    }
+
+    return { colors, tokenizedText };
+}
+
+export function formatColor(color: string, modifiedColor: string): string {
+    if (color.startsWith('#')) {
+        if (color.length === 9) { // Handle 8-digit hex with alpha
+            const rgba = hexToRgba(modifiedColor);
+            if (rgba) {
+                const parts = rgba.match(/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+                if (parts) {
+                    const [, r, g, b, a] = parts;
+                    const newAlpha = Math.round(parseFloat(a) * 255).toString(16).padStart(2, '0');
+                    return `#${r}${g}${b}${newAlpha}`;
+                }
+            }
+        }
+        return modifiedColor.slice(0, 7); // For 6 or 3 digit hex, just return modifiedColor if it's hex
+    } else if (color.startsWith('rgb')) {
+        if (color.startsWith('rgba')) {
+            return modifiedColor; // Already in rgba format
+        } else {
+            // Convert rgba back to rgb if no alpha in original
+            return modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, 'rgb($1)');
+        }
+    }
+    return modifiedColor; // Fallback
+}
+
+
 export function hexToRgba(hex: string): string | null {
     let r = 0, g = 0, b = 0, a = 1;
 
@@ -93,6 +171,7 @@ interface ColorWithPosition {
 }
 
 export function parseColorsWithPosition(text: string): ColorWithPosition[] {
+    if (!text) return [];
     const lines = text.split('\n');
     const colorsWithPosition: ColorWithPosition[] = [];
     const regex = /(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\))/gi;
@@ -124,6 +203,7 @@ export function parseColorsWithPosition(text: string): ColorWithPosition[] {
 }
 
 export function replaceColors(text: string, colors: ColorWithPosition[]): string {
+    if (!text) return '';
     const lines = text.split('\n');
 
     colors.forEach(color => {
@@ -138,22 +218,6 @@ export function replaceColors(text: string, colors: ColorWithPosition[]): string
     return lines.join('\n');
 }
 
-
-export function formatColor(color: string, modifiedColor: string): string {
-    // Determine the original format and convert modifiedColor accordingly
-    if (color.startsWith('#')) {
-        return modifiedColor; // Assuming modifiedColor is in hex format
-    } else if (color.startsWith('rgb')) {
-        // Convert rgba to rgb if necessary
-        if (modifiedColor.startsWith('rgba')) {
-            return modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, 'rgb($1)');
-        }
-        return modifiedColor;
-    } else if (color.startsWith('rgba')) {
-        return modifiedColor; // Already in rgba format
-    }
-    return modifiedColor; // Fallback
-}
 
 export const readFile = (file) => {
     return new Promise((resolve, reject) => {

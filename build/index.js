@@ -2941,6 +2941,217 @@ var init_Work = __esm({
   }
 });
 
+// src/components/pages/Colors/utils.ts
+function parseAndTokenizeColors(text, combineSimilar) {
+  const regex = /(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\))/gi;
+  const colors = [];
+  let tokenizedText = text;
+  let idCounter = 0;
+  const normalizeColorValue = (color) => {
+    let normalized = color.toLowerCase();
+    if (normalized.startsWith("rgba")) {
+      normalized = normalized.replace(/(rgba\(.+?),(\d+\.?\d*)\)/, (_2, rgbPart, alpha) => {
+        return `${rgbPart},${parseFloat(alpha).toFixed(2)})`;
+      });
+    }
+    return normalized;
+  };
+  const colorMap = /* @__PURE__ */ new Map();
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    const originalColor = match[0];
+    let normalizedColor = normalizeColorValue(originalColor);
+    let id;
+    if (combineSimilar) {
+      if (!colorMap.has(normalizedColor)) {
+        id = idCounter++;
+        colorMap.set(normalizedColor, id);
+      } else {
+        id = colorMap.get(normalizedColor);
+      }
+    } else {
+      id = idCounter++;
+    }
+    if (!colors.some((c3) => c3.id === id)) {
+      colors.push({ id, color: originalColor, modifiedColor: originalColor });
+    }
+    tokenizedText = tokenizedText.replace(originalColor, `%%${id}%%`);
+    regex.lastIndex = 0;
+  }
+  return { colors, tokenizedText };
+}
+function formatColor(color, modifiedColor) {
+  if (color.startsWith("#")) {
+    if (color.length === 9) {
+      const rgba = hexToRgba(modifiedColor);
+      if (rgba) {
+        const parts = rgba.match(/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+        if (parts) {
+          const [, r3, g2, b2, a3] = parts;
+          const newAlpha = Math.round(parseFloat(a3) * 255).toString(16).padStart(2, "0");
+          return `#${r3}${g2}${b2}${newAlpha}`;
+        }
+      }
+    }
+    return modifiedColor.slice(0, 7);
+  } else if (color.startsWith("rgb")) {
+    if (color.startsWith("rgba")) {
+      return modifiedColor;
+    } else {
+      return modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, "rgb($1)");
+    }
+  }
+  return modifiedColor;
+}
+function hexToRgba(hex) {
+  let r3 = 0, g2 = 0, b2 = 0, a3 = 1;
+  if (hex.length === 4) {
+    r3 = parseInt(hex[1] + hex[1], 16);
+    g2 = parseInt(hex[2] + hex[2], 16);
+    b2 = parseInt(hex[3] + hex[3], 16);
+  } else if (hex.length === 7 || hex.length === 9) {
+    r3 = parseInt(hex.slice(1, 3), 16);
+    g2 = parseInt(hex.slice(3, 5), 16);
+    b2 = parseInt(hex.slice(5, 7), 16);
+    if (hex.length === 9) {
+      a3 = parseInt(hex.slice(7, 9), 16) / 255;
+    }
+  } else {
+    return null;
+  }
+  return `rgba(${r3},${g2},${b2},${a3.toFixed(2)})`;
+}
+function isValidColor(color) {
+  const isNumberInRange = (num, min, max) => {
+    const n2 = Number(num);
+    return !isNaN(n2) && n2 >= min && n2 <= max;
+  };
+  if (color.startsWith("#")) {
+    const hexChars = color.slice(1);
+    return /^[0-9A-Fa-f]+$/.test(hexChars) && [3, 6, 8].includes(hexChars.length);
+  }
+  const rgbPattern = /^rgba?\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)$/;
+  const match = color.match(rgbPattern);
+  if (match) {
+    const [, r3, g2, b2, a3] = match;
+    if (!isNumberInRange(r3, 0, 255) || !isNumberInRange(g2, 0, 255) || !isNumberInRange(b2, 0, 255)) {
+      return false;
+    }
+    if (a3 !== void 0) {
+      const alpha = parseFloat(a3);
+      return !isNaN(alpha) && alpha >= 0 && alpha <= 1;
+    }
+    return true;
+  }
+  return false;
+}
+function normalizeColor(color) {
+  if (color.startsWith("#")) {
+    return hexToRgba(color);
+  } else {
+    const match = color.match(/^rgba?\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)$/);
+    if (match) {
+      const [, r3, g2, b2, a3] = match;
+      return `rgba(${r3},${g2},${b2},${a3 ? parseFloat(a3).toFixed(2) : "1.00"})`;
+    }
+  }
+  return null;
+}
+function parseColorsWithPosition(text) {
+  if (!text) return [];
+  const lines = text.split("\n");
+  const colorsWithPosition = [];
+  const regex = /(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\))/gi;
+  lines.forEach((line, lineIndex) => {
+    let match;
+    while ((match = regex.exec(line)) !== null) {
+      const color = match[0];
+      if (isValidColor(color)) {
+        const start = match.index;
+        const end = start + color.length;
+        const normalized = normalizeColor(color) || color;
+        colorsWithPosition.push({
+          color,
+          modifiedColor: normalized,
+          line: lineIndex,
+          start,
+          end
+        });
+      }
+    }
+  });
+  return colorsWithPosition.sort((a3, b2) => {
+    if (a3.line !== b2.line) return b2.line - a3.line;
+    return b2.start - a3.start;
+  });
+}
+function replaceColors(text, colors) {
+  if (!text) return "";
+  const lines = text.split("\n");
+  colors.forEach((color) => {
+    const line = lines[color.line];
+    if (line) {
+      lines[color.line] = line.slice(0, color.start) + formatColor(color.color, color.modifiedColor) + line.slice(color.end);
+    }
+  });
+  return lines.join("\n");
+}
+var init_utils = __esm({
+  "src/components/pages/Colors/utils.ts"() {
+    "use strict";
+    init_preact_module();
+  }
+});
+
+// src/components/pages/Colors/Dropdown.tsx
+var Dropdown2;
+var init_Dropdown2 = __esm({
+  "src/components/pages/Colors/Dropdown.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_hooks_module();
+    init_jsxRuntime_module();
+    Dropdown2 = ({ children }) => {
+      const [isOpen, setIsOpen] = h2(false);
+      const dropdownRef = A2(null);
+      const hoverTimeout = A2(null);
+      const handleToggle = q2(() => {
+        setIsOpen(!isOpen);
+      }, [isOpen]);
+      const handleMouseEnter = q2(() => {
+        if (hoverTimeout.current !== null) {
+          clearTimeout(hoverTimeout.current);
+          hoverTimeout.current = null;
+        }
+      }, []);
+      const handleMouseLeave = q2(() => {
+        hoverTimeout.current = window.setTimeout(() => {
+          setIsOpen(false);
+        }, 500);
+      }, []);
+      y2(() => {
+        if (dropdownRef.current) {
+          dropdownRef.current.addEventListener("mouseenter", handleMouseEnter);
+          dropdownRef.current.addEventListener("mouseleave", handleMouseLeave);
+        }
+        return () => {
+          if (dropdownRef.current) {
+            dropdownRef.current.removeEventListener("mouseenter", handleMouseEnter);
+            dropdownRef.current.removeEventListener("mouseleave", handleMouseLeave);
+          }
+          if (hoverTimeout.current !== null) {
+            clearTimeout(hoverTimeout.current);
+          }
+        };
+      }, [handleMouseEnter, handleMouseLeave]);
+      return /* @__PURE__ */ u2("div", { className: "dropdown-container", ref: dropdownRef, children: [
+        /* @__PURE__ */ u2("button", { className: "dropdown-button", onClick: handleToggle, children: /* @__PURE__ */ u2("span", { children: "Config" }) }),
+        isOpen && /* @__PURE__ */ u2("div", { className: "dropdown-menu", style: { position: "absolute", top: "100%", right: 0, zIndex: 1e3 }, children })
+      ] });
+    };
+  }
+});
+
 // node_modules/vanilla-picker/dist/vanilla-picker.mjs
 function printNum(num) {
   var decs = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 1;
@@ -3740,6 +3951,158 @@ var init_vanilla_picker = __esm({
   }
 });
 
+// src/components/pages/Colors/InputColumn.tsx
+var InputColumn;
+var init_InputColumn = __esm({
+  "src/components/pages/Colors/InputColumn.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_hooks_module();
+    init_utils();
+    init_Dropdown2();
+    init_vanilla_picker();
+    init_jsxRuntime_module();
+    InputColumn = ({ onColorsParsed, onDarkModeChange, onBackgroundColorChange }) => {
+      const [text, setText] = h2("");
+      const [combineSimilar, setCombineSimilar] = h2(false);
+      const textAreaRef = A2(null);
+      const backgroundColorPickerRef = A2(null);
+      const [backgroundColor, setBackgroundColor] = h2("#f4f4f4");
+      const backgroundSwatchRef = A2(null);
+      y2(() => {
+        const savedText = localStorage.getItem("inputText");
+        if (savedText) {
+          setText(savedText);
+        }
+        if (textAreaRef.current) {
+          textAreaRef.current.value = savedText || "";
+        }
+      }, []);
+      const handleFileImport = q2((event) => {
+        const target = event.target;
+        if (target && target.files && target.files[0]) {
+          const file = target.files[0];
+          const reader = new FileReader();
+          reader.onload = (e4) => {
+            const fileContent = e4.target.result;
+            setText(fileContent);
+            if (textAreaRef.current) {
+              textAreaRef.current.value = fileContent;
+            }
+            localStorage.setItem("inputText", fileContent);
+          };
+          reader.readAsText(file);
+        }
+      }, []);
+      const handleClear = q2(() => {
+        setText("");
+        if (textAreaRef.current) {
+          textAreaRef.current.value = "";
+        }
+        localStorage.setItem("inputText", "");
+      }, []);
+      const handleParseColors = q2(() => {
+        const textareaContent = textAreaRef.current ? textAreaRef.current.value : "";
+        if (textareaContent.trim() !== "") {
+          setText(textareaContent);
+          const { colors, tokenizedText } = parseAndTokenizeColors(textareaContent, combineSimilar);
+          onColorsParsed(colors, tokenizedText);
+          localStorage.setItem("inputText", textareaContent);
+        } else {
+          onColorsParsed([], "");
+        }
+      }, [onColorsParsed, combineSimilar]);
+      y2(() => {
+        if (backgroundSwatchRef.current && !backgroundColorPickerRef.current) {
+          backgroundColorPickerRef.current = new Picker({
+            parent: backgroundSwatchRef.current,
+            // Use the swatch as the parent
+            popup: "bottom",
+            color: backgroundColor,
+            onChange: (color) => {
+              setBackgroundColor(color.hex);
+            },
+            onDone: (color) => {
+              onBackgroundColorChange(color.hex);
+            }
+          });
+        }
+        return () => {
+          if (backgroundColorPickerRef.current) {
+            backgroundColorPickerRef.current.destroy();
+          }
+        };
+      }, [backgroundColor, onBackgroundColorChange]);
+      const handleBackgroundColorClick = q2(() => {
+        if (backgroundColorPickerRef.current) {
+          backgroundColorPickerRef.current.show();
+        }
+      }, []);
+      return /* @__PURE__ */ u2("div", { className: "column InputColumn", children: [
+        /* @__PURE__ */ u2("div", { className: "button-bar top", children: [
+          /* @__PURE__ */ u2("button", { onClick: () => document.getElementById("fileInput")?.click(), children: "Import File" }),
+          /* @__PURE__ */ u2("input", { type: "file", id: "fileInput", style: { display: "none" }, onChange: handleFileImport }),
+          /* @__PURE__ */ u2("button", { onClick: handleClear, children: "Clear" }),
+          /* @__PURE__ */ u2(Dropdown2, { children: /* @__PURE__ */ u2("div", { style: { display: "flex", flexDirection: "column", padding: "10px" }, children: [
+            /* @__PURE__ */ u2("label", { children: [
+              /* @__PURE__ */ u2(
+                "input",
+                {
+                  type: "checkbox",
+                  checked: combineSimilar,
+                  onChange: (e4) => setCombineSimilar(e4.target.checked)
+                }
+              ),
+              "Combine Similar"
+            ] }),
+            /* @__PURE__ */ u2("label", { children: [
+              /* @__PURE__ */ u2(
+                "input",
+                {
+                  type: "checkbox",
+                  checked: backgroundColor === "#012",
+                  onChange: (e4) => {
+                    const isDarkMode = e4.target.checked;
+                    onDarkModeChange(isDarkMode);
+                    setBackgroundColor(isDarkMode ? "#012" : "#f4f4f4");
+                  }
+                }
+              ),
+              "Dark Mode"
+            ] }),
+            /* @__PURE__ */ u2("div", { style: { display: "flex", alignItems: "center", marginTop: "10px" }, children: [
+              /* @__PURE__ */ u2("span", { children: "Background Color" }),
+              /* @__PURE__ */ u2(
+                "div",
+                {
+                  ref: backgroundSwatchRef,
+                  style: {
+                    width: "24px",
+                    height: "24px",
+                    backgroundColor,
+                    marginLeft: "10px",
+                    cursor: "pointer"
+                  },
+                  onClick: handleBackgroundColorClick
+                }
+              )
+            ] })
+          ] }) })
+        ] }),
+        /* @__PURE__ */ u2(
+          "textarea",
+          {
+            ref: textAreaRef,
+            value: text,
+            onChange: (e4) => setText(e4.target.value)
+          }
+        ),
+        /* @__PURE__ */ u2("div", { className: "button-bar bottom", children: /* @__PURE__ */ u2("button", { onClick: handleParseColors, children: "Parse Colors" }) })
+      ] });
+    };
+  }
+});
+
 // src/components/pages/Colors/ColorEdit.tsx
 var ColorEdit;
 var init_ColorEdit = __esm({
@@ -3872,248 +4235,27 @@ var init_ColorEditColumn = __esm({
     init_ColorEdit();
     init_jsxRuntime_module();
     ColorEditColumn = ({ colors, onColorsChanged }) => {
-      const handleColorChange = q2((index, newColor) => {
+      const handleColorChange = q2((id, newColor) => {
         const newColors = colors.map(
-          (c3, i4) => i4 === index ? { ...c3, modifiedColor: newColor } : c3
+          (c3) => c3.id === id ? { ...c3, modifiedColor: newColor } : c3
         );
         onColorsChanged(newColors);
       }, [colors, onColorsChanged]);
-      return /* @__PURE__ */ u2("div", { className: "column ColorEditColumn", children: /* @__PURE__ */ u2("div", { className: "color-list", children: colors.map((color, index) => /* @__PURE__ */ u2(
+      const hideOtherPickers = q2(() => {
+        document.querySelectorAll(".color-picker .popup").forEach((popup) => {
+          const picker = popup.picker;
+          if (picker) picker.destroy();
+        });
+      }, []);
+      return /* @__PURE__ */ u2("div", { className: "column ColorEditColumn", children: /* @__PURE__ */ u2("div", { className: "color-list", children: colors.map((color) => /* @__PURE__ */ u2(
         ColorEdit,
         {
           color,
-          onChange: (newColor) => handleColorChange(index, newColor),
-          hideOtherPickers: () => {
-          }
+          onChange: (newColor) => handleColorChange(color.id, newColor),
+          hideOtherPickers
         },
-        `index#${Math.random()}`
+        color.id
       )) }) });
-    };
-  }
-});
-
-// src/components/pages/Colors/ColorPage.scss
-var init_ColorPage = __esm({
-  "src/components/pages/Colors/ColorPage.scss"() {
-  }
-});
-
-// src/components/pages/Colors/utils.ts
-function hexToRgba(hex) {
-  let r3 = 0, g2 = 0, b2 = 0, a3 = 1;
-  if (hex.length === 4) {
-    r3 = parseInt(hex[1] + hex[1], 16);
-    g2 = parseInt(hex[2] + hex[2], 16);
-    b2 = parseInt(hex[3] + hex[3], 16);
-  } else if (hex.length === 7 || hex.length === 9) {
-    r3 = parseInt(hex.slice(1, 3), 16);
-    g2 = parseInt(hex.slice(3, 5), 16);
-    b2 = parseInt(hex.slice(5, 7), 16);
-    if (hex.length === 9) {
-      a3 = parseInt(hex.slice(7, 9), 16) / 255;
-    }
-  } else {
-    return null;
-  }
-  return `rgba(${r3},${g2},${b2},${a3.toFixed(2)})`;
-}
-function isValidColor(color) {
-  const isNumberInRange = (num, min, max) => {
-    const n2 = Number(num);
-    return !isNaN(n2) && n2 >= min && n2 <= max;
-  };
-  if (color.startsWith("#")) {
-    const hexChars = color.slice(1);
-    return /^[0-9A-Fa-f]+$/.test(hexChars) && [3, 6, 8].includes(hexChars.length);
-  }
-  const rgbPattern = /^rgba?\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)$/;
-  const match = color.match(rgbPattern);
-  if (match) {
-    const [, r3, g2, b2, a3] = match;
-    if (!isNumberInRange(r3, 0, 255) || !isNumberInRange(g2, 0, 255) || !isNumberInRange(b2, 0, 255)) {
-      return false;
-    }
-    if (a3 !== void 0) {
-      const alpha = parseFloat(a3);
-      return !isNaN(alpha) && alpha >= 0 && alpha <= 1;
-    }
-    return true;
-  }
-  return false;
-}
-function normalizeColor(color) {
-  if (color.startsWith("#")) {
-    return hexToRgba(color);
-  } else {
-    const match = color.match(/^rgba?\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)$/);
-    if (match) {
-      const [, r3, g2, b2, a3] = match;
-      return `rgba(${r3},${g2},${b2},${a3 ? parseFloat(a3).toFixed(2) : "1.00"})`;
-    }
-  }
-  return null;
-}
-function parseColors(text) {
-  const colors = [];
-  const colorRegex = /#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)/gi;
-  let match;
-  while ((match = colorRegex.exec(text)) !== null) {
-    const color = match[0];
-    if (isValidColor(color)) {
-      const normalized = normalizeColor(color);
-      if (normalized && !colors.some((c3) => c3.modifiedColor.toLowerCase() === normalized.toLowerCase())) {
-        colors.push({ color, modifiedColor: normalized });
-      }
-    }
-  }
-  return colors;
-}
-function parseColorsWithPosition(text) {
-  const lines = text.split("\n");
-  const colorsWithPosition = [];
-  const regex = /(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\))/gi;
-  lines.forEach((line, lineIndex) => {
-    let match;
-    while ((match = regex.exec(line)) !== null) {
-      const color = match[0];
-      if (isValidColor(color)) {
-        const start = match.index;
-        const end = start + color.length;
-        const normalized = normalizeColor(color) || color;
-        colorsWithPosition.push({
-          color,
-          modifiedColor: normalized,
-          line: lineIndex,
-          start,
-          end
-        });
-      }
-    }
-  });
-  return colorsWithPosition.sort((a3, b2) => {
-    if (a3.line !== b2.line) return b2.line - a3.line;
-    return b2.start - a3.start;
-  });
-}
-function replaceColors(text, colors) {
-  const lines = text.split("\n");
-  colors.forEach((color) => {
-    const line = lines[color.line];
-    if (line) {
-      lines[color.line] = line.slice(0, color.start) + formatColor(color.color, color.modifiedColor) + line.slice(color.end);
-    }
-  });
-  return lines.join("\n");
-}
-function formatColor(color, modifiedColor) {
-  if (color.startsWith("#")) {
-    return modifiedColor;
-  } else if (color.startsWith("rgb")) {
-    if (modifiedColor.startsWith("rgba")) {
-      return modifiedColor.replace(/rgba\((.+?),[\d.]+\)/, "rgb($1)");
-    }
-    return modifiedColor;
-  } else if (color.startsWith("rgba")) {
-    return modifiedColor;
-  }
-  return modifiedColor;
-}
-var init_utils = __esm({
-  "src/components/pages/Colors/utils.ts"() {
-    "use strict";
-    init_preact_module();
-  }
-});
-
-// src/components/pages/Colors/InputColumn.tsx
-var InputColumn;
-var init_InputColumn = __esm({
-  "src/components/pages/Colors/InputColumn.tsx"() {
-    "use strict";
-    init_preact_module();
-    init_hooks_module();
-    init_utils();
-    init_jsxRuntime_module();
-    InputColumn = ({ onColorsParsed, onDarkModeChange }) => {
-      const [text, setText] = h2("");
-      const [combineSimilar, setCombineSimilar] = h2(false);
-      const [darkMode, setDarkMode] = h2(true);
-      const [fileName, setFileName] = h2(void 0);
-      y2(() => {
-        const savedText = localStorage.getItem("inputText");
-        if (savedText) {
-          setText(savedText);
-          handleParseColors();
-        }
-      }, []);
-      const handleFileImport = q2((event) => {
-        const target = event.target;
-        if (target && target.files && target.files[0]) {
-          const file = target.files[0];
-          setFileName(file.name);
-          const reader = new FileReader();
-          reader.onload = (e4) => {
-            const fileContent = e4.target.result;
-            setText(fileContent);
-            localStorage.setItem("inputText", fileContent);
-          };
-          reader.readAsText(file);
-        }
-      }, []);
-      const handleClear = q2(() => {
-        setText("");
-        localStorage.setItem("inputText", "");
-      }, []);
-      const handleParseColors = q2(() => {
-        const textareaContent = document.querySelector("textarea").value;
-        if (textareaContent.trim() !== "") {
-          setText(textareaContent);
-          const colors = parseColors(textareaContent, combineSimilar);
-          onColorsParsed(colors, textareaContent, fileName);
-          localStorage.setItem("inputText", textareaContent);
-        } else {
-          onColorsParsed([], textareaContent, fileName);
-        }
-      }, [onColorsParsed, combineSimilar, fileName]);
-      return /* @__PURE__ */ u2("div", { className: "column InputColumn", children: [
-        /* @__PURE__ */ u2("div", { className: "button-bar top", children: [
-          /* @__PURE__ */ u2("button", { onClick: () => document.getElementById("fileInput")?.click(), children: "Import File" }),
-          /* @__PURE__ */ u2("input", { type: "file", id: "fileInput", style: { display: "none" }, onChange: handleFileImport }),
-          /* @__PURE__ */ u2("button", { onClick: handleClear, children: "Clear" }),
-          /* @__PURE__ */ u2("label", { children: [
-            /* @__PURE__ */ u2(
-              "input",
-              {
-                type: "checkbox",
-                checked: combineSimilar,
-                onChange: (e4) => setCombineSimilar(e4.target.checked)
-              }
-            ),
-            "Combine Similar"
-          ] }),
-          /* @__PURE__ */ u2("label", { children: [
-            /* @__PURE__ */ u2(
-              "input",
-              {
-                type: "checkbox",
-                checked: darkMode,
-                onChange: (e4) => {
-                  setDarkMode(e4.target.checked);
-                  onDarkModeChange(e4.target.checked);
-                }
-              }
-            ),
-            "Dark Mode"
-          ] })
-        ] }),
-        /* @__PURE__ */ u2(
-          "textarea",
-          {
-            value: text
-          }
-        ),
-        /* @__PURE__ */ u2("div", { className: "button-bar bottom", children: /* @__PURE__ */ u2("button", { onClick: handleParseColors, children: "Parse Colors" }) })
-      ] });
     };
   }
 });
@@ -4851,9 +4993,20 @@ var init_OutputColumn = __esm({
       const [showModified, setShowModified] = h2(true);
       const sessionSeed = T2(() => Math.random().toString(36).substring(7), []);
       const rng2 = T2(() => (0, import_seedrandom.default)(sessionSeed), [sessionSeed]);
-      const generateRandomWords = T2(() => {
-        const words = ["Hello", "World", "Color", "Sample", "Text", "Display", "View", "Edit", "Change", "Apply"];
-        return Array.from({ length: colors.length }, () => words[Math.floor(rng2() * words.length)]);
+      const generateRandomSentences = T2(() => {
+        const sentences = [
+          "The quick brown fox jumps.",
+          "Now is the time for all.",
+          "Pack my box with five.",
+          "Sphinx of black quartz, judge.",
+          "Razorback frogs level six.",
+          "Waltz, nymph, for quick jigs.",
+          "Five boxing wizards jump.",
+          "Extra pluck and zeal from.",
+          "Fredericka bought exquisite opal.",
+          "The job requires young wage."
+        ];
+        return Array.from({ length: colors.length }, () => sentences[Math.floor(rng2() * sentences.length)]);
       }, [colors.length, rng2]);
       y2(() => {
         const parsedColors = parseColorsWithPosition(inputText);
@@ -4877,7 +5030,7 @@ var init_OutputColumn = __esm({
         link.click();
         URL.revokeObjectURL(link.href);
       }, [outputTextModified, importedFileName]);
-      const renderColumn = (isOriginal) => /* @__PURE__ */ u2("div", { className: "column-content", style: { flex: 1, overflowY: "auto" }, children: activeTab === "swatches" ? colors.map((color, index) => /* @__PURE__ */ u2("div", { className: "color-swatch", style: { backgroundColor: isOriginal ? color.color : color.modifiedColor } }, index)) : colors.map((color, index) => /* @__PURE__ */ u2("div", { style: { color: isOriginal ? color.color : color.modifiedColor, padding: "5px 0 2px 0" }, children: generateRandomWords[index] }, index)) });
+      const renderColumn = (isOriginal) => /* @__PURE__ */ u2("div", { className: activeTab === "text" ? "text-content" : "column-content", style: { flex: 1, overflowY: "auto" }, children: activeTab === "swatches" ? colors.map((color, index) => /* @__PURE__ */ u2("div", { className: "color-swatch", style: { backgroundColor: isOriginal ? color.color : color.modifiedColor } }, index)) : colors.map((color, index) => /* @__PURE__ */ u2("div", { style: { color: isOriginal ? color.color : color.modifiedColor }, children: generateRandomSentences[index] }, index)) });
       return /* @__PURE__ */ u2("div", { className: "column OutputColumn", children: [
         /* @__PURE__ */ u2("div", { className: "tab-bar", children: [
           /* @__PURE__ */ u2(
@@ -4949,6 +5102,12 @@ var init_OutputColumn = __esm({
   }
 });
 
+// src/components/pages/Colors/ColorPage.scss
+var init_ColorPage = __esm({
+  "src/components/pages/Colors/ColorPage.scss"() {
+  }
+});
+
 // src/components/pages/Colors/ColorPage.tsx
 var ColorPage;
 var init_ColorPage2 = __esm({
@@ -4956,20 +5115,21 @@ var init_ColorPage2 = __esm({
     "use strict";
     init_preact_module();
     init_hooks_module();
-    init_ColorEditColumn();
-    init_ColorPage();
     init_InputColumn();
+    init_ColorEditColumn();
     init_OutputColumn();
+    init_ColorPage();
     init_jsxRuntime_module();
     ColorPage = () => {
       const [colors, setColors] = h2([]);
       const [modifiedColors, setModifiedColors] = h2([]);
       const [darkMode, setDarkMode] = h2(true);
-      const [inputText, setInputText] = h2("");
+      const [tokenizedText, setTokenizedText] = h2("");
+      const [backgroundColor, setBackgroundColor] = h2("#f4f4f4");
       const handleColorsParsed = (parsedColors, text) => {
         setColors(parsedColors);
         setModifiedColors(parsedColors);
-        setInputText(text);
+        setTokenizedText(text);
       };
       const handleColorsChanged = (newColors) => {
         setModifiedColors(newColors);
@@ -4977,17 +5137,29 @@ var init_ColorPage2 = __esm({
       const handleDarkModeChange = (isDarkMode) => {
         setDarkMode(isDarkMode);
       };
-      return /* @__PURE__ */ u2("div", { className: `ColorPage ${darkMode ? "dark-mode" : ""}`, children: [
-        /* @__PURE__ */ u2(
-          InputColumn,
-          {
-            onColorsParsed: handleColorsParsed,
-            onDarkModeChange: handleDarkModeChange
-          }
-        ),
-        /* @__PURE__ */ u2(ColorEditColumn, { colors: modifiedColors, onColorsChanged: handleColorsChanged }),
-        /* @__PURE__ */ u2(OutputColumn, { colors: modifiedColors, inputText })
-      ] });
+      const handleBackgroundColorChange = (color) => {
+        setBackgroundColor(color);
+        document.documentElement.style.setProperty("--background-color", color);
+      };
+      return /* @__PURE__ */ u2(
+        "div",
+        {
+          className: `ColorPage ${darkMode ? "dark-mode" : ""}`,
+          style: { backgroundColor },
+          children: [
+            /* @__PURE__ */ u2(
+              InputColumn,
+              {
+                onColorsParsed: handleColorsParsed,
+                onDarkModeChange: handleDarkModeChange,
+                onBackgroundColorChange: handleBackgroundColorChange
+              }
+            ),
+            /* @__PURE__ */ u2(ColorEditColumn, { colors: modifiedColors, onColorsChanged: handleColorsChanged }),
+            /* @__PURE__ */ u2(OutputColumn, { colors: modifiedColors, tokenizedText })
+          ]
+        }
+      );
     };
   }
 });
