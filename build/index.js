@@ -4078,12 +4078,13 @@ var init_Dropdown2 = __esm({
     init_preact_module();
     init_hooks_module();
     init_jsxRuntime_module();
-    Dropdown2 = ({ children }) => {
-      const [isOpen, setIsOpen] = h2(false);
+    Dropdown2 = ({ show, onShow, children }) => {
+      const [isOpen, setIsOpen] = h2(show || false);
       const dropdownRef = A2(null);
       const hoverTimeout = A2(null);
       const handleToggle = q2(() => {
         setIsOpen(!isOpen);
+        onShow(!isOpen);
       }, [isOpen]);
       const handleMouseEnter = q2(() => {
         if (hoverTimeout.current !== null) {
@@ -4091,6 +4092,9 @@ var init_Dropdown2 = __esm({
           hoverTimeout.current = null;
         }
       }, []);
+      y2(() => {
+        setIsOpen(show);
+      }, [show]);
       const handleMouseLeave = q2(() => {
       }, []);
       y2(() => {
@@ -4130,6 +4134,7 @@ var init_Config = __esm({
       const [tempConfig, setTempConfig] = h2(config);
       const [backgroundPicker, setBackgroundPicker] = h2(null);
       const [textPicker, setTextPicker] = h2(null);
+      const [showConfig, setShowConfig] = h2(false);
       const backgroundSwatchRef = A2(null);
       const textSwatchRef = A2(null);
       y2(() => {
@@ -4194,10 +4199,13 @@ var init_Config = __esm({
       }, []);
       const handleSave = q2(() => {
         onConfigChange(tempConfig);
+        setShowConfig(false);
       }, [tempConfig, onConfigChange]);
       const handleCancel = q2(() => {
+        setShowConfig(false);
+        console.log(`cancel`);
       }, []);
-      return /* @__PURE__ */ u2(Dropdown2, { onClose: handleCancel, children: [
+      return /* @__PURE__ */ u2(Dropdown2, { onClose: handleCancel, show: showConfig, onShow: (s3) => setShowConfig(s3), children: [
         "  // Assuming Dropdown component can take an onClose prop",
         /* @__PURE__ */ u2("div", { style: { display: "flex", flexDirection: "column", padding: "10px" }, children: [
           /* @__PURE__ */ u2("label", { children: [
@@ -5262,7 +5270,14 @@ var init_ColorPage2 = __esm({
                 onConfigChange: handleConfigChange
               }
             ),
-            /* @__PURE__ */ u2(ColorEditColumn, { colors: modifiedColors, onColorsChanged: handleColorsChanged }),
+            /* @__PURE__ */ u2(
+              ColorEditColumn,
+              {
+                colors: modifiedColors,
+                onColorsChanged: handleColorsChanged,
+                config
+              }
+            ),
             /* @__PURE__ */ u2(OutputColumn, { colors: modifiedColors, tokenizedText })
           ]
         }

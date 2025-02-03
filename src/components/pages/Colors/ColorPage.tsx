@@ -56,7 +56,12 @@ export const ColorPage: FunctionalComponent<ColorPageProps> = () => {
                 config={config}
                 onConfigChange={handleConfigChange}
             />
-            <ColorEditColumn colors={modifiedColors} onColorsChanged={handleColorsChanged} />
+            <ColorEditColumn
+                colors={modifiedColors}
+                onColorsChanged={handleColorsChanged}
+
+                config={config}
+            />
             <OutputColumn colors={modifiedColors} tokenizedText={tokenizedText} />
         </div>
     );

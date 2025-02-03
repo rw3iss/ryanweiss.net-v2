@@ -10,6 +10,7 @@ export interface Config {
     backgroundColorDark: string;
     fontColorLight: string;
     fontColorDark: string;
+    inputFontSize: string;
 }
 
 interface ConfigProps {
@@ -21,6 +22,7 @@ export const Config: FunctionalComponent<ConfigProps> = ({ config, onConfigChang
     const [tempConfig, setTempConfig] = useState(config); // Temporary config for unsaved changes
     const [backgroundPicker, setBackgroundPicker] = useState<VanillaPicker | null>(null);
     const [textPicker, setTextPicker] = useState<VanillaPicker | null>(null);
+    const [showConfig, setShowConfig] = useState(false);
     const backgroundSwatchRef = useRef<HTMLDivElement>(null);
     const textSwatchRef = useRef<HTMLDivElement>(null);
 
@@ -93,17 +95,20 @@ export const Config: FunctionalComponent<ConfigProps> = ({ config, onConfigChang
 
     const handleSave = useCallback(() => {
         onConfigChange(tempConfig);
+        setShowConfig(false);
         // Assuming there's a way to close the dropdown from here,
         // like passing down a close function from Dropdown
     }, [tempConfig, onConfigChange]);
 
     const handleCancel = useCallback(() => {
+        setShowConfig(false);
+        console.log(`cancel`)
         // Close dropdown without saving changes
         // This would typically involve calling a close method from Dropdown
     }, []);
 
     return (
-        <Dropdown onClose={handleCancel}>  // Assuming Dropdown component can take an onClose prop
+        <Dropdown onClose={handleCancel} show={showConfig} onShow={(s) => setShowConfig(s)}>  // Assuming Dropdown component can take an onClose prop
             <div style={{ display: 'flex', flexDirection: 'column', padding: '10px' }}>
                 <label>
                     <input
