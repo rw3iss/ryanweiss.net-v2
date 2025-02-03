@@ -701,6 +701,7 @@ var init_Dropdown = __esm({
   "src/components/shared/BlobEditor/plugins/Dropdown.ts"() {
     "use strict";
     init_preact_module();
+    init_ToolbarPlugin();
     Dropdown = class {
       dropdownButton;
       dropdownMenu;
@@ -717,51 +718,31 @@ var init_Dropdown = __esm({
         menu.className = "dropdown-menu";
         menu.style.display = "none";
         this.items.forEach((item) => {
-          if (item.type === "button") {
-            const button = document.createElement("button");
-            button.className = "dropdown-item";
-            if (item.icon) {
-              const icon = document.createElement("img");
-              icon.src = item.icon;
-              icon.alt = item.label;
-              button.appendChild(icon);
-            }
-            if (item.label) {
-              const label = document.createElement("span");
-              label.textContent = item.label;
-              button.appendChild(label);
-            }
-            if (item.onClick) {
-              button.addEventListener("click", (e4) => {
-                e4.preventDefault();
-                e4.stopPropagation();
-                item.onClick();
-              });
-            }
-            menu.appendChild(button);
-          } else {
-            this.createToolbarItem(item, menu);
-          }
+          createToolbarItem(item, menu);
         });
-        document.body.appendChild(menu);
+        this.dropdownButton.appendChild(menu);
+        menu.addEventListener("mouseleave", this.startHideTimer.bind(this));
+        menu.addEventListener("mouseenter", this.clearHideTimer.bind(this));
+        this.dropdownButton.addEventListener("click", (e4) => {
+          e4.preventDefault();
+          e4.stopPropagation();
+          console.log(`click`);
+          if (this.dropdownMenu.style.display == "flex") this.hide();
+          else this.show();
+        });
         return menu;
       }
       show() {
-        if (!this.isVisible) {
-          this.positionDropdown();
-          this.dropdownMenu.style.display = "flex";
-          this.dropdownMenu.style.opacity = "1";
-          this.isVisible = true;
-          this.dropdownMenu.addEventListener("mouseleave", this.startHideTimer.bind(this));
-          this.dropdownMenu.addEventListener("mouseenter", this.clearHideTimer.bind(this));
-        }
+        console.log(`show dropdown`, this.isVisible);
+        this.positionDropdown();
+        this.dropdownMenu.style.display = "flex";
+        this.dropdownMenu.style.opacity = "1";
+        this.isVisible = true;
       }
       positionDropdown() {
         if (!this.isVisible) {
           const buttonRect = this.dropdownButton.getBoundingClientRect();
           const windowWidth = window.innerWidth;
-          this.dropdownMenu.style.top = `${buttonRect.bottom + parseFloat(getComputedStyle(this.dropdownMenu).getPropertyValue("--dropdown-y-offset"))}px`;
-          this.dropdownMenu.style.left = `${buttonRect.left + parseFloat(getComputedStyle(this.dropdownMenu).getPropertyValue("--dropdown-x-offset"))}px`;
           if (buttonRect.left + this.dropdownMenu.offsetWidth > windowWidth) {
             this.dropdownMenu.style.left = `${windowWidth - this.dropdownMenu.offsetWidth - parseFloat(getComputedStyle(this.dropdownMenu).getPropertyValue("--dropdown-x-offset"))}px`;
           }
@@ -769,7 +750,7 @@ var init_Dropdown = __esm({
       }
       startHideTimer() {
         this.hideTimeout = window.setTimeout(() => {
-          this.hideDropdown();
+          this.hide();
         }, 500);
       }
       clearHideTimer() {
@@ -778,7 +759,7 @@ var init_Dropdown = __esm({
           this.hideTimeout = null;
         }
       }
-      hideDropdown() {
+      hide() {
         this.dropdownMenu.style.display = "none";
         this.dropdownMenu.style.opacity = "0";
         this.isVisible = false;
@@ -813,6 +794,57 @@ var init_Dropdown = __esm({
 });
 
 // src/components/shared/BlobEditor/plugins/ToolbarPlugin.ts
+function createToolbarItem(item, parent, toolbar) {
+  if (item.type === "button") {
+    const button = document.createElement("button");
+    button.className = "toolbar-button";
+    if (item.icon) {
+      const icon = document.createElement("img");
+      icon.src = item.icon;
+      icon.alt = item.label;
+      button.appendChild(icon);
+    }
+    if (item.label) {
+      const label = document.createElement("span");
+      label.textContent = item.label;
+      button.appendChild(label);
+    }
+    if (item.onClick) {
+      button.addEventListener("click", () => {
+        item.onClick.call(toolbar);
+        this.hideToolbar();
+      });
+    }
+    parent.appendChild(button);
+  } else if (item.type === "dropdown") {
+    const dropdownButton = document.createElement("button");
+    dropdownButton.className = "toolbar-dropdown-button";
+    if (item.icon) {
+      const icon = document.createElement("img");
+      icon.src = item.icon;
+      icon.alt = item.label;
+      dropdownButton.appendChild(icon);
+    }
+    if (item.label) {
+      const label = document.createElement("span");
+      label.textContent = item.label;
+      dropdownButton.appendChild(label);
+    }
+    const arrow = document.createElement("span");
+    arrow.textContent = "\u25BC";
+    dropdownButton.appendChild(arrow);
+    const dropdown = new Dropdown(dropdownButton, item.items);
+    parent.appendChild(dropdownButton);
+  } else if (item.type === "group") {
+    const group = document.createElement("div");
+    group.className = "toolbar-group";
+    if (Array.isArray(item.items)) {
+      item.items.forEach((groupItem) => createToolbarItem(groupItem, group, toolbar));
+    }
+    parent.appendChild(group);
+  }
+  return parent;
+}
 var ToolbarPlugin;
 var init_ToolbarPlugin = __esm({
   "src/components/shared/BlobEditor/plugins/ToolbarPlugin.ts"() {
@@ -840,78 +872,22 @@ var init_ToolbarPlugin = __esm({
           container.appendChild(this.toolbarContainer);
         }
         this.toolbarContainer.innerHTML = "";
-        let hasItems = false;
         this.editor.plugins.forEach((plugin) => {
           if (plugin instanceof _ToolbarPlugin) return;
           if ("toolbar" in plugin) {
             this.toolbar.items.unshift(plugin.toolbar);
-            hasItems = true;
           }
         });
-        hasItems = hasItems || this.toolbar.items.length > 0;
-        if (hasItems) {
-          this.createToolbarItem(this.toolbar);
+        if (this.toolbar.items.length > 0) {
+          createToolbarItem(this.toolbar, this.toolbarContainer, this);
         } else {
           this.toolbarContainer.style.display = "none";
         }
       }
-      createToolbarItem(item, parent) {
-        if (item.type === "button") {
-          const button = document.createElement("button");
-          button.className = "toolbar-button";
-          if (item.icon) {
-            const icon = document.createElement("img");
-            icon.src = item.icon;
-            icon.alt = item.label;
-            button.appendChild(icon);
-          }
-          if (item.label) {
-            const label = document.createElement("span");
-            label.textContent = item.label;
-            button.appendChild(label);
-          }
-          if (item.onClick) {
-            button.addEventListener("click", () => {
-              item.onClick.call(this.editor);
-              this.hideToolbar();
-            });
-          }
-          (parent || this.toolbarContainer)?.appendChild(button);
-        } else if (item.type === "dropdown") {
-          const dropdownButton = document.createElement("button");
-          dropdownButton.className = "toolbar-dropdown-button";
-          if (item.icon) {
-            const icon = document.createElement("img");
-            icon.src = item.icon;
-            icon.alt = item.label;
-            dropdownButton.appendChild(icon);
-          }
-          if (item.label) {
-            const label = document.createElement("span");
-            label.textContent = item.label;
-            dropdownButton.appendChild(label);
-          }
-          const arrow = document.createElement("span");
-          arrow.textContent = "\u25BC";
-          dropdownButton.appendChild(arrow);
-          const dropdown = new Dropdown(dropdownButton, item.items);
-          dropdownButton.addEventListener("click", (e4) => {
-            e4.preventDefault();
-            e4.stopPropagation();
-            dropdown.show();
-          });
-          (parent || this.toolbarContainer)?.appendChild(dropdownButton);
-        } else if (item.type === "group") {
-          const group = document.createElement("div");
-          group.className = "toolbar-group";
-          (parent || this.toolbarContainer)?.appendChild(group);
-          if (Array.isArray(item.items)) {
-            item.items.forEach((groupItem) => this.createToolbarItem(groupItem, group));
-          }
-        }
-      }
       checkForSelection = (e4) => {
-        if (window.getSelection()?.toString().length > 0) {
+        const s3 = window.getSelection()?.toString().length;
+        console.log(`up`, s3, window.getSelection());
+        if (s3 > 0) {
           this.showToolbar(e4);
         } else {
           this.hideToolbar();
@@ -919,10 +895,14 @@ var init_ToolbarPlugin = __esm({
       };
       showToolbar = (e4) => {
         if (!this.toolbarContainer || this.toolbarContainer.children.length === 0) return;
+        if (this.isVisible) return;
+        console.log(`show`, e4);
+        e4.preventDefault();
+        e4.stopPropagation();
         const rect = e4.target instanceof Element ? e4.target.getBoundingClientRect() : { top: 0, left: 0 };
         const windowWidth = window.innerWidth;
         this.toolbarContainer.style.top = `${rect.top - this.toolbarContainer.offsetHeight}px`;
-        this.toolbarContainer.style.left = `${e4.clientX}px`;
+        this.toolbarContainer.style.left = `${e4.clientX + 20}px`;
         if (e4.clientX + this.toolbarContainer.offsetWidth > windowWidth) {
           this.toolbarContainer.style.left = `${windowWidth - this.toolbarContainer.offsetWidth}px`;
         }
@@ -955,13 +935,15 @@ var init_ToolbarPlugin = __esm({
                 type: "button",
                 icon: "/public/icons/icon-theme.svg",
                 label: "Theme",
-                onClick: () => console.log("Theme button clicked")
+                onClick: (t3) => {
+                  console.log("Theme button clicked");
+                }
               },
               {
                 type: "button",
                 icon: "/public/icons/icon-history.svg",
                 label: "History",
-                onClick: () => console.log("History button clicked")
+                onClick: (t3) => console.log("History button clicked")
               }
             ]
           },

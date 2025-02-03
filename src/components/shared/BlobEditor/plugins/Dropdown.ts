@@ -1,3 +1,4 @@
+import { createToolbarItem } from 'components/shared/BlobEditor/plugins/ToolbarPlugin';
 
 export class Dropdown {
     private dropdownButton: HTMLElement;
@@ -18,46 +19,33 @@ export class Dropdown {
         menu.style.display = 'none';
 
         this.items.forEach(item => {
-            if (item.type === 'button') {
-                const button = document.createElement('button');
-                button.className = 'dropdown-item';
-                if (item.icon) {
-                    const icon = document.createElement('img');
-                    icon.src = item.icon;
-                    icon.alt = item.label;
-                    button.appendChild(icon);
-                }
-                if (item.label) {
-                    const label = document.createElement('span');
-                    label.textContent = item.label;
-                    button.appendChild(label);
-                }
-                if (item.onClick) {
-                    button.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation(); // Prevent event from bubbling up to toolbar
-                        item.onClick();
-                    });
-                }
-                menu.appendChild(button);
-            } else {
-                this.createToolbarItem(item, menu);
-            }
+            createToolbarItem(item, menu)
         });
 
-        document.body.appendChild(menu); // Append to body for absolute positioning
+        this.dropdownButton.appendChild(menu);
+
+        menu.addEventListener('mouseleave', this.startHideTimer.bind(this));
+        menu.addEventListener('mouseenter', this.clearHideTimer.bind(this));
+
+        this.dropdownButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log(`click`)
+            if (this.dropdownMenu.style.display == 'flex') this.hide();
+            else this.show();
+        });
+
         return menu;
     }
 
     public show() {
-        if (!this.isVisible) {
-            this.positionDropdown();
-            this.dropdownMenu.style.display = 'flex';
-            this.dropdownMenu.style.opacity = '1';
-            this.isVisible = true;
-            this.dropdownMenu.addEventListener('mouseleave', this.startHideTimer.bind(this));
-            this.dropdownMenu.addEventListener('mouseenter', this.clearHideTimer.bind(this));
-        }
+        console.log(`show dropdown`, this.isVisible)
+        //if (!this.isVisible) {
+        this.positionDropdown();
+        this.dropdownMenu.style.display = 'flex';
+        this.dropdownMenu.style.opacity = '1';
+        this.isVisible = true;
+        //}
     }
 
     private positionDropdown() {
@@ -66,8 +54,8 @@ export class Dropdown {
             const windowWidth = window.innerWidth;
 
             // Store initial position for consistent positioning
-            this.dropdownMenu.style.top = `${buttonRect.bottom + parseFloat(getComputedStyle(this.dropdownMenu).getPropertyValue('--dropdown-y-offset'))}px`;
-            this.dropdownMenu.style.left = `${buttonRect.left + parseFloat(getComputedStyle(this.dropdownMenu).getPropertyValue('--dropdown-x-offset'))}px`;
+            // this.dropdownMenu.style.top = `${buttonRect.bottom + parseFloat(getComputedStyle(this.dropdownMenu).getPropertyValue('--dropdown-y-offset'))}px`;
+            // this.dropdownMenu.style.left = `${buttonRect.left + parseFloat(getComputedStyle(this.dropdownMenu).getPropertyValue('--dropdown-x-offset'))}px`;
 
             // Adjust if dropdown goes off-screen
             if (buttonRect.left + this.dropdownMenu.offsetWidth > windowWidth) {
@@ -78,7 +66,7 @@ export class Dropdown {
 
     private startHideTimer() {
         this.hideTimeout = window.setTimeout(() => {
-            this.hideDropdown();
+            this.hide();
         }, 500);
     }
 
@@ -89,7 +77,7 @@ export class Dropdown {
         }
     }
 
-    private hideDropdown() {
+    private hide() {
         this.dropdownMenu.style.display = 'none';
         this.dropdownMenu.style.opacity = '0';
         this.isVisible = false;
