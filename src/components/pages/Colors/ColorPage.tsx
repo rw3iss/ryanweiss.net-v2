@@ -1,3 +1,4 @@
+import { ColorWithID } from 'components/pages/Colors/utils';
 import { FunctionalComponent } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import { ColorEditColumn } from './ColorEditColumn';
@@ -8,14 +9,16 @@ import { OutputColumn } from './OutputColumn';
 interface ColorPageProps { }
 
 export const ColorPage: FunctionalComponent<ColorPageProps> = () => {
-    const [colors, setColors] = useState<{ id: number; color: string; modifiedColor: string }[]>([]);
-    const [modifiedColors, setModifiedColors] = useState<{ id: number; color: string; modifiedColor: string }[]>([]);
+    const [colors, setColors] = useState<ColorWithID[]>([]);
+    const [modifiedColors, setModifiedColors] = useState<ColorWithID[]>([]);
     const [tokenizedText, setTokenizedText] = useState('');
     const [config, setConfig] = useState({
         combineSimilar: false,
         colorMode: 'dark',
-        backgroundColor: '#123',
-        fontColor: '#fed'
+        backgroundColorLight: '#f4f4f4', // Default light background
+        backgroundColorDark: '#123',     // Default dark background
+        fontColorLight: '#333',           // Default light text color
+        fontColorDark: '#fed',            // Default dark text color
     });
 
     useEffect(() => {
@@ -25,7 +28,7 @@ export const ColorPage: FunctionalComponent<ColorPageProps> = () => {
         }
     }, []);
 
-    const handleColorsParsed = (parsedColors: { id: number; color: string; modifiedColor: string }[], text: string) => {
+    const handleColorsParsed = (parsedColors: ColorWithID[], text: string) => {
         setColors(parsedColors);
         setModifiedColors(parsedColors);
         setTokenizedText(text);
@@ -44,8 +47,8 @@ export const ColorPage: FunctionalComponent<ColorPageProps> = () => {
         <div
             className={`ColorPage ${config.colorMode === 'dark' ? 'dark-mode' : ''}`}
             style={{
-                backgroundColor: config.backgroundColor,
-                color: config.fontColor
+                backgroundColor: config.colorMode == 'dark' ? config.backgroundColorDark : config.backgroundColorLight,
+                color: config.colorMode == 'dark' ? config.fontColorDark : config.fontColorLight
             }}
         >
             <InputColumn

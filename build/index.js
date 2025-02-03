@@ -3896,178 +3896,50 @@ var init_ColorPage = __esm({
   }
 });
 
-// src/components/pages/Colors/Dropdown.tsx
-var Dropdown2;
-var init_Dropdown2 = __esm({
-  "src/components/pages/Colors/Dropdown.tsx"() {
-    "use strict";
-    init_preact_module();
-    init_hooks_module();
-    init_jsxRuntime_module();
-    Dropdown2 = ({ children }) => {
-      const [isOpen, setIsOpen] = h2(false);
-      const dropdownRef = A2(null);
-      const hoverTimeout = A2(null);
-      const handleToggle = q2(() => {
-        setIsOpen(!isOpen);
-      }, [isOpen]);
-      const handleMouseEnter = q2(() => {
-        if (hoverTimeout.current !== null) {
-          clearTimeout(hoverTimeout.current);
-          hoverTimeout.current = null;
-        }
-      }, []);
-      const handleMouseLeave = q2(() => {
-      }, []);
-      y2(() => {
-        if (dropdownRef.current) {
-          dropdownRef.current.addEventListener("mouseenter", handleMouseEnter);
-          dropdownRef.current.addEventListener("mouseleave", handleMouseLeave);
-        }
-        return () => {
-          if (dropdownRef.current) {
-            dropdownRef.current.removeEventListener("mouseenter", handleMouseEnter);
-            dropdownRef.current.removeEventListener("mouseleave", handleMouseLeave);
-          }
-          if (hoverTimeout.current !== null) {
-            clearTimeout(hoverTimeout.current);
-          }
-        };
-      }, [handleMouseEnter, handleMouseLeave]);
-      return /* @__PURE__ */ u2("div", { className: "dropdown-container", ref: dropdownRef, children: [
-        /* @__PURE__ */ u2("button", { className: "dropdown-button", onClick: handleToggle, children: /* @__PURE__ */ u2("span", { children: "Config" }) }),
-        isOpen && /* @__PURE__ */ u2("div", { className: "dropdown-menu", style: { position: "absolute", top: "100%", right: 0, zIndex: 1e3 }, children })
-      ] });
-    };
-  }
-});
-
-// src/components/pages/Colors/Config.tsx
-var Config;
-var init_Config = __esm({
-  "src/components/pages/Colors/Config.tsx"() {
-    "use strict";
-    init_preact_module();
-    init_hooks_module();
-    init_vanilla_picker();
-    init_Dropdown2();
-    init_jsxRuntime_module();
-    Config = ({ config, onConfigChange }) => {
-      const [colorPicker, setColorPicker] = h2(null);
-      const backgroundSwatchRef = A2(null);
-      y2(() => {
-        if (backgroundSwatchRef.current && !colorPicker) {
-          const newPicker = new Picker({
-            parent: backgroundSwatchRef.current,
-            color: config.backgroundColor,
-            popup: "bottom",
-            editor: true,
-            onChange: (color) => {
-            },
-            onDone: (color) => {
-              onConfigChange({ backgroundColor: color.hex, colorMode: "dark" });
-            }
-          });
-          setColorPicker(newPicker);
-        } else if (colorPicker) {
-          colorPicker.setColor(config.backgroundColor);
-        }
-        return () => {
-          if (colorPicker) {
-            colorPicker.destroy();
-          }
-        };
-      }, [config.backgroundColor, onConfigChange, colorPicker]);
-      const handleCombineSimilarChange = q2((e4) => {
-        onConfigChange({ combineSimilar: e4.target.checked });
-      }, [onConfigChange]);
-      const handleColorModeChange = q2((e4) => {
-        const isDark = e4.target.checked;
-        onConfigChange({ colorMode: isDark ? "dark" : "light" });
-      }, [onConfigChange]);
-      return /* @__PURE__ */ u2(Dropdown2, { children: /* @__PURE__ */ u2("div", { style: { display: "flex", flexDirection: "column", padding: "10px" }, children: [
-        /* @__PURE__ */ u2("label", { children: [
-          /* @__PURE__ */ u2(
-            "input",
-            {
-              type: "checkbox",
-              checked: config.combineSimilar,
-              onChange: handleCombineSimilarChange
-            }
-          ),
-          "Combine Similar"
-        ] }),
-        /* @__PURE__ */ u2("label", { children: [
-          /* @__PURE__ */ u2(
-            "input",
-            {
-              type: "checkbox",
-              checked: config.colorMode === "dark",
-              onChange: handleColorModeChange
-            }
-          ),
-          "Dark Mode"
-        ] }),
-        /* @__PURE__ */ u2("div", { style: { display: "flex", alignItems: "center", marginTop: "10px" }, children: [
-          /* @__PURE__ */ u2("span", { children: "Background Color" }),
-          /* @__PURE__ */ u2(
-            "div",
-            {
-              ref: backgroundSwatchRef,
-              style: {
-                width: "24px",
-                height: "24px",
-                backgroundColor: config.backgroundColor,
-                marginLeft: "10px",
-                cursor: "pointer"
-              },
-              onClick: () => colorPicker?.show()
-            }
-          )
-        ] })
-      ] }) });
-    };
-  }
-});
-
 // src/components/pages/Colors/utils.ts
-function parseAndTokenizeColors(text, combineSimilar) {
+function parseAndTokenizeText(text, config) {
   if (text.trim() === "") {
     return { colors: [], tokenizedText: "" };
   }
-  const regex = /(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\))/gi;
+  const colorRegexes = [
+    /#(?:[0-9a-fA-F]{8})/gi,
+    // 8-character hex
+    /#(?:[0-9a-fA-F]{6})/gi,
+    // 6-character hex
+    /rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)/gi,
+    // RGBA/RGB
+    /#(?:[0-9a-fA-F]{3})/gi
+    // 3-character hex
+  ];
   const colors = [];
   let tokenizedText = text;
   let idCounter = 0;
   const colorMap = /* @__PURE__ */ new Map();
-  const normalizeColor2 = (color) => {
-    let normalized = color.toLowerCase();
-    if (normalized.startsWith("rgba")) {
-      return normalized.replace(/(rgba\(.+?),(\d+\.?\d*)\)/, (_2, rgbPart, alpha) => {
-        return `${rgbPart},${parseFloat(alpha).toFixed(2)})`;
-      });
+  for (const regex of colorRegexes) {
+    let match;
+    while ((match = regex.exec(tokenizedText)) !== null) {
+      const originalColor = match[0];
+      const normalizedColor = normalizeColor(originalColor);
+      let id;
+      if (config?.combineSimilar) {
+        id = colorMap.get(normalizedColor) ?? (() => {
+          const newId = idCounter++;
+          colorMap.set(normalizedColor, newId);
+          return newId;
+        })();
+      } else {
+        id = idCounter++;
+      }
+      const colorIndex = colors.findIndex((c3) => c3.id === id);
+      if (colorIndex === -1) {
+        colors.push({ id, color: originalColor });
+      }
+      const token = COLOR_TOKEN(id);
+      const start = match.index;
+      const end = start + originalColor.length;
+      tokenizedText = tokenizedText.slice(0, start) + token + tokenizedText.slice(end);
+      regex.lastIndex = start + token.length;
     }
-    return normalized;
-  };
-  let match;
-  while ((match = regex.exec(text)) !== null) {
-    const originalColor = match[0];
-    const normalizedColor = normalizeColor2(originalColor);
-    let id;
-    if (combineSimilar) {
-      id = colorMap.get(normalizedColor) ?? (() => {
-        const newId = idCounter++;
-        colorMap.set(normalizedColor, newId);
-        return newId;
-      })();
-    } else {
-      id = idCounter++;
-    }
-    if (!colors.some((c3) => c3.id === id)) {
-      colors.push({ id, color: originalColor, modifiedColor: originalColor });
-    }
-    tokenizedText = tokenizedText.slice(0, match.index) + `%%${id}%%` + tokenizedText.slice(match.index + originalColor.length);
-    regex.lastIndex = 0;
   }
   return { colors, tokenizedText };
 }
@@ -4078,7 +3950,7 @@ function replaceColors(tokenizedText, colors) {
   const sortedColors = [...colors].sort((a3, b2) => b2.id - a3.id);
   let outputText = tokenizedText;
   for (const { id, color, modifiedColor } of sortedColors) {
-    const token = `%%${id}%%`;
+    const token = COLOR_TOKEN(id);
     const formattedColor = formatColor(color, modifiedColor);
     outputText = outputText.replace(new RegExp(token, "g"), formattedColor);
   }
@@ -4147,16 +4019,19 @@ function isValidColor(color) {
   return false;
 }
 function normalizeColor(color) {
-  if (color.startsWith("#")) {
-    return hexToRgba(color);
-  } else {
-    const match = color.match(/^rgba?\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)$/);
-    if (match) {
-      const [, r3, g2, b2, a3] = match;
-      return `rgba(${r3},${g2},${b2},${a3 ? parseFloat(a3).toFixed(2) : "1.00"})`;
+  let normalized = color.toLowerCase();
+  if (normalized.startsWith("rgba")) {
+    return normalized.replace(/(rgba\(.+?),(\d+\.?\d*)\)/, (_2, rgbPart, alpha) => {
+      return `${rgbPart},${parseFloat(alpha).toFixed(2)})`;
+    });
+  }
+  if (normalized.startsWith("#")) {
+    const rgba = hexToRgba(normalized);
+    if (rgba) {
+      normalized = rgba;
     }
   }
-  return null;
+  return normalized;
 }
 function parseColorsWithPosition(text) {
   if (!text) return [];
@@ -4186,10 +4061,221 @@ function parseColorsWithPosition(text) {
     return b2.start - a3.start;
   });
 }
+var COLOR_TOKEN;
 var init_utils = __esm({
   "src/components/pages/Colors/utils.ts"() {
     "use strict";
     init_preact_module();
+    COLOR_TOKEN = (id) => `%%${id}%%`;
+  }
+});
+
+// src/components/pages/Colors/Dropdown.tsx
+var Dropdown2;
+var init_Dropdown2 = __esm({
+  "src/components/pages/Colors/Dropdown.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_hooks_module();
+    init_jsxRuntime_module();
+    Dropdown2 = ({ children }) => {
+      const [isOpen, setIsOpen] = h2(false);
+      const dropdownRef = A2(null);
+      const hoverTimeout = A2(null);
+      const handleToggle = q2(() => {
+        setIsOpen(!isOpen);
+      }, [isOpen]);
+      const handleMouseEnter = q2(() => {
+        if (hoverTimeout.current !== null) {
+          clearTimeout(hoverTimeout.current);
+          hoverTimeout.current = null;
+        }
+      }, []);
+      const handleMouseLeave = q2(() => {
+      }, []);
+      y2(() => {
+        if (dropdownRef.current) {
+          dropdownRef.current.addEventListener("mouseenter", handleMouseEnter);
+          dropdownRef.current.addEventListener("mouseleave", handleMouseLeave);
+        }
+        return () => {
+          if (dropdownRef.current) {
+            dropdownRef.current.removeEventListener("mouseenter", handleMouseEnter);
+            dropdownRef.current.removeEventListener("mouseleave", handleMouseLeave);
+          }
+          if (hoverTimeout.current !== null) {
+            clearTimeout(hoverTimeout.current);
+          }
+        };
+      }, [handleMouseEnter, handleMouseLeave]);
+      return /* @__PURE__ */ u2("div", { className: "dropdown-container", ref: dropdownRef, children: [
+        /* @__PURE__ */ u2("button", { className: "dropdown-button", onClick: handleToggle, children: /* @__PURE__ */ u2("span", { children: "Config" }) }),
+        isOpen && /* @__PURE__ */ u2("div", { className: "dropdown-menu", style: { position: "absolute", top: "100%", right: 0, zIndex: 1e3 }, children })
+      ] });
+    };
+  }
+});
+
+// src/components/pages/Colors/Config.tsx
+var Config;
+var init_Config = __esm({
+  "src/components/pages/Colors/Config.tsx"() {
+    "use strict";
+    init_preact_module();
+    init_hooks_module();
+    init_vanilla_picker();
+    init_Dropdown2();
+    init_jsxRuntime_module();
+    Config = ({ config, onConfigChange }) => {
+      const [tempConfig, setTempConfig] = h2(config);
+      const [backgroundPicker, setBackgroundPicker] = h2(null);
+      const [textPicker, setTextPicker] = h2(null);
+      const backgroundSwatchRef = A2(null);
+      const textSwatchRef = A2(null);
+      y2(() => {
+        setTempConfig(config);
+        if (backgroundSwatchRef.current && !backgroundPicker) {
+          const newPicker = new Picker({
+            parent: backgroundSwatchRef.current,
+            color: tempConfig.colorMode === "dark" ? tempConfig.backgroundColorDark : tempConfig.backgroundColorLight,
+            popup: "bottom",
+            editor: true,
+            onChange: (color) => {
+              setTempConfig((prev) => ({
+                ...prev,
+                [prev.colorMode === "dark" ? "backgroundColorDark" : "backgroundColorLight"]: color.hex
+              }));
+            },
+            onDone: (color) => {
+              setTempConfig((prev) => ({
+                ...prev,
+                [prev.colorMode === "dark" ? "backgroundColorDark" : "backgroundColorLight"]: color.hex
+              }));
+            }
+          });
+          setBackgroundPicker(newPicker);
+        } else if (backgroundPicker) {
+          backgroundPicker.setColor(tempConfig.colorMode === "dark" ? tempConfig.backgroundColorDark : tempConfig.backgroundColorLight);
+        }
+        if (textSwatchRef.current && !textPicker) {
+          const newTextPicker = new Picker({
+            parent: textSwatchRef.current,
+            color: tempConfig.colorMode === "dark" ? tempConfig.fontColorDark : tempConfig.fontColorLight,
+            popup: "bottom",
+            editor: true,
+            onChange: (color) => {
+              setTempConfig((prev) => ({
+                ...prev,
+                [prev.colorMode === "dark" ? "fontColorDark" : "fontColorLight"]: color.hex
+              }));
+            },
+            onDone: (color) => {
+              setTempConfig((prev) => ({
+                ...prev,
+                [prev.colorMode === "dark" ? "fontColorDark" : "fontColorLight"]: color.hex
+              }));
+            }
+          });
+          setTextPicker(newTextPicker);
+        } else if (textPicker) {
+          textPicker.setColor(tempConfig.colorMode === "dark" ? tempConfig.fontColorDark : tempConfig.fontColorLight);
+        }
+        return () => {
+          backgroundPicker?.destroy();
+          textPicker?.destroy();
+        };
+      }, [config, tempConfig]);
+      const handleCombineSimilarChange = q2((e4) => {
+        setTempConfig((prev) => ({ ...prev, combineSimilar: e4.target.checked }));
+      }, []);
+      const handleColorModeChange = q2((e4) => {
+        const isDark = e4.target.checked;
+        setTempConfig((prev) => ({ ...prev, colorMode: isDark ? "dark" : "light" }));
+      }, []);
+      const handleSave = q2(() => {
+        onConfigChange(tempConfig);
+      }, [tempConfig, onConfigChange]);
+      const handleCancel = q2(() => {
+      }, []);
+      return /* @__PURE__ */ u2(Dropdown2, { onClose: handleCancel, children: [
+        "  // Assuming Dropdown component can take an onClose prop",
+        /* @__PURE__ */ u2("div", { style: { display: "flex", flexDirection: "column", padding: "10px" }, children: [
+          /* @__PURE__ */ u2("label", { children: [
+            /* @__PURE__ */ u2(
+              "input",
+              {
+                type: "checkbox",
+                checked: tempConfig.combineSimilar,
+                onChange: handleCombineSimilarChange
+              }
+            ),
+            "Combine Similar"
+          ] }),
+          /* @__PURE__ */ u2("label", { children: [
+            /* @__PURE__ */ u2(
+              "input",
+              {
+                type: "checkbox",
+                checked: tempConfig.colorMode === "dark",
+                onChange: handleColorModeChange
+              }
+            ),
+            "Dark Mode"
+          ] }),
+          /* @__PURE__ */ u2("div", { style: { display: "flex", alignItems: "center", marginTop: "10px" }, children: [
+            /* @__PURE__ */ u2("span", { children: "Background Color" }),
+            /* @__PURE__ */ u2(
+              "div",
+              {
+                ref: backgroundSwatchRef,
+                style: {
+                  width: "24px",
+                  height: "24px",
+                  backgroundColor: tempConfig.colorMode === "dark" ? tempConfig.backgroundColorDark : tempConfig.backgroundColorLight,
+                  marginLeft: "10px",
+                  cursor: "pointer"
+                },
+                onClick: () => backgroundPicker?.show()
+              }
+            )
+          ] }),
+          /* @__PURE__ */ u2("div", { style: { display: "flex", alignItems: "center", marginTop: "10px" }, children: [
+            /* @__PURE__ */ u2("span", { children: "Text Color" }),
+            /* @__PURE__ */ u2(
+              "div",
+              {
+                ref: textSwatchRef,
+                style: {
+                  color: tempConfig.colorMode === "dark" ? tempConfig.fontColorDark : tempConfig.fontColorLight,
+                  marginLeft: "10px",
+                  cursor: "pointer"
+                },
+                children: "Sample"
+              }
+            ),
+            /* @__PURE__ */ u2(
+              "button",
+              {
+                style: {
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 0,
+                  color: "inherit",
+                  fontSize: "inherit"
+                },
+                onClick: () => textPicker?.show(),
+                children: "Sample"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ u2("div", { style: { display: "flex", justifyContent: "space-between", marginTop: "10px" }, children: [
+            /* @__PURE__ */ u2("button", { onClick: handleCancel, children: "Cancel" }),
+            /* @__PURE__ */ u2("button", { onClick: handleSave, children: "Save" })
+          ] })
+        ] })
+      ] });
+    };
   }
 });
 
@@ -4199,9 +4285,9 @@ var init_InputColumn = __esm({
   "src/components/pages/Colors/InputColumn.tsx"() {
     "use strict";
     init_preact_module();
-    init_Config();
-    init_hooks_module();
     init_utils();
+    init_hooks_module();
+    init_Config();
     init_jsxRuntime_module();
     InputColumn = ({ onColorsParsed, config, onConfigChange }) => {
       const [text, setText] = h2("");
@@ -4242,9 +4328,10 @@ var init_InputColumn = __esm({
         const textareaContent = textAreaRef.current ? textAreaRef.current.value : "";
         if (textareaContent.trim() !== "") {
           setText(textareaContent);
-          const { colors, tokenizedText } = parseAndTokenizeColors(textareaContent, config.combineSimilar);
-          onColorsParsed(colors, tokenizedText);
+          const { colors, tokenizedText } = parseAndTokenizeText(textareaContent, config);
+          console.log(`parsed`, colors, tokenizedText);
           localStorage.setItem("inputText", textareaContent);
+          onColorsParsed(colors, tokenizedText);
         } else {
           onColorsParsed([], "");
         }
@@ -4992,10 +5079,10 @@ var init_OutputColumn = __esm({
     "use strict";
     init_preact_module();
     init_hooks_module();
-    init_utils();
     import_seedrandom = __toESM(require_seedrandom2());
+    init_utils();
     init_jsxRuntime_module();
-    OutputColumn = ({ colors, inputText, importedFileName }) => {
+    OutputColumn = ({ colors, tokenizedText, importedFileName }) => {
       const [activeTab, setActiveTab] = h2("swatches");
       const [outputTextModified, setOutputTextModified] = h2("");
       const [colorsWithPosition, setColorsWithPosition] = h2([]);
@@ -5019,15 +5106,15 @@ var init_OutputColumn = __esm({
         return Array.from({ length: colors.length }, () => sentences[Math.floor(rng2() * sentences.length)]);
       }, [colors.length, rng2]);
       y2(() => {
-        const parsedColors = parseColorsWithPosition(inputText);
+        const parsedColors = parseColorsWithPosition(tokenizedText);
         setColorsWithPosition(parsedColors);
         const updatedColorsWithPosition = parsedColors.map((parsed) => {
           const match = colors.find((c3) => c3.color === parsed.color);
           return match ? { ...parsed, modifiedColor: match.modifiedColor } : parsed;
         });
-        const modifiedText = replaceColors(inputText, updatedColorsWithPosition);
+        const modifiedText = replaceColors(tokenizedText, updatedColorsWithPosition);
         setOutputTextModified(modifiedText);
-      }, [colors, inputText]);
+      }, [colors, tokenizedText]);
       const handleSave = q2(() => {
         const blob = new Blob([outputTextModified], { type: "text/plain" });
         const link = document.createElement("a");
@@ -5131,8 +5218,14 @@ var init_ColorPage2 = __esm({
       const [config, setConfig] = h2({
         combineSimilar: false,
         colorMode: "dark",
-        backgroundColor: "#123",
-        fontColor: "#fed"
+        backgroundColorLight: "#f4f4f4",
+        // Default light background
+        backgroundColorDark: "#123",
+        // Default dark background
+        fontColorLight: "#333",
+        // Default light text color
+        fontColorDark: "#fed"
+        // Default dark text color
       });
       y2(() => {
         const savedConfig = localStorage.getItem("config");
@@ -5157,8 +5250,8 @@ var init_ColorPage2 = __esm({
         {
           className: `ColorPage ${config.colorMode === "dark" ? "dark-mode" : ""}`,
           style: {
-            backgroundColor: config.backgroundColor,
-            color: config.fontColor
+            backgroundColor: config.colorMode == "dark" ? config.backgroundColorDark : config.backgroundColorLight,
+            color: config.colorMode == "dark" ? config.fontColorDark : config.fontColorLight
           },
           children: [
             /* @__PURE__ */ u2(

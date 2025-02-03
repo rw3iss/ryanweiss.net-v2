@@ -1,16 +1,11 @@
-import { Config } from 'components/pages/Colors/Config';
+import { ColorWithID, parseAndTokenizeText } from 'components/pages/Colors/utils';
 import { FunctionalComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
-import { parseAndTokenizeColors } from './utils';
+import { Config } from './Config';
 
 interface InputColumnProps {
-    onColorsParsed: (colors: { id: number; color: string; modifiedColor: string }[], tokenizedText: string) => void;
-    config: {
-        combineSimilar: boolean;
-        colorMode: 'dark' | 'light';
-        backgroundColor: string;
-        fontColor: string;
-    };
+    onColorsParsed: (colors: ColorWithID[], tokenizedText: string) => void;
+    config: Config;
     onConfigChange: (newConfig: Partial<InputColumnProps['config']>) => void;
 }
 
@@ -57,9 +52,10 @@ export const InputColumn: FunctionalComponent<InputColumnProps> = ({ onColorsPar
         const textareaContent = textAreaRef.current ? textAreaRef.current.value : '';
         if (textareaContent.trim() !== '') {
             setText(textareaContent);
-            const { colors, tokenizedText } = parseAndTokenizeColors(textareaContent, config.combineSimilar);
-            onColorsParsed(colors, tokenizedText);
+            const { colors, tokenizedText } = parseAndTokenizeText(textareaContent, config);
+            console.log(`parsed`, colors, tokenizedText);
             localStorage.setItem('inputText', textareaContent);
+            onColorsParsed(colors, tokenizedText);
         } else {
             onColorsParsed([], '');
         }

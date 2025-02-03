@@ -1,15 +1,16 @@
-import { h, FunctionalComponent } from 'preact';
-import { useState, useCallback, useEffect, useMemo } from 'preact/hooks';
-import { parseColorsWithPosition, replaceColors, formatColor } from './utils';
+import { ColorWithID } from 'components/pages/Colors/utils';
+import { FunctionalComponent } from 'preact';
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
 import seedrandom from 'seedrandom';
+import { parseColorsWithPosition, replaceColors } from './utils';
 
 interface OutputColumnProps {
-    colors: { color: string, modifiedColor: string }[];
-    inputText: string;
+    colors: ColorWithID[];
+    tokenizedText: string;
     importedFileName?: string;
 }
 
-export const OutputColumn: FunctionalComponent<OutputColumnProps> = ({ colors, inputText, importedFileName }) => {
+export const OutputColumn: FunctionalComponent<OutputColumnProps> = ({ colors, tokenizedText, importedFileName }) => {
 
     const [activeTab, setActiveTab] = useState('swatches');
     const [outputTextModified, setOutputTextModified] = useState('');
@@ -37,15 +38,15 @@ export const OutputColumn: FunctionalComponent<OutputColumnProps> = ({ colors, i
     }, [colors.length, rng]);
 
     useEffect(() => {
-        const parsedColors = parseColorsWithPosition(inputText);
+        const parsedColors = parseColorsWithPosition(tokenizedText);
         setColorsWithPosition(parsedColors);
         const updatedColorsWithPosition = parsedColors.map(parsed => {
             const match = colors.find(c => c.color === parsed.color);
             return match ? { ...parsed, modifiedColor: match.modifiedColor } : parsed;
         });
-        const modifiedText = replaceColors(inputText, updatedColorsWithPosition);
+        const modifiedText = replaceColors(tokenizedText, updatedColorsWithPosition);
         setOutputTextModified(modifiedText);
-    }, [colors, inputText]);
+    }, [colors, tokenizedText]);
 
     const handleSave = useCallback(() => {
         const blob = new Blob([outputTextModified], { type: 'text/plain' });

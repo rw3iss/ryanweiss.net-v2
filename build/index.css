@@ -1129,14 +1129,14 @@
   --item-padding: 10px;
   --column-padding: 15px;
   --base-font-size: 16px;
+  --background-color-light: #f4f4f4;
+  --background-color-dark: #123;
+  --font-color-light: #333;
+  --font-color-dark: #fed;
 }
 .dark-mode {
-  --background-color: #123;
-  --text-color: #fed;
-  --button-bg: #3498db;
-  --button-text: #000;
-  --button-hover-bg: lighten(#3498db, 20%);
-  --button-hover-text: #fff;
+  --background-color: var(--background-color-dark);
+  --text-color: var(--font-color-dark);
 }
 .ColorPage {
   display: flex;
@@ -1146,10 +1146,10 @@
   height: 100vh;
   background-color: #f4f4f4;
   background-color: var(--background-color);
-  font-size: 16px;
-  font-size: var(--base-font-size);
   color: #333;
   color: var(--text-color);
+  font-size: 16px;
+  font-size: var(--base-font-size);
 }
 .ColorPage .column {
   flex: 1 0 33%;
@@ -1310,6 +1310,9 @@
   color: #000;
   color: var(--button-hover-text);
 }
+.ColorPage .dropdown-container {
+  position: relative;
+}
 .ColorPage .dropdown-container .dropdown-button {
   background: #3498db;
   background: var(--button-bg);
@@ -1330,6 +1333,21 @@
   background-color: var(--button-hover-bg);
   color: #000;
   color: var(--button-hover-text);
+}
+.ColorPage .dropdown-container .dropdown-menu {
+  background-color: #f4f4f4;
+  background-color: var(--background-color);
+  color: #333;
+  color: var(--text-color);
+  border: 1px solid var(--textarea-border);
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  width: 200px;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
 }
 .ColorPage .color-picker,
 .ColorPage .color-picker .popup {

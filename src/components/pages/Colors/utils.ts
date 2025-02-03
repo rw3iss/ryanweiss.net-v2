@@ -1,8 +1,69 @@
-interface ColorWithID {
+import { Config } from './Config';
+
+
+export interface ColorWithID {
     id: number;
     color: string;
-    modifiedColor: string;
 }
+
+export const COLOR_TOKEN = (id: number): string => `%%${id}%%`;
+
+export function parseAndTokenizeText(text: string, config?: Config): { colors: ColorWithID[], tokenizedText: string } {
+    if (text.trim() === '') {
+        return { colors: [], tokenizedText: '' };
+    }
+
+    // Order regexes from longest to shortest color format to prioritize longer matches
+    const colorRegexes = [
+        /#(?:[0-9a-fA-F]{8})/gi, // 8-character hex
+        /#(?:[0-9a-fA-F]{6})/gi, // 6-character hex
+        /rgba?\s*\(\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*,\s*(?:\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)/gi, // RGBA/RGB
+        /#(?:[0-9a-fA-F]{3})/gi // 3-character hex
+    ];
+
+    const colors: ColorWithID[] = [];
+    let tokenizedText = text;
+    let idCounter = 0;
+    const colorMap = new Map<string, number>();
+
+    for (const regex of colorRegexes) {
+        let match;
+        while ((match = regex.exec(tokenizedText)) !== null) {
+            const originalColor = match[0];
+            const normalizedColor = normalizeColor(originalColor); // Assuming normalizeColor is imported or defined elsewhere
+
+            let id: number;
+            if (config?.combineSimilar) {
+                id = colorMap.get(normalizedColor) ?? (() => {
+                    const newId = idCounter++;
+                    colorMap.set(normalizedColor, newId);
+                    return newId;
+                })();
+            } else {
+                id = idCounter++;
+            }
+
+            const colorIndex = colors.findIndex(c => c.id === id);
+            if (colorIndex === -1) {
+                colors.push({ id, color: originalColor });
+            }
+
+            const token = COLOR_TOKEN(id);
+            const start = match.index;
+            const end = start + originalColor.length;
+
+            tokenizedText = tokenizedText.slice(0, start) + token + tokenizedText.slice(end);
+            //console.log(`\n\nReplace: `, originalColor, token, start, end, tokenizedText);
+
+            // Set the regex lastIndex to the position after the token replacement
+            regex.lastIndex = start + token.length;
+        }
+    }
+
+    return { colors, tokenizedText };
+}
+
+
 
 export function parseAndTokenizeColors(text: string, combineSimilar: boolean): { colors: ColorWithID[], tokenizedText: string } {
     if (text.trim() === '') {
@@ -45,7 +106,8 @@ export function parseAndTokenizeColors(text: string, combineSimilar: boolean): {
             colors.push({ id, color: originalColor, modifiedColor: originalColor });
         }
 
-        tokenizedText = tokenizedText.slice(0, match.index) + `%%${id}%%` + tokenizedText.slice(match.index + originalColor.length);
+        const token = COLOR_TOKEN(id);
+        tokenizedText = tokenizedText.slice(0, match.index) + token + tokenizedText.slice(match.index + originalColor.length);
         regex.lastIndex = 0; // Reset regex index as we're modifying the string
     }
 
@@ -62,7 +124,7 @@ export function replaceColors(tokenizedText: string, colors: ColorWithID[]): str
     let outputText = tokenizedText;
 
     for (const { id, color, modifiedColor } of sortedColors) {
-        const token = `%%${id}%%`;
+        const token = COLOR_TOKEN(id);
         const formattedColor = formatColor(color, modifiedColor);
         outputText = outputText.replace(new RegExp(token, 'g'), formattedColor);
     }
@@ -144,18 +206,22 @@ export function isValidColor(color: string): boolean {
     return false;
 }
 
-export function normalizeColor(color: string): string | null {
-    if (color.startsWith('#')) {
-        return hexToRgba(color);
-    } else {
-        const match = color.match(/^rgba?\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:\s*,\s*(?:[01](?:\.\d+)?|\.\d+|[01]))?\s*\)$/);
-        if (match) {
-            const [, r, g, b, a] = match;
-            return `rgba(${r},${g},${b},${a ? parseFloat(a).toFixed(2) : '1.00'})`;
+export function normalizeColor(color: string): string {
+    let normalized = color.toLowerCase();
+    if (normalized.startsWith('rgba')) {
+        return normalized.replace(/(rgba\(.+?),(\d+\.?\d*)\)/, (_, rgbPart, alpha) => {
+            return `${rgbPart},${parseFloat(alpha).toFixed(2)})`; // Normalize alpha to 2 decimal places
+        });
+    }
+    if (normalized.startsWith('#')) {
+        // Convert hex to rgba for comparison if needed for combineSimilar
+        const rgba = hexToRgba(normalized);
+        if (rgba) {
+            normalized = rgba;
         }
     }
-    return null;
-}
+    return normalized;
+};
 
 export function parseColors(text: string): { color: string; modifiedColor: string }[] {
     const colors: { color: string; modifiedColor: string }[] = [];
