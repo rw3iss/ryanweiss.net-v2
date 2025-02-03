@@ -34,6 +34,7 @@ export class Dropdown {
                 }
                 if (item.onClick) {
                     button.addEventListener('click', (e) => {
+                        e.preventDefault();
                         e.stopPropagation(); // Prevent event from bubbling up to toolbar
                         item.onClick();
                     });
@@ -93,7 +94,6 @@ export class Dropdown {
         this.dropdownMenu.style.opacity = '0';
         this.isVisible = false;
     }
-
 
     private createToolbarItem(item: any, parent: HTMLElement) {
         if (item.type === 'group') {

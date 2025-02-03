@@ -44,9 +44,6 @@ export class ToolbarPlugin implements IPlugin {
         });
 
         hasItems = hasItems || this.toolbar.items.length > 0;
-
-        console.log(`creating toolbar`, this.toolbar);
-
         if (hasItems) {
             this.createToolbarItem(this.toolbar);
         } else {
@@ -96,7 +93,11 @@ export class ToolbarPlugin implements IPlugin {
             dropdownButton.appendChild(arrow);
 
             const dropdown = new Dropdown(dropdownButton, item.items);
-            dropdownButton.addEventListener('click', () => dropdown.show());
+            dropdownButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropdown.show()
+            });
             (parent || this.toolbarContainer)?.appendChild(dropdownButton);
         } else if (item.type === 'group') {
             const group = document.createElement('div');

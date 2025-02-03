@@ -4,11 +4,21 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __require = /* @__PURE__ */ ((x2) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x2, {
+  get: (a3, b2) => (typeof require !== "undefined" ? require : a3)[b2]
+}) : x2)(function(x2) {
+  if (typeof require !== "undefined") return require.apply(this, arguments);
+  throw Error('Dynamic require of "' + x2 + '" is not supported');
+});
 var __esm = (fn, res) => function __init() {
   return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
 };
-var __commonJS = (cb, mod) => function __require() {
+var __commonJS = (cb, mod) => function __require2() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+};
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
 };
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
@@ -723,6 +733,7 @@ var init_Dropdown = __esm({
             }
             if (item.onClick) {
               button.addEventListener("click", (e4) => {
+                e4.preventDefault();
                 e4.stopPropagation();
                 item.onClick();
               });
@@ -838,7 +849,6 @@ var init_ToolbarPlugin = __esm({
           }
         });
         hasItems = hasItems || this.toolbar.items.length > 0;
-        console.log(`creating toolbar`, this.toolbar);
         if (hasItems) {
           this.createToolbarItem(this.toolbar);
         } else {
@@ -885,7 +895,11 @@ var init_ToolbarPlugin = __esm({
           arrow.textContent = "\u25BC";
           dropdownButton.appendChild(arrow);
           const dropdown = new Dropdown(dropdownButton, item.items);
-          dropdownButton.addEventListener("click", () => dropdown.show());
+          dropdownButton.addEventListener("click", (e4) => {
+            e4.preventDefault();
+            e4.stopPropagation();
+            dropdown.show();
+          });
           (parent || this.toolbarContainer)?.appendChild(dropdownButton);
         } else if (item.type === "group") {
           const group = document.createElement("div");
@@ -1353,26 +1367,18 @@ var init_ApiClient = __esm({
     "use strict";
     init_preact_module();
     ApiClient = class {
-      baseUrl = "your-api-endpoint-url";
-      // Replace with actual API endpoint
+      //private baseUrl = ''; // Replace with actual API endpoint
       async fetchBlobs() {
-        const response = await fetch(`${this.baseUrl}/blobs`);
-        return await response.json();
+        return [];
       }
       async fetchBlob(id) {
-        const response = await fetch(`${this.baseUrl}/blobs/${id}`);
-        if (!response.ok) return null;
-        return await response.json();
+        return null;
       }
       async saveBlob(blob) {
-        await fetch(`${this.baseUrl}/blobs/${blob.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(blob)
-        });
+        return Promise.resolve();
       }
       async deleteBlob(id) {
-        await fetch(`${this.baseUrl}/blobs/${id}`, { method: "DELETE" });
+        return Promise.resolve();
       }
     };
   }
@@ -1384,7 +1390,7 @@ var require_dist = __commonJS({
     "use strict";
     init_preact_module();
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.parse = parse;
+    exports.parse = parse2;
     exports.serialize = serialize;
     var cookieNameRegExp = /^[\u0021-\u003A\u003C\u003E-\u007E]+$/;
     var cookieValueRegExp = /^[\u0021-\u003A\u003C-\u007E]*$/;
@@ -1397,12 +1403,12 @@ var require_dist = __commonJS({
       C3.prototype = /* @__PURE__ */ Object.create(null);
       return C3;
     })();
-    function parse(str, options) {
+    function parse2(str, options) {
       const obj = new NullObject();
       const len = str.length;
       if (len < 2)
         return obj;
-      const dec = options?.decode || decode;
+      const dec = options?.decode || decode3;
       let index = 0;
       do {
         const eqIdx = str.indexOf("=", index);
@@ -1523,7 +1529,7 @@ var require_dist = __commonJS({
       }
       return str;
     }
-    function decode(str) {
+    function decode3(str) {
       if (str.indexOf("%") === -1)
         return str;
       try {
@@ -3934,11 +3940,11 @@ function parseAndTokenizeText(text, config) {
       if (colorIndex === -1) {
         colors.push({ id, color: originalColor });
       }
-      const token = COLOR_TOKEN(id);
+      const token2 = COLOR_TOKEN(id);
       const start = match.index;
       const end = start + originalColor.length;
-      tokenizedText = tokenizedText.slice(0, start) + token + tokenizedText.slice(end);
-      regex.lastIndex = start + token.length;
+      tokenizedText = tokenizedText.slice(0, start) + token2 + tokenizedText.slice(end);
+      regex.lastIndex = start + token2.length;
     }
   }
   return { colors, tokenizedText };
@@ -3950,9 +3956,9 @@ function replaceColors(tokenizedText, colors) {
   const sortedColors = [...colors].sort((a3, b2) => b2.id - a3.id);
   let outputText = tokenizedText;
   for (const { id, color, modifiedColor } of sortedColors) {
-    const token = COLOR_TOKEN(id);
+    const token2 = COLOR_TOKEN(id);
     const formattedColor = formatColor(color, modifiedColor);
-    outputText = outputText.replace(new RegExp(token, "g"), formattedColor);
+    outputText = outputText.replace(new RegExp(token2, "g"), formattedColor);
   }
   return outputText;
 }
@@ -4370,7 +4376,7 @@ var require_alea = __commonJS({
   "node_modules/seedrandom/lib/alea.js"(exports, module) {
     "use strict";
     init_preact_module();
-    (function(global, module2, define2) {
+    (function(global2, module2, define2) {
       function Alea(seed) {
         var me = this, mash = Mash();
         me.next = function() {
@@ -4463,7 +4469,7 @@ var require_xor128 = __commonJS({
   "node_modules/seedrandom/lib/xor128.js"(exports, module) {
     "use strict";
     init_preact_module();
-    (function(global, module2, define2) {
+    (function(global2, module2, define2) {
       function XorGen(seed) {
         var me = this, strseed = "";
         me.x = 0;
@@ -4538,7 +4544,7 @@ var require_xorwow = __commonJS({
   "node_modules/seedrandom/lib/xorwow.js"(exports, module) {
     "use strict";
     init_preact_module();
-    (function(global, module2, define2) {
+    (function(global2, module2, define2) {
       function XorGen(seed) {
         var me = this, strseed = "";
         me.next = function() {
@@ -4620,7 +4626,7 @@ var require_xorshift7 = __commonJS({
   "node_modules/seedrandom/lib/xorshift7.js"(exports, module) {
     "use strict";
     init_preact_module();
-    (function(global, module2, define2) {
+    (function(global2, module2, define2) {
       function XorGen(seed) {
         var me = this;
         me.next = function() {
@@ -4713,7 +4719,7 @@ var require_xor4096 = __commonJS({
   "node_modules/seedrandom/lib/xor4096.js"(exports, module) {
     "use strict";
     init_preact_module();
-    (function(global, module2, define2) {
+    (function(global2, module2, define2) {
       function XorGen(seed) {
         var me = this;
         me.next = function() {
@@ -4824,7 +4830,7 @@ var require_tychei = __commonJS({
   "node_modules/seedrandom/lib/tychei.js"(exports, module) {
     "use strict";
     init_preact_module();
-    (function(global, module2, define2) {
+    (function(global2, module2, define2) {
       function XorGen(seed) {
         var me = this, strseed = "";
         me.next = function() {
@@ -4913,7 +4919,7 @@ var require_seedrandom = __commonJS({
   "node_modules/seedrandom/seedrandom.js"(exports, module) {
     "use strict";
     init_preact_module();
-    (function(global, pool, math) {
+    (function(global2, pool, math) {
       var width = 256, chunks = 6, digits = 52, rngname = "random", startdenom = math.pow(width, chunks), significance = math.pow(2, digits), overflow = significance * 2, mask = width - 1, nodecrypto;
       function seedrandom2(seed, options, callback) {
         var key = [];
@@ -5021,12 +5027,12 @@ var require_seedrandom = __commonJS({
             out = out(width);
           } else {
             out = new Uint8Array(width);
-            (global.crypto || global.msCrypto).getRandomValues(out);
+            (global2.crypto || global2.msCrypto).getRandomValues(out);
           }
           return tostring(out);
         } catch (e4) {
-          var browser = global.navigator, plugins = browser && browser.plugins;
-          return [+/* @__PURE__ */ new Date(), global, plugins, global.screen, tostring(pool)];
+          var browser = global2.navigator, plugins = browser && browser.plugins;
+          return [+/* @__PURE__ */ new Date(), global2, plugins, global2.screen, tostring(pool)];
         }
       }
       function tostring(a3) {
@@ -5323,9 +5329,145 @@ var require_config = __commonJS({
     init_preact_module();
     init_routes();
     module.exports = {
-      DEFAULT_ROUTE: "/colors",
+      DEFAULT_ROUTE: "/editor",
       routes: routes_default
     };
+  }
+});
+
+// node_modules/routes/dist/routes.js
+var require_routes = __commonJS({
+  "node_modules/routes/dist/routes.js"(exports, module) {
+    "use strict";
+    init_preact_module();
+    !function(e4) {
+      if ("object" == typeof exports) module.exports = e4();
+      else if ("function" == typeof define && define.amd) define(e4);
+      else {
+        var f4;
+        "undefined" != typeof window ? f4 = window : "undefined" != typeof window ? f4 = window : "undefined" != typeof self && (f4 = self), f4.routes = e4();
+      }
+    }(function() {
+      var define2, module2, exports2;
+      return function e4(t3, n2, r3) {
+        function s3(o4, u4) {
+          if (!n2[o4]) {
+            if (!t3[o4]) {
+              var a3 = typeof __require == "function" && __require;
+              if (!u4 && a3) return a3(o4, true);
+              if (i4) return i4(o4, true);
+              throw new Error("Cannot find module '" + o4 + "'");
+            }
+            var f4 = n2[o4] = { exports: {} };
+            t3[o4][0].call(f4.exports, function(e5) {
+              var n3 = t3[o4][1][e5];
+              return s3(n3 ? n3 : e5);
+            }, f4, f4.exports, e4, t3, n2, r3);
+          }
+          return n2[o4].exports;
+        }
+        var i4 = typeof __require == "function" && __require;
+        for (var o3 = 0; o3 < r3.length; o3++) s3(r3[o3]);
+        return s3;
+      }({ 1: [function(_dereq_, module3, exports3) {
+        var localRoutes = [];
+        var Route = function(path) {
+          var src, re, keys = [];
+          if (path instanceof RegExp) {
+            re = path;
+            src = path.toString();
+          } else {
+            re = pathToRegExp(path, keys);
+            src = path;
+          }
+          return {
+            re,
+            src: path.toString(),
+            keys
+          };
+        };
+        var pathToRegExp = function(path, keys) {
+          path = path.concat("/?").replace(/\/\(/g, "(?:/").replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?|\*/g, function(_2, slash, format, key, capture, optional) {
+            if (_2 === "*") {
+              keys.push(void 0);
+              return _2;
+            }
+            keys.push(key);
+            slash = slash || "";
+            return "" + (optional ? "" : slash) + "(?:" + (optional ? slash : "") + (format || "") + (capture || "([^/]+?)") + ")" + (optional || "");
+          }).replace(/([\/.])/g, "\\$1").replace(/\*/g, "(.*)");
+          return new RegExp("^" + path + "$", "i");
+        };
+        var match = function(routes3, uri, startAt) {
+          var captures, i4 = startAt || 0;
+          for (var len = routes3.length; i4 < len; ++i4) {
+            var route = routes3[i4], re = route.re, keys = route.keys, splats = [], params = {};
+            if (captures = uri.match(re)) {
+              for (var j3 = 1, len = captures.length; j3 < len; ++j3) {
+                var key = keys[j3 - 1], val = typeof captures[j3] === "string" ? unescape(captures[j3]) : captures[j3];
+                if (key) {
+                  params[key] = val;
+                } else {
+                  splats.push(val);
+                }
+              }
+              return {
+                params,
+                splats,
+                route: route.src,
+                next: i4 + 1
+              };
+            }
+          }
+        };
+        var Router2 = function() {
+          return {
+            routes: [],
+            routeMap: {},
+            addRoute: function(path, fn) {
+              if (!path) throw new Error(" route requires a path");
+              if (!fn) throw new Error(" route " + path.toString() + " requires a callback");
+              if (this.routeMap[path]) {
+                throw new Error("path is already defined: " + path);
+              }
+              var route = Route(path);
+              route.fn = fn;
+              this.routes.push(route);
+              this.routeMap[path] = fn;
+            },
+            removeRoute: function(path) {
+              if (!path) throw new Error(" route requires a path");
+              if (!this.routeMap[path]) {
+                throw new Error("path does not exist: " + path);
+              }
+              var match2;
+              var newRoutes = [];
+              for (var i4 = 0; i4 < this.routes.length; i4++) {
+                var route = this.routes[i4];
+                if (route.src !== path) {
+                  newRoutes.push(route);
+                }
+              }
+              this.routes = newRoutes;
+              delete this.routeMap[path];
+            },
+            match: function(pathname, startAt) {
+              var route = match(this.routes, pathname, startAt);
+              if (route) {
+                route.fn = this.routeMap[route.route];
+                route.next = this.match.bind(this, pathname, route.next);
+              }
+              return route;
+            }
+          };
+        };
+        Router2.Route = Route;
+        Router2.pathToRegExp = pathToRegExp;
+        Router2.match = match;
+        Router2.Router = Router2;
+        module3.exports = Router2;
+      }, {}] }, {}, [1])(1);
+    });
   }
 });
 
@@ -5530,7 +5672,7 @@ init_preact_module();
 
 // src/components/shared/RouteContext/RouteContext.tsx
 init_preact_module();
-var import_config = __toESM(require_config());
+var import_config2 = __toESM(require_config());
 
 // src/lib/hooks/useRouter.ts
 init_preact_module();
@@ -5556,30 +5698,600 @@ var _EventService = class {
 var EventService = new _EventService();
 var EventService_default = EventService;
 
+// src/lib/Router.ts
+init_preact_module();
+var import_config = __toESM(require_config());
+
+// node_modules/query-string/index.js
+init_preact_module();
+
+// node_modules/query-string/base.js
+var base_exports = {};
+__export(base_exports, {
+  exclude: () => exclude,
+  extract: () => extract,
+  parse: () => parse,
+  parseUrl: () => parseUrl,
+  pick: () => pick,
+  stringify: () => stringify,
+  stringifyUrl: () => stringifyUrl
+});
+init_preact_module();
+
+// node_modules/decode-uri-component/index.js
+init_preact_module();
+var token = "%[a-f0-9]{2}";
+var singleMatcher = new RegExp("(" + token + ")|([^%]+?)", "gi");
+var multiMatcher = new RegExp("(" + token + ")+", "gi");
+function decodeComponents(components, split) {
+  try {
+    return [decodeURIComponent(components.join(""))];
+  } catch {
+  }
+  if (components.length === 1) {
+    return components;
+  }
+  split = split || 1;
+  const left = components.slice(0, split);
+  const right = components.slice(split);
+  return Array.prototype.concat.call([], decodeComponents(left), decodeComponents(right));
+}
+function decode(input) {
+  try {
+    return decodeURIComponent(input);
+  } catch {
+    let tokens = input.match(singleMatcher) || [];
+    for (let i4 = 1; i4 < tokens.length; i4++) {
+      input = decodeComponents(tokens, i4).join("");
+      tokens = input.match(singleMatcher) || [];
+    }
+    return input;
+  }
+}
+function customDecodeURIComponent(input) {
+  const replaceMap = {
+    "%FE%FF": "\uFFFD\uFFFD",
+    "%FF%FE": "\uFFFD\uFFFD"
+  };
+  let match = multiMatcher.exec(input);
+  while (match) {
+    try {
+      replaceMap[match[0]] = decodeURIComponent(match[0]);
+    } catch {
+      const result = decode(match[0]);
+      if (result !== match[0]) {
+        replaceMap[match[0]] = result;
+      }
+    }
+    match = multiMatcher.exec(input);
+  }
+  replaceMap["%C2"] = "\uFFFD";
+  const entries = Object.keys(replaceMap);
+  for (const key of entries) {
+    input = input.replace(new RegExp(key, "g"), replaceMap[key]);
+  }
+  return input;
+}
+function decodeUriComponent(encodedURI) {
+  if (typeof encodedURI !== "string") {
+    throw new TypeError("Expected `encodedURI` to be of type `string`, got `" + typeof encodedURI + "`");
+  }
+  try {
+    return decodeURIComponent(encodedURI);
+  } catch {
+    return customDecodeURIComponent(encodedURI);
+  }
+}
+
+// node_modules/filter-obj/index.js
+init_preact_module();
+function includeKeys(object, predicate) {
+  const result = {};
+  if (Array.isArray(predicate)) {
+    for (const key of predicate) {
+      const descriptor = Object.getOwnPropertyDescriptor(object, key);
+      if (descriptor?.enumerable) {
+        Object.defineProperty(result, key, descriptor);
+      }
+    }
+  } else {
+    for (const key of Reflect.ownKeys(object)) {
+      const descriptor = Object.getOwnPropertyDescriptor(object, key);
+      if (descriptor.enumerable) {
+        const value = object[key];
+        if (predicate(key, value, object)) {
+          Object.defineProperty(result, key, descriptor);
+        }
+      }
+    }
+  }
+  return result;
+}
+
+// node_modules/split-on-first/index.js
+init_preact_module();
+function splitOnFirst(string, separator) {
+  if (!(typeof string === "string" && typeof separator === "string")) {
+    throw new TypeError("Expected the arguments to be of type `string`");
+  }
+  if (string === "" || separator === "") {
+    return [];
+  }
+  const separatorIndex = string.indexOf(separator);
+  if (separatorIndex === -1) {
+    return [];
+  }
+  return [
+    string.slice(0, separatorIndex),
+    string.slice(separatorIndex + separator.length)
+  ];
+}
+
+// node_modules/query-string/base.js
+var isNullOrUndefined = (value) => value === null || value === void 0;
+var strictUriEncode = (string) => encodeURIComponent(string).replaceAll(/[!'()*]/g, (x2) => `%${x2.charCodeAt(0).toString(16).toUpperCase()}`);
+var encodeFragmentIdentifier = Symbol("encodeFragmentIdentifier");
+function encoderForArrayFormat(options) {
+  switch (options.arrayFormat) {
+    case "index": {
+      return (key) => (result, value) => {
+        const index = result.length;
+        if (value === void 0 || options.skipNull && value === null || options.skipEmptyString && value === "") {
+          return result;
+        }
+        if (value === null) {
+          return [
+            ...result,
+            [encode(key, options), "[", index, "]"].join("")
+          ];
+        }
+        return [
+          ...result,
+          [encode(key, options), "[", encode(index, options), "]=", encode(value, options)].join("")
+        ];
+      };
+    }
+    case "bracket": {
+      return (key) => (result, value) => {
+        if (value === void 0 || options.skipNull && value === null || options.skipEmptyString && value === "") {
+          return result;
+        }
+        if (value === null) {
+          return [
+            ...result,
+            [encode(key, options), "[]"].join("")
+          ];
+        }
+        return [
+          ...result,
+          [encode(key, options), "[]=", encode(value, options)].join("")
+        ];
+      };
+    }
+    case "colon-list-separator": {
+      return (key) => (result, value) => {
+        if (value === void 0 || options.skipNull && value === null || options.skipEmptyString && value === "") {
+          return result;
+        }
+        if (value === null) {
+          return [
+            ...result,
+            [encode(key, options), ":list="].join("")
+          ];
+        }
+        return [
+          ...result,
+          [encode(key, options), ":list=", encode(value, options)].join("")
+        ];
+      };
+    }
+    case "comma":
+    case "separator":
+    case "bracket-separator": {
+      const keyValueSeparator = options.arrayFormat === "bracket-separator" ? "[]=" : "=";
+      return (key) => (result, value) => {
+        if (value === void 0 || options.skipNull && value === null || options.skipEmptyString && value === "") {
+          return result;
+        }
+        value = value === null ? "" : value;
+        if (result.length === 0) {
+          return [[encode(key, options), keyValueSeparator, encode(value, options)].join("")];
+        }
+        return [[result, encode(value, options)].join(options.arrayFormatSeparator)];
+      };
+    }
+    default: {
+      return (key) => (result, value) => {
+        if (value === void 0 || options.skipNull && value === null || options.skipEmptyString && value === "") {
+          return result;
+        }
+        if (value === null) {
+          return [
+            ...result,
+            encode(key, options)
+          ];
+        }
+        return [
+          ...result,
+          [encode(key, options), "=", encode(value, options)].join("")
+        ];
+      };
+    }
+  }
+}
+function parserForArrayFormat(options) {
+  let result;
+  switch (options.arrayFormat) {
+    case "index": {
+      return (key, value, accumulator) => {
+        result = /\[(\d*)]$/.exec(key);
+        key = key.replace(/\[\d*]$/, "");
+        if (!result) {
+          accumulator[key] = value;
+          return;
+        }
+        if (accumulator[key] === void 0) {
+          accumulator[key] = {};
+        }
+        accumulator[key][result[1]] = value;
+      };
+    }
+    case "bracket": {
+      return (key, value, accumulator) => {
+        result = /(\[])$/.exec(key);
+        key = key.replace(/\[]$/, "");
+        if (!result) {
+          accumulator[key] = value;
+          return;
+        }
+        if (accumulator[key] === void 0) {
+          accumulator[key] = [value];
+          return;
+        }
+        accumulator[key] = [...accumulator[key], value];
+      };
+    }
+    case "colon-list-separator": {
+      return (key, value, accumulator) => {
+        result = /(:list)$/.exec(key);
+        key = key.replace(/:list$/, "");
+        if (!result) {
+          accumulator[key] = value;
+          return;
+        }
+        if (accumulator[key] === void 0) {
+          accumulator[key] = [value];
+          return;
+        }
+        accumulator[key] = [...accumulator[key], value];
+      };
+    }
+    case "comma":
+    case "separator": {
+      return (key, value, accumulator) => {
+        const isArray = typeof value === "string" && value.includes(options.arrayFormatSeparator);
+        const isEncodedArray = typeof value === "string" && !isArray && decode2(value, options).includes(options.arrayFormatSeparator);
+        value = isEncodedArray ? decode2(value, options) : value;
+        const newValue = isArray || isEncodedArray ? value.split(options.arrayFormatSeparator).map((item) => decode2(item, options)) : value === null ? value : decode2(value, options);
+        accumulator[key] = newValue;
+      };
+    }
+    case "bracket-separator": {
+      return (key, value, accumulator) => {
+        const isArray = /(\[])$/.test(key);
+        key = key.replace(/\[]$/, "");
+        if (!isArray) {
+          accumulator[key] = value ? decode2(value, options) : value;
+          return;
+        }
+        const arrayValue = value === null ? [] : decode2(value, options).split(options.arrayFormatSeparator);
+        if (accumulator[key] === void 0) {
+          accumulator[key] = arrayValue;
+          return;
+        }
+        accumulator[key] = [...accumulator[key], ...arrayValue];
+      };
+    }
+    default: {
+      return (key, value, accumulator) => {
+        if (accumulator[key] === void 0) {
+          accumulator[key] = value;
+          return;
+        }
+        accumulator[key] = [...[accumulator[key]].flat(), value];
+      };
+    }
+  }
+}
+function validateArrayFormatSeparator(value) {
+  if (typeof value !== "string" || value.length !== 1) {
+    throw new TypeError("arrayFormatSeparator must be single character string");
+  }
+}
+function encode(value, options) {
+  if (options.encode) {
+    return options.strict ? strictUriEncode(value) : encodeURIComponent(value);
+  }
+  return value;
+}
+function decode2(value, options) {
+  if (options.decode) {
+    return decodeUriComponent(value);
+  }
+  return value;
+}
+function keysSorter(input) {
+  if (Array.isArray(input)) {
+    return input.sort();
+  }
+  if (typeof input === "object") {
+    return keysSorter(Object.keys(input)).sort((a3, b2) => Number(a3) - Number(b2)).map((key) => input[key]);
+  }
+  return input;
+}
+function removeHash(input) {
+  const hashStart = input.indexOf("#");
+  if (hashStart !== -1) {
+    input = input.slice(0, hashStart);
+  }
+  return input;
+}
+function getHash(url) {
+  let hash = "";
+  const hashStart = url.indexOf("#");
+  if (hashStart !== -1) {
+    hash = url.slice(hashStart);
+  }
+  return hash;
+}
+function parseValue(value, options, type) {
+  if (type === "string" && typeof value === "string") {
+    return value;
+  }
+  if (typeof type === "function" && typeof value === "string") {
+    return type(value);
+  }
+  if (options.parseBooleans && value !== null && (value.toLowerCase() === "true" || value.toLowerCase() === "false")) {
+    return value.toLowerCase() === "true";
+  }
+  if (type === "number" && !Number.isNaN(Number(value)) && (typeof value === "string" && value.trim() !== "")) {
+    return Number(value);
+  }
+  if (options.parseNumbers && !Number.isNaN(Number(value)) && (typeof value === "string" && value.trim() !== "")) {
+    return Number(value);
+  }
+  return value;
+}
+function extract(input) {
+  input = removeHash(input);
+  const queryStart = input.indexOf("?");
+  if (queryStart === -1) {
+    return "";
+  }
+  return input.slice(queryStart + 1);
+}
+function parse(query, options) {
+  options = {
+    decode: true,
+    sort: true,
+    arrayFormat: "none",
+    arrayFormatSeparator: ",",
+    parseNumbers: false,
+    parseBooleans: false,
+    types: /* @__PURE__ */ Object.create(null),
+    ...options
+  };
+  validateArrayFormatSeparator(options.arrayFormatSeparator);
+  const formatter = parserForArrayFormat(options);
+  const returnValue = /* @__PURE__ */ Object.create(null);
+  if (typeof query !== "string") {
+    return returnValue;
+  }
+  query = query.trim().replace(/^[?#&]/, "");
+  if (!query) {
+    return returnValue;
+  }
+  for (const parameter of query.split("&")) {
+    if (parameter === "") {
+      continue;
+    }
+    const parameter_ = options.decode ? parameter.replaceAll("+", " ") : parameter;
+    let [key, value] = splitOnFirst(parameter_, "=");
+    if (key === void 0) {
+      key = parameter_;
+    }
+    value = value === void 0 ? null : ["comma", "separator", "bracket-separator"].includes(options.arrayFormat) ? value : decode2(value, options);
+    formatter(decode2(key, options), value, returnValue);
+  }
+  for (const [key, value] of Object.entries(returnValue)) {
+    if (typeof value === "object" && value !== null && options.types[key] !== "string") {
+      for (const [key2, value2] of Object.entries(value)) {
+        const type = options.types[key] ? options.types[key].replace("[]", "") : void 0;
+        value[key2] = parseValue(value2, options, type);
+      }
+    } else if (typeof value === "object" && value !== null && options.types[key] === "string") {
+      returnValue[key] = Object.values(value).join(options.arrayFormatSeparator);
+    } else {
+      returnValue[key] = parseValue(value, options, options.types[key]);
+    }
+  }
+  if (options.sort === false) {
+    return returnValue;
+  }
+  return (options.sort === true ? Object.keys(returnValue).sort() : Object.keys(returnValue).sort(options.sort)).reduce((result, key) => {
+    const value = returnValue[key];
+    result[key] = Boolean(value) && typeof value === "object" && !Array.isArray(value) ? keysSorter(value) : value;
+    return result;
+  }, /* @__PURE__ */ Object.create(null));
+}
+function stringify(object, options) {
+  if (!object) {
+    return "";
+  }
+  options = {
+    encode: true,
+    strict: true,
+    arrayFormat: "none",
+    arrayFormatSeparator: ",",
+    ...options
+  };
+  validateArrayFormatSeparator(options.arrayFormatSeparator);
+  const shouldFilter = (key) => options.skipNull && isNullOrUndefined(object[key]) || options.skipEmptyString && object[key] === "";
+  const formatter = encoderForArrayFormat(options);
+  const objectCopy = {};
+  for (const [key, value] of Object.entries(object)) {
+    if (!shouldFilter(key)) {
+      objectCopy[key] = value;
+    }
+  }
+  const keys = Object.keys(objectCopy);
+  if (options.sort !== false) {
+    keys.sort(options.sort);
+  }
+  return keys.map((key) => {
+    const value = object[key];
+    if (value === void 0) {
+      return "";
+    }
+    if (value === null) {
+      return encode(key, options);
+    }
+    if (Array.isArray(value)) {
+      if (value.length === 0 && options.arrayFormat === "bracket-separator") {
+        return encode(key, options) + "[]";
+      }
+      return value.reduce(formatter(key), []).join("&");
+    }
+    return encode(key, options) + "=" + encode(value, options);
+  }).filter((x2) => x2.length > 0).join("&");
+}
+function parseUrl(url, options) {
+  options = {
+    decode: true,
+    ...options
+  };
+  let [url_, hash] = splitOnFirst(url, "#");
+  if (url_ === void 0) {
+    url_ = url;
+  }
+  return {
+    url: url_?.split("?")?.[0] ?? "",
+    query: parse(extract(url), options),
+    ...options && options.parseFragmentIdentifier && hash ? { fragmentIdentifier: decode2(hash, options) } : {}
+  };
+}
+function stringifyUrl(object, options) {
+  options = {
+    encode: true,
+    strict: true,
+    [encodeFragmentIdentifier]: true,
+    ...options
+  };
+  const url = removeHash(object.url).split("?")[0] || "";
+  const queryFromUrl = extract(object.url);
+  const query = {
+    ...parse(queryFromUrl, { sort: false }),
+    ...object.query
+  };
+  let queryString = stringify(query, options);
+  queryString &&= `?${queryString}`;
+  let hash = getHash(object.url);
+  if (typeof object.fragmentIdentifier === "string") {
+    const urlObjectForFragmentEncode = new URL(url);
+    urlObjectForFragmentEncode.hash = object.fragmentIdentifier;
+    hash = options[encodeFragmentIdentifier] ? urlObjectForFragmentEncode.hash : `#${object.fragmentIdentifier}`;
+  }
+  return `${url}${queryString}${hash}`;
+}
+function pick(input, filter, options) {
+  options = {
+    parseFragmentIdentifier: true,
+    [encodeFragmentIdentifier]: false,
+    ...options
+  };
+  const { url, query, fragmentIdentifier } = parseUrl(input, options);
+  return stringifyUrl({
+    url,
+    query: includeKeys(query, filter),
+    fragmentIdentifier
+  }, options);
+}
+function exclude(input, filter, options) {
+  const exclusionFilter = Array.isArray(filter) ? (key) => !filter.includes(key) : (key, value) => !filter(key, value);
+  return pick(input, exclusionFilter, options);
+}
+
+// node_modules/query-string/index.js
+var query_string_default = base_exports;
+
+// src/lib/Router.ts
+var import_routes = __toESM(require_routes());
+console.log(`routes`, import_config.routes);
+var ROUTE_CHANGE_EVENT = "route-change";
+var Router = class {
+  parser = void 0;
+  routes = import_config.routes;
+  route = void 0;
+  routeParams = void 0;
+  routeArgs;
+  constructor() {
+    this.parser = (0, import_routes.default)();
+    this.registerRoutes(import_config.routes);
+    window.addEventListener("popstate", (e4) => {
+      if (e4.state?.url) this.navigate(e4.state?.url);
+    });
+  }
+  registerRoutes = (routes3) => {
+    if (this.parser) {
+      Object.keys(routes3).forEach((r3) => this.parser.addRoute(r3, this._onRouteChange));
+    }
+  };
+  // try to find and load a route, change page url, and emit route-change event
+  navigate = (url, emit = true) => {
+    let r3 = this.loadUrl(url);
+    if (!r3 && url != "/page-not-found") return this.navigate("/page-not-found");
+    window.history.pushState({ url, params: r3.params }, "", url);
+    if (emit) EventService_default.dispatch(ROUTE_CHANGE_EVENT, r3);
+  };
+  // given a url, try to match a route and set variables.
+  loadUrl = (url) => {
+    let qp = url.indexOf("?");
+    let r3 = this.parser.match(qp != -1 ? url.slice(0, qp) : url);
+    if (r3) {
+      let args = qp != -1 ? url.slice(qp, url.length) : "";
+      r3.args = query_string_default.parse(args);
+      r3.fn(r3);
+      return r3;
+    } else {
+      return false;
+    }
+  };
+  // auto-change handler from url change.
+  _onRouteChange = (r3) => {
+    this.route = r3.route;
+    this.routeParams = r3.params;
+  };
+};
+var router = new Router();
+
 // src/lib/hooks/useRouter.ts
 init_hooks_module();
-var ROUTE_CHANGE_EVENT = "route-change";
 function useRouter() {
   const [route, setRoute] = h2(void 0);
   const [routeParams, setRouteParams] = h2(void 0);
   const [routeArgs, setRouteArgs] = h2(void 0);
+  function handleRouteChange(e4) {
+    setRoute(e4.target.route);
+    setRouteParams(e4.target.params);
+    setRouteArgs(e4.target.args);
+  }
   y2(() => {
-    function handleRouteChange(e4) {
-      setRoute(e4.target.route);
-      setRouteParams(e4.target.params);
-    }
     EventService_default.subscribe(ROUTE_CHANGE_EVENT, handleRouteChange);
     return () => {
       EventService_default.unsubscribe(ROUTE_CHANGE_EVENT, handleRouteChange);
     };
-  });
-  const navigate = (to) => {
-    console.log(`navigate`, to);
-    setRoute(to);
-    setRouteParams(void 0);
-    setRouteArgs(void 0);
-  };
-  return { route, routeParams, navigate };
+  }, []);
+  return { route, routeParams, routeArgs, navigate: router.navigate };
 }
 
 // src/components/shared/RouteContext/RouteContext.tsx
@@ -5587,12 +6299,12 @@ init_hooks_module();
 function RouteContext() {
   const { route, routeParams, navigate } = useRouter();
   y2(() => {
-    console.log(`route to:`, location.pathname, import_config.DEFAULT_ROUTE);
     let l3 = location.pathname;
-    if (l3 == "/" || l3 == "") l3 = import_config.DEFAULT_ROUTE;
+    if (l3 == "/" || l3 == "") l3 = import_config2.DEFAULT_ROUTE;
+    else l3 += location.search;
     if (!route) navigate(l3);
   }, []);
-  return route ? typeof import_config.routes[route] != "undefined" ? import_config.routes[route](routeParams) : "Not found." : "";
+  return route ? typeof import_config2.routes[route] != "undefined" ? import_config2.routes[route](routeParams) : "Not found." : "";
 }
 
 // src/components/app/App.tsx

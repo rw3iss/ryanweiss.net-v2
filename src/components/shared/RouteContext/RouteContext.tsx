@@ -6,11 +6,11 @@ export function RouteContext() {
 
     const { route, routeParams, navigate } = useRouter();
 
-    // tell the router to try to load the initial url
+    // tell the router to try to render the current or default route
     useEffect(() => {
-        console.log(`route to:`, location.pathname, DEFAULT_ROUTE);
         let l = location.pathname;
         if (l == '/' || l == '') l = DEFAULT_ROUTE;
+        else l += location.search;
         if (!route) navigate(l);
     }, []);
 
@@ -19,3 +19,4 @@ export function RouteContext() {
             typeof routes[route] != 'undefined' ? routes[route](routeParams) : "Not found.") : ''
     )
 }
+
