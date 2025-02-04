@@ -3,10 +3,9 @@ import { TabPlugin } from 'components/shared/BlobEditor/plugins/TabPlugin';
 import { ToolbarPlugin } from 'components/shared/BlobEditor/plugins/ToolbarPlugin';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Blob, BlobContent } from 'types/Blob';
-import { throttle } from 'utils/throttle';
 import { BlobService } from './lib/BlobService'; // Assuming BlobService is in this path
 import { WEditor } from './lib/WEditor';
-import { DragDropPlugin } from './plugins/DragDropPlugin.ts';
+import { FilePlugin } from './plugins/FilePlugin';
 import './styles/BlobEditor.scss';
 
 interface Props {
@@ -53,7 +52,7 @@ export const BlobEditor: FunctionComponent<Props> = ({ blob: initialBlob }) => {
                 [
                     new ToolbarPlugin(),
                     new TabPlugin(),
-                    new DragDropPlugin(),
+                    new FilePlugin(),
                     new PastePlugin()
                 ]
             );

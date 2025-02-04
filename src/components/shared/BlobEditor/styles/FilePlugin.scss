@@ -1,0 +1,9 @@
+[content-editable]:read-only {
+    cursor: not-allowed;
+}
+
+.file-preview {
+    .remove-button {
+        cursor: not-allowed;
+    }
+}

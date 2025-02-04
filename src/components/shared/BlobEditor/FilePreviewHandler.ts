@@ -9,6 +9,7 @@ export class FilePreviewHandler {
 
     public createPreview(file: File, range: Range): void {
         let previewElement: HTMLElement;
+        console.log(`insert file`, file.type)
 
         if (file.type.startsWith('image/')) {
             previewElement = this.renderImage(file);
@@ -16,6 +17,8 @@ export class FilePreviewHandler {
             previewElement = this.renderVideo(file);
         } else if (file.type.startsWith('audio/')) {
             previewElement = this.renderAudio(file);
+        } else if (file.type.startsWith('text/')) {
+            previewElement = this.renderText(file);
         } else {
             previewElement = this.renderGeneric(file);
         }
@@ -62,6 +65,12 @@ export class FilePreviewHandler {
         return this.wrapPreview(audio, 'audio');
     }
 
+    private renderText(file: File): HTMLElement {
+        const div = document.createElement('div');
+        div.textContent = file.name;
+        return this.wrapPreview(div, 'text');
+    }
+
     private renderGeneric(file: File): HTMLElement {
         const div = document.createElement('div');
         div.textContent = file.name;
@@ -70,6 +79,7 @@ export class FilePreviewHandler {
 
     private wrapPreview(element: HTMLElement, type: string): HTMLElement {
         const wrapper = document.createElement('div');
+        wrapper.setAttribute('contenteditable', "false");
         wrapper.className = `file-preview ${type}-preview`;
         wrapper.appendChild(element);
 

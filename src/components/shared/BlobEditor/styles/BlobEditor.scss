@@ -93,6 +93,7 @@ $padding: 20px; // General padding for elements
         text-align: center;
         padding: $padding;
     }
-}
 
-@import "./ToolbarPlugin.scss";
+    @import "./ToolbarPlugin.scss";
+    @import "./FilePlugin.scss";
+}

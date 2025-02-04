@@ -1,18 +1,16 @@
-:root {
+.toolbar-container {
     --toolbar-bg-color: #f0f0f0;
-    --toolbar-padding: 1px;
-    --item-padding: 1px;
+    --toolbar-padding: 2px;
+    --item-padding: 2px;
     --item-margin: 1px;
     --group-margin: 0 2px;
     --dropdown-x-offset: 0px;
-    --dropdown-y-offset: 0px;
+    --toolbar-dropdown-y-offset: 0px;
     --button-bg: #fff;
     --button-text-color: #000;
     --button-font-size: 12px;
     --icon-size: 20px;
-}
 
-.toolbar-container {
     position: absolute;
     z-index: 1000;
     background: var(--toolbar-bg-color);

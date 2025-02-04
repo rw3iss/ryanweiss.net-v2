@@ -709,10 +709,10 @@ var init_Dropdown = __esm({
       toolbar;
       hideTimeout = null;
       isVisible = false;
-      constructor(button, items, toolbar2) {
+      constructor(button, items, toolbar) {
         this.dropdownButton = button;
         this.items = items;
-        this.toolbar = toolbar2;
+        this.toolbar = toolbar;
         this.dropdownMenu = this.createDropdownMenu();
       }
       createDropdownMenu() {
@@ -720,7 +720,7 @@ var init_Dropdown = __esm({
         menu.className = "dropdown-menu";
         menu.style.display = "none";
         this.items.forEach((item) => {
-          createToolbarItem(item, menu, toolbar);
+          createToolbarItem(item, menu, this.toolbar);
         });
         this.dropdownButton.appendChild(menu);
         menu.addEventListener("mouseleave", this.startHideTimer.bind(this));
@@ -796,8 +796,8 @@ var init_Dropdown = __esm({
 });
 
 // src/components/shared/BlobEditor/plugins/ToolbarPlugin.ts
-function createToolbarItem(item, parent, toolbar2) {
-  this.toolbar = toolbar2;
+function createToolbarItem(item, parent, toolbar) {
+  this.toolbar = toolbar;
   if (item.type === "button") {
     const button = document.createElement("button");
     button.className = "toolbar-button";
@@ -836,13 +836,13 @@ function createToolbarItem(item, parent, toolbar2) {
     const arrow = document.createElement("span");
     arrow.textContent = "\u25BC";
     dropdownButton.appendChild(arrow);
-    const dropdown = new Dropdown(dropdownButton, item.items, toolbar2);
+    const dropdown = new Dropdown(dropdownButton, item.items, toolbar);
     parent.appendChild(dropdownButton);
   } else if (item.type === "group") {
     const group = document.createElement("div");
     group.className = "toolbar-group";
     if (Array.isArray(item.items)) {
-      item.items.forEach((groupItem) => createToolbarItem(groupItem, group, toolbar2));
+      item.items.forEach((groupItem) => createToolbarItem(groupItem, group, toolbar));
     }
     parent.appendChild(group);
   }
@@ -2427,12 +2427,15 @@ var init_FilePreviewHandler = __esm({
       }
       createPreview(file, range) {
         let previewElement;
+        console.log(`insert file`, file.type);
         if (file.type.startsWith("image/")) {
           previewElement = this.renderImage(file);
         } else if (file.type.startsWith("video/")) {
           previewElement = this.renderVideo(file);
         } else if (file.type.startsWith("audio/")) {
           previewElement = this.renderAudio(file);
+        } else if (file.type.startsWith("text/")) {
+          previewElement = this.renderText(file);
         } else {
           previewElement = this.renderGeneric(file);
         }
@@ -2467,6 +2470,11 @@ var init_FilePreviewHandler = __esm({
         audio.controls = true;
         return this.wrapPreview(audio, "audio");
       }
+      renderText(file) {
+        const div = document.createElement("div");
+        div.textContent = file.name;
+        return this.wrapPreview(div, "text");
+      }
       renderGeneric(file) {
         const div = document.createElement("div");
         div.textContent = file.name;
@@ -2474,6 +2482,7 @@ var init_FilePreviewHandler = __esm({
       }
       wrapPreview(element, type) {
         const wrapper = document.createElement("div");
+        wrapper.setAttribute("contenteditable", "false");
         wrapper.className = `file-preview ${type}-preview`;
         wrapper.appendChild(element);
         const deleteButton = document.createElement("button");
@@ -2490,57 +2499,59 @@ var init_FilePreviewHandler = __esm({
   }
 });
 
-// src/components/shared/BlobEditor/plugins/DragDropPlugin.ts
-var DragDropPlugin;
-var init_DragDropPlugin = __esm({
-  "src/components/shared/BlobEditor/plugins/DragDropPlugin.ts"() {
+// src/components/shared/BlobEditor/plugins/FilePlugin.ts
+var FilePlugin;
+var init_FilePlugin = __esm({
+  "src/components/shared/BlobEditor/plugins/FilePlugin.ts"() {
     "use strict";
     init_preact_module();
     init_FilePreviewHandler();
-    DragDropPlugin = class {
+    FilePlugin = class {
       // private editor: WEditor;
       // private container: HTMLElement;
       filePreviewHandler;
+      input;
       initialize(editor, container) {
         this.filePreviewHandler = new FilePreviewHandler(editor);
         container.addEventListener("dragover", this.handleDragOver);
         container.addEventListener("drop", this.handleDrop);
+        this.input = document.createElement("input");
+        this.input.type = "file";
+        this.input.multiple = true;
+        this.input.style.display = "none";
+        this.input.addEventListener("change", (e4) => {
+          this.insertFiles(Array.from(e4.target.files));
+        });
+        container.appendChild(this.input);
       }
       handleToolbarFile = (e4) => {
-        console.log(`toolbar file click.`);
+        this.input.click();
       };
       toolbar = {
-        type: "group",
-        items: [
-          {
-            type: "button",
-            icon: "/public/icons/icon-add-file.svg",
-            label: "+File",
-            onClick: this.handleToolbarFile
-          },
-          {
-            type: "button",
-            icon: "/public/icons/icon-test.svg",
-            label: "Test",
-            onClick: this.handleToolbarFile
-          }
-        ]
+        type: "button",
+        icon: "/public/icons/icon-add-file.svg",
+        label: "File",
+        onClick: this.handleToolbarFile
       };
       handleDragOver = (e4) => {
         console.log(`drag over`);
         e4.preventDefault();
       };
-      handleDrop = (e4) => {
-        e4.preventDefault();
-        if (!e4.dataTransfer) return;
-        const files = Array.from(e4.dataTransfer.files);
+      insertFiles = (files) => {
         files.forEach((file) => {
           const selection = window.getSelection();
+          console.log(`insert`, file, selection);
           if (selection && selection.rangeCount) {
             const range = selection.getRangeAt(0);
             this.filePreviewHandler.createPreview(file, range);
           }
         });
+      };
+      handleDrop = (e4) => {
+        e4.preventDefault();
+        if (!e4.dataTransfer) return;
+        const files = Array.from(e4.dataTransfer.files);
+        this.insertFiles(files);
       };
     };
   }
@@ -2565,7 +2576,7 @@ var init_BlobEditor2 = __esm({
     init_Blob();
     init_BlobService();
     init_WEditor();
-    init_DragDropPlugin();
+    init_FilePlugin();
     init_BlobEditor();
     init_jsxRuntime_module();
     BlobEditor = ({ blob: initialBlob }) => {
@@ -2604,7 +2615,7 @@ var init_BlobEditor2 = __esm({
             [
               new ToolbarPlugin(),
               new TabPlugin(),
-              new DragDropPlugin(),
+              new FilePlugin(),
               new PastePlugin()
             ]
           );

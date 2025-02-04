@@ -22,7 +22,7 @@ export class Dropdown {
         menu.style.display = 'none';
 
         this.items.forEach(item => {
-            createToolbarItem(item, menu, toolbar)
+            createToolbarItem(item, menu, this.toolbar)
         });
 
         this.dropdownButton.appendChild(menu);
