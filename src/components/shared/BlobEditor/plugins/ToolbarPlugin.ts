@@ -1,6 +1,7 @@
 import { WEditor } from '../lib/WEditor';
 import { Dropdown } from './Dropdown'; // Assuming Dropdown class is in this file
 import { IPlugin } from './IPlugin';
+import { debounce } from 'lib/utils/debounce';
 
 export function createToolbarItem(item: any, parent: HTMLElement, toolbar: ToolbarPlugin) {
     this.toolbar = toolbar;
@@ -20,7 +21,10 @@ export function createToolbarItem(item: any, parent: HTMLElement, toolbar: Toolb
             button.appendChild(label);
         }
         if (item.onClick) {
-            button.addEventListener('click', () => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                e.stopPropagation();
                 item.onClick.call(this.toolbar);
                 this.toolbar.hideToolbar();
             });
@@ -72,7 +76,7 @@ export class ToolbarPlugin implements IPlugin {
     initialize(editor: WEditor, container: HTMLElement) {
         this.editor = editor;
         this.initUI(container);
-        container.addEventListener('mouseup', this.checkForSelection);
+        container.addEventListener('mouseup', debounce(this.checkForSelection, 100));
         container.addEventListener('contextmenu', this.showToolbar);
         document.addEventListener('keydown', this.handleEscapeKey);
     }
@@ -103,8 +107,8 @@ export class ToolbarPlugin implements IPlugin {
 
     private checkForSelection = (e: MouseEvent) => {
         const s = window.getSelection()?.toString().length;
-        //console.log(`up`, s, window.getSelection())
-        if (s > 0) {
+        console.log(`up`, e, s, window.getSelection())
+        if (s > 0 || e.button == 2) { // right click or selection
             this.showToolbar(e);
         } else {
             this.hideToolbar();
@@ -115,7 +119,6 @@ export class ToolbarPlugin implements IPlugin {
         if (!this.toolbarContainer || this.toolbarContainer.children.length === 0) return;
         if (this.isVisible) return;
 
-        console.log(`show`, e);
         e.preventDefault();
         e.stopPropagation();
 
@@ -124,7 +127,7 @@ export class ToolbarPlugin implements IPlugin {
         const windowWidth = window.innerWidth;
 
         this.toolbarContainer.style.top = `${rect.top - this.toolbarContainer.offsetHeight}px`;
-        this.toolbarContainer.style.left = `${e.clientX + 20}px`;
+        this.toolbarContainer.style.left = `${e.clientX + 10}px`;
 
         // Adjust position if toolbar goes off-screen
         if (e.clientX + this.toolbarContainer.offsetWidth > windowWidth) {
@@ -154,6 +157,12 @@ export class ToolbarPlugin implements IPlugin {
         }
     };
 
+    private funcs = {
+        clearAll: () => {
+            this.editor.clearContent();
+        }
+    };
+
     toolbar = {
         type: 'group',
         items: [
@@ -175,6 +184,12 @@ export class ToolbarPlugin implements IPlugin {
                         onClick: (t) => console.log('History button clicked')
                     }
                 ]
+            },
+            {
+                type: 'button',
+                icon: '/public/icons/icon-clear.svg',
+                label: 'Clear',
+                onClick: this.funcs.clearAll,
             },
             {
                 type: 'button',

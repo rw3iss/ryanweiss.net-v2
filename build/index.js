@@ -795,6 +795,26 @@ var init_Dropdown = __esm({
   }
 });
 
+// src/lib/utils/debounce.ts
+function debounce(func, delay) {
+  let timeoutId = null;
+  return function(...args) {
+    const context = this;
+    const later = () => {
+      timeoutId = null;
+      func.apply(context, args);
+    };
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(later, delay);
+  };
+}
+var init_debounce = __esm({
+  "src/lib/utils/debounce.ts"() {
+    "use strict";
+    init_preact_module();
+  }
+});
+
 // src/components/shared/BlobEditor/plugins/ToolbarPlugin.ts
 function createToolbarItem(item, parent, toolbar) {
   this.toolbar = toolbar;
@@ -813,7 +833,10 @@ function createToolbarItem(item, parent, toolbar) {
       button.appendChild(label);
     }
     if (item.onClick) {
-      button.addEventListener("click", () => {
+      button.addEventListener("click", (e4) => {
+        e4.preventDefault();
+        e4.stopImmediatePropagation();
+        e4.stopPropagation();
         item.onClick.call(this.toolbar);
         this.toolbar.hideToolbar();
       });
@@ -854,6 +877,7 @@ var init_ToolbarPlugin = __esm({
     "use strict";
     init_preact_module();
     init_Dropdown();
+    init_debounce();
     ToolbarPlugin = class _ToolbarPlugin {
       editor;
       toolbarContainer = null;
@@ -863,7 +887,7 @@ var init_ToolbarPlugin = __esm({
       initialize(editor, container) {
         this.editor = editor;
         this.initUI(container);
-        container.addEventListener("mouseup", this.checkForSelection);
+        container.addEventListener("mouseup", debounce(this.checkForSelection, 100));
         container.addEventListener("contextmenu", this.showToolbar);
         document.addEventListener("keydown", this.handleEscapeKey);
       }
@@ -889,7 +913,8 @@ var init_ToolbarPlugin = __esm({
       }
       checkForSelection = (e4) => {
         const s3 = window.getSelection()?.toString().length;
-        if (s3 > 0) {
+        console.log(`up`, e4, s3, window.getSelection());
+        if (s3 > 0 || e4.button == 2) {
           this.showToolbar(e4);
         } else {
           this.hideToolbar();
@@ -898,13 +923,12 @@ var init_ToolbarPlugin = __esm({
       showToolbar = (e4) => {
         if (!this.toolbarContainer || this.toolbarContainer.children.length === 0) return;
         if (this.isVisible) return;
-        console.log(`show`, e4);
         e4.preventDefault();
         e4.stopPropagation();
         const rect = e4.target instanceof Element ? e4.target.getBoundingClientRect() : { top: 0, left: 0 };
         const windowWidth = window.innerWidth;
         this.toolbarContainer.style.top = `${rect.top - this.toolbarContainer.offsetHeight}px`;
-        this.toolbarContainer.style.left = `${e4.clientX + 20}px`;
+        this.toolbarContainer.style.left = `${e4.clientX + 10}px`;
         if (e4.clientX + this.toolbarContainer.offsetWidth > windowWidth) {
           this.toolbarContainer.style.left = `${windowWidth - this.toolbarContainer.offsetWidth}px`;
         }
@@ -923,6 +947,11 @@ var init_ToolbarPlugin = __esm({
       handleEscapeKey = (e4) => {
         if (e4.key === "Escape" && this.isVisible) {
           this.hideToolbar();
+        }
+      };
+      funcs = {
+        clearAll: () => {
+          this.editor.clearContent();
         }
       };
       toolbar = {
@@ -948,6 +977,12 @@ var init_ToolbarPlugin = __esm({
                 onClick: (t3) => console.log("History button clicked")
               }
             ]
+          },
+          {
+            type: "button",
+            icon: "/public/icons/icon-clear.svg",
+            label: "Clear",
+            onClick: this.funcs.clearAll
           },
           {
             type: "button",
@@ -2335,6 +2370,11 @@ var init_WEditor = __esm({
         this.initialize();
         this.initPlugins();
       }
+      // clear content
+      clearContent() {
+        this.contentEditable.innerHTML = "";
+        this.applyChanges();
+      }
       initialize() {
         if (!this.container) {
           console.error("WEditor initialization failed: Container is null");
@@ -2415,11 +2455,31 @@ var init_WEditor = __esm({
 });
 
 // src/components/shared/BlobEditor/FilePreviewHandler.ts
-var FilePreviewHandler;
+var rowLabelEl, printBytes, FilePreviewHandler;
 var init_FilePreviewHandler = __esm({
   "src/components/shared/BlobEditor/FilePreviewHandler.ts"() {
     "use strict";
     init_preact_module();
+    rowLabelEl = (label, innerHtml) => {
+      const el = document.createElement("div");
+      el.className = "row-label";
+      el.innerHTML = `<span class="label">${label}</span><div class="inner">${innerHtml}</div>`;
+      return el;
+    };
+    printBytes = (b2) => {
+      let kb = b2 / 1024;
+      let mb = kb / 1024;
+      if (mb >= 1) {
+        let kbr = kb - mb * 1024;
+        return `${mb.toFixed(0)}mb${kbr > 0 ? `${kbr}kb` : ``}`;
+      } else {
+        if (kb >= 1) {
+          let br = b2 - kb * 1024;
+          return `${kb.toFixed(0)}kb${br > 0 ? `${br}b` : ``}`;
+        }
+        return `${b2}b`;
+      }
+    };
     FilePreviewHandler = class {
       editor;
       constructor(editor) {
@@ -2456,39 +2516,49 @@ var init_FilePreviewHandler = __esm({
       renderImage(file) {
         const img = document.createElement("img");
         img.src = URL.createObjectURL(file);
-        return this.wrapPreview(img, "image");
+        return this.wrapPreview(img, file, "image");
       }
       renderVideo(file) {
         const video = document.createElement("video");
         video.src = URL.createObjectURL(file);
         video.controls = true;
-        return this.wrapPreview(video, "video");
+        return this.wrapPreview(video, file, "video");
       }
       renderAudio(file) {
         const audio = document.createElement("audio");
         audio.src = URL.createObjectURL(file);
         audio.controls = true;
-        return this.wrapPreview(audio, "audio");
+        return this.wrapPreview(audio, file, "audio");
       }
       renderText(file) {
         const div = document.createElement("div");
         div.textContent = file.name;
-        return this.wrapPreview(div, "text");
+        return this.wrapPreview(div, file, "text");
       }
       renderGeneric(file) {
         const div = document.createElement("div");
         div.textContent = file.name;
-        return this.wrapPreview(div, "file");
+        return this.wrapPreview(div, file, "file");
       }
-      wrapPreview(element, type) {
+      wrapPreview(element, file, type) {
+        element.classList.add("file-thumb");
         const wrapper = document.createElement("div");
         wrapper.setAttribute("contenteditable", "false");
         wrapper.className = `file-preview ${type}-preview`;
         wrapper.appendChild(element);
+        const meta = document.createElement("div");
+        meta.className = "file-options";
+        const info = document.createElement("div");
+        info.className = "file-info";
+        info.appendChild(rowLabelEl("Name:", file.name));
+        info.appendChild(rowLabelEl("Size:", printBytes(file.size)));
+        meta.appendChild(info);
         const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Remove";
+        deleteButton.className = "remove-button";
+        deleteButton.textContent = "X";
         deleteButton.addEventListener("click", () => this.removePreview(wrapper));
-        wrapper.appendChild(deleteButton);
+        meta.appendChild(deleteButton);
+        wrapper.appendChild(meta);
         return wrapper;
       }
       removePreview(previewElement) {

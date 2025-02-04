@@ -1,5 +1,27 @@
 import { WEditor } from './lib/WEditor';
 
+const rowLabelEl = (label, innerHtml) => {
+    const el = document.createElement('div');
+    el.className = 'row-label';
+    el.innerHTML = `<span class="label">${label}</span><div class="inner">${innerHtml}</div>`;
+    return el;
+};
+
+const printBytes = (b) => {
+    let kb = b / 1024;
+    let mb = kb / 1024;
+    if (mb >= 1) {
+        let kbr = kb - (mb * 1024);
+        return `${mb.toFixed(0)}mb${kbr > 0 ? `${kbr}kb` : ``}`;
+    } else {
+        if (kb >= 1) {
+            let br = b - (kb * 1024);
+            return `${kb.toFixed(0)}kb${br > 0 ? `${br}b` : ``}`;
+        }
+        return `${b}b`;
+    }
+}
+
 export class FilePreviewHandler {
     private editor: WEditor;
 
@@ -48,46 +70,61 @@ export class FilePreviewHandler {
     private renderImage(file: File): HTMLElement {
         const img = document.createElement('img');
         img.src = URL.createObjectURL(file);
-        return this.wrapPreview(img, 'image');
+        return this.wrapPreview(img, file, 'image');
     }
 
     private renderVideo(file: File): HTMLElement {
         const video = document.createElement('video');
         video.src = URL.createObjectURL(file);
         video.controls = true;
-        return this.wrapPreview(video, 'video');
+        return this.wrapPreview(video, file, 'video');
     }
 
     private renderAudio(file: File): HTMLElement {
         const audio = document.createElement('audio');
         audio.src = URL.createObjectURL(file);
         audio.controls = true;
-        return this.wrapPreview(audio, 'audio');
+        return this.wrapPreview(audio, file, 'audio');
     }
 
     private renderText(file: File): HTMLElement {
         const div = document.createElement('div');
         div.textContent = file.name;
-        return this.wrapPreview(div, 'text');
+        return this.wrapPreview(div, file, 'text');
     }
 
     private renderGeneric(file: File): HTMLElement {
         const div = document.createElement('div');
         div.textContent = file.name;
-        return this.wrapPreview(div, 'file');
+        return this.wrapPreview(div, file, 'file');
     }
 
-    private wrapPreview(element: HTMLElement, type: string): HTMLElement {
+    private wrapPreview(element: HTMLElement, file, type: string): HTMLElement {
+        element.classList.add('file-thumb');
         const wrapper = document.createElement('div');
         wrapper.setAttribute('contenteditable', "false");
         wrapper.className = `file-preview ${type}-preview`;
         wrapper.appendChild(element);
 
+        // Add info section + options
+        const meta = document.createElement('div');
+        meta.className = 'file-options';
+
+        const info = document.createElement('div');
+        info.className = 'file-info';
+        info.appendChild(rowLabelEl('Name:', file.name));
+        info.appendChild(rowLabelEl('Size:', printBytes(file.size)));
+
+        meta.appendChild(info);
+
         // Add delete button
         const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Remove';
+        deleteButton.className = "remove-button";
+        deleteButton.textContent = 'X';
         deleteButton.addEventListener('click', () => this.removePreview(wrapper));
-        wrapper.appendChild(deleteButton);
+        meta.appendChild(deleteButton);
+
+        wrapper.appendChild(meta);
 
         return wrapper;
     }

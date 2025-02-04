@@ -26,6 +26,12 @@ export class WEditor {
         this.initPlugins();
     }
 
+    // clear content
+    public clearContent() {
+        this.contentEditable.innerHTML = '';
+        this.applyChanges();
+    }
+
     private initialize() {
         if (!this.container) {
             console.error('WEditor initialization failed: Container is null');

@@ -515,14 +515,39 @@
   font-size: 10px;
   margin-left: 5px;
 }
-.blob-editor [content-editable]:-moz-read-only {
-  cursor: not-allowed;
+.blob-editor .file-preview {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  max-width: 200px;
+  max-height: 200px;
+  border: 1px solid #aaa;
+  border-radius: 10px;
+  overflow: hidden;
 }
-.blob-editor [content-editable]:read-only {
-  cursor: not-allowed;
+.blob-editor .file-preview .file-thumb {
+  border: 1px solid red;
 }
-.blob-editor .file-preview .remove-button {
-  cursor: not-allowed;
+.blob-editor .file-preview .file-options {
+  display: flex;
+  background: #aaa;
+}
+.blob-editor .file-preview .file-options .file-info {
+  font-size: 0.85em;
+  padding: 5px;
+  line-height: 1em;
+}
+.blob-editor .file-preview .file-options .file-info .row-label {
+  display: flex;
+}
+.blob-editor .file-preview .file-options .file-info .row-label .label {
+  font-weight: bold;
+  padding-right: 3px;
+}
+.blob-editor .file-preview .file-options .remove-button {
+  cursor: pointer;
+  margin: 0 0 0 auto;
+  padding: 2px;
 }
 
 /* src/components/pages/Other/style.scss */

@@ -1,9 +1,43 @@
-[content-editable]:read-only {
-    cursor: not-allowed;
-}
-
 .file-preview {
-    .remove-button {
-        cursor: not-allowed;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+    max-width: 200px;
+    max-height: 200px;
+    border: 1px solid #aaa;
+    border-radius: 10px;
+    overflow: hidden;
+
+    .file-thumb {
+        border: 1px solid red;
+    }
+
+    .file-options {
+        display: flex;
+        background: #aaa;
+
+        .file-info {
+            font-size: 0.85em;
+            padding: 5px;
+            line-height: 1em;
+
+            .row-label {
+                display: flex;
+
+                .label {
+                    font-weight: bold;
+                    padding-right: 3px;
+                }
+
+                .inner {
+                }
+            }
+        }
+
+        .remove-button {
+            cursor: pointer;
+            margin: 0 0 0 auto;
+            padding: 2px;
+        }
     }
 }
