@@ -3,6 +3,7 @@ import { Dropdown } from './Dropdown'; // Assuming Dropdown class is in this fil
 import { IPlugin } from './IPlugin';
 
 export function createToolbarItem(item: any, parent: HTMLElement, toolbar: ToolbarPlugin) {
+    this.toolbar = toolbar;
     if (item.type === 'button') {
         const button = document.createElement('button');
         button.className = 'toolbar-button';
@@ -19,8 +20,9 @@ export function createToolbarItem(item: any, parent: HTMLElement, toolbar: Toolb
         }
         if (item.onClick) {
             button.addEventListener('click', () => {
-                item.onClick.call(toolbar);
-                this.hideToolbar();
+                item.onClick.call(this.toolbar);
+                console.log(`toolbar`, this.toolbar)
+                this.toolbar.hideToolbar();
             });
         }
         parent.appendChild(button);
@@ -107,7 +109,7 @@ export class ToolbarPlugin implements IPlugin {
         }
     };
 
-    private showToolbar = (e: MouseEvent) => {
+    public showToolbar = (e: MouseEvent) => {
         if (!this.toolbarContainer || this.toolbarContainer.children.length === 0) return;
         if (this.isVisible) return;
 
@@ -131,7 +133,7 @@ export class ToolbarPlugin implements IPlugin {
         this.isVisible = true;
     };
 
-    private hideToolbar = () => {
+    public hideToolbar = () => {
         if (!this.toolbarContainer) return;
 
         this.toolbarContainer.style.display = 'none';

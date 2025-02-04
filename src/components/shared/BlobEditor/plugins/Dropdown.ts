@@ -1,15 +1,18 @@
 import { createToolbarItem } from 'components/shared/BlobEditor/plugins/ToolbarPlugin';
+import { ToolbarPlugin } from './ToolbarPlugin.ts';
 
 export class Dropdown {
     private dropdownButton: HTMLElement;
     private dropdownMenu: HTMLDivElement;
     private items: any[];
+    private toolbar;
     private hideTimeout: number | null = null;
     private isVisible: boolean = false;
 
-    constructor(button: HTMLElement, items: any[]) {
+    constructor(button: HTMLElement, items: any[], toolbar: ToolbarPlugin) {
         this.dropdownButton = button;
         this.items = items;
+        this.toolbar = toolbar;
         this.dropdownMenu = this.createDropdownMenu();
     }
 
@@ -19,7 +22,7 @@ export class Dropdown {
         menu.style.display = 'none';
 
         this.items.forEach(item => {
-            createToolbarItem(item, menu)
+            createToolbarItem(item, menu, toolbar)
         });
 
         this.dropdownButton.appendChild(menu);
@@ -30,7 +33,7 @@ export class Dropdown {
         this.dropdownButton.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log(`click`)
+            console.log(`click`, e.target)
             if (this.dropdownMenu.style.display == 'flex') this.hide();
             else this.show();
         });

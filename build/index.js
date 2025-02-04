@@ -706,11 +706,13 @@ var init_Dropdown = __esm({
       dropdownButton;
       dropdownMenu;
       items;
+      toolbar;
       hideTimeout = null;
       isVisible = false;
-      constructor(button, items) {
+      constructor(button, items, toolbar2) {
         this.dropdownButton = button;
         this.items = items;
+        this.toolbar = toolbar2;
         this.dropdownMenu = this.createDropdownMenu();
       }
       createDropdownMenu() {
@@ -718,7 +720,7 @@ var init_Dropdown = __esm({
         menu.className = "dropdown-menu";
         menu.style.display = "none";
         this.items.forEach((item) => {
-          createToolbarItem(item, menu);
+          createToolbarItem(item, menu, toolbar);
         });
         this.dropdownButton.appendChild(menu);
         menu.addEventListener("mouseleave", this.startHideTimer.bind(this));
@@ -726,7 +728,7 @@ var init_Dropdown = __esm({
         this.dropdownButton.addEventListener("click", (e4) => {
           e4.preventDefault();
           e4.stopPropagation();
-          console.log(`click`);
+          console.log(`click`, e4.target);
           if (this.dropdownMenu.style.display == "flex") this.hide();
           else this.show();
         });
@@ -794,7 +796,8 @@ var init_Dropdown = __esm({
 });
 
 // src/components/shared/BlobEditor/plugins/ToolbarPlugin.ts
-function createToolbarItem(item, parent, toolbar) {
+function createToolbarItem(item, parent, toolbar2) {
+  this.toolbar = toolbar2;
   if (item.type === "button") {
     const button = document.createElement("button");
     button.className = "toolbar-button";
@@ -811,8 +814,9 @@ function createToolbarItem(item, parent, toolbar) {
     }
     if (item.onClick) {
       button.addEventListener("click", () => {
-        item.onClick.call(toolbar);
-        this.hideToolbar();
+        item.onClick.call(this.toolbar);
+        console.log(`toolbar`, this.toolbar);
+        this.toolbar.hideToolbar();
       });
     }
     parent.appendChild(button);
@@ -839,7 +843,7 @@ function createToolbarItem(item, parent, toolbar) {
     const group = document.createElement("div");
     group.className = "toolbar-group";
     if (Array.isArray(item.items)) {
-      item.items.forEach((groupItem) => createToolbarItem(groupItem, group, toolbar));
+      item.items.forEach((groupItem) => createToolbarItem(groupItem, group, toolbar2));
     }
     parent.appendChild(group);
   }
