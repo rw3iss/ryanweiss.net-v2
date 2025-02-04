@@ -4,6 +4,7 @@ import { IPlugin } from './IPlugin';
 
 export function createToolbarItem(item: any, parent: HTMLElement, toolbar: ToolbarPlugin) {
     this.toolbar = toolbar;
+
     if (item.type === 'button') {
         const button = document.createElement('button');
         button.className = 'toolbar-button';
@@ -21,12 +22,12 @@ export function createToolbarItem(item: any, parent: HTMLElement, toolbar: Toolb
         if (item.onClick) {
             button.addEventListener('click', () => {
                 item.onClick.call(this.toolbar);
-                console.log(`toolbar`, this.toolbar)
                 this.toolbar.hideToolbar();
             });
         }
         parent.appendChild(button);
-    } else if (item.type === 'dropdown') {
+    }
+    else if (item.type === 'dropdown') {
         const dropdownButton = document.createElement('button');
         dropdownButton.className = 'toolbar-dropdown-button';
         if (item.icon) {
@@ -45,9 +46,10 @@ export function createToolbarItem(item: any, parent: HTMLElement, toolbar: Toolb
         arrow.textContent = '▼'; // Down arrow symbol
         dropdownButton.appendChild(arrow);
 
-        const dropdown = new Dropdown(dropdownButton, item.items);
+        const dropdown = new Dropdown(dropdownButton, item.items, toolbar);
         parent.appendChild(dropdownButton);
-    } else if (item.type === 'group') {
+    }
+    else if (item.type === 'group') {
         const group = document.createElement('div');
         group.className = 'toolbar-group';
         if (Array.isArray(item.items)) {
@@ -101,7 +103,7 @@ export class ToolbarPlugin implements IPlugin {
 
     private checkForSelection = (e: MouseEvent) => {
         const s = window.getSelection()?.toString().length;
-        console.log(`up`, s, window.getSelection())
+        //console.log(`up`, s, window.getSelection())
         if (s > 0) {
             this.showToolbar(e);
         } else {

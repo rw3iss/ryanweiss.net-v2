@@ -815,7 +815,6 @@ function createToolbarItem(item, parent, toolbar2) {
     if (item.onClick) {
       button.addEventListener("click", () => {
         item.onClick.call(this.toolbar);
-        console.log(`toolbar`, this.toolbar);
         this.toolbar.hideToolbar();
       });
     }
@@ -837,7 +836,7 @@ function createToolbarItem(item, parent, toolbar2) {
     const arrow = document.createElement("span");
     arrow.textContent = "\u25BC";
     dropdownButton.appendChild(arrow);
-    const dropdown = new Dropdown(dropdownButton, item.items);
+    const dropdown = new Dropdown(dropdownButton, item.items, toolbar2);
     parent.appendChild(dropdownButton);
   } else if (item.type === "group") {
     const group = document.createElement("div");
@@ -890,7 +889,6 @@ var init_ToolbarPlugin = __esm({
       }
       checkForSelection = (e4) => {
         const s3 = window.getSelection()?.toString().length;
-        console.log(`up`, s3, window.getSelection());
         if (s3 > 0) {
           this.showToolbar(e4);
         } else {
@@ -1223,34 +1221,6 @@ var init_Blob = __esm({
         this.type = params.type || "blob";
       }
     };
-  }
-});
-
-// src/lib/utils/throttle.ts
-function throttle(func, limit) {
-  let lastFunc;
-  let lastRan;
-  return function(...args) {
-    const context = this;
-    const now = Date.now();
-    if (!lastRan) {
-      func.apply(context, args);
-      lastRan = now;
-    } else {
-      clearTimeout(lastFunc);
-      lastFunc = setTimeout(function() {
-        if (now - lastRan >= limit) {
-          func.apply(context, args);
-          lastRan = now;
-        }
-      }, limit - (now - lastRan));
-    }
-  };
-}
-var init_throttle = __esm({
-  "src/lib/utils/throttle.ts"() {
-    "use strict";
-    init_preact_module();
   }
 });
 
@@ -1910,6 +1880,7 @@ var init_BlobService = __esm({
         return blob;
       }
       async saveBlob(blob) {
+        console.log(`save`, blob);
         await this.apiClient.saveBlob(blob);
         this.cacheService.set(blob.id, blob);
         this.notifyEvent("blobUpdated", blob);
@@ -2339,13 +2310,14 @@ var init_ContentEntries = __esm({
 });
 
 // src/components/shared/BlobEditor/lib/WEditor.ts
-var CHANGE_TIMEOUT_MS, WEditor;
+var CHANGE_TIMEOUT_MS, AUTOSAVE_TIMEOUT_MS, WEditor;
 var init_WEditor = __esm({
   "src/components/shared/BlobEditor/lib/WEditor.ts"() {
     "use strict";
     init_preact_module();
     init_ContentEntries();
-    CHANGE_TIMEOUT_MS = 2e3;
+    CHANGE_TIMEOUT_MS = 500;
+    AUTOSAVE_TIMEOUT_MS = 3e3;
     WEditor = class {
       container;
       blob;
@@ -2387,15 +2359,17 @@ var init_WEditor = __esm({
         this.contentEditable.addEventListener("input", this.handleContentChange);
       }
       handleContentChange = () => {
-        console.log(`change.`);
+        this.dirty = true;
         if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
         this.applyChangesTimeoutId = setTimeout(() => {
+          console.log(`autochange...`);
           this.applyChanges();
         }, CHANGE_TIMEOUT_MS);
         if (!this.autoSaveTimeoutId) {
           this.autoSaveTimeoutId = setTimeout(() => {
+            console.log(`autosave...`);
             this.applyChanges();
-          }, CHANGE_TIMEOUT_MS / 2);
+          }, AUTOSAVE_TIMEOUT_MS);
         }
       };
       loadBlob() {
@@ -2419,6 +2393,10 @@ var init_WEditor = __esm({
         if (this.autoSaveTimeoutId) {
           clearTimeout(this.autoSaveTimeoutId);
           this.autoSaveTimeoutId = null;
+        }
+        if (this.applyChangesTimeoutId) {
+          clearTimeout(this.applyChangesTimeoutId);
+          this.applyChangesTimeoutId = null;
         }
         const entries = [];
         const nodes = Array.from(this.contentEditable.childNodes);
@@ -2585,7 +2563,6 @@ var init_BlobEditor2 = __esm({
     init_ToolbarPlugin();
     init_hooks_module();
     init_Blob();
-    init_throttle();
     init_BlobService();
     init_WEditor();
     init_DragDropPlugin();
@@ -2636,12 +2613,11 @@ var init_BlobEditor2 = __esm({
       const saveBlob = (blob) => {
         blobService.saveBlob(blob);
       };
-      const saveBlobThrottled = A2(throttle(saveBlob, 2e3)).current;
       const onContentChanged = (content) => {
         if (currentBlob) {
           currentBlob.content = content;
           currentBlob.dateUpdated = /* @__PURE__ */ new Date();
-          saveBlobThrottled(currentBlob);
+          saveBlob(currentBlob);
           setCurrentBlob({ ...currentBlob });
         }
       };
@@ -2649,7 +2625,7 @@ var init_BlobEditor2 = __esm({
         if (e4.target instanceof HTMLInputElement && currentBlob) {
           currentBlob.title = e4.target.value;
           currentBlob.dateUpdated = /* @__PURE__ */ new Date();
-          saveBlobThrottled(currentBlob);
+          saveBlob(currentBlob);
           setCurrentBlob({ ...currentBlob });
         }
       };

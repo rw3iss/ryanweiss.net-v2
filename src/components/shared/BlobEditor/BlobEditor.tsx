@@ -64,13 +64,14 @@ export const BlobEditor: FunctionComponent<Props> = ({ blob: initialBlob }) => {
         blobService.saveBlob(blob);
     };
 
-    const saveBlobThrottled = useRef(throttle(saveBlob, 2000)).current;
+    //const saveBlobThrottled = useRef(throttle(saveBlob, 1000)).current;
 
+    // this method will be
     const onContentChanged = (content: BlobContent) => {
         if (currentBlob) {
             currentBlob.content = content;
             currentBlob.dateUpdated = new Date();
-            saveBlobThrottled(currentBlob);
+            saveBlob(currentBlob);
             setCurrentBlob({ ...currentBlob }); // Shallow copy to trigger re-render
         }
     };
@@ -79,7 +80,7 @@ export const BlobEditor: FunctionComponent<Props> = ({ blob: initialBlob }) => {
         if (e.target instanceof HTMLInputElement && currentBlob) {
             currentBlob.title = e.target.value;
             currentBlob.dateUpdated = new Date();
-            saveBlobThrottled(currentBlob);
+            saveBlob(currentBlob);
             setCurrentBlob({ ...currentBlob });
         }
     };

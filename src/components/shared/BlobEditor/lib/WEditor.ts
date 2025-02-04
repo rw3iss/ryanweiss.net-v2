@@ -4,7 +4,8 @@ import { ContentEntry } from '../ContentEntries';
 import { IPlugin } from '../plugins/IPlugin';
 
 
-const CHANGE_TIMEOUT_MS = 2000;
+const CHANGE_TIMEOUT_MS = 500; // time delay to save after last key/input
+const AUTOSAVE_TIMEOUT_MS = 3000; // time delay to save automatically
 
 export class WEditor {
     private container: HTMLElement | null;
@@ -12,8 +13,8 @@ export class WEditor {
     private contentEditable: HTMLDivElement | null;
     private onChangeHandler: (content: BlobContent) => void;
     private plugins: IPlugin[];
-    private applyChangesTimeoutId: number | null = null;
-    private autoSaveTimeoutId: number | null = null;
+    private applyChangesTimeoutId: Timeout | null = null;
+    private autoSaveTimeoutId: Timeout | null = null;
 
     constructor(container: HTMLElement | null, blob: Blob, onChange: (content: BlobContent) => void, plugins: IPlugin[] = []) {
         this.container = container;
@@ -56,19 +57,21 @@ export class WEditor {
     }
 
     private handleContentChange = () => {
-        console.log(`change.`)
+        this.dirty = true;
 
         // Clear previous timeout for the 'save after stopping' and set a new timeout
         if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
         this.applyChangesTimeoutId = setTimeout(() => {
+            console.log(`autochange...`)
             this.applyChanges();
         }, CHANGE_TIMEOUT_MS);
 
         // If not set to autosave already, start timeout
         if (!this.autoSaveTimeoutId) {
             this.autoSaveTimeoutId = setTimeout(() => {
+                console.log(`autosave...`)
                 this.applyChanges(); // This ensures at least one save operation every 2 seconds
-            }, CHANGE_TIMEOUT_MS / 2);
+            }, AUTOSAVE_TIMEOUT_MS);
         }
     }
 
@@ -98,10 +101,13 @@ export class WEditor {
             clearTimeout(this.autoSaveTimeoutId);
             this.autoSaveTimeoutId = null;
         }
+        if (this.applyChangesTimeoutId) {
+            clearTimeout(this.applyChangesTimeoutId);
+            this.applyChangesTimeoutId = null;
+        }
 
         const entries: ContentEntry[] = [];
         const nodes = Array.from(this.contentEditable.childNodes);
-
         nodes.forEach(node => {
             const entry = ContentEntries.convertNodeToEntry(node);
             if (entry) entries.push(entry);
@@ -109,6 +115,7 @@ export class WEditor {
 
         const content: BlobContent = { entries };
         this.onChangeHandler(content);
+
         return content;
     }
 
