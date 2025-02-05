@@ -63,7 +63,8 @@ export class WEditor {
         //this.contentEditable.addEventListener('keyup', this.handleContentChange);
     }
 
-    private handleContentChange = () => {
+    private handleContentChange = (e) => {
+        console.log(`c.`, e, window.getSelection())
         // Clear previous timeout for the 'save after stopping' and set a new timeout
         if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
         this.applyChangesTimeoutId = setTimeout(() => {

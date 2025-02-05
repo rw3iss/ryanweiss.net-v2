@@ -2399,7 +2399,8 @@ var init_WEditor = __esm({
         if (!this.contentEditable) return;
         this.contentEditable.addEventListener("input", this.handleContentChange);
       }
-      handleContentChange = () => {
+      handleContentChange = (e4) => {
+        console.log(`c.`, e4, window.getSelection());
         if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
         this.applyChangesTimeoutId = setTimeout(() => {
           console.log(`autochange...`);
