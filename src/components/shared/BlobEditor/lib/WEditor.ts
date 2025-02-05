@@ -1,5 +1,6 @@
-import { ContentEntries, ContentEntry, NodeEntryRef } from '../ContentEntries';
+import { NodeEntryCache } from 'components/shared/BlobEditor/lib/NodeEntryCache';
 import { Blob, BlobContent } from 'types/Blob';
+import { ContentEntries } from '../ContentEntries';
 import { IPlugin } from '../plugins/IPlugin';
 
 
@@ -9,35 +10,31 @@ const AUTOSAVE_TIMEOUT_MS = 3000; // time delay to save automatically
 
 export class WEditor {
     private container: HTMLElement | null;
-    private blob: Blob;
     private contentEditable: HTMLDivElement | null;
+
     private onChangeHandler: (content: BlobContent) => void;
     private plugins: IPlugin[];
+
     private applyChangesTimeoutId: Timeout | null = null;
     private autoSaveTimeoutId: Timeout | null = null;
 
-    private nodeEntryRefs: Array<NodeEntryRef> = [];
+    private blob: Blob;
+    private nodes: NodeEntryCache;
 
-    // returns an entry linked to a given dom node
-    private findCachedEntry = (node): NodeEntryRef | undefined => {
-        return this.nodeEntryRefs.find(n => n.node == node);
-    }
-
-    constructor(container: HTMLElement | null, blob: Blob, onChange: (content: BlobContent) => void, plugins: IPlugin[] = []) {
+    constructor(
+        container: HTMLElement | null,
+        onChange: (content: BlobContent) => void,
+        plugins: IPlugin[] = []) {
         this.container = container;
-        this.blob = blob;
         this.contentEditable = null;
         this.onChangeHandler = onChange;
         this.plugins = plugins || [];
+        this.nodes = new NodeEntryCache();
         this.initialize();
-        this.initPlugins();
     }
 
     private initialize() {
-        if (!this.container) {
-            console.error('WEditor initialization failed: Container is null');
-            return;
-        }
+        if (!this.container) return console.error('WEditor initialization failed: Container is null');
 
         if (!this.contentEditable) {
             this.contentEditable = document.createElement('div');
@@ -45,83 +42,40 @@ export class WEditor {
             this.container.appendChild(this.contentEditable);
         }
 
-        this.loadBlob();
-        this.setupEventListeners();
-    }
+        // init plugins:
+        this.plugins.forEach(plugin => plugin.initialize(this, this.container));
 
-    private initPlugins() {
-        if (!this.container) return;
-        this.plugins.forEach(plugin => {
-            plugin.initialize(this, this.container);
-        });
-    }
-
-    private setupEventListeners() {
-        if (!this.contentEditable) return;
-
+        // setup event listeners:
         this.contentEditable.addEventListener('input', this.handleContentChange);
-        //this.contentEditable.addEventListener('keyup', this.handleContentChange);
-    }
-
-    // replaces the node's matching ContentEntry with a new one
-    private applyChanges(node) {
-        if (node) {
-            let ner: NodeEntryRef | undefined = this.findCachedEntry(node);
-            //let editContent = editNode.textContent;
-            let entry = ContentEntries.convertNodeToEntry(node);
-            if (!entry) throw "Entry could not be created from node.";
-            console.log(`existing node?`, node, ner, entry);
-            if (ner) {
-                ner.entry = entry;
-            } else {
-                ner = { node, entry };
-                this.nodeEntryRefs.push(ner);
-            }
-        } else {
-            console.log(`no edit node!`)
-        }
     }
 
     private handleContentChange = (e) => {
+        // Find the node where the edit took place
         let editNode: Node | undefined = undefined;
         if (window.getSelection) {
             let range = window.getSelection()?.getRangeAt(0);
             editNode = range?.commonAncestorContainer;
         }
 
+        // Apply the changes immediately to the entry, before committing
         this.applyChanges(editNode);
-
-        // Clear previous timeout for the 'save after stopping' and set a new timeout
-        if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
-        this.applyChangesTimeoutId = setTimeout(() => {
-            console.log(`autochange...`)
-            this.commitChanges();
-        }, CHANGE_TIMEOUT_MS);
-
-        // If not set to autosave already, start timeout
-        if (!this.autoSaveTimeoutId) {
-            this.autoSaveTimeoutId = setTimeout(() => {
-                console.log(`autosave...`)
-                this.commitChanges(); // This ensures at least one save operation every 2 seconds
-            }, AUTOSAVE_TIMEOUT_MS);
-        }
     }
 
     // clear content
-    public clearContent() {
+    public clearContent(apply?) {
         if (this.contentEditable) {
             this.contentEditable.innerHTML = '';
-            this.applyChanges();
+            if (apply) this.applyChanges(this.contentEditable);
         }
     }
 
-    public loadBlob() {
-        if (!this.contentEditable) {
-            console.error('Cannot load blob: ContentEditable is null');
-            return;
-        }
+    public loadBlob(blob?) {
+        if (blob) this.blob = blob;
+        if (!this.contentEditable) return console.error('Cannot load blob: ContentEditable is null');
+        if (!this.blob) return console.error("No blob given to load.");
         this.contentEditable.innerHTML = '';
         this.convertToHTML(this.blob.content, this.contentEditable);
+        // todo: should hydrate node cache
     }
 
     private convertToHTML(content: BlobContent, parent: HTMLElement) {
@@ -129,6 +83,32 @@ export class WEditor {
         content.entries.forEach(entry => {
             ContentEntries.convertToHTMLByType(entry, parent);
         });
+    }
+
+    // replaces the node's matching ContentEntry with a new one
+    private applyChanges(node) {
+        console.log(`apply`, node);
+
+        if (node) {
+            let entry = ContentEntries.convertNodeToEntry(node);
+            if (!entry) throw "Entry could not be created from node.";
+            this.nodes.updateOrAdd(node, entry);
+        } else {
+            console.log(`no edit node given!`);
+        }
+
+        // Signal to save all pending changes after timeout.
+        // There are two timers here: One that will autosave every X secs, and which saves after the last input.
+        if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
+        this.applyChangesTimeoutId = setTimeout(() => {
+            this.commitChanges();
+        }, CHANGE_TIMEOUT_MS);
+
+        if (!this.autoSaveTimeoutId) {
+            this.autoSaveTimeoutId = setTimeout(() => {
+                this.commitChanges();
+            }, AUTOSAVE_TIMEOUT_MS);
+        }
     }
 
     // Converts content area HTML to JSON. Any html elements associated with custom "types" will be ignored convert to JSON through their handlers.
@@ -148,33 +128,10 @@ export class WEditor {
             this.applyChangesTimeoutId = null;
         }
 
-        // const entries: ContentEntry[] = [];
-        // const nodes = Array.from(this.contentEditable.childNodes);
-
-        // nodes.forEach(node => {
-        //     let ner: NodeEntryRef | undefined = this.findCachedEntry(node);
-        //     if (!ner) {
-        //         let entry = ContentEntries.convertNodeToEntry(node);
-        //         if (entry) {
-        //             ner = { node, entry };
-        //             console.log(`adding new entry`, ner)
-        //             this.nodeEntryRefs.push(ner);
-        //         }
-        //     } else {
-        //         console.log(`cached entry`, ner)
-        //     }
-
-        //     if (ner) {
-        //         entries.push(ner.entry);
-        //     }
-        // });
-
-        const content: BlobContent = { entries: this.nodeEntryRefs.map(ner => ner.entry) };
+        const content: BlobContent = { entries: this.nodes.getEntries() };
         this.onChangeHandler(content);
 
         return content;
     }
 
-    public updateContent(newContent: BlobContent) {
-    }
 }

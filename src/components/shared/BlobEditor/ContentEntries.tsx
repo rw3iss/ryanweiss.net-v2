@@ -7,6 +7,7 @@ interface BaseEntry {
 export type NodeEntryRef = {
     node: Node;
     entry: ContentEntry;
+    children?: Array<NodeEntryRef>;
 }
 
 export abstract class ContentEntry {
@@ -94,6 +95,184 @@ export class TextEntry extends ContentEntry {
             return new TextEntry(textContent, attributes);
         }
         return null;
+    }
+}
+
+export class HeaderEntry extends ContentEntry {
+    type = 'header';
+    attributes?: { [key: string]: string };
+    inner: string;
+
+    constructor(inner: string, attributes?: { [key: string]: string }) {
+        super();
+        this.inner = inner;
+        this.attributes = attributes;
+    }
+
+    static convertToHTML(entry: HeaderEntry, parent: HTMLElement) {
+        const level = entry.attributes?.level || '1';
+        const h = document.createElement(`h${level}`);
+        h.textContent = entry.inner;
+        if (entry.attributes) {
+            for (const [key, value] of Object.entries(entry.attributes)) {
+                if (key !== 'level') {
+                    h.setAttribute(key, value);
+                }
+            }
+        }
+        parent.appendChild(h);
+    }
+
+    static convertNodeToEntry(node: HTMLHeadingElement): HeaderEntry {
+        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
+            acc[attr.name] = attr.value;
+            return acc;
+        }, {} as { [key: string]: string });
+        return new HeaderEntry(node.textContent || '', attributes);
+    }
+}
+
+export class FileEntry extends ContentEntry {
+    type = 'file';
+    attributes?: { [key: string]: string };
+    inner: string;
+
+    constructor(inner: string, attributes?: { [key: string]: string }) {
+        super();
+        this.inner = inner;
+        this.attributes = attributes;
+    }
+
+    static convertToHTML(entry: FileEntry, parent: HTMLElement) {
+        const fileDiv = document.createElement('div');
+        fileDiv.textContent = entry.inner;
+        if (entry.attributes) {
+            for (const [key, value] of Object.entries(entry.attributes)) {
+                fileDiv.setAttribute(key, value);
+            }
+        }
+        parent.appendChild(fileDiv);
+    }
+
+    static convertNodeToEntry(node: HTMLDivElement): FileEntry {
+        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
+            acc[attr.name] = attr.value;
+            return acc;
+        }, {} as { [key: string]: string });
+        return new FileEntry(node.textContent || '', attributes);
+    }
+}
+
+export class BreakEntry extends ContentEntry {
+    type = 'break';
+    attributes?: { [key: string]: string };
+    inner = [];
+    //inner?: ContentEntry[];
+
+    constructor(attributes?: { [key: string]: string }) {
+        super();
+        this.attributes = attributes;
+    }
+
+    static convertToHTML(entry: BreakEntry, parent: HTMLElement) {
+        const br = document.createElement('br');
+        if (entry.attributes) {
+            for (const [key, value] of Object.entries(entry.attributes)) {
+                br.setAttribute(key, value);
+            }
+        }
+        parent.appendChild(br);
+    }
+
+    static convertNodeToEntry(node: HTMLElement): BreakEntry | null {
+        if (node.tagName === 'BR') {
+            const attributes = Array.from(node.attributes).reduce((acc, attr) => {
+                acc[attr.name] = attr.value;
+                return acc;
+            }, {} as { [key: string]: string });
+            return new BreakEntry(attributes);
+        }
+        return null;
+    }
+}
+
+export class PreEntry extends ContentEntry {
+    type = 'pre';
+    attributes?: { [key: string]: string };
+    inner: ContentEntry[];
+
+    constructor(attributes?: { [key: string]: string }, inner: ContentEntry[] = []) {
+        super();
+        this.attributes = attributes;
+        this.inner = inner;
+    }
+
+    static convertToHTML(entry: PreEntry, parent: HTMLElement) {
+        const pre = document.createElement('pre');
+        if (entry.attributes) {
+            pre.setAttribute('type', entry.type);
+            for (const [key, value] of Object.entries(entry.attributes)) {
+                pre.setAttribute(key, value);
+            }
+        }
+        parent.appendChild(pre);
+        entry.inner.forEach(child => ContentEntries.convertToHTMLByType(child, pre));
+    }
+
+    static convertNodeToEntry(node: HTMLPreElement): PreEntry {
+        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
+            acc[attr.name] = attr.value;
+            return acc;
+        }, {} as { [key: string]: string });
+
+        const inner: ContentEntry[] = [];
+        Array.from(node.childNodes).forEach(childNode => {
+            const childEntry = ContentEntries.convertNodeToEntry(childNode);
+            if (childEntry) inner.push(childEntry);
+        });
+
+        return new PreEntry(attributes, inner);
+    }
+}
+
+export class CodeEntry extends ContentEntry {
+    type = 'code';
+    attributes?: { [key: string]: string };
+    inner: ContentEntry[];
+
+    constructor(attributes?: { [key: string]: string }, inner: ContentEntry[] = []) {
+        super();
+        this.attributes = attributes;
+        this.inner = inner;
+    }
+
+    static convertToHTML(entry: CodeEntry, parent: HTMLElement) {
+        const code = document.createElement('code');
+        if (entry.attributes) {
+            code.setAttribute('type', entry.type);
+            for (const [key, value] of Object.entries(entry.attributes)) {
+                code.setAttribute(key, value);
+            }
+        }
+        parent.appendChild(code);
+        entry.inner.forEach(child => ContentEntries.convertToHTMLByType(child, code));
+    }
+
+    static convertNodeToEntry(node: HTMLElement): CodeEntry {
+        if (node.tagName !== 'CODE') return null;
+
+        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
+            acc[attr.name] = attr.value;
+            return acc;
+        }, {} as { [key: string]: string });
+
+        const inner: ContentEntry[] = [];
+        Array.from(node.childNodes).forEach(childNode => {
+            const childEntry = ContentEntries.convertNodeToEntry(childNode);
+            if (childEntry) inner.push(childEntry);
+        });
+
+        return new CodeEntry(attributes, inner);
     }
 }
 
@@ -188,71 +367,6 @@ export class LinkEntry extends ContentEntry {
     }
 }
 
-export class HeaderEntry extends ContentEntry {
-    type = 'header';
-    attributes?: { [key: string]: string };
-    inner: string;
-
-    constructor(inner: string, attributes?: { [key: string]: string }) {
-        super();
-        this.inner = inner;
-        this.attributes = attributes;
-    }
-
-    static convertToHTML(entry: HeaderEntry, parent: HTMLElement) {
-        const level = entry.attributes?.level || '1';
-        const h = document.createElement(`h${level}`);
-        h.textContent = entry.inner;
-        if (entry.attributes) {
-            for (const [key, value] of Object.entries(entry.attributes)) {
-                if (key !== 'level') {
-                    h.setAttribute(key, value);
-                }
-            }
-        }
-        parent.appendChild(h);
-    }
-
-    static convertNodeToEntry(node: HTMLHeadingElement): HeaderEntry {
-        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
-            acc[attr.name] = attr.value;
-            return acc;
-        }, {} as { [key: string]: string });
-        return new HeaderEntry(node.textContent || '', attributes);
-    }
-}
-
-export class FileEntry extends ContentEntry {
-    type = 'file';
-    attributes?: { [key: string]: string };
-    inner: string;
-
-    constructor(inner: string, attributes?: { [key: string]: string }) {
-        super();
-        this.inner = inner;
-        this.attributes = attributes;
-    }
-
-    static convertToHTML(entry: FileEntry, parent: HTMLElement) {
-        const fileDiv = document.createElement('div');
-        fileDiv.textContent = entry.inner;
-        if (entry.attributes) {
-            for (const [key, value] of Object.entries(entry.attributes)) {
-                fileDiv.setAttribute(key, value);
-            }
-        }
-        parent.appendChild(fileDiv);
-    }
-
-    static convertNodeToEntry(node: HTMLDivElement): FileEntry {
-        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
-            acc[attr.name] = attr.value;
-            return acc;
-        }, {} as { [key: string]: string });
-        return new FileEntry(node.textContent || '', attributes);
-    }
-}
-
 export class CustomEntry extends ContentEntry {
     type = 'custom';
     attributes?: { [key: string]: string };
@@ -294,118 +408,6 @@ export class CustomEntry extends ContentEntry {
     }
 }
 
-export class PreEntry extends ContentEntry {
-    type = 'pre';
-    attributes?: { [key: string]: string };
-    inner: ContentEntry[];
-
-    constructor(attributes?: { [key: string]: string }, inner: ContentEntry[] = []) {
-        super();
-        this.attributes = attributes;
-        this.inner = inner;
-    }
-
-    static convertToHTML(entry: PreEntry, parent: HTMLElement) {
-        const pre = document.createElement('pre');
-        if (entry.attributes) {
-            pre.setAttribute('type', entry.type);
-            for (const [key, value] of Object.entries(entry.attributes)) {
-                pre.setAttribute(key, value);
-            }
-        }
-        parent.appendChild(pre);
-        entry.inner.forEach(child => ContentEntries.convertToHTMLByType(child, pre));
-    }
-
-    static convertNodeToEntry(node: HTMLPreElement): PreEntry {
-        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
-            acc[attr.name] = attr.value;
-            return acc;
-        }, {} as { [key: string]: string });
-
-        const inner: ContentEntry[] = [];
-        Array.from(node.childNodes).forEach(childNode => {
-            const childEntry = ContentEntries.convertNodeToEntry(childNode);
-            if (childEntry) inner.push(childEntry);
-        });
-
-        return new PreEntry(attributes, inner);
-    }
-}
-
-export class CodeEntry extends ContentEntry {
-    type = 'code';
-    attributes?: { [key: string]: string };
-    inner: ContentEntry[];
-
-    constructor(attributes?: { [key: string]: string }, inner: ContentEntry[] = []) {
-        super();
-        this.attributes = attributes;
-        this.inner = inner;
-    }
-
-    static convertToHTML(entry: CodeEntry, parent: HTMLElement) {
-        const code = document.createElement('code');
-        if (entry.attributes) {
-            code.setAttribute('type', entry.type);
-            for (const [key, value] of Object.entries(entry.attributes)) {
-                code.setAttribute(key, value);
-            }
-        }
-        parent.appendChild(code);
-        entry.inner.forEach(child => ContentEntries.convertToHTMLByType(child, code));
-    }
-
-    static convertNodeToEntry(node: HTMLElement): CodeEntry {
-        if (node.tagName !== 'CODE') return null;
-
-        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
-            acc[attr.name] = attr.value;
-            return acc;
-        }, {} as { [key: string]: string });
-
-        const inner: ContentEntry[] = [];
-        Array.from(node.childNodes).forEach(childNode => {
-            const childEntry = ContentEntries.convertNodeToEntry(childNode);
-            if (childEntry) inner.push(childEntry);
-        });
-
-        return new CodeEntry(attributes, inner);
-    }
-}
-
-export class BreakEntry extends ContentEntry {
-    type = 'break';
-    attributes?: { [key: string]: string };
-    inner = [];
-    //inner?: ContentEntry[];
-
-    constructor(attributes?: { [key: string]: string }) {
-        super();
-        this.attributes = attributes;
-    }
-
-    static convertToHTML(entry: BreakEntry, parent: HTMLElement) {
-        const br = document.createElement('br');
-        if (entry.attributes) {
-            for (const [key, value] of Object.entries(entry.attributes)) {
-                br.setAttribute(key, value);
-            }
-        }
-        parent.appendChild(br);
-    }
-
-    static convertNodeToEntry(node: HTMLElement): BreakEntry | null {
-        if (node.tagName === 'BR') {
-            const attributes = Array.from(node.attributes).reduce((acc, attr) => {
-                acc[attr.name] = attr.value;
-                return acc;
-            }, {} as { [key: string]: string });
-            return new BreakEntry(attributes);
-        }
-        return null;
-    }
-}
 
 export class ContentEntries {
 

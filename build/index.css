@@ -337,11 +337,11 @@
 .blob-editor {
   flex: 1 0 100%;
   margin: 50px auto;
-  background: #222222;
+  background: #1e1f20;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   overflow: hidden;
-  background: #222222;
+  background: #1e1f20;
   color: #f5f5f5;
   font-family:
     "Roboto",
@@ -354,7 +354,7 @@
 .blob-editor h2 {
   padding: 20px;
   margin: 0;
-  background: #333333;
+  background: #191a1a;
   text-align: center;
 }
 .blob-editor .blob-title {
@@ -362,7 +362,7 @@
   padding: 20px;
   margin: 0;
   border: none;
-  background: #222222;
+  background: #1e1f20;
   color: #f5f5f5;
   font-size: 1.2em;
   border-bottom: 1px solid rgba(245, 245, 245, 0.1);
@@ -373,7 +373,7 @@
 }
 .blob-editor .wysiwyg-container {
   padding: 20px;
-  background: #333333;
+  background: #191a1a;
   border-radius: 0 0 8px 8px;
   min-height: 300px;
   overflow-y: auto;
@@ -381,7 +381,7 @@
 .blob-editor .wysiwyg-container div[contenteditable=true] {
   position: relative;
   color: #f5f5f5;
-  background: #333333;
+  background: #191a1a;
   border: none;
   outline: none;
   padding: 20px;

@@ -34,7 +34,7 @@ export class BlobService {
     }
 
     public async saveBlob(blob: Blob): Promise<void> {
-        console.log(`save`, blob)
+        console.log(`save`, blob.content.entries)
         await this.apiClient.saveBlob(blob);
         this.cacheService.set(blob.id, blob);
         this.notifyEvent('blobUpdated', blob);

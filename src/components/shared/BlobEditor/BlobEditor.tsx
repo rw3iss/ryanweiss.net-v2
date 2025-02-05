@@ -47,7 +47,6 @@ export const BlobEditor: FunctionComponent<Props> = ({ blob: initialBlob }) => {
         if (currentBlob && containerRef.current && !editorRef.current) {
             editorRef.current = new WEditor(
                 containerRef.current,
-                currentBlob,
                 onContentChanged,
                 [
                     new ToolbarPlugin(),
@@ -56,6 +55,7 @@ export const BlobEditor: FunctionComponent<Props> = ({ blob: initialBlob }) => {
                     new PastePlugin()
                 ]
             );
+            editorRef.current.loadBlob(currentBlob);
         }
     }, [currentBlob]);
 

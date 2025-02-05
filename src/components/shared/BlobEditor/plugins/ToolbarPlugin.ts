@@ -1,68 +1,7 @@
+import { debounce } from 'lib/utils/debounce';
 import { WEditor } from '../lib/WEditor';
 import { Dropdown } from './Dropdown'; // Assuming Dropdown class is in this file
 import { IPlugin } from './IPlugin';
-import { debounce } from 'lib/utils/debounce';
-
-export function createToolbarItem(item: any, parent: HTMLElement, toolbar: ToolbarPlugin) {
-    this.toolbar = toolbar;
-
-    if (item.type === 'button') {
-        const button = document.createElement('button');
-        button.className = 'toolbar-button';
-        if (item.icon) {
-            const icon = document.createElement('img');
-            icon.src = item.icon;
-            icon.alt = item.label;
-            button.appendChild(icon);
-        }
-        if (item.label) {
-            const label = document.createElement('span');
-            label.textContent = item.label;
-            button.appendChild(label);
-        }
-        if (item.onClick) {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopImmediatePropagation();
-                e.stopPropagation();
-                item.onClick.call(this.toolbar);
-                this.toolbar.hideToolbar();
-            });
-        }
-        parent.appendChild(button);
-    }
-    else if (item.type === 'dropdown') {
-        const dropdownButton = document.createElement('button');
-        dropdownButton.className = 'toolbar-dropdown-button';
-        if (item.icon) {
-            const icon = document.createElement('img');
-            icon.src = item.icon;
-            icon.alt = item.label;
-            dropdownButton.appendChild(icon);
-        }
-        if (item.label) {
-            const label = document.createElement('span');
-            label.textContent = item.label;
-            dropdownButton.appendChild(label);
-        }
-
-        const arrow = document.createElement('span');
-        arrow.textContent = '▼'; // Down arrow symbol
-        dropdownButton.appendChild(arrow);
-
-        const dropdown = new Dropdown(dropdownButton, item.items, toolbar);
-        parent.appendChild(dropdownButton);
-    }
-    else if (item.type === 'group') {
-        const group = document.createElement('div');
-        group.className = 'toolbar-group';
-        if (Array.isArray(item.items)) {
-            item.items.forEach((groupItem: any) => createToolbarItem(groupItem, group, toolbar));
-        }
-        parent.appendChild(group);
-    }
-    return parent;
-}
 
 export class ToolbarPlugin implements IPlugin {
     public editor: WEditor;
@@ -159,7 +98,7 @@ export class ToolbarPlugin implements IPlugin {
 
     private funcs = {
         clearAll: () => {
-            this.editor.clearContent();
+            this.editor.clearContent(true);
         }
     };
 
@@ -200,3 +139,66 @@ export class ToolbarPlugin implements IPlugin {
         ]
     };
 }
+
+
+export function createToolbarItem(item: any, parent: HTMLElement, toolbar: ToolbarPlugin) {
+    this.toolbar = toolbar;
+
+    if (item.type === 'button') {
+        const button = document.createElement('button');
+        button.className = 'toolbar-button';
+        if (item.icon) {
+            const icon = document.createElement('img');
+            icon.src = item.icon;
+            icon.alt = item.label;
+            button.appendChild(icon);
+        }
+        if (item.label) {
+            const label = document.createElement('span');
+            label.textContent = item.label;
+            button.appendChild(label);
+        }
+        if (item.onClick) {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                e.stopPropagation();
+                item.onClick.call(this.toolbar);
+                this.toolbar.hideToolbar();
+            });
+        }
+        parent.appendChild(button);
+    }
+    else if (item.type === 'dropdown') {
+        const dropdownButton = document.createElement('button');
+        dropdownButton.className = 'toolbar-dropdown-button';
+        if (item.icon) {
+            const icon = document.createElement('img');
+            icon.src = item.icon;
+            icon.alt = item.label;
+            dropdownButton.appendChild(icon);
+        }
+        if (item.label) {
+            const label = document.createElement('span');
+            label.textContent = item.label;
+            dropdownButton.appendChild(label);
+        }
+
+        const arrow = document.createElement('span');
+        arrow.textContent = '▼'; // Down arrow symbol
+        dropdownButton.appendChild(arrow);
+
+        const dropdown = new Dropdown(dropdownButton, item.items, toolbar);
+        parent.appendChild(dropdownButton);
+    }
+    else if (item.type === 'group') {
+        const group = document.createElement('div');
+        group.className = 'toolbar-group';
+        if (Array.isArray(item.items)) {
+            item.items.forEach((groupItem: any) => createToolbarItem(groupItem, group, toolbar));
+        }
+        parent.appendChild(group);
+    }
+    return parent;
+}
+
