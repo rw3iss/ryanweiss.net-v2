@@ -2370,11 +2370,6 @@ var init_WEditor = __esm({
         this.initialize();
         this.initPlugins();
       }
-      // clear content
-      clearContent() {
-        this.contentEditable.innerHTML = "";
-        this.applyChanges();
-      }
       initialize() {
         if (!this.container) {
           console.error("WEditor initialization failed: Container is null");
@@ -2399,7 +2394,6 @@ var init_WEditor = __esm({
         this.contentEditable.addEventListener("input", this.handleContentChange);
       }
       handleContentChange = () => {
-        this.dirty = true;
         if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
         this.applyChangesTimeoutId = setTimeout(() => {
           console.log(`autochange...`);
@@ -2412,6 +2406,13 @@ var init_WEditor = __esm({
           }, AUTOSAVE_TIMEOUT_MS);
         }
       };
+      // clear content
+      clearContent() {
+        if (this.contentEditable) {
+          this.contentEditable.innerHTML = "";
+          this.applyChanges();
+        }
+      }
       loadBlob() {
         if (!this.contentEditable) {
           console.error("Cannot load blob: ContentEditable is null");
@@ -2425,6 +2426,7 @@ var init_WEditor = __esm({
           ContentEntries.convertToHTMLByType(entry, parent);
         });
       }
+      // Converts content area HTML to JSON. Any html elements associated with custom "types" will convert to JSON through their handlers.
       applyChanges() {
         if (!this.contentEditable) {
           console.error("Cannot apply changes: ContentEditable is null");
@@ -2502,10 +2504,8 @@ var init_FilePreviewHandler = __esm({
         previewElement.setAttribute("data-file-type", file.type);
         previewElement.setAttribute("data-file-size", file.size.toString());
         previewElement.setAttribute("data-file-name", file.name);
-        range.deleteContents();
         range.insertNode(previewElement);
         range.setStartAfter(previewElement);
-        range.collapse(true);
         const selection = window.getSelection();
         if (selection) {
           selection.removeAllRanges();

@@ -26,12 +26,6 @@ export class WEditor {
         this.initPlugins();
     }
 
-    // clear content
-    public clearContent() {
-        this.contentEditable.innerHTML = '';
-        this.applyChanges();
-    }
-
     private initialize() {
         if (!this.container) {
             console.error('WEditor initialization failed: Container is null');
@@ -63,8 +57,6 @@ export class WEditor {
     }
 
     private handleContentChange = () => {
-        this.dirty = true;
-
         // Clear previous timeout for the 'save after stopping' and set a new timeout
         if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
         this.applyChangesTimeoutId = setTimeout(() => {
@@ -78,6 +70,14 @@ export class WEditor {
                 console.log(`autosave...`)
                 this.applyChanges(); // This ensures at least one save operation every 2 seconds
             }, AUTOSAVE_TIMEOUT_MS);
+        }
+    }
+
+    // clear content
+    public clearContent() {
+        if (this.contentEditable) {
+            this.contentEditable.innerHTML = '';
+            this.applyChanges();
         }
     }
 
@@ -96,6 +96,7 @@ export class WEditor {
         });
     }
 
+    // Converts content area HTML to JSON. Any html elements associated with custom "types" will convert to JSON through their handlers.
     public applyChanges(): BlobContent | null {
         if (!this.contentEditable) {
             console.error('Cannot apply changes: ContentEditable is null');

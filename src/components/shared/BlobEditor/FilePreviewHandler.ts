@@ -51,10 +51,10 @@ export class FilePreviewHandler {
         previewElement.setAttribute('data-file-name', file.name);
 
         // Insert the preview element
-        range.deleteContents();
+        //range.deleteContents(); // should not delete here...
         range.insertNode(previewElement);
         range.setStartAfter(previewElement);
-        range.collapse(true);
+        //range.collapse(true);
 
         // Update selection to reflect new content
         const selection = window.getSelection();
