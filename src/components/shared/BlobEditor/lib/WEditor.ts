@@ -1,4 +1,4 @@
-import { ContentEntries, NodeEntryRef } from 'components/shared/BlobEditor/ContentEntries';
+import { ContentEntries, ContentEntry, NodeEntryRef } from '../ContentEntries';
 import { Blob, BlobContent } from 'types/Blob';
 import { IPlugin } from '../plugins/IPlugin';
 
@@ -63,20 +63,46 @@ export class WEditor {
         //this.contentEditable.addEventListener('keyup', this.handleContentChange);
     }
 
+    // replaces the node's matching ContentEntry with a new one
+    private applyChanges(node) {
+        if (node) {
+            let ner: NodeEntryRef | undefined = this.findCachedEntry(node);
+            //let editContent = editNode.textContent;
+            let entry = ContentEntries.convertNodeToEntry(node);
+            if (!entry) throw "Entry could not be created from node.";
+            console.log(`existing node?`, node, ner, entry);
+            if (ner) {
+                ner.entry = entry;
+            } else {
+                ner = { node, entry };
+                this.nodeEntryRefs.push(ner);
+            }
+        } else {
+            console.log(`no edit node!`)
+        }
+    }
+
     private handleContentChange = (e) => {
-        console.log(`c.`, e, window.getSelection())
+        let editNode: Node | undefined = undefined;
+        if (window.getSelection) {
+            let range = window.getSelection()?.getRangeAt(0);
+            editNode = range?.commonAncestorContainer;
+        }
+
+        this.applyChanges(editNode);
+
         // Clear previous timeout for the 'save after stopping' and set a new timeout
         if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
         this.applyChangesTimeoutId = setTimeout(() => {
             console.log(`autochange...`)
-            this.applyChanges();
+            this.commitChanges();
         }, CHANGE_TIMEOUT_MS);
 
         // If not set to autosave already, start timeout
         if (!this.autoSaveTimeoutId) {
             this.autoSaveTimeoutId = setTimeout(() => {
                 console.log(`autosave...`)
-                this.applyChanges(); // This ensures at least one save operation every 2 seconds
+                this.commitChanges(); // This ensures at least one save operation every 2 seconds
             }, AUTOSAVE_TIMEOUT_MS);
         }
     }
@@ -99,13 +125,14 @@ export class WEditor {
     }
 
     private convertToHTML(content: BlobContent, parent: HTMLElement) {
+        console.log(`convertToHTML`, content)
         content.entries.forEach(entry => {
             ContentEntries.convertToHTMLByType(entry, parent);
         });
     }
 
     // Converts content area HTML to JSON. Any html elements associated with custom "types" will be ignored convert to JSON through their handlers.
-    public applyChanges(): BlobContent | null {
+    public commitChanges(): BlobContent | null {
         if (!this.contentEditable) {
             console.error('Cannot apply changes: ContentEditable is null');
             return null;
@@ -121,26 +148,29 @@ export class WEditor {
             this.applyChangesTimeoutId = null;
         }
 
-        // todo: work with a vdom or cached entries for the nodes?
+        // const entries: ContentEntry[] = [];
+        // const nodes = Array.from(this.contentEditable.childNodes);
 
-        const entries: NodeEntryRef[] = [];
-        const nodes = Array.from(this.contentEditable.childNodes);
-        nodes.forEach(node => {
-            let entry = this.findCachedEntry(node);
-            if (!entry) {
-                entry = ContentEntries.convertNodeToEntry(node);
-                if (entry) {
-                    console.log(`adding new entry`, entry)
-                    this.nodeEntryRefs.push(entry);
-                    entries.push(entry);
-                }
-            } else {
-                console.log(`cached entry`, entry)
-            }
-        });
+        // nodes.forEach(node => {
+        //     let ner: NodeEntryRef | undefined = this.findCachedEntry(node);
+        //     if (!ner) {
+        //         let entry = ContentEntries.convertNodeToEntry(node);
+        //         if (entry) {
+        //             ner = { node, entry };
+        //             console.log(`adding new entry`, ner)
+        //             this.nodeEntryRefs.push(ner);
+        //         }
+        //     } else {
+        //         console.log(`cached entry`, ner)
+        //     }
 
-        const content: BlobContent = { entries };
-        //this.onChangeHandler(content);
+        //     if (ner) {
+        //         entries.push(ner.entry);
+        //     }
+        // });
+
+        const content: BlobContent = { entries: this.nodeEntryRefs.map(ner => ner.entry) };
+        this.onChangeHandler(content);
 
         return content;
     }

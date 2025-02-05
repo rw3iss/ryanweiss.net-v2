@@ -118,6 +118,9 @@ export class GroupEntry extends ContentEntry {
         parent.appendChild(div);
         if (Array.isArray(entry.inner)) {
             entry.inner.forEach(child => ContentEntries.convertToHTMLByType(child, div));
+        } else if (entry.inner) {
+            // ContentEntries.convertToHTMLByType(entry.ild, div)
+            div.innerText = entry.inner;
         }
     }
 
@@ -440,7 +443,7 @@ export class ContentEntries {
         }
     }
 
-    static convertNodeToEntry(node: Node): NodeEntryRef | undefined {
+    static convertNodeToEntry(node: Node): ContentEntry | undefined {
         let entry;
 
         if (node.nodeType === Node.TEXT_NODE) {
@@ -475,10 +478,6 @@ export class ContentEntries {
 
         if (!entry) throw "Could not convert node type to entry: " + node.nodeType;
 
-        const ner: NodeEntryRef = {
-            node,
-            entry
-        }
-        return ner;
+        return entry;
     }
 }

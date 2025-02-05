@@ -44,11 +44,11 @@ export class FilePlugin implements IPlugin {
     };
 
     private handleMouseDown = (event) => {
-        console.log(`mouse down`, event, event.target.closest('.file-preview') as HTMLElement)
+        //console.log(`mouse down`, event, event.target.closest('.file-preview') as HTMLElement)
     };
 
     private handleDragStart = (event: DragEvent) => {
-        console.log(`drag start`, event)
+        //console.log(`drag start`, event)
         const target = event.target as HTMLElement;
         const filePreview = target.closest('.file-preview') as HTMLElement | null;
 

@@ -887,7 +887,7 @@ var init_ToolbarPlugin = __esm({
       initialize(editor, container) {
         this.editor = editor;
         this.initUI(container);
-        container.addEventListener("mouseup", debounce(this.checkForSelection, 100));
+        container.addEventListener("mouseup", debounce(this.checkForSelection, 200));
         container.addEventListener("contextmenu", this.showToolbar);
         document.addEventListener("keydown", this.handleEscapeKey);
       }
@@ -913,7 +913,6 @@ var init_ToolbarPlugin = __esm({
       }
       checkForSelection = (e4) => {
         const s3 = window.getSelection()?.toString().length;
-        console.log(`up`, e4, s3, window.getSelection());
         if (s3 > 0 || e4.button == 2) {
           this.showToolbar(e4);
         } else {
@@ -2033,6 +2032,8 @@ var init_ContentEntries = __esm({
         parent.appendChild(div);
         if (Array.isArray(entry.inner)) {
           entry.inner.forEach((child) => ContentEntries.convertToHTMLByType(child, div));
+        } else if (entry.inner) {
+          div.innerText = entry.inner;
         }
       }
       static convertNodeToEntry(node) {
@@ -2335,11 +2336,7 @@ var init_ContentEntries = __esm({
           entry = BreakEntry.convertNodeToEntry(node);
         }
         if (!entry) throw "Could not convert node type to entry: " + node.nodeType;
-        const ner = {
-          node,
-          entry
-        };
-        return ner;
+        return entry;
       }
     };
   }
@@ -2399,17 +2396,39 @@ var init_WEditor = __esm({
         if (!this.contentEditable) return;
         this.contentEditable.addEventListener("input", this.handleContentChange);
       }
+      // replaces the node's matching ContentEntry with a new one
+      applyChanges(node) {
+        if (node) {
+          let ner = this.findCachedEntry(node);
+          let entry = ContentEntries.convertNodeToEntry(node);
+          if (!entry) throw "Entry could not be created from node.";
+          console.log(`existing node?`, node, ner, entry);
+          if (ner) {
+            ner.entry = entry;
+          } else {
+            ner = { node, entry };
+            this.nodeEntryRefs.push(ner);
+          }
+        } else {
+          console.log(`no edit node!`);
+        }
+      }
       handleContentChange = (e4) => {
-        console.log(`c.`, e4, window.getSelection());
+        let editNode = void 0;
+        if (window.getSelection) {
+          let range = window.getSelection()?.getRangeAt(0);
+          editNode = range?.commonAncestorContainer;
+        }
+        this.applyChanges(editNode);
         if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
         this.applyChangesTimeoutId = setTimeout(() => {
           console.log(`autochange...`);
-          this.applyChanges();
+          this.commitChanges();
         }, CHANGE_TIMEOUT_MS);
         if (!this.autoSaveTimeoutId) {
           this.autoSaveTimeoutId = setTimeout(() => {
             console.log(`autosave...`);
-            this.applyChanges();
+            this.commitChanges();
           }, AUTOSAVE_TIMEOUT_MS);
         }
       };
@@ -2429,12 +2448,13 @@ var init_WEditor = __esm({
         this.convertToHTML(this.blob.content, this.contentEditable);
       }
       convertToHTML(content, parent) {
+        console.log(`convertToHTML`, content);
         content.entries.forEach((entry) => {
           ContentEntries.convertToHTMLByType(entry, parent);
         });
       }
       // Converts content area HTML to JSON. Any html elements associated with custom "types" will be ignored convert to JSON through their handlers.
-      applyChanges() {
+      commitChanges() {
         if (!this.contentEditable) {
           console.error("Cannot apply changes: ContentEditable is null");
           return null;
@@ -2447,22 +2467,8 @@ var init_WEditor = __esm({
           clearTimeout(this.applyChangesTimeoutId);
           this.applyChangesTimeoutId = null;
         }
-        const entries = [];
-        const nodes = Array.from(this.contentEditable.childNodes);
-        nodes.forEach((node) => {
-          let entry = this.findCachedEntry(node);
-          if (!entry) {
-            entry = ContentEntries.convertNodeToEntry(node);
-            if (entry) {
-              console.log(`adding new entry`, entry);
-              this.nodeEntryRefs.push(entry);
-              entries.push(entry);
-            }
-          } else {
-            console.log(`cached entry`, entry);
-          }
-        });
-        const content = { entries };
+        const content = { entries: this.nodeEntryRefs.map((ner) => ner.entry) };
+        this.onChangeHandler(content);
         return content;
       }
       updateContent(newContent) {
@@ -2628,10 +2634,8 @@ var init_FilePlugin = __esm({
         event.preventDefault();
       };
       handleMouseDown = (event) => {
-        console.log(`mouse down`, event, event.target.closest(".file-preview"));
       };
       handleDragStart = (event) => {
-        console.log(`drag start`, event);
         const target = event.target;
         const filePreview = target.closest(".file-preview");
         if (filePreview) {

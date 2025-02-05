@@ -76,7 +76,7 @@ export class ToolbarPlugin implements IPlugin {
     initialize(editor: WEditor, container: HTMLElement) {
         this.editor = editor;
         this.initUI(container);
-        container.addEventListener('mouseup', debounce(this.checkForSelection, 100));
+        container.addEventListener('mouseup', debounce(this.checkForSelection, 200));
         container.addEventListener('contextmenu', this.showToolbar);
         document.addEventListener('keydown', this.handleEscapeKey);
     }
@@ -107,7 +107,7 @@ export class ToolbarPlugin implements IPlugin {
 
     private checkForSelection = (e: MouseEvent) => {
         const s = window.getSelection()?.toString().length;
-        console.log(`up`, e, s, window.getSelection())
+        //console.log(`up`, e, s, window.getSelection())
         if (s > 0 || e.button == 2) { // right click or selection
             this.showToolbar(e);
         } else {
