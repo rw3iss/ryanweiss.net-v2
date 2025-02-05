@@ -1,7 +1,12 @@
 interface BaseEntry {
     type: string;
     attributes?: { [key: string]: string };
-    inner?: string | ContentEntry[];
+    inner?: string | ContentEntry[] | null;
+}
+
+export type NodeEntryRef = {
+    node: Node;
+    entry: ContentEntry;
 }
 
 export abstract class ContentEntry {
@@ -369,6 +374,7 @@ export class CodeEntry extends ContentEntry {
 export class BreakEntry extends ContentEntry {
     type = 'break';
     attributes?: { [key: string]: string };
+    inner = [];
     //inner?: ContentEntry[];
 
     constructor(attributes?: { [key: string]: string }) {
@@ -434,36 +440,45 @@ export class ContentEntries {
         }
     }
 
-    static convertNodeToEntry(node: Node): ContentEntry | null {
+    static convertNodeToEntry(node: Node): NodeEntryRef | undefined {
+        let entry;
+
         if (node.nodeType === Node.TEXT_NODE) {
-            return TextEntry.convertNodeToEntry(node);
+            entry = TextEntry.convertNodeToEntry(node);
         }
-        if (node.nodeName === 'DIV') {
+        else if (node.nodeName === 'DIV') {
             const div = node as HTMLDivElement;
             if (div.getAttribute('custom') === 'true') {
-                return CustomEntry.convertNodeToEntry(div);
+                entry = CustomEntry.convertNodeToEntry(div);
+            } else {
+                entry = GroupEntry.convertNodeToEntry(div);
             }
-            return GroupEntry.convertNodeToEntry(div);
         }
-        if (node.nodeName === 'A') {
-            return LinkEntry.convertNodeToEntry(node as HTMLAnchorElement);
+        else if (node.nodeName === 'A') {
+            entry = LinkEntry.convertNodeToEntry(node as HTMLAnchorElement);
         }
-        if (/^H[1-6]$/.test(node.nodeName)) {
-            return HeaderEntry.convertNodeToEntry(node as HTMLHeadingElement);
+        else if (/^H[1-6]$/.test(node.nodeName)) {
+            entry = HeaderEntry.convertNodeToEntry(node as HTMLHeadingElement);
         }
-        if (node.nodeName === 'B' || node.nodeName === 'I' || node.nodeName === 'SPAN') {
-            return TextEntry.convertNodeToEntry(node as HTMLElement);
+        else if (node.nodeName === 'B' || node.nodeName === 'I' || node.nodeName === 'SPAN') {
+            entry = TextEntry.convertNodeToEntry(node as HTMLElement);
         }
-        if (node.nodeName === 'PRE') {
-            return PreEntry.convertNodeToEntry(node as HTMLPreElement);
+        else if (node.nodeName === 'PRE') {
+            entry = PreEntry.convertNodeToEntry(node as HTMLPreElement);
         }
-        if (node.nodeName === 'CODE') {
-            return CodeEntry.convertNodeToEntry(node as HTMLElement);
+        else if (node.nodeName === 'CODE') {
+            entry = CodeEntry.convertNodeToEntry(node as HTMLElement);
         }
-        if (node.nodeName === 'BR') {
-            return BreakEntry.convertNodeToEntry(node as HTMLElement);
+        else if (node.nodeName === 'BR') {
+            entry = BreakEntry.convertNodeToEntry(node as HTMLElement);
         }
-        // Add more conditions for other node types if needed
-        return null;
+
+        if (!entry) throw "Could not convert node type to entry: " + node.nodeType;
+
+        const ner: NodeEntryRef = {
+            node,
+            entry
+        }
+        return ner;
     }
 }

@@ -2250,6 +2250,7 @@ var init_ContentEntries = __esm({
     BreakEntry = class _BreakEntry extends ContentEntry {
       type = "break";
       attributes;
+      inner = [];
       //inner?: ContentEntry[];
       constructor(attributes) {
         super();
@@ -2310,35 +2311,35 @@ var init_ContentEntries = __esm({
         }
       }
       static convertNodeToEntry(node) {
+        let entry;
         if (node.nodeType === Node.TEXT_NODE) {
-          return TextEntry.convertNodeToEntry(node);
-        }
-        if (node.nodeName === "DIV") {
+          entry = TextEntry.convertNodeToEntry(node);
+        } else if (node.nodeName === "DIV") {
           const div = node;
           if (div.getAttribute("custom") === "true") {
-            return CustomEntry.convertNodeToEntry(div);
+            entry = CustomEntry.convertNodeToEntry(div);
+          } else {
+            entry = GroupEntry.convertNodeToEntry(div);
           }
-          return GroupEntry.convertNodeToEntry(div);
+        } else if (node.nodeName === "A") {
+          entry = LinkEntry.convertNodeToEntry(node);
+        } else if (/^H[1-6]$/.test(node.nodeName)) {
+          entry = HeaderEntry.convertNodeToEntry(node);
+        } else if (node.nodeName === "B" || node.nodeName === "I" || node.nodeName === "SPAN") {
+          entry = TextEntry.convertNodeToEntry(node);
+        } else if (node.nodeName === "PRE") {
+          entry = PreEntry.convertNodeToEntry(node);
+        } else if (node.nodeName === "CODE") {
+          entry = CodeEntry.convertNodeToEntry(node);
+        } else if (node.nodeName === "BR") {
+          entry = BreakEntry.convertNodeToEntry(node);
         }
-        if (node.nodeName === "A") {
-          return LinkEntry.convertNodeToEntry(node);
-        }
-        if (/^H[1-6]$/.test(node.nodeName)) {
-          return HeaderEntry.convertNodeToEntry(node);
-        }
-        if (node.nodeName === "B" || node.nodeName === "I" || node.nodeName === "SPAN") {
-          return TextEntry.convertNodeToEntry(node);
-        }
-        if (node.nodeName === "PRE") {
-          return PreEntry.convertNodeToEntry(node);
-        }
-        if (node.nodeName === "CODE") {
-          return CodeEntry.convertNodeToEntry(node);
-        }
-        if (node.nodeName === "BR") {
-          return BreakEntry.convertNodeToEntry(node);
-        }
-        return null;
+        if (!entry) throw "Could not convert node type to entry: " + node.nodeType;
+        const ner = {
+          node,
+          entry
+        };
+        return ner;
       }
     };
   }
@@ -2361,6 +2362,11 @@ var init_WEditor = __esm({
       plugins;
       applyChangesTimeoutId = null;
       autoSaveTimeoutId = null;
+      nodeEntryRefs = [];
+      // returns an entry linked to a given dom node
+      findCachedEntry = (node) => {
+        return this.nodeEntryRefs.find((n2) => n2.node == node);
+      };
       constructor(container, blob, onChange, plugins = []) {
         this.container = container;
         this.blob = blob;
@@ -2426,7 +2432,7 @@ var init_WEditor = __esm({
           ContentEntries.convertToHTMLByType(entry, parent);
         });
       }
-      // Converts content area HTML to JSON. Any html elements associated with custom "types" will convert to JSON through their handlers.
+      // Converts content area HTML to JSON. Any html elements associated with custom "types" will be ignored convert to JSON through their handlers.
       applyChanges() {
         if (!this.contentEditable) {
           console.error("Cannot apply changes: ContentEditable is null");
@@ -2443,11 +2449,19 @@ var init_WEditor = __esm({
         const entries = [];
         const nodes = Array.from(this.contentEditable.childNodes);
         nodes.forEach((node) => {
-          const entry = ContentEntries.convertNodeToEntry(node);
-          if (entry) entries.push(entry);
+          let entry = this.findCachedEntry(node);
+          if (!entry) {
+            entry = ContentEntries.convertNodeToEntry(node);
+            if (entry) {
+              console.log(`adding new entry`, entry);
+              this.nodeEntryRefs.push(entry);
+              entries.push(entry);
+            }
+          } else {
+            console.log(`cached entry`, entry);
+          }
         });
         const content = { entries };
-        this.onChangeHandler(content);
         return content;
       }
       updateContent(newContent) {

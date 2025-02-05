@@ -1,11 +1,11 @@
-import { ContentEntries } from 'components/shared/BlobEditor/ContentEntries';
+import { ContentEntries, NodeEntryRef } from 'components/shared/BlobEditor/ContentEntries';
 import { Blob, BlobContent } from 'types/Blob';
-import { ContentEntry } from '../ContentEntries';
 import { IPlugin } from '../plugins/IPlugin';
 
 
 const CHANGE_TIMEOUT_MS = 500; // time delay to save after last key/input
 const AUTOSAVE_TIMEOUT_MS = 3000; // time delay to save automatically
+
 
 export class WEditor {
     private container: HTMLElement | null;
@@ -15,6 +15,13 @@ export class WEditor {
     private plugins: IPlugin[];
     private applyChangesTimeoutId: Timeout | null = null;
     private autoSaveTimeoutId: Timeout | null = null;
+
+    private nodeEntryRefs: Array<NodeEntryRef> = [];
+
+    // returns an entry linked to a given dom node
+    private findCachedEntry = (node): NodeEntryRef | undefined => {
+        return this.nodeEntryRefs.find(n => n.node == node);
+    }
 
     constructor(container: HTMLElement | null, blob: Blob, onChange: (content: BlobContent) => void, plugins: IPlugin[] = []) {
         this.container = container;
@@ -96,7 +103,7 @@ export class WEditor {
         });
     }
 
-    // Converts content area HTML to JSON. Any html elements associated with custom "types" will convert to JSON through their handlers.
+    // Converts content area HTML to JSON. Any html elements associated with custom "types" will be ignored convert to JSON through their handlers.
     public applyChanges(): BlobContent | null {
         if (!this.contentEditable) {
             console.error('Cannot apply changes: ContentEditable is null');
@@ -113,15 +120,26 @@ export class WEditor {
             this.applyChangesTimeoutId = null;
         }
 
-        const entries: ContentEntry[] = [];
+        // todo: work with a vdom or cached entries for the nodes?
+
+        const entries: NodeEntryRef[] = [];
         const nodes = Array.from(this.contentEditable.childNodes);
         nodes.forEach(node => {
-            const entry = ContentEntries.convertNodeToEntry(node);
-            if (entry) entries.push(entry);
+            let entry = this.findCachedEntry(node);
+            if (!entry) {
+                entry = ContentEntries.convertNodeToEntry(node);
+                if (entry) {
+                    console.log(`adding new entry`, entry)
+                    this.nodeEntryRefs.push(entry);
+                    entries.push(entry);
+                }
+            } else {
+                console.log(`cached entry`, entry)
+            }
         });
 
         const content: BlobContent = { entries };
-        this.onChangeHandler(content);
+        //this.onChangeHandler(content);
 
         return content;
     }
