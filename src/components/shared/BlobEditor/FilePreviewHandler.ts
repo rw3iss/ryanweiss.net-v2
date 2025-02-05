@@ -12,15 +12,15 @@ const printBytes = (b) => {
     let mb = kb / 1024;
     if (mb >= 1) {
         let kbr = kb - (mb * 1024);
-        return `${mb.toFixed(0)}mb${kbr > 0 ? `${kbr}kb` : ``}`;
+        return `${mb.toFixed(0)}Mb${kbr > 0 ? `${kbr}Kb` : ``}`;
     } else {
         if (kb >= 1) {
             let br = b - (kb * 1024);
-            return `${kb.toFixed(0)}kb${br > 0 ? `${br}b` : ``}`;
+            return `${kb.toFixed(0)}Kb${br > 0 ? `${br}B` : ``}`;
         }
-        return `${b}b`;
+        return `${b}B`;
     }
-}
+};
 
 export class FilePreviewHandler {
     private editor: WEditor;
@@ -100,11 +100,14 @@ export class FilePreviewHandler {
     }
 
     private wrapPreview(element: HTMLElement, file, type: string): HTMLElement {
-        element.classList.add('file-thumb');
         const wrapper = document.createElement('div');
         wrapper.setAttribute('contenteditable', "false");
         wrapper.className = `file-preview ${type}-preview`;
-        wrapper.appendChild(element);
+
+        const thumb = document.createElement('div');
+        thumb.classList.add('file-thumb');
+        thumb.appendChild(element);
+        wrapper.appendChild(thumb);
 
         // Add info section + options
         const meta = document.createElement('div');
@@ -125,6 +128,8 @@ export class FilePreviewHandler {
         meta.appendChild(deleteButton);
 
         wrapper.appendChild(meta);
+
+        console.log(`add file`, file)
 
         return wrapper;
     }

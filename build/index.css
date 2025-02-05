@@ -379,6 +379,7 @@
   overflow-y: auto;
 }
 .blob-editor .wysiwyg-container div[contenteditable=true] {
+  position: relative;
   color: #f5f5f5;
   background: #333333;
   border: none;
@@ -520,13 +521,22 @@
   flex-direction: column;
   flex: 1 0 auto;
   max-width: 200px;
-  max-height: 200px;
   border: 1px solid #aaa;
   border-radius: 10px;
   overflow: hidden;
 }
 .blob-editor .file-preview .file-thumb {
-  border: 1px solid red;
+  display: flex;
+  justify-content: center;
+  max-height: 200px;
+  background: #aaa;
+}
+.blob-editor .file-preview .file-thumb img {
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+  -o-object-fit: contain;
+  object-fit: contain;
 }
 .blob-editor .file-preview .file-options {
   display: flex;

@@ -12,6 +12,8 @@ export class FilePlugin implements IPlugin {
         //        this.editor = editor;
         //       this.container = container;
         this.filePreviewHandler = new FilePreviewHandler(editor);
+        container.addEventListener('mousedown', this.handleMouseDown);
+        container.addEventListener('dragstart', this.handleDragStart);
         container.addEventListener('dragover', this.handleDragOver);
         container.addEventListener('drop', this.handleDrop);
 
@@ -36,9 +38,37 @@ export class FilePlugin implements IPlugin {
         onClick: this.handleToolbarFile
     };
 
-    private handleDragOver = (e: DragEvent) => {
-        console.log(`drag over`)
-        e.preventDefault();
+    private handleDragOver = (event: DragEvent) => {
+        console.log(`drag over`, event);
+        event.preventDefault();
+    };
+
+    private handleMouseDown = (event) => {
+        console.log(`mouse down`, event, event.target.closest('.file-preview') as HTMLElement)
+    };
+
+    private handleDragStart = (event: DragEvent) => {
+        console.log(`drag start`, event)
+        const target = event.target as HTMLElement;
+        const filePreview = target.closest('.file-preview') as HTMLElement | null;
+
+        if (filePreview) {
+            console.log("Dragging file preview:", filePreview);
+
+            // Clone the preview element for the drag image
+            const dragPreview = filePreview.cloneNode(true) as HTMLElement;
+            dragPreview.style.position = 'absolute';
+            dragPreview.style.top = '-9999px'; // Hide from document layout
+
+            document.body.appendChild(dragPreview); // Add to DOM temporarily
+
+            // Set as the drag image
+            event.dataTransfer!.setDragImage(dragPreview, 10, 10);
+
+            // Cleanup after drag ends
+            setTimeout(() => document.body.removeChild(dragPreview), 0);
+        }
+        //event.preventDefault();
     };
 
     private insertFiles = (files) => {

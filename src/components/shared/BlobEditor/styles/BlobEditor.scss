@@ -51,6 +51,7 @@ $padding: 20px; // General padding for elements
         overflow-y: auto;
 
         div[contenteditable="true"] {
+            position: relative;
             color: $text-color;
             background: $secondary-bg;
             border: none;

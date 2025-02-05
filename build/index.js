@@ -2471,13 +2471,13 @@ var init_FilePreviewHandler = __esm({
       let mb = kb / 1024;
       if (mb >= 1) {
         let kbr = kb - mb * 1024;
-        return `${mb.toFixed(0)}mb${kbr > 0 ? `${kbr}kb` : ``}`;
+        return `${mb.toFixed(0)}Mb${kbr > 0 ? `${kbr}Kb` : ``}`;
       } else {
         if (kb >= 1) {
           let br = b2 - kb * 1024;
-          return `${kb.toFixed(0)}kb${br > 0 ? `${br}b` : ``}`;
+          return `${kb.toFixed(0)}Kb${br > 0 ? `${br}B` : ``}`;
         }
-        return `${b2}b`;
+        return `${b2}B`;
       }
     };
     FilePreviewHandler = class {
@@ -2541,11 +2541,13 @@ var init_FilePreviewHandler = __esm({
         return this.wrapPreview(div, file, "file");
       }
       wrapPreview(element, file, type) {
-        element.classList.add("file-thumb");
         const wrapper = document.createElement("div");
         wrapper.setAttribute("contenteditable", "false");
         wrapper.className = `file-preview ${type}-preview`;
-        wrapper.appendChild(element);
+        const thumb = document.createElement("div");
+        thumb.classList.add("file-thumb");
+        thumb.appendChild(element);
+        wrapper.appendChild(thumb);
         const meta = document.createElement("div");
         meta.className = "file-options";
         const info = document.createElement("div");
@@ -2559,6 +2561,7 @@ var init_FilePreviewHandler = __esm({
         deleteButton.addEventListener("click", () => this.removePreview(wrapper));
         meta.appendChild(deleteButton);
         wrapper.appendChild(meta);
+        console.log(`add file`, file);
         return wrapper;
       }
       removePreview(previewElement) {
@@ -2583,6 +2586,8 @@ var init_FilePlugin = __esm({
       input;
       initialize(editor, container) {
         this.filePreviewHandler = new FilePreviewHandler(editor);
+        container.addEventListener("mousedown", this.handleMouseDown);
+        container.addEventListener("dragstart", this.handleDragStart);
         container.addEventListener("dragover", this.handleDragOver);
         container.addEventListener("drop", this.handleDrop);
         this.input = document.createElement("input");
@@ -2603,9 +2608,26 @@ var init_FilePlugin = __esm({
         label: "File",
         onClick: this.handleToolbarFile
       };
-      handleDragOver = (e4) => {
-        console.log(`drag over`);
-        e4.preventDefault();
+      handleDragOver = (event) => {
+        console.log(`drag over`, event);
+        event.preventDefault();
+      };
+      handleMouseDown = (event) => {
+        console.log(`mouse down`, event, event.target.closest(".file-preview"));
+      };
+      handleDragStart = (event) => {
+        console.log(`drag start`, event);
+        const target = event.target;
+        const filePreview = target.closest(".file-preview");
+        if (filePreview) {
+          console.log("Dragging file preview:", filePreview);
+          const dragPreview = filePreview.cloneNode(true);
+          dragPreview.style.position = "absolute";
+          dragPreview.style.top = "-9999px";
+          document.body.appendChild(dragPreview);
+          event.dataTransfer.setDragImage(dragPreview, 10, 10);
+          setTimeout(() => document.body.removeChild(dragPreview), 0);
+        }
       };
       insertFiles = (files) => {
         files.forEach((file) => {
