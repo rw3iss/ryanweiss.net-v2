@@ -2780,7 +2780,6 @@ var init_BlobEditor2 = __esm({
         return /* @__PURE__ */ u2("p", { class: "error-message", children: "Loading..." });
       }
       return /* @__PURE__ */ u2("div", { class: "blob-editor", style: { width: "100%", height: "100%", display: "flex", flexDirection: "column" }, children: [
-        /* @__PURE__ */ u2("h2", { children: "Blob Editor" }),
         /* @__PURE__ */ u2(
           "input",
           {

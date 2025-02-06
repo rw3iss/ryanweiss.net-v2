@@ -90,7 +90,6 @@ export const BlobEditor: FunctionComponent<Props> = ({ blob: initialBlob }) => {
 
     return (
         <div class="blob-editor" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <h2>Blob Editor</h2>
             <input
                 type="text"
                 value={currentBlob.title}

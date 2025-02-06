@@ -1,15 +1,15 @@
-$primary-bg: #1e1f20; // Darker background for the main container
-$secondary-bg: #191a1a; // Slightly lighter background for content area
+$primary-bg: #111418; // Darker background for the main container
+$secondary-bg: #161b21; // Slightly lighter background for content area
 $text-color: #f5f5f5; // Light text color for contrast
 $border-radius: 8px; // Rounded corners
 $padding: 20px; // General padding for elements
+$focus-color: rgb(10, 157, 215);
 
 .blob-editor {
     flex: 1 0 100%;
     //max-width: 800px;
     margin: 50px auto;
     background: $primary-bg;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: $border-radius;
     overflow: hidden; // Ensures rounded corners on content area
 
@@ -23,29 +23,29 @@ $padding: 20px; // General padding for elements
     h2 {
         padding: $padding;
         margin: 0;
-        background: $secondary-bg;
+        background: $primary-bg;
         text-align: center;
     }
 
     .blob-title {
-        width: calc(100% - 40px); // 40px accounts for padding
+        width: 100%; // 40px accounts for padding
         padding: $padding;
         margin: 0;
         border: none;
-        background: $primary-bg;
+        background: $secondary-bg;
         color: $text-color;
         font-size: 1.2em;
-        border-bottom: 1px solid rgba($text-color, 0.1);
+        //border-bottom: 1px solid rgba($text-color, 0.1);
 
         &:focus {
             outline: none;
-            box-shadow: 0 0 0 2px rgba($text-color, 0.2);
+            //box-shadow: 0 0 0 2px rgba($text-color, 0.2);
         }
     }
 
     .wysiwyg-container {
         padding: $padding;
-        background: $secondary-bg;
+        background: $primary-bg;
         border-radius: 0 0 $border-radius $border-radius;
         min-height: 300px;
         overflow-y: auto;
@@ -53,15 +53,16 @@ $padding: 20px; // General padding for elements
         div[contenteditable="true"] {
             position: relative;
             color: $text-color;
-            background: $secondary-bg;
+            background: $primary-bg;
             border: none;
             outline: none;
             padding: $padding;
             border-radius: $border-radius;
             line-height: 1.8; // Increased line height for better readability
 
-            &:focus {
-                box-shadow: 0 0 0 2px rgba($text-color, 0.2);
+            &:focus,
+            &:hover {
+                box-shadow: 0 0 0 2px rgba($focus-color, 0.2);
             }
 
             p {
