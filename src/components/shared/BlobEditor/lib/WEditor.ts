@@ -39,6 +39,7 @@ export class WEditor {
         if (!this.contentEditable) {
             this.contentEditable = document.createElement('div');
             this.contentEditable.setAttribute('contenteditable', 'true');
+            this.contentEditable.classList.add('content-editor');
             this.container.appendChild(this.contentEditable);
         }
 
@@ -57,7 +58,7 @@ export class WEditor {
             editNode = range?.commonAncestorContainer;
         }
 
-        // Apply the changes immediately to the entry, before committing
+        // Apply the changes immediately to the entry, for throttled commit later
         this.applyChanges(editNode);
     }
 
@@ -85,13 +86,20 @@ export class WEditor {
         });
     }
 
-    // replaces the node's matching ContentEntry with a new one
+    // updates the given node's entry with it's changed content
     private applyChanges(node) {
-        console.log(`apply`, node);
+        if (!node) throw "No node given to applyChanges()";
+
+        let entry = ContentEntries.convertNodeToEntry(node);
+        if (!entry) throw "Entry could not be created from node.";
+
+        console.log(`apply`, node, node.parentNode);
+        // find node in dom, or add at found index
+
+
+        // update entry from node
 
         if (node) {
-            let entry = ContentEntries.convertNodeToEntry(node);
-            if (!entry) throw "Entry could not be created from node.";
             this.nodes.updateOrAdd(node, entry);
         } else {
             console.log(`no edit node given!`);
@@ -118,15 +126,9 @@ export class WEditor {
             return null;
         }
 
-        // Clear the auto-save timeout since we're saving now
-        if (this.autoSaveTimeoutId) {
-            clearTimeout(this.autoSaveTimeoutId);
-            this.autoSaveTimeoutId = null;
-        }
-        if (this.applyChangesTimeoutId) {
-            clearTimeout(this.applyChangesTimeoutId);
-            this.applyChangesTimeoutId = null;
-        }
+        // Clear the auto-save and auto-change timeouts since we're saving now
+        if (this.autoSaveTimeoutId) this.autoSaveTimeoutId = clearTimeout(this.autoSaveTimeoutId);
+        if (this.applyChangesTimeoutId) this.applyChangesTimeoutId = clearTimeout(this.applyChangesTimeoutId);
 
         const content: BlobContent = { entries: this.nodes.getEntries() };
         this.onChangeHandler(content);

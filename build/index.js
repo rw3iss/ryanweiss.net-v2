@@ -1941,11 +1941,14 @@ var init_NodeEntryCache = __esm({
     "use strict";
     init_preact_module();
     NodeEntryCache = class {
+      entryTree = [];
+      nodeTree = [];
       nodeEntryRefs = [];
       lastNodeEntry = void 0;
       // reference to last-edited node for faster/immdiate lookups
       // Return just the entries without the node references, so they can be saved as Blob content.
-      getEntries = () => this.nodeEntryRefs.map((ner) => ner.entry);
+      getEntries = () => this.entryTree;
+      //odeEntryRefs.map(ner => ner.entry);
       // Find a NodeEntryRef whose node matches the given node.
       findEntry = (node) => this.nodeEntryRefs.find((n2) => n2.node == node);
       // Change the given node's entry content and set last edited node.
@@ -2412,6 +2415,7 @@ var init_WEditor = __esm({
         if (!this.contentEditable) {
           this.contentEditable = document.createElement("div");
           this.contentEditable.setAttribute("contenteditable", "true");
+          this.contentEditable.classList.add("content-editor");
           this.container.appendChild(this.contentEditable);
         }
         this.plugins.forEach((plugin) => plugin.initialize(this, this.container));
@@ -2445,12 +2449,13 @@ var init_WEditor = __esm({
           ContentEntries.convertToHTMLByType(entry, parent);
         });
       }
-      // replaces the node's matching ContentEntry with a new one
+      // updates the given node's entry with it's changed content
       applyChanges(node) {
-        console.log(`apply`, node);
+        if (!node) throw "No node given to applyChanges()";
+        let entry = ContentEntries.convertNodeToEntry(node);
+        if (!entry) throw "Entry could not be created from node.";
+        console.log(`apply`, node, node.parentNode);
         if (node) {
-          let entry = ContentEntries.convertNodeToEntry(node);
-          if (!entry) throw "Entry could not be created from node.";
           this.nodes.updateOrAdd(node, entry);
         } else {
           console.log(`no edit node given!`);
@@ -2471,14 +2476,8 @@ var init_WEditor = __esm({
           console.error("Cannot apply changes: ContentEditable is null");
           return null;
         }
-        if (this.autoSaveTimeoutId) {
-          clearTimeout(this.autoSaveTimeoutId);
-          this.autoSaveTimeoutId = null;
-        }
-        if (this.applyChangesTimeoutId) {
-          clearTimeout(this.applyChangesTimeoutId);
-          this.applyChangesTimeoutId = null;
-        }
+        if (this.autoSaveTimeoutId) this.autoSaveTimeoutId = clearTimeout(this.autoSaveTimeoutId);
+        if (this.applyChangesTimeoutId) this.applyChangesTimeoutId = clearTimeout(this.applyChangesTimeoutId);
         const content = { entries: this.nodes.getEntries() };
         this.onChangeHandler(content);
         return content;

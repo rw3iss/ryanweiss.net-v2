@@ -1,11 +1,22 @@
 import { ContentEntry, NodeEntryRef } from 'components/shared/BlobEditor/ContentEntries';
-// simple link of DOM nodes -to- ContentEntry entries.
+
+
+/**
+ * @description Maintains two dictionary trees, one with a reference of existing dom nodes to entries, and the other of just the entries.
+ * When an update from a dom node is received, the reference is found and replaced in place, allowing the entry tree to be retrieved and serialized
+ * without any further work.
+ * @export
+ * @class NodeEntryCache
+ */
 export class NodeEntryCache {
+    private entryTree: Array<ContentEntry> = [];
+    private nodeTree: Array<NodeEntryRef> = [];
+
     private nodeEntryRefs: Array<NodeEntryRef> = [];
     private lastNodeEntry: NodeEntryRef | undefined = undefined; // reference to last-edited node for faster/immdiate lookups
 
     // Return just the entries without the node references, so they can be saved as Blob content.
-    public getEntries = () => this.nodeEntryRefs.map(ner => ner.entry);
+    public getEntries = () => this.entryTree; //odeEntryRefs.map(ner => ner.entry);
 
     // Find a NodeEntryRef whose node matches the given node.
     public findEntry = (node: Node): NodeEntryRef | undefined => this.nodeEntryRefs.find(n => n.node == node);
