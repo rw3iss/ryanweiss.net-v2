@@ -4,11 +4,6 @@ interface BaseEntry {
     inner?: string | ContentEntry[] | null;
 }
 
-export type NodeEntryRef = {
-    node: Node;
-    entry: ContentEntry;
-    children?: Array<NodeEntryRef>;
-}
 
 export abstract class ContentEntry {
     abstract type: string;

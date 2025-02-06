@@ -1,7 +1,7 @@
 import { debounce } from 'lib/utils/debounce';
-import { WEditor } from '../lib/WEditor';
+import { WEditor } from '../../lib/WEditor';
+import { IPlugin } from '../IPlugin';
 import { Dropdown } from './Dropdown'; // Assuming Dropdown class is in this file
-import { IPlugin } from './IPlugin';
 
 export class ToolbarPlugin implements IPlugin {
     public editor: WEditor;

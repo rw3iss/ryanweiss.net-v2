@@ -1,6 +1,6 @@
 import { PastePlugin } from 'components/shared/BlobEditor/plugins/PastePlugin';
 import { TabPlugin } from 'components/shared/BlobEditor/plugins/TabPlugin';
-import { ToolbarPlugin } from 'components/shared/BlobEditor/plugins/ToolbarPlugin';
+import { ToolbarPlugin } from 'components/shared/BlobEditor/plugins/toolbar/ToolbarPlugin';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Blob, BlobContent } from 'types/Blob';
 import { BlobService } from './lib/BlobService'; // Assuming BlobService is in this path

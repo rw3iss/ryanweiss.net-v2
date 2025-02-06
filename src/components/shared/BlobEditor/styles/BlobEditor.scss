@@ -95,6 +95,6 @@ $padding: 20px; // General padding for elements
         padding: $padding;
     }
 
-    @import "./ToolbarPlugin.scss";
+    @import "../plugins/toolbar/ToolbarPlugin.scss";
     @import "./FilePlugin.scss";
 }

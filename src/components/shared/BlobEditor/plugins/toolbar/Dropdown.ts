@@ -1,5 +1,5 @@
-import { createToolbarItem } from 'components/shared/BlobEditor/plugins/ToolbarPlugin';
-import { ToolbarPlugin } from './ToolbarPlugin.ts';
+import { createToolbarItem } from 'components/shared/BlobEditor/plugins/toolbar/ToolbarPlugin.js';
+import { ToolbarPlugin } from './ToolbarPlugin.js';
 
 export class Dropdown {
     private dropdownButton: HTMLElement;

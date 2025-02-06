@@ -1,4 +1,10 @@
-import { ContentEntry, NodeEntryRef } from 'components/shared/BlobEditor/ContentEntries';
+import { ContentEntry } from 'components/shared/BlobEditor/ContentEntries';
+
+export type NodeEntryRef = {
+    node: Node;
+    entry: ContentEntry;
+    children?: Array<NodeEntryRef>;
+}
 
 
 /**
@@ -9,8 +15,11 @@ import { ContentEntry, NodeEntryRef } from 'components/shared/BlobEditor/Content
  * @class NodeEntryCache
  */
 export class NodeEntryCache {
-    private entryTree: Array<ContentEntry> = [];
-    private nodeTree: Array<NodeEntryRef> = [];
+    // node tree that references each entry, allowing for quick lookup of relevant nodes->entries.
+    public nodeTree: Array<NodeEntryRef> = [];
+
+    // the actual entry tree (content)
+    public entryTree: Array<ContentEntry> = [];
 
     private nodeEntryRefs: Array<NodeEntryRef> = [];
     private lastNodeEntry: NodeEntryRef | undefined = undefined; // reference to last-edited node for faster/immdiate lookups
@@ -19,6 +28,7 @@ export class NodeEntryCache {
     public getEntries = () => this.entryTree; //odeEntryRefs.map(ner => ner.entry);
 
     // Find a NodeEntryRef whose node matches the given node.
+    // TODO: find from parent stack...
     public findEntry = (node: Node): NodeEntryRef | undefined => this.nodeEntryRefs.find(n => n.node == node);
 
     // Change the given node's entry content and set last edited node.

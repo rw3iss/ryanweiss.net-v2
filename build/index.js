@@ -715,10 +715,10 @@ var init_debounce = __esm({
   }
 });
 
-// src/components/shared/BlobEditor/plugins/Dropdown.ts
+// src/components/shared/BlobEditor/plugins/toolbar/Dropdown.ts
 var Dropdown;
 var init_Dropdown = __esm({
-  "src/components/shared/BlobEditor/plugins/Dropdown.ts"() {
+  "src/components/shared/BlobEditor/plugins/toolbar/Dropdown.ts"() {
     "use strict";
     init_preact_module();
     init_ToolbarPlugin();
@@ -815,7 +815,7 @@ var init_Dropdown = __esm({
   }
 });
 
-// src/components/shared/BlobEditor/plugins/ToolbarPlugin.ts
+// src/components/shared/BlobEditor/plugins/toolbar/ToolbarPlugin.ts
 function createToolbarItem(item, parent, toolbar) {
   this.toolbar = toolbar;
   if (item.type === "button") {
@@ -873,7 +873,7 @@ function createToolbarItem(item, parent, toolbar) {
 }
 var ToolbarPlugin;
 var init_ToolbarPlugin = __esm({
-  "src/components/shared/BlobEditor/plugins/ToolbarPlugin.ts"() {
+  "src/components/shared/BlobEditor/plugins/toolbar/ToolbarPlugin.ts"() {
     "use strict";
     init_preact_module();
     init_debounce();
@@ -1941,8 +1941,10 @@ var init_NodeEntryCache = __esm({
     "use strict";
     init_preact_module();
     NodeEntryCache = class {
-      entryTree = [];
+      // node tree that references each entry, allowing for quick lookup of relevant nodes->entries.
       nodeTree = [];
+      // the actual entry tree (content)
+      entryTree = [];
       nodeEntryRefs = [];
       lastNodeEntry = void 0;
       // reference to last-edited node for faster/immdiate lookups
@@ -1950,6 +1952,7 @@ var init_NodeEntryCache = __esm({
       getEntries = () => this.entryTree;
       //odeEntryRefs.map(ner => ner.entry);
       // Find a NodeEntryRef whose node matches the given node.
+      // TODO: find from parent stack...
       findEntry = (node) => this.nodeEntryRefs.find((n2) => n2.node == node);
       // Change the given node's entry content and set last edited node.
       update = (ner, entry) => {
@@ -2384,6 +2387,18 @@ var init_ContentEntries = __esm({
 });
 
 // src/components/shared/BlobEditor/lib/WEditor.ts
+function hydrateContent(entries, contentEditable, nodeCache) {
+  console.log(`hydrate`, entries, nodeCache, contentEditable);
+  entries.forEach((entry) => {
+    const node = ContentEntries.convertToHTMLByType(entry, contentEditable);
+    const ner = { node, entry, children: [] };
+    if (entry.inner && Array.isArray(entry.inner)) {
+      entry.inner.forEach((c3) => {
+      });
+    }
+    nodeCache.entryTree.push(entry);
+  });
+}
 var CHANGE_TIMEOUT_MS, AUTOSAVE_TIMEOUT_MS, WEditor;
 var init_WEditor = __esm({
   "src/components/shared/BlobEditor/lib/WEditor.ts"() {
@@ -2441,6 +2456,7 @@ var init_WEditor = __esm({
         if (!this.contentEditable) return console.error("Cannot load blob: ContentEditable is null");
         if (!this.blob) return console.error("No blob given to load.");
         this.contentEditable.innerHTML = "";
+        hydrateContent(this.blob.content, this.nodes, this.contentEditable);
         this.convertToHTML(this.blob.content, this.contentEditable);
       }
       convertToHTML(content, parent) {

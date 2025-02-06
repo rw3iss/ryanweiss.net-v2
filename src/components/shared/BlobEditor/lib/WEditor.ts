@@ -1,3 +1,4 @@
+import { ContentEntry } from 'components/shared/BlobEditor/ContentEntries';
 import { NodeEntryCache } from 'components/shared/BlobEditor/lib/NodeEntryCache';
 import { Blob, BlobContent } from 'types/Blob';
 import { ContentEntries } from '../ContentEntries';
@@ -7,14 +8,41 @@ import { IPlugin } from '../plugins/IPlugin';
 const CHANGE_TIMEOUT_MS = 500; // time delay to save after last key/input
 const AUTOSAVE_TIMEOUT_MS = 3000; // time delay to save automatically
 
+// Populates contentEditable dom, and fills node + entry trees.
+function hydrateContent(entries: Array<ContentEntry>, contentEditable: HTMLDivElement, nodeCache: NodeEntryCache) {
+    console.log(`hydrate`, entries, nodeCache, contentEditable);
+    // for all entries in content... make html node from entry... add { node, entry, children } to nodeCache, add
+    entries.forEach(entry => {
+        // createElement, add node to tree
+        const node = ContentEntries.convertToHTMLByType(entry, contentEditable);
+
+        // need to make dom tree that mirrors entry array...
+        // let entries create their dom nodes and automatically as as children...
+        const ner = { node, entry, children: [] };
+
+        if (entry.inner && Array.isArray(entry.inner)) {
+
+            // add child nodes
+            entry.inner.forEach(c => {
+                // add to current node.children
+
+                // call hydrate with this NER as parent.
+
+            });
+        }
+
+        // create node->entry ref, and add entry.
+        nodeCache.entryTree.push(entry);
+    });
+}
 
 export class WEditor {
+
     private container: HTMLElement | null;
     private contentEditable: HTMLDivElement | null;
-
     private onChangeHandler: (content: BlobContent) => void;
-    private plugins: IPlugin[];
 
+    private plugins: IPlugin[];
     private applyChangesTimeoutId: Timeout | null = null;
     private autoSaveTimeoutId: Timeout | null = null;
 
@@ -75,6 +103,9 @@ export class WEditor {
         if (!this.contentEditable) return console.error('Cannot load blob: ContentEditable is null');
         if (!this.blob) return console.error("No blob given to load.");
         this.contentEditable.innerHTML = '';
+
+        hydrateContent(this.blob.content, this.nodes, this.contentEditable);
+
         this.convertToHTML(this.blob.content, this.contentEditable);
         // todo: should hydrate node cache
     }
