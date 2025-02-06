@@ -1934,52 +1934,8 @@ var init_BlobService = __esm({
   }
 });
 
-// src/components/shared/BlobEditor/lib/NodeEntryCache.ts
-var NodeEntryCache;
-var init_NodeEntryCache = __esm({
-  "src/components/shared/BlobEditor/lib/NodeEntryCache.ts"() {
-    "use strict";
-    init_preact_module();
-    NodeEntryCache = class {
-      // node tree that references each entry, allowing for quick lookup of relevant nodes->entries.
-      nodeTree = [];
-      // the actual entry tree (content)
-      entryTree = [];
-      nodeEntryRefs = [];
-      lastNodeEntry = void 0;
-      // reference to last-edited node for faster/immdiate lookups
-      // Return just the entries without the node references, so they can be saved as Blob content.
-      getEntries = () => this.entryTree;
-      //odeEntryRefs.map(ner => ner.entry);
-      // Find a NodeEntryRef whose node matches the given node.
-      // TODO: find from parent stack...
-      findEntry = (node) => this.nodeEntryRefs.find((n2) => n2.node == node);
-      // Change the given node's entry content and set last edited node.
-      update = (ner, entry) => {
-        ner.entry = entry;
-        this.lastNodeEntry = ner;
-        console.log(`update`, ner);
-      };
-      // Append an entry to the list of cached nodes, and set last edited node.
-      add = (node, entry) => {
-        const ner = { node, entry };
-        this.nodeEntryRefs.push(ner);
-        this.lastNodeEntry = ner;
-        console.log(`add`, ner);
-      };
-      // Updates the given node with the new entry. Compares lastNodeEntry with current node to avoid lookup through all nodes.
-      updateOrAdd = (node, entry) => {
-        let ner;
-        if (this.lastNodeEntry && this.lastNodeEntry.node == node) ner = this.lastNodeEntry;
-        if (ner) this.update(ner, entry);
-        else this.add(node, entry);
-      };
-    };
-  }
-});
-
 // src/components/shared/BlobEditor/ContentEntries.tsx
-var ContentEntry, TextEntry, HeaderEntry, FileEntry, BreakEntry, PreEntry, CodeEntry, GroupEntry, LinkEntry, CustomEntry, ContentEntries;
+var ContentEntry, TextEntry, HeaderEntry, FileEntry, BreakEntry, PreEntry, CodeEntry, GroupEntry, LinkEntry, CustomEntry, ContentEntries2;
 var init_ContentEntries = __esm({
   "src/components/shared/BlobEditor/ContentEntries.tsx"() {
     "use strict";
@@ -1995,15 +1951,17 @@ var init_ContentEntries = __esm({
     TextEntry = class _TextEntry extends ContentEntry {
       type = "text";
       attributes;
-      inner;
-      constructor(inner, attributes) {
+      children;
+      constructor(children, attributes) {
         super();
-        this.inner = inner;
+        if (typeof children != "string") throw "Error: TextEntry expects children to be a string.";
+        this.children = children;
         this.attributes = attributes;
       }
       static convertToHTML(entry, parent) {
         let textNode;
         let wrapper = null;
+        let node;
         if (entry.attributes) {
           if (entry.attributes["bold"]) {
             wrapper = document.createElement("b");
@@ -2016,7 +1974,7 @@ var init_ContentEntries = __esm({
             }
           }
         }
-        textNode = document.createTextNode(entry.inner);
+        textNode = node = document.createTextNode(entry.children);
         if (wrapper) {
           wrapper.appendChild(textNode);
           if (wrapper.tagName === "SPAN") {
@@ -2026,10 +1984,11 @@ var init_ContentEntries = __esm({
               }
             });
           }
-          parent.appendChild(wrapper);
-        } else {
-          parent.appendChild(textNode);
+          node = wrapper;
         }
+        const ner = { node, entry };
+        parent.appendChild(node);
+        return ner;
       }
       static convertNodeToEntry(node) {
         if (node.nodeType === Node.TEXT_NODE) {
@@ -2060,16 +2019,16 @@ var init_ContentEntries = __esm({
     HeaderEntry = class _HeaderEntry extends ContentEntry {
       type = "header";
       attributes;
-      inner;
-      constructor(inner, attributes) {
+      children;
+      constructor(children, attributes) {
         super();
-        this.inner = inner;
+        this.children = children;
         this.attributes = attributes;
       }
       static convertToHTML(entry, parent) {
         const level = entry.attributes?.level || "1";
         const h3 = document.createElement(`h${level}`);
-        h3.textContent = entry.inner;
+        h3.textContent = entry.children;
         if (entry.attributes) {
           for (const [key, value] of Object.entries(entry.attributes)) {
             if (key !== "level") {
@@ -2090,15 +2049,15 @@ var init_ContentEntries = __esm({
     FileEntry = class _FileEntry extends ContentEntry {
       type = "file";
       attributes;
-      inner;
-      constructor(inner, attributes) {
+      children;
+      constructor(children, attributes) {
         super();
-        this.inner = inner;
+        this.children = children;
         this.attributes = attributes;
       }
       static convertToHTML(entry, parent) {
         const fileDiv = document.createElement("div");
-        fileDiv.textContent = entry.inner;
+        fileDiv.textContent = entry.children;
         if (entry.attributes) {
           for (const [key, value] of Object.entries(entry.attributes)) {
             fileDiv.setAttribute(key, value);
@@ -2117,8 +2076,8 @@ var init_ContentEntries = __esm({
     BreakEntry = class _BreakEntry extends ContentEntry {
       type = "break";
       attributes;
-      inner = [];
-      //inner?: ContentEntry[];
+      children = [];
+      //children?: ContentEntry[];
       constructor(attributes) {
         super();
         this.attributes = attributes;
@@ -2146,11 +2105,11 @@ var init_ContentEntries = __esm({
     PreEntry = class _PreEntry extends ContentEntry {
       type = "pre";
       attributes;
-      inner;
-      constructor(attributes, inner = []) {
+      children;
+      constructor(attributes, children = []) {
         super();
         this.attributes = attributes;
-        this.inner = inner;
+        this.children = children;
       }
       static convertToHTML(entry, parent) {
         const pre = document.createElement("pre");
@@ -2161,16 +2120,16 @@ var init_ContentEntries = __esm({
           }
         }
         parent.appendChild(pre);
-        entry.inner.forEach((child) => ContentEntries.convertToHTMLByType(child, pre));
+        entry.children.forEach((child) => ContentEntries2.convertToHTMLByType(child, pre));
       }
       static convertNodeToEntry(node) {
         const attributes = Array.from(node.attributes).reduce((acc, attr) => {
           acc[attr.name] = attr.value;
           return acc;
         }, {});
-        const inner = [];
+        const children = [];
         Array.from(node.childNodes).forEach((childNode) => {
-          const childEntry = ContentEntries.convertNodeToEntry(childNode);
+          const childEntry = ContentEntries2.convertNodeToEntry(childNode);
           if (childEntry) inner.push(childEntry);
         });
         return new _PreEntry(attributes, inner);
@@ -2179,11 +2138,11 @@ var init_ContentEntries = __esm({
     CodeEntry = class _CodeEntry extends ContentEntry {
       type = "code";
       attributes;
-      inner;
-      constructor(attributes, inner = []) {
+      children;
+      constructor(attributes, children = []) {
         super();
         this.attributes = attributes;
-        this.inner = inner;
+        this.children = children;
       }
       static convertToHTML(entry, parent) {
         const code = document.createElement("code");
@@ -2194,7 +2153,7 @@ var init_ContentEntries = __esm({
           }
         }
         parent.appendChild(code);
-        entry.inner.forEach((child) => ContentEntries.convertToHTMLByType(child, code));
+        entry.children.forEach((child) => ContentEntries2.convertToHTMLByType(child, code));
       }
       static convertNodeToEntry(node) {
         if (node.tagName !== "CODE") return null;
@@ -2202,9 +2161,9 @@ var init_ContentEntries = __esm({
           acc[attr.name] = attr.value;
           return acc;
         }, {});
-        const inner = [];
+        const children = [];
         Array.from(node.childNodes).forEach((childNode) => {
-          const childEntry = ContentEntries.convertNodeToEntry(childNode);
+          const childEntry = ContentEntries2.convertNodeToEntry(childNode);
           if (childEntry) inner.push(childEntry);
         });
         return new _CodeEntry(attributes, inner);
@@ -2213,11 +2172,11 @@ var init_ContentEntries = __esm({
     GroupEntry = class _GroupEntry extends ContentEntry {
       type = "group";
       attributes;
-      inner;
-      constructor(attributes, inner = []) {
+      children;
+      constructor(attributes, children = []) {
         super();
         this.attributes = attributes;
-        this.inner = inner;
+        this.children = children;
       }
       static convertToHTML(entry, parent) {
         const div = document.createElement("div");
@@ -2227,10 +2186,10 @@ var init_ContentEntries = __esm({
           }
         }
         parent.appendChild(div);
-        if (Array.isArray(entry.inner)) {
-          entry.inner.forEach((child) => ContentEntries.convertToHTMLByType(child, div));
-        } else if (entry.inner) {
-          div.innerText = entry.inner;
+        if (Array.isArray(entry.children)) {
+          entry.children.forEach((child) => ContentEntries2.convertToHTMLByType(child, div));
+        } else if (entry.children) {
+          div.childrenText = entry.children;
         }
       }
       static convertNodeToEntry(node) {
@@ -2238,9 +2197,9 @@ var init_ContentEntries = __esm({
           acc[attr.name] = attr.value;
           return acc;
         }, {});
-        const inner = [];
+        const children = [];
         Array.from(node.childNodes).forEach((childNode) => {
-          const childEntry = ContentEntries.convertNodeToEntry(childNode);
+          const childEntry = ContentEntries2.convertNodeToEntry(childNode);
           if (childEntry) inner.push(childEntry);
         });
         return new _GroupEntry(attributes, inner);
@@ -2249,10 +2208,10 @@ var init_ContentEntries = __esm({
     LinkEntry = class _LinkEntry extends ContentEntry {
       type = "link";
       attributes;
-      inner;
-      constructor(inner, attributes) {
+      children;
+      constructor(children, attributes) {
         super();
-        this.inner = inner;
+        this.children = children;
         this.attributes = attributes;
       }
       static convertToHTML(entry, parent) {
@@ -2263,10 +2222,10 @@ var init_ContentEntries = __esm({
           }
         }
         parent.appendChild(a3);
-        if (Array.isArray(entry.inner)) {
-          entry.inner.forEach((child) => ContentEntries.convertToHTMLByType(child, a3));
+        if (Array.isArray(entry.children)) {
+          entry.children.forEach((child) => ContentEntries2.convertToHTMLByType(child, a3));
         } else {
-          a3.textContent = entry.inner;
+          a3.textContent = entry.children;
         }
       }
       static convertNodeToEntry(node) {
@@ -2274,15 +2233,15 @@ var init_ContentEntries = __esm({
           acc[attr.name] = attr.value;
           return acc;
         }, {});
-        let inner;
+        let children;
         if (node.childNodes.length > 0) {
           if (node.childNodes.length === 1 && node.childNodes[0].nodeType === Node.TEXT_NODE) {
-            inner = node.textContent || "";
+            children = node.textContent || "";
           } else {
-            inner = Array.from(node.childNodes).map((childNode) => ContentEntries.convertNodeToEntry(childNode)).filter(Boolean);
+            children = Array.from(node.childNodes).map((childNode) => ContentEntries2.convertNodeToEntry(childNode)).filter(Boolean);
           }
         } else {
-          inner = "";
+          children = "";
         }
         return new _LinkEntry(inner, attributes);
       }
@@ -2290,11 +2249,11 @@ var init_ContentEntries = __esm({
     CustomEntry = class _CustomEntry extends ContentEntry {
       type = "custom";
       attributes;
-      inner;
-      constructor(attributes, inner = []) {
+      children;
+      constructor(attributes, children = []) {
         super();
         this.attributes = attributes;
-        this.inner = inner;
+        this.children = children;
       }
       static convertToHTML(entry, parent) {
         const customDiv = document.createElement("div");
@@ -2305,7 +2264,7 @@ var init_ContentEntries = __esm({
           }
         }
         parent.appendChild(customDiv);
-        entry.inner.forEach((child) => ContentEntries.convertToHTMLByType(child, customDiv));
+        entry.children.forEach((child) => ContentEntries2.convertToHTMLByType(child, customDiv));
       }
       static convertNodeToEntry(node) {
         if (node.getAttribute("custom") !== "true") return null;
@@ -2313,19 +2272,20 @@ var init_ContentEntries = __esm({
           acc[attr.name] = attr.value;
           return acc;
         }, {});
-        const inner = [];
+        const children = [];
         Array.from(node.childNodes).forEach((childNode) => {
-          const childEntry = ContentEntries.convertNodeToEntry(childNode);
+          const childEntry = ContentEntries2.convertNodeToEntry(childNode);
           if (childEntry) inner.push(childEntry);
         });
         return new _CustomEntry(attributes, inner);
       }
     };
-    ContentEntries = class {
-      static convertToHTMLByType(entry, parent) {
+    ContentEntries2 = class {
+      // make an html node from entry, append to parent, return NER for { node, entry, children } which is appended to current node in node cache nodeTree.
+      static convertToHTMLByType(entry, parent, nodeCache) {
         switch (entry.type) {
           case "text":
-            TextEntry.convertToHTML(entry, parent);
+            TextEntry.convertToHTML(entry, parent, nodeCache);
             break;
           case "group":
             GroupEntry.convertToHTML(entry, parent);
@@ -2386,18 +2346,201 @@ var init_ContentEntries = __esm({
   }
 });
 
+// src/components/shared/BlobEditor/lib/NodeEntryCache.ts
+var NodeEntryCache, GroupNode, TextNode, BreakNode;
+var init_NodeEntryCache = __esm({
+  "src/components/shared/BlobEditor/lib/NodeEntryCache.ts"() {
+    "use strict";
+    init_preact_module();
+    init_ContentEntries();
+    NodeEntryCache = class {
+      // node tree that references each entry, allowing for quick lookup of relevant nodes->entries.
+      nodeTree = [];
+      // the actual entry tree (content)
+      entryTree = [];
+      nodeEntryRefs = [];
+      lastNodeEntry = void 0;
+      // reference to last-edited node for faster/immdiate lookups
+      // Return just the entries without the node references, so they can be saved as Blob content.
+      getEntries = () => this.entryTree;
+      //odeEntryRefs.map(ner => ner.entry);
+      // Find a NodeEntryRef whose node matches the given node.
+      // TODO: find from parent stack...
+      findEntry = (node) => this.nodeEntryRefs.find((n2) => n2.node == node);
+      // Change the given node's entry content and set last edited node.
+      update = (ner, entry) => {
+        ner.entry = entry;
+        this.lastNodeEntry = ner;
+        console.log(`update`, ner);
+      };
+      // Append an entry to the list of cached nodes, and set last edited node.
+      add = (node, entry) => {
+        const ner = { node, entry, children: [] };
+        this.nodeEntryRefs.push(ner);
+        this.lastNodeEntry = ner;
+        console.log(`add`, ner);
+      };
+      // Updates the given node with the new entry. Compares lastNodeEntry with current node to avoid lookup through all nodes.
+      updateOrAdd = (node, entry) => {
+        let ner;
+        if (this.lastNodeEntry && this.lastNodeEntry.node == node) ner = this.lastNodeEntry;
+        if (ner) this.update(ner, entry);
+        else this.add(node, entry);
+      };
+      static createNodeEntry(entry, parent) {
+        let ner;
+        switch (entry.type) {
+          case "text":
+            ner = TextNode.createNodeEntry(entry, parent);
+            break;
+          case "group":
+            ner = GroupNode.createNodeEntry(entry, parent);
+            break;
+          case "break":
+            ner = BreakNode.createNodeEntry(entry, parent);
+            break;
+          default:
+            break;
+        }
+        if (parent) {
+          if (parent.node) parent.node.appendChild(ner.node);
+          if (parent.children) parent.children.push(ner);
+        }
+        return ner;
+      }
+    };
+    GroupNode = class extends ContentEntry {
+      type = "group";
+      attributes;
+      children;
+      constructor(attributes, children = []) {
+        super();
+        this.attributes = attributes;
+        this.children = children;
+      }
+      static createNodeEntry(entry, parent) {
+        const ner = {
+          entry,
+          node: document.createElement("div"),
+          children: []
+        };
+        if (entry.attributes) {
+          for (const [key, value] of Object.entries(entry.attributes)) {
+            ner.node.setAttribute(key, value);
+          }
+        }
+        if (Array.isArray(entry.children)) {
+          entry.children.forEach((child) => NodeEntryCache.createNodeEntry(child, ner));
+        } else if (entry.children) {
+          ner.node.innerText = entry.children;
+        }
+        return ner;
+      }
+      static convertNodeToEntry(node) {
+        const attributes = Array.from(node.attributes).reduce((acc, attr) => {
+          acc[attr.name] = attr.value;
+          return acc;
+        }, {});
+        const children = [];
+        Array.from(node.childNodes).forEach((childNode) => {
+          const childEntry = ContentEntries.convertNodeToEntry(childNode);
+          if (childEntry) inner.push(childEntry);
+        });
+        return new GroupEntry(attributes, inner);
+      }
+    };
+    TextNode = class extends ContentEntry {
+      type = "text";
+      attributes;
+      children;
+      constructor(children, attributes) {
+        super();
+        if (typeof children != "string") throw "Error: TextEntry expects children to be a string.";
+        this.children = children;
+        this.attributes = attributes;
+      }
+      static createNodeEntry(entry, parent, nodeCache) {
+        const ner = {
+          entry,
+          node: document.createTextNode(entry.children),
+          children: []
+        };
+        if (entry.attributes) {
+          if (entry.attributes["bold"]) {
+            ner.node.classList.add("bold");
+          }
+          if (entry.attributes["italic"]) {
+            ner.node.classList.add("italic");
+          }
+        }
+        return ner;
+      }
+      static convertNodeToEntry(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return new TextEntry(node.textContent || "");
+        } else if (node instanceof HTMLElement) {
+          let attributes = {};
+          let textContent = "";
+          if (node.tagName === "B") {
+            attributes["bold"] = "true";
+            textContent = node.textContent || "";
+          } else if (node.tagName === "I") {
+            attributes["italic"] = "true";
+            textContent = node.textContent || "";
+          } else if (node.tagName === "SPAN") {
+            attributes["span"] = "true";
+            textContent = node.textContent || "";
+            Array.from(node.attributes).forEach((attr) => {
+              attributes[attr.name] = attr.value;
+            });
+          } else {
+            return null;
+          }
+          return new TextEntry(textContent, attributes);
+        }
+        return null;
+      }
+    };
+    BreakNode = class extends ContentEntry {
+      type = "break";
+      attributes;
+      children = [];
+      //children?: ContentEntry[];
+      constructor(attributes) {
+        super();
+        this.attributes = attributes;
+      }
+      static createNodeEntry(entry, parent, nodeCache) {
+        const ner = {
+          entry,
+          node: document.createElement("br"),
+          children: []
+        };
+        if (entry.attributes) {
+          for (const [key, value] of Object.entries(entry.attributes)) {
+            ner.node.setAttribute(key, value);
+          }
+        }
+        return ner;
+      }
+      static convertNodeToEntry(node) {
+        if (node.tagName === "BR") {
+          const attributes = Array.from(node.attributes).reduce((acc, attr) => {
+            acc[attr.name] = attr.value;
+            return acc;
+          }, {});
+          return new BreakEntry(attributes);
+        }
+        return null;
+      }
+    };
+  }
+});
+
 // src/components/shared/BlobEditor/lib/WEditor.ts
-function hydrateContent(entries, contentEditable, nodeCache) {
-  console.log(`hydrate`, entries, nodeCache, contentEditable);
-  entries.forEach((entry) => {
-    const node = ContentEntries.convertToHTMLByType(entry, contentEditable);
-    const ner = { node, entry, children: [] };
-    if (entry.inner && Array.isArray(entry.inner)) {
-      entry.inner.forEach((c3) => {
-      });
-    }
-    nodeCache.entryTree.push(entry);
-  });
+function hydrateContent(entry, parent, nodeCache) {
+  const NER = { entry, children: [], node: void 0 };
+  nodeCache.createNodeEntry(entry, parent);
 }
 var CHANGE_TIMEOUT_MS, AUTOSAVE_TIMEOUT_MS, WEditor;
 var init_WEditor = __esm({
@@ -2416,13 +2559,13 @@ var init_WEditor = __esm({
       applyChangesTimeoutId = null;
       autoSaveTimeoutId = null;
       blob;
-      nodes;
+      nodeCache;
       constructor(container, onChange, plugins = []) {
         this.container = container;
         this.contentEditable = null;
         this.onChangeHandler = onChange;
         this.plugins = plugins || [];
-        this.nodes = new NodeEntryCache();
+        this.nodeCache = new NodeEntryCache();
         this.initialize();
       }
       initialize() {
@@ -2456,23 +2599,28 @@ var init_WEditor = __esm({
         if (!this.contentEditable) return console.error("Cannot load blob: ContentEditable is null");
         if (!this.blob) return console.error("No blob given to load.");
         this.contentEditable.innerHTML = "";
-        hydrateContent(this.blob.content, this.nodes, this.contentEditable);
+        const rootNER = { node: this.contentEditable, entry: { children: this.blob.content.entries } };
+        const rootEntry = {
+          type: "group",
+          children: this.blob.content.entries
+        };
+        hydrateContent(rootEntry, this.contentEditable, this.nodeCache);
         this.convertToHTML(this.blob.content, this.contentEditable);
       }
       convertToHTML(content, parent) {
         console.log(`convertToHTML`, content);
         content.entries.forEach((entry) => {
-          ContentEntries.convertToHTMLByType(entry, parent);
+          ContentEntries2.convertToHTMLByType(entry, parent);
         });
       }
       // updates the given node's entry with it's changed content
       applyChanges(node) {
         if (!node) throw "No node given to applyChanges()";
-        let entry = ContentEntries.convertNodeToEntry(node);
+        let entry = ContentEntries2.convertNodeToEntry(node);
         if (!entry) throw "Entry could not be created from node.";
         console.log(`apply`, node, node.parentNode);
         if (node) {
-          this.nodes.updateOrAdd(node, entry);
+          this.nodeCache.updateOrAdd(node, entry);
         } else {
           console.log(`no edit node given!`);
         }
@@ -2494,7 +2642,7 @@ var init_WEditor = __esm({
         }
         if (this.autoSaveTimeoutId) this.autoSaveTimeoutId = clearTimeout(this.autoSaveTimeoutId);
         if (this.applyChangesTimeoutId) this.applyChangesTimeoutId = clearTimeout(this.applyChangesTimeoutId);
-        const content = { entries: this.nodes.getEntries() };
+        const content = { entries: this.nodeCache.getEntries() };
         this.onChangeHandler(content);
         return content;
       }

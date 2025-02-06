@@ -1,14 +1,17 @@
+import { NodeEntryCache } from './lib/NodeEntryCache';
+
 interface BaseEntry {
     type: string;
     attributes?: { [key: string]: string };
-    inner?: string | ContentEntry[] | null;
+    children?: string | ContentEntry[] | null;
 }
+
 
 
 export abstract class ContentEntry {
     abstract type: string;
     abstract attributes?: { [key: string]: string };
-    abstract inner?: string | ContentEntry[];
+    abstract children?: string | ContentEntry[];
 
     static convertToHTML(entry: ContentEntry, parent: HTMLElement): void {
         throw new Error('Method not implemented');
@@ -22,17 +25,19 @@ export abstract class ContentEntry {
 export class TextEntry extends ContentEntry {
     type = 'text';
     attributes?: { [key: string]: string };
-    inner: string;
+    children: string;
 
-    constructor(inner: string, attributes?: { [key: string]: string }) {
+    constructor(children: string, attributes?: { [key: string]: string }) {
         super();
-        this.inner = inner;
+        if (typeof children != 'string') throw "Error: TextEntry expects children to be a string.";
+        this.children = children;
         this.attributes = attributes;
     }
 
     static convertToHTML(entry: TextEntry, parent: HTMLElement) {
         let textNode: Node;
         let wrapper: HTMLElement | null = null;
+        let node: HTMLElement | Node | undefined;
 
         if (entry.attributes) {
             if (entry.attributes['bold']) {
@@ -48,7 +53,7 @@ export class TextEntry extends ContentEntry {
             // Add more conditions for other text styling tags if needed
         }
 
-        textNode = document.createTextNode(entry.inner);
+        textNode = node = document.createTextNode(entry.children);
         if (wrapper) {
             wrapper.appendChild(textNode);
             if (wrapper.tagName === 'SPAN') {
@@ -58,10 +63,12 @@ export class TextEntry extends ContentEntry {
                     }
                 });
             }
-            parent.appendChild(wrapper);
-        } else {
-            parent.appendChild(textNode);
+            node = wrapper;
         }
+        const ner = { node, entry };
+        parent.appendChild(node);
+        return ner;
+
     }
 
     static convertNodeToEntry(node: Node): TextEntry | null {
@@ -96,18 +103,18 @@ export class TextEntry extends ContentEntry {
 export class HeaderEntry extends ContentEntry {
     type = 'header';
     attributes?: { [key: string]: string };
-    inner: string;
+    children: string;
 
-    constructor(inner: string, attributes?: { [key: string]: string }) {
+    constructor(children: string, attributes?: { [key: string]: string }) {
         super();
-        this.inner = inner;
+        this.children = children;
         this.attributes = attributes;
     }
 
     static convertToHTML(entry: HeaderEntry, parent: HTMLElement) {
         const level = entry.attributes?.level || '1';
         const h = document.createElement(`h${level}`);
-        h.textContent = entry.inner;
+        h.textContent = entry.children;
         if (entry.attributes) {
             for (const [key, value] of Object.entries(entry.attributes)) {
                 if (key !== 'level') {
@@ -130,17 +137,17 @@ export class HeaderEntry extends ContentEntry {
 export class FileEntry extends ContentEntry {
     type = 'file';
     attributes?: { [key: string]: string };
-    inner: string;
+    children: string;
 
-    constructor(inner: string, attributes?: { [key: string]: string }) {
+    constructor(children: string, attributes?: { [key: string]: string }) {
         super();
-        this.inner = inner;
+        this.children = children;
         this.attributes = attributes;
     }
 
     static convertToHTML(entry: FileEntry, parent: HTMLElement) {
         const fileDiv = document.createElement('div');
-        fileDiv.textContent = entry.inner;
+        fileDiv.textContent = entry.children;
         if (entry.attributes) {
             for (const [key, value] of Object.entries(entry.attributes)) {
                 fileDiv.setAttribute(key, value);
@@ -161,8 +168,8 @@ export class FileEntry extends ContentEntry {
 export class BreakEntry extends ContentEntry {
     type = 'break';
     attributes?: { [key: string]: string };
-    inner = [];
-    //inner?: ContentEntry[];
+    children = [];
+    //children?: ContentEntry[];
 
     constructor(attributes?: { [key: string]: string }) {
         super();
@@ -194,12 +201,12 @@ export class BreakEntry extends ContentEntry {
 export class PreEntry extends ContentEntry {
     type = 'pre';
     attributes?: { [key: string]: string };
-    inner: ContentEntry[];
+    children: ContentEntry[];
 
-    constructor(attributes?: { [key: string]: string }, inner: ContentEntry[] = []) {
+    constructor(attributes?: { [key: string]: string }, children: ContentEntry[] = []) {
         super();
         this.attributes = attributes;
-        this.inner = inner;
+        this.children = children;
     }
 
     static convertToHTML(entry: PreEntry, parent: HTMLElement) {
@@ -211,7 +218,7 @@ export class PreEntry extends ContentEntry {
             }
         }
         parent.appendChild(pre);
-        entry.inner.forEach(child => ContentEntries.convertToHTMLByType(child, pre));
+        entry.children.forEach(child => ContentEntries.convertToHTMLByType(child, pre));
     }
 
     static convertNodeToEntry(node: HTMLPreElement): PreEntry {
@@ -220,7 +227,7 @@ export class PreEntry extends ContentEntry {
             return acc;
         }, {} as { [key: string]: string });
 
-        const inner: ContentEntry[] = [];
+        const children: ContentEntry[] = [];
         Array.from(node.childNodes).forEach(childNode => {
             const childEntry = ContentEntries.convertNodeToEntry(childNode);
             if (childEntry) inner.push(childEntry);
@@ -233,12 +240,12 @@ export class PreEntry extends ContentEntry {
 export class CodeEntry extends ContentEntry {
     type = 'code';
     attributes?: { [key: string]: string };
-    inner: ContentEntry[];
+    children: ContentEntry[];
 
-    constructor(attributes?: { [key: string]: string }, inner: ContentEntry[] = []) {
+    constructor(attributes?: { [key: string]: string }, children: ContentEntry[] = []) {
         super();
         this.attributes = attributes;
-        this.inner = inner;
+        this.children = children;
     }
 
     static convertToHTML(entry: CodeEntry, parent: HTMLElement) {
@@ -250,7 +257,7 @@ export class CodeEntry extends ContentEntry {
             }
         }
         parent.appendChild(code);
-        entry.inner.forEach(child => ContentEntries.convertToHTMLByType(child, code));
+        entry.children.forEach(child => ContentEntries.convertToHTMLByType(child, code));
     }
 
     static convertNodeToEntry(node: HTMLElement): CodeEntry {
@@ -261,7 +268,7 @@ export class CodeEntry extends ContentEntry {
             return acc;
         }, {} as { [key: string]: string });
 
-        const inner: ContentEntry[] = [];
+        const children: ContentEntry[] = [];
         Array.from(node.childNodes).forEach(childNode => {
             const childEntry = ContentEntries.convertNodeToEntry(childNode);
             if (childEntry) inner.push(childEntry);
@@ -274,12 +281,12 @@ export class CodeEntry extends ContentEntry {
 export class GroupEntry extends ContentEntry {
     type = 'group';
     attributes?: { [key: string]: string };
-    inner: ContentEntry[];
+    children: ContentEntry[];
 
-    constructor(attributes?: { [key: string]: string }, inner: ContentEntry[] = []) {
+    constructor(attributes?: { [key: string]: string }, children: ContentEntry[] = []) {
         super();
         this.attributes = attributes;
-        this.inner = inner;
+        this.children = children;
     }
 
     static convertToHTML(entry: GroupEntry, parent: HTMLElement) {
@@ -290,11 +297,11 @@ export class GroupEntry extends ContentEntry {
             }
         }
         parent.appendChild(div);
-        if (Array.isArray(entry.inner)) {
-            entry.inner.forEach(child => ContentEntries.convertToHTMLByType(child, div));
-        } else if (entry.inner) {
+        if (Array.isArray(entry.children)) {
+            entry.children.forEach(child => ContentEntries.convertToHTMLByType(child, div));
+        } else if (entry.children) {
             // ContentEntries.convertToHTMLByType(entry.ild, div)
-            div.innerText = entry.inner;
+            div.childrenText = entry.children;
         }
     }
 
@@ -304,7 +311,7 @@ export class GroupEntry extends ContentEntry {
             return acc;
         }, {} as { [key: string]: string });
 
-        const inner: ContentEntry[] = [];
+        const children: ContentEntry[] = [];
         Array.from(node.childNodes).forEach(childNode => {
             const childEntry = ContentEntries.convertNodeToEntry(childNode);
             if (childEntry) inner.push(childEntry);
@@ -317,11 +324,11 @@ export class GroupEntry extends ContentEntry {
 export class LinkEntry extends ContentEntry {
     type = 'link';
     attributes?: { [key: string]: string };
-    inner: string | ContentEntry[];
+    children: string | ContentEntry[];
 
-    constructor(inner: string | ContentEntry[], attributes?: { [key: string]: string }) {
+    constructor(children: string | ContentEntry[], attributes?: { [key: string]: string }) {
         super();
-        this.inner = inner;
+        this.children = children;
         this.attributes = attributes;
     }
 
@@ -334,10 +341,10 @@ export class LinkEntry extends ContentEntry {
         }
         parent.appendChild(a);
 
-        if (Array.isArray(entry.inner)) {
-            entry.inner.forEach(child => ContentEntries.convertToHTMLByType(child, a));
+        if (Array.isArray(entry.children)) {
+            entry.children.forEach(child => ContentEntries.convertToHTMLByType(child, a));
         } else {
-            a.textContent = entry.inner;
+            a.textContent = entry.children;
         }
     }
 
@@ -347,15 +354,15 @@ export class LinkEntry extends ContentEntry {
             return acc;
         }, {} as { [key: string]: string });
 
-        let inner: string | ContentEntry[];
+        let children: string | ContentEntry[];
         if (node.childNodes.length > 0) {
             if (node.childNodes.length === 1 && node.childNodes[0].nodeType === Node.TEXT_NODE) {
-                inner = node.textContent || '';
+                children = node.textContent || '';
             } else {
-                inner = Array.from(node.childNodes).map(childNode => ContentEntries.convertNodeToEntry(childNode)).filter(Boolean) as ContentEntry[];
+                children = Array.from(node.childNodes).map(childNode => ContentEntries.convertNodeToEntry(childNode)).filter(Boolean) as ContentEntry[];
             }
         } else {
-            inner = '';
+            children = '';
         }
 
         return new LinkEntry(inner, attributes);
@@ -365,12 +372,12 @@ export class LinkEntry extends ContentEntry {
 export class CustomEntry extends ContentEntry {
     type = 'custom';
     attributes?: { [key: string]: string };
-    inner: ContentEntry[];
+    children: ContentEntry[];
 
-    constructor(attributes?: { [key: string]: string }, inner: ContentEntry[] = []) {
+    constructor(attributes?: { [key: string]: string }, children: ContentEntry[] = []) {
         super();
         this.attributes = attributes;
-        this.inner = inner;
+        this.children = children;
     }
 
     static convertToHTML(entry: CustomEntry, parent: HTMLElement) {
@@ -382,7 +389,7 @@ export class CustomEntry extends ContentEntry {
             }
         }
         parent.appendChild(customDiv);
-        entry.inner.forEach(child => ContentEntries.convertToHTMLByType(child, customDiv));
+        entry.children.forEach(child => ContentEntries.convertToHTMLByType(child, customDiv));
     }
 
     static convertNodeToEntry(node: HTMLDivElement): CustomEntry | null {
@@ -393,7 +400,7 @@ export class CustomEntry extends ContentEntry {
             return acc;
         }, {} as { [key: string]: string });
 
-        const inner: ContentEntry[] = [];
+        const children: ContentEntry[] = [];
         Array.from(node.childNodes).forEach(childNode => {
             const childEntry = ContentEntries.convertNodeToEntry(childNode);
             if (childEntry) inner.push(childEntry);
@@ -406,10 +413,11 @@ export class CustomEntry extends ContentEntry {
 
 export class ContentEntries {
 
-    static convertToHTMLByType(entry: ContentEntry, parent: HTMLElement) {
+    // make an html node from entry, append to parent, return NER for { node, entry, children } which is appended to current node in node cache nodeTree.
+    static convertToHTMLByType(entry: ContentEntry, parent: HTMLElement, nodeCache: NodeEntryCache) {
         switch (entry.type) {
             case 'text':
-                TextEntry.convertToHTML(entry as TextEntry, parent);
+                TextEntry.convertToHTML(entry as TextEntry, parent, nodeCache);
                 break;
             case 'group':
                 GroupEntry.convertToHTML(entry as GroupEntry, parent);

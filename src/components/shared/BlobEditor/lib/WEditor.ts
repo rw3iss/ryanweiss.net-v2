@@ -1,5 +1,5 @@
 import { ContentEntry } from 'components/shared/BlobEditor/ContentEntries';
-import { NodeEntryCache } from 'components/shared/BlobEditor/lib/NodeEntryCache';
+import { NodeEntryCache, NodeEntryRef } from 'components/shared/BlobEditor/lib/NodeEntryCache';
 import { Blob, BlobContent } from 'types/Blob';
 import { ContentEntries } from '../ContentEntries';
 import { IPlugin } from '../plugins/IPlugin';
@@ -8,32 +8,59 @@ import { IPlugin } from '../plugins/IPlugin';
 const CHANGE_TIMEOUT_MS = 500; // time delay to save after last key/input
 const AUTOSAVE_TIMEOUT_MS = 3000; // time delay to save automatically
 
+
+// Given a root node with children, create a dom node for it, and add to the node cache, then do the same for all children.
 // Populates contentEditable dom, and fills node + entry trees.
-function hydrateContent(entries: Array<ContentEntry>, contentEditable: HTMLDivElement, nodeCache: NodeEntryCache) {
-    console.log(`hydrate`, entries, nodeCache, contentEditable);
-    // for all entries in content... make html node from entry... add { node, entry, children } to nodeCache, add
-    entries.forEach(entry => {
-        // createElement, add node to tree
-        const node = ContentEntries.convertToHTMLByType(entry, contentEditable);
+function hydrateContent(entry: ContentEntry, parent: NodeEntryRef, nodeCache: NodeEntryCache) {
+    // for the entry... create a new NER, with entry reference.
+    // create a dom node according to type... the dom node will try to create child dom nodes. If it does... createNewElement, insert at position, addChild to current NodeEntryRef (new NER).
+    const NER = { entry, children: [], node: undefined };
+    nodeCache.createNodeEntry(entry, parent);
 
-        // need to make dom tree that mirrors entry array...
-        // let entries create their dom nodes and automatically as as children...
-        const ner = { node, entry, children: [] };
+    // node = setDomRef(parent.node, entry)
+    //    create a new NER with the dom node and entry refs
+    //    add the NER to the parent NER children.
 
-        if (entry.inner && Array.isArray(entry.inner)) {
+    // console.log(`hydrate`, entry, parent, nodeCache);
 
-            // add child nodes
-            entry.inner.forEach(c => {
-                // add to current node.children
+    // // for all entries in content... make html node from entry... add { node, entry, children } to nodeCache
+    // const node = createHtmlNode(entry, parent);
+    // const NER = { node, entry, children: [] };
 
-                // call hydrate with this NER as parent.
+    // entries.forEach(entry => {
+    //     const ner = { entry };
 
-            });
-        }
+    //     // createElement, cache element to NER with current entry.
+    //     // for all children, create node to given parent, cache element to NER
 
-        // create node->entry ref, and add entry.
-        nodeCache.entryTree.push(entry);
-    });
+    //     // return an NER to add to parent.
+    //     function cacheNode(entry, parent, nodeCache) {
+    //         ContentEntries.convertToHTMLByType(entry, parent, nodeCache);
+    //     }
+
+    //     const node = cacheNode(entry, parent, nodeCache);
+
+    //     //const node = ContentEntries.convertToHTMLByType(entry, parent);//, nodeCache);
+
+
+    //     // need to make dom tree that mirrors entry array...
+    //     // let entries create their dom nodes and automatically as as children...
+    //     const ner = { node, entry, children: [] };
+
+    //     if (entry.children && Array.isArray(entry.children)) {
+
+    //         // add child nodes
+    //         entry.children.forEach(c => {
+    //             // add to current node.children
+
+    //             // call hydrate with this NER as parent.
+
+    //         });
+    //     }
+
+    //     // create node->entry ref, and add entry.
+    //     nodeCache.entryTree.push(entry);
+    // });
 }
 
 export class WEditor {
@@ -47,7 +74,7 @@ export class WEditor {
     private autoSaveTimeoutId: Timeout | null = null;
 
     private blob: Blob;
-    private nodes: NodeEntryCache;
+    private nodeCache: NodeEntryCache;
 
     constructor(
         container: HTMLElement | null,
@@ -57,7 +84,7 @@ export class WEditor {
         this.contentEditable = null;
         this.onChangeHandler = onChange;
         this.plugins = plugins || [];
-        this.nodes = new NodeEntryCache();
+        this.nodeCache = new NodeEntryCache();
         this.initialize();
     }
 
@@ -104,7 +131,15 @@ export class WEditor {
         if (!this.blob) return console.error("No blob given to load.");
         this.contentEditable.innerHTML = '';
 
-        hydrateContent(this.blob.content, this.nodes, this.contentEditable);
+        // create a root node:
+        const rootNER = { node: this.contentEditable, entry: { children: this.blob.content.entries } };
+
+        const rootEntry = {
+            type: 'group',
+            children: this.blob.content.entries
+        }
+
+        hydrateContent(rootEntry, this.contentEditable, this.nodeCache);
 
         this.convertToHTML(this.blob.content, this.contentEditable);
         // todo: should hydrate node cache
@@ -131,7 +166,7 @@ export class WEditor {
         // update entry from node
 
         if (node) {
-            this.nodes.updateOrAdd(node, entry);
+            this.nodeCache.updateOrAdd(node, entry);
         } else {
             console.log(`no edit node given!`);
         }
@@ -161,7 +196,7 @@ export class WEditor {
         if (this.autoSaveTimeoutId) this.autoSaveTimeoutId = clearTimeout(this.autoSaveTimeoutId);
         if (this.applyChangesTimeoutId) this.applyChangesTimeoutId = clearTimeout(this.applyChangesTimeoutId);
 
-        const content: BlobContent = { entries: this.nodes.getEntries() };
+        const content: BlobContent = { entries: this.nodeCache.getEntries() };
         this.onChangeHandler(content);
 
         return content;
