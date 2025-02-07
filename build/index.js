@@ -2354,13 +2354,98 @@ var init_NodeEntryCache = __esm({
     init_preact_module();
     init_ContentEntries();
     NodeEntryCache = class {
+      rootNode;
       // node tree that references each entry, allowing for quick lookup of relevant nodes->entries.
-      nodeTree = [];
+      //public nodeTree: Array<NodeEntryRef> = [];
       // the actual entry tree (content)
-      entryTree = [];
-      nodeEntryRefs = [];
+      //public entryTree: Array<ContentEntry> = [];
       lastNodeEntry = void 0;
       // reference to last-edited node for faster/immdiate lookups
+      // Given a root node with children, create a dom node for it, and add to the node cache, then do the same for all children.
+      // Populates contentEditable dom, and fills node + entry trees.
+      hydrateContent(entries, node) {
+        this.rootNode = {
+          node,
+          children: [],
+          entry: void 0
+        };
+        entries.forEach((entry) => this.createNodeEntry(entry, this.rootNode));
+        console.log(`hydrated.`, this.rootNode);
+      }
+      // create a node and add it to the parent. If no parent is given, the node as added directly to the tree.
+      createNodeEntry(entry, parent) {
+        let ner;
+        if (entry) {
+          switch (entry.type) {
+            case "text":
+              ner = TextNode.createNodeEntry(entry, parent, this);
+              break;
+            case "group":
+              ner = GroupNode.createNodeEntry(entry, parent, this);
+              break;
+            case "break":
+              ner = BreakNode.createNodeEntry(entry, parent, this);
+              break;
+            default:
+              break;
+          }
+        } else {
+          ner = { node: void 0, entry, children: [] };
+        }
+        if (!ner) throw "Node->entry node could not be created from type: " + entry.type;
+        if (parent) {
+          if (parent.node) parent.node.appendChild(ner.node);
+          if (parent.children) parent.children.push(ner);
+        } else {
+          this.nodeTree.push(ner);
+        }
+        return ner;
+      }
+      // Called when a change is detected on the node. Find the given node in the tree and updates it's entry.
+      applyChange(node) {
+        console.log(`applyChange`, node);
+        const ner = this.findNodeEntry(node);
+        let entry = ContentEntries.convertNodeToEntry(node);
+        if (!entry) throw "Entry could not be created from node.";
+      }
+      // tries to locate an NER by looking for it's node in the nodeTree walking backwards.
+      findNodeEntry(node) {
+        if (!this.rootNode) throw "No rootNode found on NodeEntryCache. Did you forget to call hydrateContent()?";
+        if (this.lastNodeEntry?.node == node) {
+          console.log(`last node match.`, node);
+          return this.lastNodeEntry;
+        }
+        let currNode = node;
+        let lookupPath = [];
+        while (currNode != this.rootNode.node) {
+          lookupPath.push(currNode);
+          console.log(`currNode:`, currNode);
+          currNode = currNode.parentNode;
+        }
+        console.log(`root found?`, currNode);
+        if (currNode != this.rootNode.node) throw "Expected currNode to be the rootNode, but it's not.";
+        console.log(`walking back...`);
+        currNode = lookupPath.pop();
+        let currNer = this.rootNode;
+        while (currNode) {
+          if (currNode == node) {
+            console.log(`NODE FOUND`, currNer);
+            return currNer;
+          }
+          for (const c3 of currNer.children) {
+            if (c3.node == node) {
+              console.log(`NODE FOUND`);
+              return c3;
+            }
+            console.log(`c`, c3);
+            if (c3.node == currNode) {
+              currNer = c3;
+              currNode = lookupPath.pop();
+            }
+          }
+          ;
+        }
+      }
       // Return just the entries without the node references, so they can be saved as Blob content.
       getEntries = () => this.entryTree;
       //odeEntryRefs.map(ner => ner.entry);
@@ -2387,27 +2472,6 @@ var init_NodeEntryCache = __esm({
         if (ner) this.update(ner, entry);
         else this.add(node, entry);
       };
-      static createNodeEntry(entry, parent) {
-        let ner;
-        switch (entry.type) {
-          case "text":
-            ner = TextNode.createNodeEntry(entry, parent);
-            break;
-          case "group":
-            ner = GroupNode.createNodeEntry(entry, parent);
-            break;
-          case "break":
-            ner = BreakNode.createNodeEntry(entry, parent);
-            break;
-          default:
-            break;
-        }
-        if (parent) {
-          if (parent.node) parent.node.appendChild(ner.node);
-          if (parent.children) parent.children.push(ner);
-        }
-        return ner;
-      }
     };
     GroupNode = class extends ContentEntry {
       type = "group";
@@ -2418,7 +2482,7 @@ var init_NodeEntryCache = __esm({
         this.attributes = attributes;
         this.children = children;
       }
-      static createNodeEntry(entry, parent) {
+      static createNodeEntry(entry, parent, nodeCache) {
         const ner = {
           entry,
           node: document.createElement("div"),
@@ -2430,7 +2494,7 @@ var init_NodeEntryCache = __esm({
           }
         }
         if (Array.isArray(entry.children)) {
-          entry.children.forEach((child) => NodeEntryCache.createNodeEntry(child, ner));
+          entry.children.forEach((child) => nodeCache.createNodeEntry(child, ner));
         } else if (entry.children) {
           ner.node.innerText = entry.children;
         }
@@ -2538,19 +2602,12 @@ var init_NodeEntryCache = __esm({
 });
 
 // src/components/shared/BlobEditor/lib/WEditor.ts
-function hydrateContent(entry, parent, nodeCache) {
-  const NER = { entry, children: [], node: void 0 };
-  nodeCache.createNodeEntry(entry, parent);
-}
-var CHANGE_TIMEOUT_MS, AUTOSAVE_TIMEOUT_MS, WEditor;
+var WEditor;
 var init_WEditor = __esm({
   "src/components/shared/BlobEditor/lib/WEditor.ts"() {
     "use strict";
     init_preact_module();
     init_NodeEntryCache();
-    init_ContentEntries();
-    CHANGE_TIMEOUT_MS = 500;
-    AUTOSAVE_TIMEOUT_MS = 3e3;
     WEditor = class {
       container;
       contentEditable;
@@ -2599,39 +2656,22 @@ var init_WEditor = __esm({
         if (!this.contentEditable) return console.error("Cannot load blob: ContentEditable is null");
         if (!this.blob) return console.error("No blob given to load.");
         this.contentEditable.innerHTML = "";
-        const rootNER = { node: this.contentEditable, entry: { children: this.blob.content.entries } };
-        const rootEntry = {
-          type: "group",
-          children: this.blob.content.entries
-        };
-        hydrateContent(rootEntry, this.contentEditable, this.nodeCache);
-        this.convertToHTML(this.blob.content, this.contentEditable);
+        this.nodeCache.hydrateContent(this.blob.content.entries, this.contentEditable);
       }
-      convertToHTML(content, parent) {
-        console.log(`convertToHTML`, content);
-        content.entries.forEach((entry) => {
-          ContentEntries2.convertToHTMLByType(entry, parent);
-        });
-      }
+      // private convertToHTML(content: BlobContent, parent: HTMLElement) {
+      //     console.log(`convertToHTML`, content)
+      //     content.entries.forEach(entry => {
+      //         ContentEntries.convertToHTMLByType(entry, parent);
+      //     });
+      // }
       // updates the given node's entry with it's changed content
       applyChanges(node) {
         if (!node) throw "No node given to applyChanges()";
-        let entry = ContentEntries2.convertNodeToEntry(node);
-        if (!entry) throw "Entry could not be created from node.";
         console.log(`apply`, node, node.parentNode);
         if (node) {
-          this.nodeCache.updateOrAdd(node, entry);
+          this.nodeCache.applyChange(node);
         } else {
           console.log(`no edit node given!`);
-        }
-        if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
-        this.applyChangesTimeoutId = setTimeout(() => {
-          this.commitChanges();
-        }, CHANGE_TIMEOUT_MS);
-        if (!this.autoSaveTimeoutId) {
-          this.autoSaveTimeoutId = setTimeout(() => {
-            this.commitChanges();
-          }, AUTOSAVE_TIMEOUT_MS);
         }
       }
       // Converts content area HTML to JSON. Any html elements associated with custom "types" will be ignored convert to JSON through their handlers.

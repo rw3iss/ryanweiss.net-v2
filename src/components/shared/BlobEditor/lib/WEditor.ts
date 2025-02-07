@@ -1,7 +1,5 @@
-import { ContentEntry } from 'components/shared/BlobEditor/ContentEntries';
-import { NodeEntryCache, NodeEntryRef } from 'components/shared/BlobEditor/lib/NodeEntryCache';
+import { NodeEntryCache } from 'components/shared/BlobEditor/lib/NodeEntryCache';
 import { Blob, BlobContent } from 'types/Blob';
-import { ContentEntries } from '../ContentEntries';
 import { IPlugin } from '../plugins/IPlugin';
 
 
@@ -9,59 +7,6 @@ const CHANGE_TIMEOUT_MS = 500; // time delay to save after last key/input
 const AUTOSAVE_TIMEOUT_MS = 3000; // time delay to save automatically
 
 
-// Given a root node with children, create a dom node for it, and add to the node cache, then do the same for all children.
-// Populates contentEditable dom, and fills node + entry trees.
-function hydrateContent(entry: ContentEntry, parent: NodeEntryRef, nodeCache: NodeEntryCache) {
-    // for the entry... create a new NER, with entry reference.
-    // create a dom node according to type... the dom node will try to create child dom nodes. If it does... createNewElement, insert at position, addChild to current NodeEntryRef (new NER).
-    const NER = { entry, children: [], node: undefined };
-    nodeCache.createNodeEntry(entry, parent);
-
-    // node = setDomRef(parent.node, entry)
-    //    create a new NER with the dom node and entry refs
-    //    add the NER to the parent NER children.
-
-    // console.log(`hydrate`, entry, parent, nodeCache);
-
-    // // for all entries in content... make html node from entry... add { node, entry, children } to nodeCache
-    // const node = createHtmlNode(entry, parent);
-    // const NER = { node, entry, children: [] };
-
-    // entries.forEach(entry => {
-    //     const ner = { entry };
-
-    //     // createElement, cache element to NER with current entry.
-    //     // for all children, create node to given parent, cache element to NER
-
-    //     // return an NER to add to parent.
-    //     function cacheNode(entry, parent, nodeCache) {
-    //         ContentEntries.convertToHTMLByType(entry, parent, nodeCache);
-    //     }
-
-    //     const node = cacheNode(entry, parent, nodeCache);
-
-    //     //const node = ContentEntries.convertToHTMLByType(entry, parent);//, nodeCache);
-
-
-    //     // need to make dom tree that mirrors entry array...
-    //     // let entries create their dom nodes and automatically as as children...
-    //     const ner = { node, entry, children: [] };
-
-    //     if (entry.children && Array.isArray(entry.children)) {
-
-    //         // add child nodes
-    //         entry.children.forEach(c => {
-    //             // add to current node.children
-
-    //             // call hydrate with this NER as parent.
-
-    //         });
-    //     }
-
-    //     // create node->entry ref, and add entry.
-    //     nodeCache.entryTree.push(entry);
-    // });
-}
 
 export class WEditor {
 
@@ -132,57 +77,46 @@ export class WEditor {
         this.contentEditable.innerHTML = '';
 
         // create a root node:
-        const rootNER = { node: this.contentEditable, entry: { children: this.blob.content.entries } };
+        this.nodeCache.hydrateContent(this.blob.content.entries, this.contentEditable);
 
-        const rootEntry = {
-            type: 'group',
-            children: this.blob.content.entries
-        }
-
-        hydrateContent(rootEntry, this.contentEditable, this.nodeCache);
-
-        this.convertToHTML(this.blob.content, this.contentEditable);
+        //this.convertToHTML(this.blob.content, this.contentEditable);
         // todo: should hydrate node cache
     }
 
-    private convertToHTML(content: BlobContent, parent: HTMLElement) {
-        console.log(`convertToHTML`, content)
-        content.entries.forEach(entry => {
-            ContentEntries.convertToHTMLByType(entry, parent);
-        });
-    }
+    // private convertToHTML(content: BlobContent, parent: HTMLElement) {
+    //     console.log(`convertToHTML`, content)
+    //     content.entries.forEach(entry => {
+    //         ContentEntries.convertToHTMLByType(entry, parent);
+    //     });
+    // }
 
     // updates the given node's entry with it's changed content
     private applyChanges(node) {
         if (!node) throw "No node given to applyChanges()";
 
-        let entry = ContentEntries.convertNodeToEntry(node);
-        if (!entry) throw "Entry could not be created from node.";
-
         console.log(`apply`, node, node.parentNode);
         // find node in dom, or add at found index
-
 
         // update entry from node
 
         if (node) {
-            this.nodeCache.updateOrAdd(node, entry);
+            this.nodeCache.applyChange(node);
         } else {
             console.log(`no edit node given!`);
         }
 
         // Signal to save all pending changes after timeout.
         // There are two timers here: One that will autosave every X secs, and which saves after the last input.
-        if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
-        this.applyChangesTimeoutId = setTimeout(() => {
-            this.commitChanges();
-        }, CHANGE_TIMEOUT_MS);
+        // if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
+        // this.applyChangesTimeoutId = setTimeout(() => {
+        //     this.commitChanges();
+        // }, CHANGE_TIMEOUT_MS);
 
-        if (!this.autoSaveTimeoutId) {
-            this.autoSaveTimeoutId = setTimeout(() => {
-                this.commitChanges();
-            }, AUTOSAVE_TIMEOUT_MS);
-        }
+        // if (!this.autoSaveTimeoutId) {
+        //     this.autoSaveTimeoutId = setTimeout(() => {
+        //         this.commitChanges();
+        //     }, AUTOSAVE_TIMEOUT_MS);
+        // }
     }
 
     // Converts content area HTML to JSON. Any html elements associated with custom "types" will be ignored convert to JSON through their handlers.

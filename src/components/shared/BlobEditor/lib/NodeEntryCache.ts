@@ -2,7 +2,7 @@ import { BreakEntry, ContentEntry, GroupEntry, TextEntry } from 'components/shar
 
 export type NodeEntryRef = {
     node: Node;
-    entry: ContentEntry;
+    entry: ContentEntry | undefined;
     children: Array<NodeEntryRef>;
 }
 
@@ -14,14 +14,126 @@ export type NodeEntryRef = {
  * @class NodeEntryCache
  */
 export class NodeEntryCache {
+    private rootNode: NodeEntryRef | undefined;
+
     // node tree that references each entry, allowing for quick lookup of relevant nodes->entries.
-    public nodeTree: Array<NodeEntryRef> = [];
+    //public nodeTree: Array<NodeEntryRef> = [];
 
     // the actual entry tree (content)
-    public entryTree: Array<ContentEntry> = [];
+    //public entryTree: Array<ContentEntry> = [];
 
-    private nodeEntryRefs: Array<NodeEntryRef> = [];
     private lastNodeEntry: NodeEntryRef | undefined = undefined; // reference to last-edited node for faster/immdiate lookups
+
+    // Given a root node with children, create a dom node for it, and add to the node cache, then do the same for all children.
+    // Populates contentEditable dom, and fills node + entry trees.
+    public hydrateContent(entries: Array<ContentEntry>, node: Node) {
+        // create a root node and add to node cache tree
+        this.rootNode = {
+            node,
+            children: [],
+            entry: undefined
+        };
+
+        // add root reference to tree, mostly for backwards dom node lookup stop
+        //this.nodeTree.push(root);
+
+        //nodeCache.createNodeEntry(null, root);
+        // process each immediate entry (and subsequent children), and append to the root.
+        entries.forEach(entry => this.createNodeEntry(entry, this.rootNode));
+        console.log(`hydrated.`, this.rootNode);
+    }
+
+
+    // create a node and add it to the parent. If no parent is given, the node as added directly to the tree.
+    public createNodeEntry(entry: ContentEntry, parent: NodeEntryRef) {
+        let ner;
+
+        if (entry) {
+            switch (entry.type) {
+                case 'text':
+                    ner = TextNode.createNodeEntry(entry as TextEntry, parent, this);
+                    break;
+                case 'group':
+                    ner = GroupNode.createNodeEntry(entry as GroupEntry, parent, this);
+                    break;
+                case 'break':
+                    ner = BreakNode.createNodeEntry(entry as BreakEntry, parent, this);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            // no entry given, ie. for root node
+            ner = { node: undefined, entry, children: [] };
+        }
+
+        if (!ner) throw "Node->entry node could not be created from type: " + entry.type;
+
+        if (parent) {
+            if (parent.node) parent.node.appendChild(ner.node);
+            if (parent.children) parent.children.push(ner);
+        } else {
+            this.nodeTree.push(ner);
+        }
+
+        return ner;
+    }
+
+    // Called when a change is detected on the node. Find the given node in the tree and updates it's entry.
+    public applyChange(node: Node) {
+        console.log(`applyChange`, node);
+        const ner = this.findNodeEntry(node);
+        let entry = ContentEntries.convertNodeToEntry(node);
+        if (!entry) throw "Entry could not be created from node.";
+    }
+
+    // tries to locate an NER by looking for it's node in the nodeTree walking backwards.
+    public findNodeEntry(node: Node) {
+        if (!this.rootNode) throw "No rootNode found on NodeEntryCache. Did you forget to call hydrateContent()?";
+
+        // if the last applied node is the same, return immediately with it.
+        if (this.lastNodeEntry?.node == node) {
+            console.log(`last node match.`, node);
+            return this.lastNodeEntry;
+        }
+
+        // Crawl up to root from the node, keeping a stack of parents, and then
+        // DFS back through the NER tree using them to find the NER for the node.
+        let currNode: any = node;
+        let lookupPath: any = [];
+        while (currNode != this.rootNode.node) {
+            lookupPath.push(currNode); // push all but root
+            console.log(`currNode:`, currNode);
+            currNode = currNode.parentNode;
+        }
+        console.log(`root found?`, currNode);
+
+        if (currNode != this.rootNode.node) throw "Expected currNode to be the rootNode, but it's not.";
+
+        // walk down from the NER tree root, matching each node element in the
+        // lookup path along the way, stopping at the NER that matches the last node.
+        console.log(`walking back...`)
+        currNode = lookupPath.pop();
+        let currNer = this.rootNode;
+        while (currNode) {
+            // look for target node in the children, or otherwise next branch node in the lookup path
+            for (const c of currNer.children) {
+                // finish if child matches target node
+                if (c.node == node) {
+                    console.log(`NODE FOUND`);
+                    return c;
+                }
+
+                // check if the child matches the lookup path node, and continue there
+                console.log(`c`, c);
+                if (c.node == currNode) {
+                    // we've found the next node, continue at this NER and look for next
+                    currNer = c;
+                    currNode = lookupPath.pop();
+                }
+            };
+        }
+    }
 
     // Return just the entries without the node references, so they can be saved as Blob content.
     public getEntries = () => this.entryTree; //odeEntryRefs.map(ner => ner.entry);
@@ -53,31 +165,6 @@ export class NodeEntryCache {
         else this.add(node, entry);
     }
 
-    static createNodeEntry(entry: ContentEntry, parent: NodeEntryRef) {
-        // create an NER for entry, add to parent NER
-        let ner;
-
-        switch (entry.type) {
-            case 'text':
-                ner = TextNode.createNodeEntry(entry as TextEntry, parent);
-                break;
-            case 'group':
-                ner = GroupNode.createNodeEntry(entry as GroupEntry, parent);
-                break;
-            case 'break':
-                ner = BreakNode.createNodeEntry(entry as BreakEntry, parent);
-                break;
-            default:
-                break;
-        }
-
-        if (parent) {
-            if (parent.node) parent.node.appendChild(ner.node);
-            if (parent.children) parent.children.push(ner);
-        }
-
-        return ner;
-    }
 
 }
 
@@ -92,7 +179,7 @@ export class GroupNode extends ContentEntry {
         this.children = children;
     }
 
-    static createNodeEntry(entry: GroupEntry, parent: NodeEntryRef): NodeEntryRef {
+    static createNodeEntry(entry: GroupEntry, parent: NodeEntryRef, nodeCache: NodeEntryCache): NodeEntryRef {
         const ner: NodeEntryRef = {
             entry,
             node: document.createElement('div'),
@@ -104,7 +191,7 @@ export class GroupNode extends ContentEntry {
             }
         }
         if (Array.isArray(entry.children)) {
-            entry.children.forEach(child => NodeEntryCache.createNodeEntry(child, ner));
+            entry.children.forEach(child => nodeCache.createNodeEntry(child, ner));
         } else if (entry.children) {
             // ContentEntries.convertToHTMLByType(entry.ild, div)
             ner.node.innerText = entry.children;
@@ -140,7 +227,7 @@ export class TextNode extends ContentEntry {
         this.attributes = attributes;
     }
 
-    static createNodeEntry(entry: TextEntry, parent: NodeEntryRef, nodeCache?: NodeEntryCache): NodeEntryRef {
+    static createNodeEntry(entry: TextEntry, parent: NodeEntryRef, nodeCache: NodeEntryCache): NodeEntryRef {
         const ner = {
             entry,
             node: document.createTextNode(entry.children),
@@ -200,7 +287,7 @@ export class BreakNode extends ContentEntry {
         this.attributes = attributes;
     }
 
-    static createNodeEntry(entry: BreakEntry, parent: NodeEntryRef, nodeCache?: NodeEntryCache): NodeEntryRef {
+    static createNodeEntry(entry: BreakEntry, parent: NodeEntryRef, nodeCache: NodeEntryCache): NodeEntryRef {
         const ner = {
             entry,
             node: document.createElement('br'),
