@@ -1,6 +1,5 @@
-Okay. Can you make a new plugin called 'CodePlugin' that is able to display a section of content text as a code block, surrounded in the <code> tag. Eventually this <code> tag will be translated to a CodeEntry object during its serialization.
-When the code plugin loads, it will just parse
+todo: on shift+enter... should manually insert the break entry after the current node in it's parent so that it does not trigger a full re-build of the parent node and it's content.
 
+todo: on enter... should create the group node but without the break?
 
-
-
+bug: multiple break chilren arent added to ner.children but are seen in entry.children.

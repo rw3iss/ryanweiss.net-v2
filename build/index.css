@@ -368,14 +368,14 @@
 .blob-editor .blob-title:focus {
   outline: none;
 }
-.blob-editor .wysiwyg-container {
+.blob-editor .w-editor {
   padding: 20px;
   background: #111418;
   border-radius: 0 0 8px 8px;
   min-height: 300px;
   overflow-y: auto;
 }
-.blob-editor .wysiwyg-container div[contenteditable=true] {
+.blob-editor .w-editor .w-content {
   position: relative;
   color: #f5f5f5;
   background: #111418;
@@ -384,29 +384,35 @@
   padding: 20px;
   border-radius: 8px;
   line-height: 1.8;
-}
-.blob-editor .wysiwyg-container div[contenteditable=true]:focus,
-.blob-editor .wysiwyg-container div[contenteditable=true]:hover {
   box-shadow: 0 0 0 2px rgba(10, 157, 215, 0.2);
 }
-.blob-editor .wysiwyg-container div[contenteditable=true] p {
+.blob-editor .w-editor .w-content div,
+.blob-editor .w-editor .w-content .group-entry {
+  padding: 7px;
+  line-height: 1.382em;
+}
+.blob-editor .w-editor .w-content:focus,
+.blob-editor .w-editor .w-content:hover {
+  box-shadow: 0 0 0 2px rgba(10, 157, 215, 0.4);
+}
+.blob-editor .w-editor .w-content p {
   margin-bottom: 1.5em;
 }
-.blob-editor .wysiwyg-container div[contenteditable=true] a {
+.blob-editor .w-editor .w-content a {
   color: #4caf50;
   -webkit-text-decoration: none;
   text-decoration: none;
 }
-.blob-editor .wysiwyg-container div[contenteditable=true] a:hover {
+.blob-editor .w-editor .w-content a:hover {
   -webkit-text-decoration: underline;
   text-decoration: underline;
 }
-.blob-editor .wysiwyg-container div[contenteditable=true] h1,
-.blob-editor .wysiwyg-container div[contenteditable=true] h2,
-.blob-editor .wysiwyg-container div[contenteditable=true] h3,
-.blob-editor .wysiwyg-container div[contenteditable=true] h4,
-.blob-editor .wysiwyg-container div[contenteditable=true] h5,
-.blob-editor .wysiwyg-container div[contenteditable=true] h6 {
+.blob-editor .w-editor .w-content h1,
+.blob-editor .w-editor .w-content h2,
+.blob-editor .w-editor .w-content h3,
+.blob-editor .w-editor .w-content h4,
+.blob-editor .w-editor .w-content h5,
+.blob-editor .w-editor .w-content h6 {
   margin-top: 0;
   margin-bottom: 0.5em;
 }
@@ -485,7 +491,7 @@
 .blob-editor .toolbar-button,
 .blob-editor .toolbar-dropdown-button {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   padding: var(--item-padding);

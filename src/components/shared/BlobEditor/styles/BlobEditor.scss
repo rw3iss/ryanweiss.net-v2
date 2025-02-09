@@ -43,14 +43,14 @@ $focus-color: rgb(10, 157, 215);
         }
     }
 
-    .wysiwyg-container {
+    .w-editor {
         padding: $padding;
         background: $primary-bg;
         border-radius: 0 0 $border-radius $border-radius;
         min-height: 300px;
         overflow-y: auto;
 
-        div[contenteditable="true"] {
+        .w-content {
             position: relative;
             color: $text-color;
             background: $primary-bg;
@@ -59,10 +59,18 @@ $focus-color: rgb(10, 157, 215);
             padding: $padding;
             border-radius: $border-radius;
             line-height: 1.8; // Increased line height for better readability
+            box-shadow: 0 0 0 2px rgba($focus-color, 0.2);
+
+            div,
+            .group-entry {
+                //border-top: 1px solid #234;
+                padding: 7px;
+                line-height: 1.382em;
+            }
 
             &:focus,
             &:hover {
-                box-shadow: 0 0 0 2px rgba($focus-color, 0.2);
+                box-shadow: 0 0 0 2px rgba($focus-color, 0.4);
             }
 
             p {

@@ -3,8 +3,6 @@ import EventService from 'lib/EventService';
 import qs from 'query-string';
 import RouteParser from 'routes';
 
-console.log(`routes`, routes);
-
 export const ROUTE_CHANGE_EVENT = 'route-change';
 
 export class Router {

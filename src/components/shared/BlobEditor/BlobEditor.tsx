@@ -96,7 +96,7 @@ export const BlobEditor: FunctionComponent<Props> = ({ blob: initialBlob }) => {
                 onChange={handleTitleChange}
                 class="blob-title"
             />
-            <div ref={containerRef} class="wysiwyg-container" style={{ flexGrow: 1 }}></div>
+            <div ref={containerRef} class="w-editor" style={{ flexGrow: 1 }}></div>
         </div>
     );
 };

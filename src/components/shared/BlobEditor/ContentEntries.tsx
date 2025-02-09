@@ -1,4 +1,7 @@
+import { getLogger } from '../../../lib/utils/logging.js';
 import { NodeEntryCache } from './lib/NodeEntryCache';
+
+const { log, warn } = getLogger('ContentEntries', { color: 'red', enabled: false });
 
 interface BaseEntry {
     type: string;
@@ -31,7 +34,7 @@ export class TextEntry extends ContentEntry {
         super();
         if (typeof children != 'string') throw "Error: TextEntry expects children to be a string.";
         this.children = children;
-        this.attributes = attributes;
+        this.attributes = attributes || {};
     }
 
     static convertToHTML(entry: TextEntry, parent: HTMLElement) {
@@ -230,10 +233,10 @@ export class PreEntry extends ContentEntry {
         const children: ContentEntry[] = [];
         Array.from(node.childNodes).forEach(childNode => {
             const childEntry = ContentEntries.convertNodeToEntry(childNode);
-            if (childEntry) inner.push(childEntry);
+            if (childEntry) children.push(childEntry);
         });
 
-        return new PreEntry(attributes, inner);
+        return new PreEntry(attributes, children);
     }
 }
 
@@ -271,10 +274,10 @@ export class CodeEntry extends ContentEntry {
         const children: ContentEntry[] = [];
         Array.from(node.childNodes).forEach(childNode => {
             const childEntry = ContentEntries.convertNodeToEntry(childNode);
-            if (childEntry) inner.push(childEntry);
+            if (childEntry) children.push(childEntry);
         });
 
-        return new CodeEntry(attributes, inner);
+        return new CodeEntry(attributes, children);
     }
 }
 
@@ -311,13 +314,14 @@ export class GroupEntry extends ContentEntry {
             return acc;
         }, {} as { [key: string]: string });
 
+        // todo: consolidate entries?
         const children: ContentEntry[] = [];
         Array.from(node.childNodes).forEach(childNode => {
             const childEntry = ContentEntries.convertNodeToEntry(childNode);
-            if (childEntry) inner.push(childEntry);
+            if (childEntry) children.push(childEntry);
         });
 
-        return new GroupEntry(attributes, inner);
+        return new GroupEntry(attributes, children);
     }
 }
 
@@ -365,7 +369,7 @@ export class LinkEntry extends ContentEntry {
             children = '';
         }
 
-        return new LinkEntry(inner, attributes);
+        return new LinkEntry(children, attributes);
     }
 }
 
@@ -403,10 +407,10 @@ export class CustomEntry extends ContentEntry {
         const children: ContentEntry[] = [];
         Array.from(node.childNodes).forEach(childNode => {
             const childEntry = ContentEntries.convertNodeToEntry(childNode);
-            if (childEntry) inner.push(childEntry);
+            if (childEntry) children.push(childEntry);
         });
 
-        return new CustomEntry(attributes, inner);
+        return new CustomEntry(attributes, children);
     }
 }
 
@@ -448,17 +452,21 @@ export class ContentEntries {
         }
     }
 
-    static convertNodeToEntry(node: Node): ContentEntry | undefined {
+    static convertNodeToEntry(node: Node): ContentEntry {
+        if (!node || !node.nodeType) throw `${node ? 'Invalid' : 'No'} node given to convertNodeToEntry`;
         let entry;
+        log(`convertNodeToEntry(), node:`, node.nodeType, node.tagName, node);
 
         if (node.nodeType === Node.TEXT_NODE) {
             entry = TextEntry.convertNodeToEntry(node);
+            log(`made text node`, node, entry)
         }
         else if (node.nodeName === 'DIV') {
             const div = node as HTMLDivElement;
             if (div.getAttribute('custom') === 'true') {
                 entry = CustomEntry.convertNodeToEntry(div);
             } else {
+                log(`making group:`, node)
                 entry = GroupEntry.convertNodeToEntry(div);
             }
         }
@@ -479,6 +487,7 @@ export class ContentEntries {
         }
         else if (node.nodeName === 'BR') {
             entry = BreakEntry.convertNodeToEntry(node as HTMLElement);
+            log(`made break node`, node.tagName, node, entry)
         }
 
         if (!entry) throw "Could not convert node type to entry: " + node.nodeType;

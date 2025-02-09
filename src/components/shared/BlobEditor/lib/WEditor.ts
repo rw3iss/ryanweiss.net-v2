@@ -1,20 +1,25 @@
 import { NodeEntryCache } from 'components/shared/BlobEditor/lib/NodeEntryCache';
 import { Blob, BlobContent } from 'types/Blob';
 import { IPlugin } from '../plugins/IPlugin';
-
+import { ContentEntries } from '../ContentEntries.js';
 
 const CHANGE_TIMEOUT_MS = 500; // time delay to save after last key/input
 const AUTOSAVE_TIMEOUT_MS = 3000; // time delay to save automatically
 
+const CONTENT_ROOT_CLASS = 'w-content';
 
+type WEditorConfig = {
+    focusOnStart: boolean;
+}
+
+const DEFAULT_CONFIG = (): WEditorConfig => ({
+    focusOnStart: true
+})
 
 export class WEditor {
 
-    private container: HTMLElement | null;
     private contentEditable: HTMLDivElement | null;
-    private onChangeHandler: (content: BlobContent) => void;
 
-    private plugins: IPlugin[];
     private applyChangesTimeoutId: Timeout | null = null;
     private autoSaveTimeoutId: Timeout | null = null;
 
@@ -22,13 +27,11 @@ export class WEditor {
     private nodeCache: NodeEntryCache;
 
     constructor(
-        container: HTMLElement | null,
-        onChange: (content: BlobContent) => void,
-        plugins: IPlugin[] = []) {
-        this.container = container;
-        this.contentEditable = null;
-        this.onChangeHandler = onChange;
-        this.plugins = plugins || [];
+        private container: HTMLElement,
+        private onChangeHandler: (content: BlobContent) => void,
+        private plugins: IPlugin[] = [],
+        private config: WEditorConfig = DEFAULT_CONFIG()
+    ) {
         this.nodeCache = new NodeEntryCache();
         this.initialize();
     }
@@ -39,7 +42,7 @@ export class WEditor {
         if (!this.contentEditable) {
             this.contentEditable = document.createElement('div');
             this.contentEditable.setAttribute('contenteditable', 'true');
-            this.contentEditable.classList.add('content-editor');
+            this.contentEditable.classList.add(CONTENT_ROOT_CLASS);
             this.container.appendChild(this.contentEditable);
         }
 
@@ -47,26 +50,11 @@ export class WEditor {
         this.plugins.forEach(plugin => plugin.initialize(this, this.container));
 
         // setup event listeners:
+        document.addEventListener('keydown', this.handleKeyDown);
         this.contentEditable.addEventListener('input', this.handleContentChange);
-    }
 
-    private handleContentChange = (e) => {
-        // Find the node where the edit took place
-        let editNode: Node | undefined = undefined;
-        if (window.getSelection) {
-            let range = window.getSelection()?.getRangeAt(0);
-            editNode = range?.commonAncestorContainer;
-        }
-
-        // Apply the changes immediately to the entry, for throttled commit later
-        this.applyChanges(editNode);
-    }
-
-    // clear content
-    public clearContent(apply?) {
-        if (this.contentEditable) {
-            this.contentEditable.innerHTML = '';
-            if (apply) this.applyChanges(this.contentEditable);
+        if (this.config.focusOnStart) {
+            this.contentEditable.focus();
         }
     }
 
@@ -83,48 +71,85 @@ export class WEditor {
         // todo: should hydrate node cache
     }
 
-    // private convertToHTML(content: BlobContent, parent: HTMLElement) {
-    //     console.log(`convertToHTML`, content)
-    //     content.entries.forEach(entry => {
-    //         ContentEntries.convertToHTMLByType(entry, parent);
-    //     });
-    // }
+    // todo: on shift+enter... should manually insert the break entry after the current node in it's parent
+    // ... so that it does not trigger a full re-build of the parent node and it's content.
+    // todo: on enter... should create the group node but without the break?
+    // bug: multiple break chilren arent added to ner.children but are seen in entry.children.
+    private handleKeyDown = (e) => {
+        if (e.target == this.contentEditable) {
+            e.stopPropagation();
+            if (e.key == 'Enter') {
+                const node = this.getCurrentEditingNode();
+                console.log(`Enter`, node, e);
+                // if node is a text node, make
+                // insert
+                // insert a break node in the current node.
+                // if the current node type is a text node, convert it to a group node.
+                //if (!e.shiftKey) e.preventDefault();
+                // todo: handle adding break node... if content-editable is ancestor.
+            }
+
+            if (e.key == 'Backspace') {
+                const node = this.getCurrentEditingNode();
+                // if the current editing node has no children or content, delete it from the tree
+                if (node) {
+                    //
+                    console.log(`backspace on:`, node, node.childNodes, node.innerHTML);
+                    if (node.innerHTML == '<br>') {
+                        //console.log(`DELETE NODE`, node);
+                        this.nodeCache.deleteNode(node);
+                        // if it's the root node don't delete it...
+                        if (node.classList.contains(CONTENT_ROOT_CLASS)) {
+                            node.innerHTML = '';
+                        }
+                        return e.preventDefault();
+                    } else {
+                        if (node.nodeType != Node.TEXT_NODE) {
+                            console.log(`delete by node type:`, node, node.nodeType, node.classList, 'parent:', node.parentNode)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private handleContentChange = (e) => {
+        // Find the node where the edit took place
+        let editNode: Node | undefined = this.getCurrentEditingNode();
+        if (window.getSelection) {
+            let range = window.getSelection()?.getRangeAt(0);
+            editNode = range?.commonAncestorContainer;
+        }
+
+        // Apply the changes immediately to the entry, for throttled commit later
+        this.applyChanges(editNode);
+    }
 
     // updates the given node's entry with it's changed content
     private applyChanges(node) {
         if (!node) throw "No node given to applyChanges()";
 
-        console.log(`apply`, node, node.parentNode);
-        // find node in dom, or add at found index
-
-        // update entry from node
-
-        if (node) {
-            this.nodeCache.applyChange(node);
-        } else {
-            console.log(`no edit node given!`);
-        }
+        const entry = ContentEntries.convertNodeToEntry(node)
+        const change = this.nodeCache.applyChange(node, entry);
+        // todo: can store or serialize change object to backend or other clients.
 
         // Signal to save all pending changes after timeout.
-        // There are two timers here: One that will autosave every X secs, and which saves after the last input.
-        // if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
-        // this.applyChangesTimeoutId = setTimeout(() => {
-        //     this.commitChanges();
-        // }, CHANGE_TIMEOUT_MS);
+        // One timer will (definitely) autosave content every X secs, and the other saves after the last keypress.
+        if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
+        this.applyChangesTimeoutId = setTimeout(() => {
+            this.commitChanges();
+        }, CHANGE_TIMEOUT_MS);
 
-        // if (!this.autoSaveTimeoutId) {
-        //     this.autoSaveTimeoutId = setTimeout(() => {
-        //         this.commitChanges();
-        //     }, AUTOSAVE_TIMEOUT_MS);
-        // }
+        if (!this.autoSaveTimeoutId) {
+            this.autoSaveTimeoutId = setTimeout(() => {
+                this.commitChanges();
+            }, AUTOSAVE_TIMEOUT_MS);
+        }
     }
 
     // Converts content area HTML to JSON. Any html elements associated with custom "types" will be ignored convert to JSON through their handlers.
     public commitChanges(): BlobContent | null {
-        if (!this.contentEditable) {
-            console.error('Cannot apply changes: ContentEditable is null');
-            return null;
-        }
+        if (!this.contentEditable) throw "Cannot apply changes: ContentEditable is null";
 
         // Clear the auto-save and auto-change timeouts since we're saving now
         if (this.autoSaveTimeoutId) this.autoSaveTimeoutId = clearTimeout(this.autoSaveTimeoutId);
@@ -132,8 +157,23 @@ export class WEditor {
 
         const content: BlobContent = { entries: this.nodeCache.getEntries() };
         this.onChangeHandler(content);
-
         return content;
+    }
+
+    // helper to clear all content (for dev)
+    public clearContent(commit?) {
+        if (this.contentEditable) {
+            this.contentEditable.innerHTML = '';
+            this.nodeCache.clear();
+            if (commit) this.commitChanges();
+        }
+    }
+
+    private getCurrentEditingNode(): Node | undefined {
+        if (window.getSelection) {
+            let range = window.getSelection()?.getRangeAt(0);
+            return range?.commonAncestorContainer;
+        }
     }
 
 }

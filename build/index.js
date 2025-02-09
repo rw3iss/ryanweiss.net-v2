@@ -1935,11 +1935,13 @@ var init_BlobService = __esm({
 });
 
 // src/components/shared/BlobEditor/ContentEntries.tsx
-var ContentEntry, TextEntry, HeaderEntry, FileEntry, BreakEntry, PreEntry, CodeEntry, GroupEntry, LinkEntry, CustomEntry, ContentEntries2;
+var log4, warn3, ContentEntry, TextEntry, HeaderEntry, FileEntry, BreakEntry, PreEntry, CodeEntry, GroupEntry, LinkEntry, CustomEntry, ContentEntries;
 var init_ContentEntries = __esm({
   "src/components/shared/BlobEditor/ContentEntries.tsx"() {
     "use strict";
     init_preact_module();
+    init_logging();
+    ({ log: log4, warn: warn3 } = getLogger("ContentEntries", { color: "red", enabled: false }));
     ContentEntry = class {
       static convertToHTML(entry, parent) {
         throw new Error("Method not implemented");
@@ -1956,7 +1958,7 @@ var init_ContentEntries = __esm({
         super();
         if (typeof children != "string") throw "Error: TextEntry expects children to be a string.";
         this.children = children;
-        this.attributes = attributes;
+        this.attributes = attributes || {};
       }
       static convertToHTML(entry, parent) {
         let textNode;
@@ -2120,7 +2122,7 @@ var init_ContentEntries = __esm({
           }
         }
         parent.appendChild(pre);
-        entry.children.forEach((child) => ContentEntries2.convertToHTMLByType(child, pre));
+        entry.children.forEach((child) => ContentEntries.convertToHTMLByType(child, pre));
       }
       static convertNodeToEntry(node) {
         const attributes = Array.from(node.attributes).reduce((acc, attr) => {
@@ -2129,10 +2131,10 @@ var init_ContentEntries = __esm({
         }, {});
         const children = [];
         Array.from(node.childNodes).forEach((childNode) => {
-          const childEntry = ContentEntries2.convertNodeToEntry(childNode);
-          if (childEntry) inner.push(childEntry);
+          const childEntry = ContentEntries.convertNodeToEntry(childNode);
+          if (childEntry) children.push(childEntry);
         });
-        return new _PreEntry(attributes, inner);
+        return new _PreEntry(attributes, children);
       }
     };
     CodeEntry = class _CodeEntry extends ContentEntry {
@@ -2153,7 +2155,7 @@ var init_ContentEntries = __esm({
           }
         }
         parent.appendChild(code);
-        entry.children.forEach((child) => ContentEntries2.convertToHTMLByType(child, code));
+        entry.children.forEach((child) => ContentEntries.convertToHTMLByType(child, code));
       }
       static convertNodeToEntry(node) {
         if (node.tagName !== "CODE") return null;
@@ -2163,10 +2165,10 @@ var init_ContentEntries = __esm({
         }, {});
         const children = [];
         Array.from(node.childNodes).forEach((childNode) => {
-          const childEntry = ContentEntries2.convertNodeToEntry(childNode);
-          if (childEntry) inner.push(childEntry);
+          const childEntry = ContentEntries.convertNodeToEntry(childNode);
+          if (childEntry) children.push(childEntry);
         });
-        return new _CodeEntry(attributes, inner);
+        return new _CodeEntry(attributes, children);
       }
     };
     GroupEntry = class _GroupEntry extends ContentEntry {
@@ -2187,7 +2189,7 @@ var init_ContentEntries = __esm({
         }
         parent.appendChild(div);
         if (Array.isArray(entry.children)) {
-          entry.children.forEach((child) => ContentEntries2.convertToHTMLByType(child, div));
+          entry.children.forEach((child) => ContentEntries.convertToHTMLByType(child, div));
         } else if (entry.children) {
           div.childrenText = entry.children;
         }
@@ -2199,10 +2201,10 @@ var init_ContentEntries = __esm({
         }, {});
         const children = [];
         Array.from(node.childNodes).forEach((childNode) => {
-          const childEntry = ContentEntries2.convertNodeToEntry(childNode);
-          if (childEntry) inner.push(childEntry);
+          const childEntry = ContentEntries.convertNodeToEntry(childNode);
+          if (childEntry) children.push(childEntry);
         });
-        return new _GroupEntry(attributes, inner);
+        return new _GroupEntry(attributes, children);
       }
     };
     LinkEntry = class _LinkEntry extends ContentEntry {
@@ -2223,7 +2225,7 @@ var init_ContentEntries = __esm({
         }
         parent.appendChild(a3);
         if (Array.isArray(entry.children)) {
-          entry.children.forEach((child) => ContentEntries2.convertToHTMLByType(child, a3));
+          entry.children.forEach((child) => ContentEntries.convertToHTMLByType(child, a3));
         } else {
           a3.textContent = entry.children;
         }
@@ -2238,12 +2240,12 @@ var init_ContentEntries = __esm({
           if (node.childNodes.length === 1 && node.childNodes[0].nodeType === Node.TEXT_NODE) {
             children = node.textContent || "";
           } else {
-            children = Array.from(node.childNodes).map((childNode) => ContentEntries2.convertNodeToEntry(childNode)).filter(Boolean);
+            children = Array.from(node.childNodes).map((childNode) => ContentEntries.convertNodeToEntry(childNode)).filter(Boolean);
           }
         } else {
           children = "";
         }
-        return new _LinkEntry(inner, attributes);
+        return new _LinkEntry(children, attributes);
       }
     };
     CustomEntry = class _CustomEntry extends ContentEntry {
@@ -2264,7 +2266,7 @@ var init_ContentEntries = __esm({
           }
         }
         parent.appendChild(customDiv);
-        entry.children.forEach((child) => ContentEntries2.convertToHTMLByType(child, customDiv));
+        entry.children.forEach((child) => ContentEntries.convertToHTMLByType(child, customDiv));
       }
       static convertNodeToEntry(node) {
         if (node.getAttribute("custom") !== "true") return null;
@@ -2274,13 +2276,13 @@ var init_ContentEntries = __esm({
         }, {});
         const children = [];
         Array.from(node.childNodes).forEach((childNode) => {
-          const childEntry = ContentEntries2.convertNodeToEntry(childNode);
-          if (childEntry) inner.push(childEntry);
+          const childEntry = ContentEntries.convertNodeToEntry(childNode);
+          if (childEntry) children.push(childEntry);
         });
-        return new _CustomEntry(attributes, inner);
+        return new _CustomEntry(attributes, children);
       }
     };
-    ContentEntries2 = class {
+    ContentEntries = class {
       // make an html node from entry, append to parent, return NER for { node, entry, children } which is appended to current node in node cache nodeTree.
       static convertToHTMLByType(entry, parent, nodeCache) {
         switch (entry.type) {
@@ -2316,14 +2318,18 @@ var init_ContentEntries = __esm({
         }
       }
       static convertNodeToEntry(node) {
+        if (!node || !node.nodeType) throw `${node ? "Invalid" : "No"} node given to convertNodeToEntry`;
         let entry;
+        log4(`convertNodeToEntry(), node:`, node.nodeType, node.tagName, node);
         if (node.nodeType === Node.TEXT_NODE) {
           entry = TextEntry.convertNodeToEntry(node);
+          log4(`made text node`, node, entry);
         } else if (node.nodeName === "DIV") {
           const div = node;
           if (div.getAttribute("custom") === "true") {
             entry = CustomEntry.convertNodeToEntry(div);
           } else {
+            log4(`making group:`, node);
             entry = GroupEntry.convertNodeToEntry(div);
           }
         } else if (node.nodeName === "A") {
@@ -2338,6 +2344,7 @@ var init_ContentEntries = __esm({
           entry = CodeEntry.convertNodeToEntry(node);
         } else if (node.nodeName === "BR") {
           entry = BreakEntry.convertNodeToEntry(node);
+          log4(`made break node`, node.tagName, node, entry);
         }
         if (!entry) throw "Could not convert node type to entry: " + node.nodeType;
         return entry;
@@ -2346,35 +2353,150 @@ var init_ContentEntries = __esm({
   }
 });
 
+// src/components/shared/BlobEditor/lib/nerUtils.ts
+function getParentPath(node, stopNode, cache) {
+  let lookupPath = [];
+  let currNode = node;
+  while (currNode) {
+    lookupPath.push(currNode);
+    if (currNode == cache.rootNER.node || currNode == stopNode) break;
+    currNode = currNode.parentNode;
+  }
+  return lookupPath;
+}
+function findNode(node, parent, cache) {
+  if (!node) throw "No node given to findNode()";
+  if (!cache.rootNER?.node) throw "No rootNER found on NodeEntryCache. Did you forget to call hydrateContent()?";
+  if (cache.rootNER.node == node) return cache.rootNER;
+  if (cache.lastNER?.node == node) {
+    log5(`Last:`, cache.lastNER);
+    return cache.lastNER;
+  }
+  let lookupPath = nerUtils.getParentPath(node, parent?.node, cache);
+  let currNER = parent || cache.rootNER;
+  let currNode = lookupPath.pop();
+  let nextNode = lookupPath.pop();
+  log5(`findNode`, node, lookupPath);
+  while (currNode) {
+    const isTarget = currNode == node;
+    const isParent = nextNode == node;
+    if (isTarget) {
+      log5(`isTarget`, currNode, nextNode);
+      return currNER;
+    }
+    for (const c3 of currNER.children) {
+      if (c3.node == node) return c3;
+      if (c3.node == nextNode) {
+        currNER = c3;
+        break;
+      }
+    }
+    ;
+    if (isParent) return void 0;
+    currNode = nextNode;
+    nextNode = lookupPath.pop();
+  }
+  return void 0;
+}
+function updateNode(ner, entry, cache) {
+  if (!ner.entry) ner.entry = entry;
+  else {
+    ner.entry.type = entry.type;
+    ner.entry.children = entry.children;
+    ner.entry.attributes = entry.attributes;
+  }
+  log5(`UPDATE node:`, ner);
+  return ner;
+}
+function insertNode(parent, node, entry, cache) {
+  if (!parent.node) throw "Error: parent NER does not have a node for insertNode.";
+  const pos = Array.from(parent.node.childNodes).findIndex((n2, i4) => n2 == node);
+  const ner = { node, entry, children: [], parent };
+  log5(`INSERT at:`, pos, "parent:", parent, "new:", ner);
+  if (!parent.children) parent.children = [];
+  parent.children.splice(pos, 0, ner);
+  if (Array.isArray(parent.entry?.children)) {
+    parent.entry?.children?.splice(pos, 0, entry);
+  }
+  return ner;
+}
+function deleteNode(node, cache) {
+  log5(`deleteNode:`, node);
+}
+function clearCache(cache) {
+  if (Array.isArray(cache.entries)) while (cache.entries.pop()) {
+  }
+  ;
+  if (cache.lastNER != cache.rootNER) cache.lastNER = void 0;
+  if (cache.rootNER) {
+    cache.rootNER.children = [];
+    if (cache.rootNER.entry?.children) {
+      if (Array.isArray(cache.rootNER.entry.children)) {
+        while (cache.rootNER.entry.children.pop()) {
+        }
+        ;
+      }
+    }
+  }
+}
+var log5, warn4, nerUtils;
+var init_nerUtils = __esm({
+  "src/components/shared/BlobEditor/lib/nerUtils.ts"() {
+    "use strict";
+    init_preact_module();
+    init_logging();
+    ({ log: log5, warn: warn4 } = getLogger("NER", { color: "yellow", enabled: true }));
+    nerUtils = {
+      getParentPath,
+      findNode,
+      updateNode,
+      insertNode,
+      deleteNode,
+      clearCache
+    };
+  }
+});
+
 // src/components/shared/BlobEditor/lib/NodeEntryCache.ts
-var NodeEntryCache, GroupNode, TextNode, BreakNode;
+function NER(node, entry, children, parent) {
+  return { node, entry, children, parent };
+}
+var log6, error3, NodeEntryCache, GroupNode, TextNode, BreakNode;
 var init_NodeEntryCache = __esm({
   "src/components/shared/BlobEditor/lib/NodeEntryCache.ts"() {
     "use strict";
     init_preact_module();
     init_ContentEntries();
+    init_nerUtils();
+    init_logging();
+    ({ log: log6, error: error3 } = getLogger("NodeEntryCache", { color: "yellow", enabled: true }));
     NodeEntryCache = class {
-      rootNode;
-      // node tree that references each entry, allowing for quick lookup of relevant nodes->entries.
-      //public nodeTree: Array<NodeEntryRef> = [];
-      // the actual entry tree (content)
-      //public entryTree: Array<ContentEntry> = [];
-      lastNodeEntry = void 0;
+      entries;
+      rootNER;
+      lastNER = void 0;
       // reference to last-edited node for faster/immdiate lookups
-      // Given a root node with children, create a dom node for it, and add to the node cache, then do the same for all children.
-      // Populates contentEditable dom, and fills node + entry trees.
+      // Creates elements from the given list of entries, and builds the node tree from them.
       hydrateContent(entries, node) {
-        this.rootNode = {
+        this.entries = entries || [
+          { type: "text", children: "..." }
+        ];
+        this.rootNER = {
           node,
+          entry: {
+            type: "group",
+            children: this.entries
+          },
           children: [],
-          entry: void 0
+          parent: void 0
         };
-        entries.forEach((entry) => this.createNodeEntry(entry, this.rootNode));
-        console.log(`hydrated.`, this.rootNode);
+        this.createNodeEntry(this.rootNER.entry, this.rootNER);
+        log6(`hydrated.`, entries, this.rootNER);
       }
-      // create a node and add it to the parent. If no parent is given, the node as added directly to the tree.
+      // Create a node and add it to the given parent. If no parent is given, the node as added directly to the root.
       createNodeEntry(entry, parent) {
-        let ner;
+        if (!this.rootNER) throw "rootNER has not been created. Create a root node or call hydrateContent first.";
+        if (!parent) parent = this.rootNER;
+        let ner = NER(void 0, entry, [], parent);
         if (entry) {
           switch (entry.type) {
             case "text":
@@ -2389,88 +2511,46 @@ var init_NodeEntryCache = __esm({
             default:
               break;
           }
-        } else {
-          ner = { node: void 0, entry, children: [] };
         }
-        if (!ner) throw "Node->entry node could not be created from type: " + entry.type;
-        if (parent) {
-          if (parent.node) parent.node.appendChild(ner.node);
-          if (parent.children) parent.children.push(ner);
-        } else {
-          this.nodeTree.push(ner);
-        }
+        if (!ner.node) throw "Node->entry node could not be created from type: " + entry.type;
+        if (parent.node) parent.node.appendChild(ner.node);
+        if (parent.children) parent.children.push(ner);
         return ner;
       }
-      // Called when a change is detected on the node. Find the given node in the tree and updates it's entry.
-      applyChange(node) {
-        console.log(`applyChange`, node);
-        const ner = this.findNodeEntry(node);
-        let entry = ContentEntries.convertNodeToEntry(node);
-        if (!entry) throw "Entry could not be created from node.";
+      // Locate an NER in the tree by a dom node reference.
+      findNode(node, parent) {
+        return nerUtils.findNode(node, parent, this);
       }
-      // tries to locate an NER by looking for it's node in the nodeTree walking backwards.
-      findNodeEntry(node) {
-        if (!this.rootNode) throw "No rootNode found on NodeEntryCache. Did you forget to call hydrateContent()?";
-        if (this.lastNodeEntry?.node == node) {
-          console.log(`last node match.`, node);
-          return this.lastNodeEntry;
-        }
-        let currNode = node;
-        let lookupPath = [];
-        while (currNode != this.rootNode.node) {
-          lookupPath.push(currNode);
-          console.log(`currNode:`, currNode);
-          currNode = currNode.parentNode;
-        }
-        console.log(`root found?`, currNode);
-        if (currNode != this.rootNode.node) throw "Expected currNode to be the rootNode, but it's not.";
-        console.log(`walking back...`);
-        currNode = lookupPath.pop();
-        let currNer = this.rootNode;
-        while (currNode) {
-          if (currNode == node) {
-            console.log(`NODE FOUND`, currNer);
-            return currNer;
-          }
-          for (const c3 of currNer.children) {
-            if (c3.node == node) {
-              console.log(`NODE FOUND`);
-              return c3;
-            }
-            console.log(`c`, c3);
-            if (c3.node == currNode) {
-              currNer = c3;
-              currNode = lookupPath.pop();
-            }
-          }
-          ;
+      // Locates and updates the NER for the node, of it exists, or inserts a new one.
+      updateOrInsert(node, entry) {
+        if (!node.parentNode) throw "parentNode does not exist.";
+        let parent = this.findNode(node.parentNode);
+        let ner = this.findNode(node, parent);
+        if (ner) nerUtils.updateNode(ner, entry, this);
+        else if (parent) ner = nerUtils.insertNode(parent, node, entry, this);
+        else throw "Parent not found for updateOrInsert.";
+        this.lastNER = ner;
+        return ner;
+      }
+      // Finds the node in the tree and removes the entry from it, and the dom node as well.
+      deleteNode(node) {
+        return nerUtils.deleteNode(node, this);
+      }
+      // Called when a change is detected on the node. Finds the given node in the tree and updates it's entry.
+      // If the node does not exist the NER is inserted in its relative dom position.
+      applyChange(node, entry) {
+        console.log(`applyChange`, "isRoot?", node == this.rootNER?.node, "node:", node, "entry:", entry);
+        try {
+          return this.lastNER = this.updateOrInsert(node, entry);
+        } catch (e4) {
+          console.log(`Exception in applyChange():`, e4);
         }
       }
       // Return just the entries without the node references, so they can be saved as Blob content.
-      getEntries = () => this.entryTree;
+      getEntries = () => this.entries;
       //odeEntryRefs.map(ner => ner.entry);
-      // Find a NodeEntryRef whose node matches the given node.
-      // TODO: find from parent stack...
-      findEntry = (node) => this.nodeEntryRefs.find((n2) => n2.node == node);
-      // Change the given node's entry content and set last edited node.
-      update = (ner, entry) => {
-        ner.entry = entry;
-        this.lastNodeEntry = ner;
-        console.log(`update`, ner);
-      };
-      // Append an entry to the list of cached nodes, and set last edited node.
-      add = (node, entry) => {
-        const ner = { node, entry, children: [] };
-        this.nodeEntryRefs.push(ner);
-        this.lastNodeEntry = ner;
-        console.log(`add`, ner);
-      };
-      // Updates the given node with the new entry. Compares lastNodeEntry with current node to avoid lookup through all nodes.
-      updateOrAdd = (node, entry) => {
-        let ner;
-        if (this.lastNodeEntry && this.lastNodeEntry.node == node) ner = this.lastNodeEntry;
-        if (ner) this.update(ner, entry);
-        else this.add(node, entry);
+      clear = () => {
+        nerUtils.clearCache(this);
       };
     };
     GroupNode = class extends ContentEntry {
@@ -2486,7 +2566,8 @@ var init_NodeEntryCache = __esm({
         const ner = {
           entry,
           node: document.createElement("div"),
-          children: []
+          children: [],
+          parent
         };
         if (entry.attributes) {
           for (const [key, value] of Object.entries(entry.attributes)) {
@@ -2508,9 +2589,10 @@ var init_NodeEntryCache = __esm({
         const children = [];
         Array.from(node.childNodes).forEach((childNode) => {
           const childEntry = ContentEntries.convertNodeToEntry(childNode);
-          if (childEntry) inner.push(childEntry);
+          if (childEntry) children.push(childEntry);
         });
-        return new GroupEntry(attributes, inner);
+        console.log(`GroupEntry`, node, children);
+        return new GroupEntry(attributes, children);
       }
     };
     TextNode = class extends ContentEntry {
@@ -2521,13 +2603,14 @@ var init_NodeEntryCache = __esm({
         super();
         if (typeof children != "string") throw "Error: TextEntry expects children to be a string.";
         this.children = children;
-        this.attributes = attributes;
+        this.attributes = attributes || {};
       }
       static createNodeEntry(entry, parent, nodeCache) {
         const ner = {
           entry,
           node: document.createTextNode(entry.children),
-          children: []
+          children: [],
+          parent
         };
         if (entry.attributes) {
           if (entry.attributes["bold"]) {
@@ -2578,7 +2661,8 @@ var init_NodeEntryCache = __esm({
         const ner = {
           entry,
           node: document.createElement("br"),
-          children: []
+          children: [],
+          parent
         };
         if (entry.attributes) {
           for (const [key, value] of Object.entries(entry.attributes)) {
@@ -2602,53 +2686,46 @@ var init_NodeEntryCache = __esm({
 });
 
 // src/components/shared/BlobEditor/lib/WEditor.ts
-var WEditor;
+var CHANGE_TIMEOUT_MS, AUTOSAVE_TIMEOUT_MS, CONTENT_ROOT_CLASS, DEFAULT_CONFIG, WEditor;
 var init_WEditor = __esm({
   "src/components/shared/BlobEditor/lib/WEditor.ts"() {
     "use strict";
     init_preact_module();
     init_NodeEntryCache();
+    init_ContentEntries();
+    CHANGE_TIMEOUT_MS = 500;
+    AUTOSAVE_TIMEOUT_MS = 3e3;
+    CONTENT_ROOT_CLASS = "w-content";
+    DEFAULT_CONFIG = () => ({
+      focusOnStart: true
+    });
     WEditor = class {
-      container;
+      constructor(container, onChangeHandler, plugins = [], config = DEFAULT_CONFIG()) {
+        this.container = container;
+        this.onChangeHandler = onChangeHandler;
+        this.plugins = plugins;
+        this.config = config;
+        this.nodeCache = new NodeEntryCache();
+        this.initialize();
+      }
       contentEditable;
-      onChangeHandler;
-      plugins;
       applyChangesTimeoutId = null;
       autoSaveTimeoutId = null;
       blob;
       nodeCache;
-      constructor(container, onChange, plugins = []) {
-        this.container = container;
-        this.contentEditable = null;
-        this.onChangeHandler = onChange;
-        this.plugins = plugins || [];
-        this.nodeCache = new NodeEntryCache();
-        this.initialize();
-      }
       initialize() {
         if (!this.container) return console.error("WEditor initialization failed: Container is null");
         if (!this.contentEditable) {
           this.contentEditable = document.createElement("div");
           this.contentEditable.setAttribute("contenteditable", "true");
-          this.contentEditable.classList.add("content-editor");
+          this.contentEditable.classList.add(CONTENT_ROOT_CLASS);
           this.container.appendChild(this.contentEditable);
         }
         this.plugins.forEach((plugin) => plugin.initialize(this, this.container));
+        document.addEventListener("keydown", this.handleKeyDown);
         this.contentEditable.addEventListener("input", this.handleContentChange);
-      }
-      handleContentChange = (e4) => {
-        let editNode = void 0;
-        if (window.getSelection) {
-          let range = window.getSelection()?.getRangeAt(0);
-          editNode = range?.commonAncestorContainer;
-        }
-        this.applyChanges(editNode);
-      };
-      // clear content
-      clearContent(apply) {
-        if (this.contentEditable) {
-          this.contentEditable.innerHTML = "";
-          if (apply) this.applyChanges(this.contentEditable);
+        if (this.config.focusOnStart) {
+          this.contentEditable.focus();
         }
       }
       loadBlob(blob) {
@@ -2658,33 +2735,81 @@ var init_WEditor = __esm({
         this.contentEditable.innerHTML = "";
         this.nodeCache.hydrateContent(this.blob.content.entries, this.contentEditable);
       }
-      // private convertToHTML(content: BlobContent, parent: HTMLElement) {
-      //     console.log(`convertToHTML`, content)
-      //     content.entries.forEach(entry => {
-      //         ContentEntries.convertToHTMLByType(entry, parent);
-      //     });
-      // }
+      // todo: on shift+enter... should manually insert the break entry after the current node in it's parent
+      // ... so that it does not trigger a full re-build of the parent node and it's content.
+      // todo: on enter... should create the group node but without the break?
+      // bug: multiple break chilren arent added to ner.children but are seen in entry.children.
+      handleKeyDown = (e4) => {
+        if (e4.target == this.contentEditable) {
+          e4.stopPropagation();
+          if (e4.key == "Enter") {
+            const node = this.getCurrentEditingNode();
+            console.log(`Enter`, node, e4);
+          }
+          if (e4.key == "Backspace") {
+            const node = this.getCurrentEditingNode();
+            if (node) {
+              console.log(`backspace on:`, node, node.childNodes, node.innerHTML);
+              if (node.innerHTML == "<br>") {
+                this.nodeCache.deleteNode(node);
+                if (node.classList.contains(CONTENT_ROOT_CLASS)) {
+                  node.innerHTML = "";
+                }
+                return e4.preventDefault();
+              } else {
+                if (node.nodeType != Node.TEXT_NODE) {
+                  console.log(`delete by node type:`, node, node.nodeType, node.classList, "parent:", node.parentNode);
+                }
+              }
+            }
+          }
+        }
+      };
+      handleContentChange = (e4) => {
+        let editNode = this.getCurrentEditingNode();
+        if (window.getSelection) {
+          let range = window.getSelection()?.getRangeAt(0);
+          editNode = range?.commonAncestorContainer;
+        }
+        this.applyChanges(editNode);
+      };
       // updates the given node's entry with it's changed content
       applyChanges(node) {
         if (!node) throw "No node given to applyChanges()";
-        console.log(`apply`, node, node.parentNode);
-        if (node) {
-          this.nodeCache.applyChange(node);
-        } else {
-          console.log(`no edit node given!`);
+        const entry = ContentEntries.convertNodeToEntry(node);
+        const change = this.nodeCache.applyChange(node, entry);
+        if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
+        this.applyChangesTimeoutId = setTimeout(() => {
+          this.commitChanges();
+        }, CHANGE_TIMEOUT_MS);
+        if (!this.autoSaveTimeoutId) {
+          this.autoSaveTimeoutId = setTimeout(() => {
+            this.commitChanges();
+          }, AUTOSAVE_TIMEOUT_MS);
         }
       }
       // Converts content area HTML to JSON. Any html elements associated with custom "types" will be ignored convert to JSON through their handlers.
       commitChanges() {
-        if (!this.contentEditable) {
-          console.error("Cannot apply changes: ContentEditable is null");
-          return null;
-        }
+        if (!this.contentEditable) throw "Cannot apply changes: ContentEditable is null";
         if (this.autoSaveTimeoutId) this.autoSaveTimeoutId = clearTimeout(this.autoSaveTimeoutId);
         if (this.applyChangesTimeoutId) this.applyChangesTimeoutId = clearTimeout(this.applyChangesTimeoutId);
         const content = { entries: this.nodeCache.getEntries() };
         this.onChangeHandler(content);
         return content;
+      }
+      // helper to clear all content (for dev)
+      clearContent(commit) {
+        if (this.contentEditable) {
+          this.contentEditable.innerHTML = "";
+          this.nodeCache.clear();
+          if (commit) this.commitChanges();
+        }
+      }
+      getCurrentEditingNode() {
+        if (window.getSelection) {
+          let range = window.getSelection()?.getRangeAt(0);
+          return range?.commonAncestorContainer;
+        }
       }
     };
   }
@@ -2922,8 +3047,8 @@ var init_BlobEditor2 = __esm({
               } else {
                 setCurrentBlob(new Blob2({}));
               }
-            } catch (error3) {
-              console.error("Failed to load blobs:", error3);
+            } catch (error4) {
+              console.error("Failed to load blobs:", error4);
               setCurrentBlob(new Blob2({}));
             }
           }
@@ -2977,7 +3102,7 @@ var init_BlobEditor2 = __esm({
             class: "blob-title"
           }
         ),
-        /* @__PURE__ */ u2("div", { ref: containerRef, class: "wysiwyg-container", style: { flexGrow: 1 } })
+        /* @__PURE__ */ u2("div", { ref: containerRef, class: "w-editor", style: { flexGrow: 1 } })
       ] });
     };
   }
@@ -6522,7 +6647,6 @@ var query_string_default = base_exports;
 
 // src/lib/Router.ts
 var import_routes = __toESM(require_routes());
-console.log(`routes`, import_config.routes);
 var ROUTE_CHANGE_EVENT = "route-change";
 var Router = class {
   parser = void 0;
