@@ -1,6 +1,6 @@
 import { BreakEntry, ContentEntries, ContentEntry, GroupEntry, TextEntry } from 'components/shared/BlobEditor/ContentEntries';
 import { nerUtils } from './nerUtils';
-import { getLogger } from '../../../../lib/utils/logging.js';
+import { getLogger } from 'lib/utils/logging.js';
 
 const { log, error } = getLogger('NodeEntryCache', { color: 'yellow', enabled: true });
 
@@ -16,36 +16,30 @@ function NER(node, entry, children, parent) {
 }
 
 export class NodeEntryCache {
-    private entries: Array<ContentEntry> | undefined;
+    public entries: Array<ContentEntry> | undefined;
     public rootNER: NodeEntryRef | undefined;
     private lastNER: NodeEntryRef | undefined = undefined; // reference to last-edited node for faster/immdiate lookups
 
-    // Creates elements from the given list of entries, and builds the node tree from them.
+    // Creates elements from the given list of entries, and insert them into the node tree.
     public hydrateContent(entries: Array<ContentEntry>, node: Node) {
-        //entries.push({ type: 'text', children: '...' });
-        //console.log(`hydrateContent()`, entries.length, entries);
-        // maintains the same assigning of entries so that any change will be reflected in them.
-        this.entries = entries || [
-            { type: 'text', children: '...' }
-        ];//entries;// || [];
+        this.entries = entries || [];
 
-        // builds from a blank root node pointed at the editor, with a single group for any existing entries
+        // create a root node to start
         this.rootNER = {
             node,
-            entry: {
-                type: 'group',
-                children: this.entries
-            },
-            children: [],
-            parent: undefined
+            entry: undefined,  // root has no entry
+            parent: undefined, // root has no parent
+            children: []
         };
 
-        this.createNodeEntry(this.rootNER.entry, this.rootNER)
+        this.entries.forEach(e => this.createNodeFromEntry(e, this.rootNER));
+
+        //this.createNodeEntry(this.rootNER.entry, null)
         log(`hydrated.`, entries, this.rootNER);
     }
 
     // Create a node and add it to the given parent. If no parent is given, the node as added directly to the root.
-    public createNodeEntry(entry: ContentEntry, parent: NodeEntryRef | undefined) {
+    public createNodeFromEntry(entry: ContentEntry, parent?: NodeEntryRef) {
         if (!this.rootNER) throw "rootNER has not been created. Create a root node or call hydrateContent first.";
         if (!parent) parent = this.rootNER; // default to rootNER
 
@@ -90,9 +84,13 @@ export class NodeEntryCache {
     public updateOrInsert(node: Node, entry: ContentEntry): NodeEntryRef {
         if (!node.parentNode) throw "parentNode does not exist."
 
-        let parent = this.findNode(node.parentNode as Node);
-        let ner = this.findNode(node, parent);
+        // if the node is the root... it should... always insert?
+        const isRoot = node == this.rootNER?.node;
 
+        log(`finding parent. root?`, isRoot, 'parent node:', node.parentNode)
+        let parent = isRoot ? this.rootNER : this.findNode(node.parentNode as Node);
+        let ner = isRoot ? this.rootNER : this.findNode(node, parent);
+        log(`found child in parent?`, parent, 'child:', ner);
         if (ner) nerUtils.updateNode(ner, entry, this);
         else if (parent) ner = nerUtils.insertNode(parent, node, entry, this);
         else throw "Parent not found for updateOrInsert."
@@ -109,19 +107,16 @@ export class NodeEntryCache {
     // Called when a change is detected on the node. Finds the given node in the tree and updates it's entry.
     // If the node does not exist the NER is inserted in its relative dom position.
     public applyChange(node: Node, entry: ContentEntry) {
-        console.log(`applyChange`, 'isRoot?', node == this.rootNER?.node, 'node:', node, 'entry:', entry)
+        //log(`applyChange`, 'isRoot?', node == this.rootNER?.node, 'node:', node, 'entry:', entry)
         try {
             // todo: move this to WEditor?
             // if its a text entry, check the parent... if it only has a break, remove the break.
             //console.log(`converted:`, entry);
             return this.lastNER = this.updateOrInsert(node, entry);
         } catch (e) {
-            console.log(`Exception in applyChange():`, e);
+            log(`Exception in applyChange():`, e);
         }
     }
-
-    // Return just the entries without the node references, so they can be saved as Blob content.
-    public getEntries = () => this.entries; //odeEntryRefs.map(ner => ner.entry);
 
     public clear = () => {
         nerUtils.clearCache(this);
@@ -153,7 +148,7 @@ export class GroupNode extends ContentEntry {
             }
         }
         if (Array.isArray(entry.children)) {
-            entry.children.forEach(child => nodeCache.createNodeEntry(child, ner));
+            entry.children.forEach(child => nodeCache.createNodeFromEntry(child, ner));
         } else if (entry.children) {
             // ContentEntries.convertToHTMLByType(entry.ild, div)
             ner.node.innerText = entry.children;
@@ -173,7 +168,7 @@ export class GroupNode extends ContentEntry {
             const childEntry = ContentEntries.convertNodeToEntry(childNode);
             if (childEntry) children.push(childEntry);
         });
-        console.log(`GroupEntry`, node, children);
+        log(`GroupEntry`, node, children);
         return new GroupEntry(attributes, children);
     }
 }

@@ -21,23 +21,20 @@ export const BlobEditor: FunctionComponent<Props> = ({ blob: initialBlob }) => {
     useEffect(() => {
         const initBlob = async () => {
             if (!initialBlob) {
+                let loadBlob;
                 try {
                     const blobs = await blobService.listBlobs();
                     const mostRecentBlob = blobs.reduce((latest, current) =>
                         !latest || (current.dateUpdated > latest.dateUpdated) ? current : latest,
                         null as Blob | null
                     );
-                    if (mostRecentBlob) {
-                        setCurrentBlob(mostRecentBlob);
-                    } else {
-                        // If no blobs exist, create a new one
-                        setCurrentBlob(new Blob({}));
-                    }
+                    loadBlob = mostRecentBlob || new Blob();
                 } catch (error) {
                     console.error('Failed to load blobs:', error);
                     // Handle error case, maybe set a default or empty blob
-                    setCurrentBlob(new Blob({}));
+                    loadBlob = new Blob();
                 }
+                setCurrentBlob(loadBlob);
             }
         };
         initBlob();

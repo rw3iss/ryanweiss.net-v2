@@ -1,11 +1,32 @@
 /* Usage:
     import { getLogger } from 'lib/utils/logging';
-    const { log, warn } = getLogger('somename');
-    log('something', ...); // will log/show if enabled
-    warn('something', ...); // will always log/show
+    const { log, warn, error } = getLogger('somename');
+    log('something', ...);
 */
-export const DEFAULT_LOG_COLOR = 'yellow';
 
+export interface LogModule {
+    name: string;
+    onLog(...args): void;
+}
+
+const DISABLED_LOGGER = { log: () => { }, warn: () => { } };
+const loggers = {};
+const logModules: Array<LogModule> = [];
+
+// main logging output, and send to modules.
+function doLog(namespace, args) {
+    //let stack = (new Error()).stack.split("\n")[1].split("/").slice(-1)[0].split(":");
+    //const [filename, linenum, linepos] = stack;
+    //args.push(`:${linenum} @${linepos}`);
+    const logEvent = { namespace, args }
+    logModules.forEach((m: LogModule) => m.onLog(logEvent));
+    console.log.apply(console, args);
+}
+
+export const addLogModule = (m) => logModules.push(m);
+
+// START Colors
+export const DEFAULT_LOG_COLOR = 'yellow';
 export const Colors = {
     reset: "\x1b[0m",
     bright: "\x1b[1m",
@@ -33,15 +54,13 @@ export const Colors = {
     BGcyan: "\x1b[46m",
     BGwhite: "\x1b[47m",
 };
-
-const DISABLED_LOGGER = { log: () => { }, warn: () => { } };
-
 export function color(color, str) {
     let cs = color.indexOf('\x1b') >= 0 ? color : Colors[color];
     return `${cs}${str}${Colors['reset']}`;
 }
+// END Colors
 
-let loggers = {};
+
 /**
  * @description Retrieve a logger by name.
  * @param {string} [namespace='']
@@ -66,24 +85,6 @@ export const getLogger = function (namespace = '', opts: any = {}) {
     return l;
 }
 
-///////////////////////////////////////////
-// this is is sort of a browser-only feature atm.
-let windowParams;
-let isLogAllMode = false;
-let logOnly = undefined;
-if (typeof window != 'undefined' && typeof URLSearchParams != 'undefined') {
-    windowParams = new URLSearchParams(window.location.search);
-    if (windowParams.get('logAll')) {
-        let logWhat = windowParams.get('logAll');
-        if (logWhat == 'true') {
-            isLogAllMode = true;
-        } else if (logWhat && logWhat != 'true') {
-            isLogAllMode = true;
-            logOnly = logWhat.split(',');
-        }
-    }
-}
-
 /**
  * @description Debugs logs/arguments to a specific namespace (first parameter), or default/global.
  * @param {*} args
@@ -93,15 +94,15 @@ export const log = function (...args) {
     args = args.length > 1 ? args.slice(1, args.length) : [];
     let l = getLogger(namespace);
     if (l) {
+        let la = [...args];
         // log if normal mode, and logger is enabled, or log if it is globally-enabled
         if ((!isLogAllMode && l.enabled) ||
             (isLogAllMode && (!logOnly || logOnly.includes(namespace)))) {
-            let la = [...args];
             if (namespace) la.unshift(`${Colors[l.color] || Colors[l.black]}${namespace || '(no namespace)'}:${Colors["reset"]}`);
-            console.log.apply(console, la);
         }
+        doLog(namespace, la);
     } else {
-        console.log(`Log:`, args);
+        doLog(namespace, ['Warning:', ...args]);
     }
 }
 
@@ -118,9 +119,9 @@ export const warn = function (...args) {
         if (namespace) {
             la.unshift(`${Colors[l.color] || Colors[l.black]}${namespace || '(no namespace)'}:${Colors["reset"]} ⚠️`);
         }
-        console.log.apply(console, la);
+        doLog(namespace, la);
     } else {
-        console.log(`Warning:`, args);
+        doLog(namespace, ['Warning:', ...args]);
     }
 }
 
@@ -135,19 +136,11 @@ export const error = function (...args) {
     if (l) {
         let la = [...args];
         if (namespace) la.unshift(`${Colors["red"]}${namespace || '(no namespace)'}:${Colors["reset"]} 🛑`);
-        console.error.apply(console, la);
+        doLog(namespace, la);
     } else {
-        console.error(`Error:`, args);
+        doLog(namespace, ['Error:', ...args]);
     }
 }
-/**
- * @description Shortcut to determine if we're okay to dev.
- * @return {*}
- */
-export const IS_DEV = () => {
-    return process.env.NODE_ENV != 'production';
-}
-
 
 /**
  * @description A Logger that utilizes the global log() method, and adds fancy stuff like colors, namespacing, and configuration.
@@ -186,5 +179,26 @@ export class Logger {
     public setEnabled(enabled) {
         this.enabled = enabled;
         return this;
+    }
+}
+
+
+/* Window url param options:
+This is a browser-only feature to enable logging options from the url, which will enable or disable certain features.
+Todo: Could make this a module.
+*/
+let windowParams;
+let isLogAllMode = false;
+let logOnly = undefined;
+if (typeof window != 'undefined' && typeof URLSearchParams != 'undefined') {
+    windowParams = new URLSearchParams(window.location.search);
+    if (windowParams.get('logAll')) {
+        let logWhat = windowParams.get('logAll');
+        if (logWhat == 'true') {
+            isLogAllMode = true;
+        } else if (logWhat && logWhat != 'true') {
+            isLogAllMode = true;
+            logOnly = logWhat.split(',');
+        }
     }
 }

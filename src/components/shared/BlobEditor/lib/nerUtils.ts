@@ -75,16 +75,23 @@ function updateNode(ner, entry, cache: NodeEntryCache) {
 
 // Finds the node's position in the parent's dom node and inserts a new NER in the tree there.
 function insertNode(parent: NodeEntryRef, node: Node, entry: ContentEntry, cache: NodeEntryCache) {
-    if (!parent.node) throw "Error: parent NER does not have a node for insertNode.";
-    const pos = Array.from(parent.node.childNodes).findIndex((n, i) => n == node);
+    if (!parent.node) throw "Error: No node found on parent NER to insert to.";
     const ner = { node, entry, children: [], parent }; // entry will be created later
+    const pos = Array.from(parent.node.childNodes).findIndex((n, i) => n === node);
     log(`INSERT at:`, pos, 'parent:', parent, 'new:', ner);
     if (!parent.children) parent.children = [];
     parent.children.splice(pos, 0, ner);
-    if (Array.isArray(parent.entry?.children)) {
-        parent.entry?.children?.splice(pos, 0, entry);
+    // we add root entries directly to cache.entries to retain the pure array for export
+    if (parent == cache.rootNER) {
+        cache.entries?.push(ner.entry);
+    } else {
+        if (parent.entry && !parent.entry.children) parent.entry.children = [];
+        if (Array.isArray(parent.entry?.children)) {
+            parent.entry?.children?.splice(pos, 0, entry);
+        }
+    } {
+        return ner;
     }
-    return ner;
 }
 
 // deletes the node and associated entry from the tree

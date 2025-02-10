@@ -2,6 +2,8 @@ import { idbTables } from 'config/idb.config';
 import { APP_ID } from 'env';
 import { IndexedDBManager } from 'lib/IndexedDBManager';
 import AudioManager from './lib/AudioManager.js';
+import { DebugPanel, DebugPanelLogModule } from './lib/utils/debug/DebugPanel';
+import { addLogModule } from './lib/utils/logging.js';
 
 class _Application {
 
@@ -18,6 +20,8 @@ class _Application {
 
         AudioManager.register('hover', '/public/sounds/click.wav');
         AudioManager.register('click', '/public/sounds/cool-click.wav');
+
+        // addLogModule(new DebugPanelLogModule({ show: true }));
     }
 }
 

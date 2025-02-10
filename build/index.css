@@ -388,8 +388,8 @@
 }
 .blob-editor .w-editor .w-content div,
 .blob-editor .w-editor .w-content .group-entry {
-  padding: 7px;
-  line-height: 1.382em;
+  padding: 10px;
+  line-height: 1.2em;
 }
 .blob-editor .w-editor .w-content:focus,
 .blob-editor .w-editor .w-content:hover {
@@ -562,6 +562,151 @@
   cursor: pointer;
   margin: 0 0 0 auto;
   padding: 2px;
+}
+.debug-panel {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 320px;
+  height: 400px;
+  background: #222;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  color: #fff;
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+.debug-panel.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.debug-panel:not(.visible) {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+}
+.debug-panel .debug-panel-tabs {
+  display: flex;
+  background: #111;
+  padding: 5px;
+  gap: 5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.debug-panel .debug-panel-tabs .debug-tab {
+  background: #333;
+  color: #ccc;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+.debug-panel .debug-panel-tabs .debug-tab:hover {
+  background: #444;
+  color: #fff;
+}
+.debug-panel .debug-panel-tabs .debug-tab:focus {
+  outline: none;
+}
+.debug-panel .debug-panel-tabs .debug-tab.active {
+  background: #007bff;
+  color: #fff;
+}
+.debug-panel .debug-panel-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 10px;
+  background: #1a1a1a;
+}
+.debug-panel .debug-panel-content .debug-tab-content {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  gap: 5px;
+}
+.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry {
+  background: #292929;
+  color: #ddd;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  word-break: break-word;
+  border-left: 3px solid #007bff;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry:hover .debug-delete-button,
+.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry:hover .debug-copy-button {
+  opacity: 1;
+}
+.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-action-button,
+.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-copy-button,
+.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-delete-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(100, 100, 100, 0.8);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out, background 0.2s ease-in-out;
+}
+.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-action-button:hover,
+.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-copy-button:hover,
+.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-delete-button:hover {
+  background: rgb(150, 150, 150);
+}
+.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-delete-button {
+  right: 8px;
+  background: rgba(255, 85, 85, 0.8);
+}
+.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-delete-button:hover {
+  background: rgb(255, 34, 34);
+}
+.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-copy-button {
+  right: 36px;
+  background: rgba(85, 170, 255, 0.8);
+}
+.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-copy-button:hover {
+  background: rgb(34, 136, 255);
+}
+.debug-panel .debug-panel-content .debug-tab-content .debug-clear-button {
+  background: #d9534f;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out, background 0.2s;
+}
+.debug-panel .debug-panel-content .debug-tab-content .debug-clear-button:hover {
+  background: #c9302c;
+}
+.debug-panel .debug-panel-content .debug-tab-content .debug-clear-button:focus {
+  outline: none;
+}
+.debug-panel .debug-panel-content .debug-tab-content:hover .debug-clear-button {
+  opacity: 1;
 }
 
 /* src/components/pages/Other/style.scss */

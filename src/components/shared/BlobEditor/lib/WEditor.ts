@@ -2,6 +2,7 @@ import { NodeEntryCache } from 'components/shared/BlobEditor/lib/NodeEntryCache'
 import { Blob, BlobContent } from 'types/Blob';
 import { IPlugin } from '../plugins/IPlugin';
 import { ContentEntries } from '../ContentEntries.js';
+import { nerUtils } from './nerUtils.js';
 
 const CHANGE_TIMEOUT_MS = 500; // time delay to save after last key/input
 const AUTOSAVE_TIMEOUT_MS = 3000; // time delay to save automatically
@@ -13,7 +14,7 @@ type WEditorConfig = {
 }
 
 const DEFAULT_CONFIG = (): WEditorConfig => ({
-    focusOnStart: true
+    focusOnStart: false
 })
 
 export class WEditor {
@@ -79,35 +80,36 @@ export class WEditor {
         if (e.target == this.contentEditable) {
             e.stopPropagation();
             if (e.key == 'Enter') {
-                const node = this.getCurrentEditingNode();
-                console.log(`Enter`, node, e);
-                // if node is a text node, make
-                // insert
-                // insert a break node in the current node.
-                // if the current node type is a text node, convert it to a group node.
-                //if (!e.shiftKey) e.preventDefault();
-                // todo: handle adding break node... if content-editable is ancestor.
+                this.handleEnter(e);
+            } else if (e.key == 'Backspace') {
+                this.handleBackspace(e);
             }
+        }
+    }
 
-            if (e.key == 'Backspace') {
-                const node = this.getCurrentEditingNode();
-                // if the current editing node has no children or content, delete it from the tree
-                if (node) {
-                    //
-                    console.log(`backspace on:`, node, node.childNodes, node.innerHTML);
-                    if (node.innerHTML == '<br>') {
-                        //console.log(`DELETE NODE`, node);
-                        this.nodeCache.deleteNode(node);
-                        // if it's the root node don't delete it...
-                        if (node.classList.contains(CONTENT_ROOT_CLASS)) {
-                            node.innerHTML = '';
-                        }
-                        return e.preventDefault();
-                    } else {
-                        if (node.nodeType != Node.TEXT_NODE) {
-                            console.log(`delete by node type:`, node, node.nodeType, node.classList, 'parent:', node.parentNode)
-                        }
-                    }
+    private handleEnter = (e) => {
+        const node = this.getCurrentEditingNode();
+        console.log(`Enter`, node, e);
+    }
+
+    private handleBackspace = (e) => {
+        const node = this.getCurrentEditingNode();
+        // if the current editing node has no children or content, delete it from the tree
+        if (node) {
+            //
+            console.log(`backspace on edit node:`, node, node.childNodes, node.innerHTML);
+            if (node.innerHTML == '<br>') {
+                //console.log(`DELETE NODE`, node);
+                this.nodeCache.deleteNode(node);
+                // if it's the root node don't delete it...
+                if (node.classList.contains(CONTENT_ROOT_CLASS)) {
+                    //node.innerHTML = '';
+                }
+                return;// e.preventDefault();
+            } else {
+                if (node.nodeType != Node.TEXT_NODE) {
+                    console.log(`DELETE by node type...`, node, node.nodeType, node.classList, 'parent:', node.parentNode)
+                    //return e.preventDefault();
                 }
             }
         }
@@ -155,7 +157,7 @@ export class WEditor {
         if (this.autoSaveTimeoutId) this.autoSaveTimeoutId = clearTimeout(this.autoSaveTimeoutId);
         if (this.applyChangesTimeoutId) this.applyChangesTimeoutId = clearTimeout(this.applyChangesTimeoutId);
 
-        const content: BlobContent = { entries: this.nodeCache.getEntries() };
+        const content: BlobContent = { entries: this.nodeCache.entries };
         this.onChangeHandler(content);
         return content;
     }

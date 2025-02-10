@@ -288,11 +288,21 @@ var init_preact_module = __esm({
 });
 
 // src/lib/utils/logging.ts
-var DEFAULT_LOG_COLOR, Colors, DISABLED_LOGGER, loggers, getLogger, windowParams, isLogAllMode, logOnly, log, warn, error, Logger;
+function doLog(namespace, args) {
+  const logEvent = { namespace, args };
+  logModules.forEach((m3) => m3.onLog(logEvent));
+  console.log.apply(console, args);
+}
+var DISABLED_LOGGER, loggers, logModules, DEFAULT_LOG_COLOR, Colors, getLogger, log, warn, error, Logger, windowParams, isLogAllMode, logOnly;
 var init_logging = __esm({
   "src/lib/utils/logging.ts"() {
     "use strict";
     init_preact_module();
+    DISABLED_LOGGER = { log: () => {
+    }, warn: () => {
+    } };
+    loggers = {};
+    logModules = [];
     DEFAULT_LOG_COLOR = "yellow";
     Colors = {
       reset: "\x1B[0m",
@@ -319,10 +329,6 @@ var init_logging = __esm({
       BGcyan: "\x1B[46m",
       BGwhite: "\x1B[47m"
     };
-    DISABLED_LOGGER = { log: () => {
-    }, warn: () => {
-    } };
-    loggers = {};
     getLogger = function(namespace = "", opts = {}) {
       if (opts.enabled === false) return DISABLED_LOGGER;
       let l3 = loggers[namespace];
@@ -339,32 +345,18 @@ var init_logging = __esm({
       }
       return l3;
     };
-    isLogAllMode = false;
-    logOnly = void 0;
-    if (typeof window != "undefined" && typeof URLSearchParams != "undefined") {
-      windowParams = new URLSearchParams(window.location.search);
-      if (windowParams.get("logAll")) {
-        let logWhat = windowParams.get("logAll");
-        if (logWhat == "true") {
-          isLogAllMode = true;
-        } else if (logWhat && logWhat != "true") {
-          isLogAllMode = true;
-          logOnly = logWhat.split(",");
-        }
-      }
-    }
     log = function(...args) {
       const namespace = args.length > 1 ? args[0] : "";
       args = args.length > 1 ? args.slice(1, args.length) : [];
       let l3 = getLogger(namespace);
       if (l3) {
+        let la = [...args];
         if (!isLogAllMode && l3.enabled || isLogAllMode && (!logOnly || logOnly.includes(namespace))) {
-          let la = [...args];
           if (namespace) la.unshift(`${Colors[l3.color] || Colors[l3.black]}${namespace || "(no namespace)"}:${Colors["reset"]}`);
-          console.log.apply(console, la);
         }
+        doLog(namespace, la);
       } else {
-        console.log(`Log:`, args);
+        doLog(namespace, ["Warning:", ...args]);
       }
     };
     warn = function(...args) {
@@ -376,9 +368,9 @@ var init_logging = __esm({
         if (namespace) {
           la.unshift(`${Colors[l3.color] || Colors[l3.black]}${namespace || "(no namespace)"}:${Colors["reset"]} \u26A0\uFE0F`);
         }
-        console.log.apply(console, la);
+        doLog(namespace, la);
       } else {
-        console.log(`Warning:`, args);
+        doLog(namespace, ["Warning:", ...args]);
       }
     };
     error = function(...args) {
@@ -388,9 +380,9 @@ var init_logging = __esm({
       if (l3) {
         let la = [...args];
         if (namespace) la.unshift(`${Colors["red"]}${namespace || "(no namespace)"}:${Colors["reset"]} \u{1F6D1}`);
-        console.error.apply(console, la);
+        doLog(namespace, la);
       } else {
-        console.error(`Error:`, args);
+        doLog(namespace, ["Error:", ...args]);
       }
     };
     Logger = class {
@@ -422,6 +414,20 @@ var init_logging = __esm({
         return this;
       }
     };
+    isLogAllMode = false;
+    logOnly = void 0;
+    if (typeof window != "undefined" && typeof URLSearchParams != "undefined") {
+      windowParams = new URLSearchParams(window.location.search);
+      if (windowParams.get("logAll")) {
+        let logWhat = windowParams.get("logAll");
+        if (logWhat == "true") {
+          isLogAllMode = true;
+        } else if (logWhat && logWhat != "true") {
+          isLogAllMode = true;
+          logOnly = logWhat.split(",");
+        }
+      }
+    }
   }
 });
 
@@ -2409,16 +2415,23 @@ function updateNode(ner, entry, cache) {
   return ner;
 }
 function insertNode(parent, node, entry, cache) {
-  if (!parent.node) throw "Error: parent NER does not have a node for insertNode.";
-  const pos = Array.from(parent.node.childNodes).findIndex((n2, i4) => n2 == node);
+  if (!parent.node) throw "Error: No node found on parent NER to insert to.";
   const ner = { node, entry, children: [], parent };
+  const pos = Array.from(parent.node.childNodes).findIndex((n2, i4) => n2 === node);
   log5(`INSERT at:`, pos, "parent:", parent, "new:", ner);
   if (!parent.children) parent.children = [];
   parent.children.splice(pos, 0, ner);
-  if (Array.isArray(parent.entry?.children)) {
-    parent.entry?.children?.splice(pos, 0, entry);
+  if (parent == cache.rootNER) {
+    cache.entries?.push(ner.entry);
+  } else {
+    if (parent.entry && !parent.entry.children) parent.entry.children = [];
+    if (Array.isArray(parent.entry?.children)) {
+      parent.entry?.children?.splice(pos, 0, entry);
+    }
   }
-  return ner;
+  {
+    return ner;
+  }
 }
 function deleteNode(node, cache) {
   log5(`deleteNode:`, node);
@@ -2475,25 +2488,22 @@ var init_NodeEntryCache = __esm({
       rootNER;
       lastNER = void 0;
       // reference to last-edited node for faster/immdiate lookups
-      // Creates elements from the given list of entries, and builds the node tree from them.
+      // Creates elements from the given list of entries, and insert them into the node tree.
       hydrateContent(entries, node) {
-        this.entries = entries || [
-          { type: "text", children: "..." }
-        ];
+        this.entries = entries || [];
         this.rootNER = {
           node,
-          entry: {
-            type: "group",
-            children: this.entries
-          },
-          children: [],
-          parent: void 0
+          entry: void 0,
+          // root has no entry
+          parent: void 0,
+          // root has no parent
+          children: []
         };
-        this.createNodeEntry(this.rootNER.entry, this.rootNER);
+        this.entries.forEach((e4) => this.createNodeFromEntry(e4, this.rootNER));
         log6(`hydrated.`, entries, this.rootNER);
       }
       // Create a node and add it to the given parent. If no parent is given, the node as added directly to the root.
-      createNodeEntry(entry, parent) {
+      createNodeFromEntry(entry, parent) {
         if (!this.rootNER) throw "rootNER has not been created. Create a root node or call hydrateContent first.";
         if (!parent) parent = this.rootNER;
         let ner = NER(void 0, entry, [], parent);
@@ -2524,8 +2534,11 @@ var init_NodeEntryCache = __esm({
       // Locates and updates the NER for the node, of it exists, or inserts a new one.
       updateOrInsert(node, entry) {
         if (!node.parentNode) throw "parentNode does not exist.";
-        let parent = this.findNode(node.parentNode);
-        let ner = this.findNode(node, parent);
+        const isRoot = node == this.rootNER?.node;
+        log6(`finding parent. root?`, isRoot, "parent node:", node.parentNode);
+        let parent = isRoot ? this.rootNER : this.findNode(node.parentNode);
+        let ner = isRoot ? this.rootNER : this.findNode(node, parent);
+        log6(`found child in parent?`, parent, "child:", ner);
         if (ner) nerUtils.updateNode(ner, entry, this);
         else if (parent) ner = nerUtils.insertNode(parent, node, entry, this);
         else throw "Parent not found for updateOrInsert.";
@@ -2539,16 +2552,12 @@ var init_NodeEntryCache = __esm({
       // Called when a change is detected on the node. Finds the given node in the tree and updates it's entry.
       // If the node does not exist the NER is inserted in its relative dom position.
       applyChange(node, entry) {
-        console.log(`applyChange`, "isRoot?", node == this.rootNER?.node, "node:", node, "entry:", entry);
         try {
           return this.lastNER = this.updateOrInsert(node, entry);
         } catch (e4) {
-          console.log(`Exception in applyChange():`, e4);
+          log6(`Exception in applyChange():`, e4);
         }
       }
-      // Return just the entries without the node references, so they can be saved as Blob content.
-      getEntries = () => this.entries;
-      //odeEntryRefs.map(ner => ner.entry);
       clear = () => {
         nerUtils.clearCache(this);
       };
@@ -2575,7 +2584,7 @@ var init_NodeEntryCache = __esm({
           }
         }
         if (Array.isArray(entry.children)) {
-          entry.children.forEach((child) => nodeCache.createNodeEntry(child, ner));
+          entry.children.forEach((child) => nodeCache.createNodeFromEntry(child, ner));
         } else if (entry.children) {
           ner.node.innerText = entry.children;
         }
@@ -2591,7 +2600,7 @@ var init_NodeEntryCache = __esm({
           const childEntry = ContentEntries.convertNodeToEntry(childNode);
           if (childEntry) children.push(childEntry);
         });
-        console.log(`GroupEntry`, node, children);
+        log6(`GroupEntry`, node, children);
         return new GroupEntry(attributes, children);
       }
     };
@@ -2697,7 +2706,7 @@ var init_WEditor = __esm({
     AUTOSAVE_TIMEOUT_MS = 3e3;
     CONTENT_ROOT_CLASS = "w-content";
     DEFAULT_CONFIG = () => ({
-      focusOnStart: true
+      focusOnStart: false
     });
     WEditor = class {
       constructor(container, onChangeHandler, plugins = [], config = DEFAULT_CONFIG()) {
@@ -2743,24 +2752,28 @@ var init_WEditor = __esm({
         if (e4.target == this.contentEditable) {
           e4.stopPropagation();
           if (e4.key == "Enter") {
-            const node = this.getCurrentEditingNode();
-            console.log(`Enter`, node, e4);
+            this.handleEnter(e4);
+          } else if (e4.key == "Backspace") {
+            this.handleBackspace(e4);
           }
-          if (e4.key == "Backspace") {
-            const node = this.getCurrentEditingNode();
-            if (node) {
-              console.log(`backspace on:`, node, node.childNodes, node.innerHTML);
-              if (node.innerHTML == "<br>") {
-                this.nodeCache.deleteNode(node);
-                if (node.classList.contains(CONTENT_ROOT_CLASS)) {
-                  node.innerHTML = "";
-                }
-                return e4.preventDefault();
-              } else {
-                if (node.nodeType != Node.TEXT_NODE) {
-                  console.log(`delete by node type:`, node, node.nodeType, node.classList, "parent:", node.parentNode);
-                }
-              }
+        }
+      };
+      handleEnter = (e4) => {
+        const node = this.getCurrentEditingNode();
+        console.log(`Enter`, node, e4);
+      };
+      handleBackspace = (e4) => {
+        const node = this.getCurrentEditingNode();
+        if (node) {
+          console.log(`backspace on edit node:`, node, node.childNodes, node.innerHTML);
+          if (node.innerHTML == "<br>") {
+            this.nodeCache.deleteNode(node);
+            if (node.classList.contains(CONTENT_ROOT_CLASS)) {
+            }
+            return;
+          } else {
+            if (node.nodeType != Node.TEXT_NODE) {
+              console.log(`DELETE by node type...`, node, node.nodeType, node.classList, "parent:", node.parentNode);
             }
           }
         }
@@ -2793,7 +2806,7 @@ var init_WEditor = __esm({
         if (!this.contentEditable) throw "Cannot apply changes: ContentEditable is null";
         if (this.autoSaveTimeoutId) this.autoSaveTimeoutId = clearTimeout(this.autoSaveTimeoutId);
         if (this.applyChangesTimeoutId) this.applyChangesTimeoutId = clearTimeout(this.applyChangesTimeoutId);
-        const content = { entries: this.nodeCache.getEntries() };
+        const content = { entries: this.nodeCache.entries };
         this.onChangeHandler(content);
         return content;
       }
@@ -3036,21 +3049,19 @@ var init_BlobEditor2 = __esm({
       y2(() => {
         const initBlob = async () => {
           if (!initialBlob) {
+            let loadBlob;
             try {
               const blobs = await blobService.listBlobs();
               const mostRecentBlob = blobs.reduce(
                 (latest, current) => !latest || current.dateUpdated > latest.dateUpdated ? current : latest,
                 null
               );
-              if (mostRecentBlob) {
-                setCurrentBlob(mostRecentBlob);
-              } else {
-                setCurrentBlob(new Blob2({}));
-              }
+              loadBlob = mostRecentBlob || new Blob2();
             } catch (error4) {
               console.error("Failed to load blobs:", error4);
-              setCurrentBlob(new Blob2({}));
+              loadBlob = new Blob2();
             }
+            setCurrentBlob(loadBlob);
           }
         };
         initBlob();
