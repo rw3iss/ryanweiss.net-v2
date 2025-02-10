@@ -1,8 +1,8 @@
-import { NodeEntryCache } from 'components/shared/BlobEditor/lib/NodeEntryCache';
+import { NodeEntryCache } from 'components/shared/BlobEditor/lib/NodeEntryCache/NodeEntryCache';
 import { Blob, BlobContent } from 'types/Blob';
 import { IPlugin } from '../plugins/IPlugin';
-import { ContentEntries } from '../ContentEntries.js';
-import { nerUtils } from './nerUtils.js';
+import { ContentEntries } from './NodeEntryCache/ContentEntries.js';
+import { nerUtils } from './NodeEntryCache/nerUtils.js';
 
 const CHANGE_TIMEOUT_MS = 500; // time delay to save after last key/input
 const AUTOSAVE_TIMEOUT_MS = 3000; // time delay to save automatically
@@ -131,8 +131,7 @@ export class WEditor {
     private applyChanges(node) {
         if (!node) throw "No node given to applyChanges()";
 
-        const entry = ContentEntries.convertNodeToEntry(node)
-        const change = this.nodeCache.applyChange(node, entry);
+        const change = this.nodeCache.applyChange(node);
         // todo: can store or serialize change object to backend or other clients.
 
         // Signal to save all pending changes after timeout.

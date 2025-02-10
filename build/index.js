@@ -1940,10 +1940,10 @@ var init_BlobService = __esm({
   }
 });
 
-// src/components/shared/BlobEditor/ContentEntries.tsx
+// src/components/shared/BlobEditor/lib/NodeEntryCache/ContentEntries.ts
 var log4, warn3, ContentEntry, TextEntry, HeaderEntry, FileEntry, BreakEntry, PreEntry, CodeEntry, GroupEntry, LinkEntry, CustomEntry, ContentEntries;
 var init_ContentEntries = __esm({
-  "src/components/shared/BlobEditor/ContentEntries.tsx"() {
+  "src/components/shared/BlobEditor/lib/NodeEntryCache/ContentEntries.ts"() {
     "use strict";
     init_preact_module();
     init_logging();
@@ -2359,209 +2359,18 @@ var init_ContentEntries = __esm({
   }
 });
 
-// src/components/shared/BlobEditor/lib/nerUtils.ts
-function getParentPath(node, stopNode, cache) {
-  let lookupPath = [];
-  let currNode = node;
-  while (currNode) {
-    lookupPath.push(currNode);
-    if (currNode == cache.rootNER.node || currNode == stopNode) break;
-    currNode = currNode.parentNode;
-  }
-  return lookupPath;
-}
-function findNode(node, parent, cache) {
-  if (!node) throw "No node given to findNode()";
-  if (!cache.rootNER?.node) throw "No rootNER found on NodeEntryCache. Did you forget to call hydrateContent()?";
-  if (cache.rootNER.node == node) return cache.rootNER;
-  if (cache.lastNER?.node == node) {
-    log5(`Last:`, cache.lastNER);
-    return cache.lastNER;
-  }
-  let lookupPath = nerUtils.getParentPath(node, parent?.node, cache);
-  let currNER = parent || cache.rootNER;
-  let currNode = lookupPath.pop();
-  let nextNode = lookupPath.pop();
-  log5(`findNode`, node, lookupPath);
-  while (currNode) {
-    const isTarget = currNode == node;
-    const isParent = nextNode == node;
-    if (isTarget) {
-      log5(`isTarget`, currNode, nextNode);
-      return currNER;
-    }
-    for (const c3 of currNER.children) {
-      if (c3.node == node) return c3;
-      if (c3.node == nextNode) {
-        currNER = c3;
-        break;
-      }
-    }
-    ;
-    if (isParent) return void 0;
-    currNode = nextNode;
-    nextNode = lookupPath.pop();
-  }
-  return void 0;
-}
-function updateNode(ner, entry, cache) {
-  if (!ner.entry) ner.entry = entry;
-  else {
-    ner.entry.type = entry.type;
-    ner.entry.children = entry.children;
-    ner.entry.attributes = entry.attributes;
-  }
-  log5(`UPDATE node:`, ner);
-  return ner;
-}
-function insertNode(parent, node, entry, cache) {
-  if (!parent.node) throw "Error: No node found on parent NER to insert to.";
-  const ner = { node, entry, children: [], parent };
-  const pos = Array.from(parent.node.childNodes).findIndex((n2, i4) => n2 === node);
-  log5(`INSERT at:`, pos, "parent:", parent, "new:", ner);
-  if (!parent.children) parent.children = [];
-  parent.children.splice(pos, 0, ner);
-  if (parent == cache.rootNER) {
-    cache.entries?.push(ner.entry);
-  } else {
-    if (parent.entry && !parent.entry.children) parent.entry.children = [];
-    if (Array.isArray(parent.entry?.children)) {
-      parent.entry?.children?.splice(pos, 0, entry);
-    }
-  }
-  {
-    return ner;
-  }
-}
-function deleteNode(node, cache) {
-  log5(`deleteNode:`, node);
-}
-function clearCache(cache) {
-  if (Array.isArray(cache.entries)) while (cache.entries.pop()) {
-  }
-  ;
-  if (cache.lastNER != cache.rootNER) cache.lastNER = void 0;
-  if (cache.rootNER) {
-    cache.rootNER.children = [];
-    if (cache.rootNER.entry?.children) {
-      if (Array.isArray(cache.rootNER.entry.children)) {
-        while (cache.rootNER.entry.children.pop()) {
-        }
-        ;
-      }
-    }
-  }
-}
-var log5, warn4, nerUtils;
-var init_nerUtils = __esm({
-  "src/components/shared/BlobEditor/lib/nerUtils.ts"() {
-    "use strict";
-    init_preact_module();
-    init_logging();
-    ({ log: log5, warn: warn4 } = getLogger("NER", { color: "yellow", enabled: true }));
-    nerUtils = {
-      getParentPath,
-      findNode,
-      updateNode,
-      insertNode,
-      deleteNode,
-      clearCache
-    };
-  }
-});
-
-// src/components/shared/BlobEditor/lib/NodeEntryCache.ts
+// src/components/shared/BlobEditor/lib/NodeEntryCache/NodeEntries.ts
 function NER(node, entry, children, parent) {
   return { node, entry, children, parent };
 }
-var log6, error3, NodeEntryCache, GroupNode, TextNode, BreakNode;
-var init_NodeEntryCache = __esm({
-  "src/components/shared/BlobEditor/lib/NodeEntryCache.ts"() {
+var log5, warn4, GroupNode, TextNode, BreakNode;
+var init_NodeEntries = __esm({
+  "src/components/shared/BlobEditor/lib/NodeEntryCache/NodeEntries.ts"() {
     "use strict";
     init_preact_module();
-    init_ContentEntries();
-    init_nerUtils();
     init_logging();
-    ({ log: log6, error: error3 } = getLogger("NodeEntryCache", { color: "yellow", enabled: true }));
-    NodeEntryCache = class {
-      entries;
-      rootNER;
-      lastNER = void 0;
-      // reference to last-edited node for faster/immdiate lookups
-      // Creates elements from the given list of entries, and insert them into the node tree.
-      hydrateContent(entries, node) {
-        this.entries = entries || [];
-        this.rootNER = {
-          node,
-          entry: void 0,
-          // root has no entry
-          parent: void 0,
-          // root has no parent
-          children: []
-        };
-        this.entries.forEach((e4) => this.createNodeFromEntry(e4, this.rootNER));
-        log6(`hydrated.`, entries, this.rootNER);
-      }
-      // Create a node and add it to the given parent. If no parent is given, the node as added directly to the root.
-      createNodeFromEntry(entry, parent) {
-        if (!this.rootNER) throw "rootNER has not been created. Create a root node or call hydrateContent first.";
-        if (!parent) parent = this.rootNER;
-        let ner = NER(void 0, entry, [], parent);
-        if (entry) {
-          switch (entry.type) {
-            case "text":
-              ner = TextNode.createNodeEntry(entry, parent, this);
-              break;
-            case "group":
-              ner = GroupNode.createNodeEntry(entry, parent, this);
-              break;
-            case "break":
-              ner = BreakNode.createNodeEntry(entry, parent, this);
-              break;
-            default:
-              break;
-          }
-        }
-        if (!ner.node) throw "Node->entry node could not be created from type: " + entry.type;
-        if (parent.node) parent.node.appendChild(ner.node);
-        if (parent.children) parent.children.push(ner);
-        return ner;
-      }
-      // Locate an NER in the tree by a dom node reference.
-      findNode(node, parent) {
-        return nerUtils.findNode(node, parent, this);
-      }
-      // Locates and updates the NER for the node, of it exists, or inserts a new one.
-      updateOrInsert(node, entry) {
-        if (!node.parentNode) throw "parentNode does not exist.";
-        const isRoot = node == this.rootNER?.node;
-        log6(`finding parent. root?`, isRoot, "parent node:", node.parentNode);
-        let parent = isRoot ? this.rootNER : this.findNode(node.parentNode);
-        let ner = isRoot ? this.rootNER : this.findNode(node, parent);
-        log6(`found child in parent?`, parent, "child:", ner);
-        if (ner) nerUtils.updateNode(ner, entry, this);
-        else if (parent) ner = nerUtils.insertNode(parent, node, entry, this);
-        else throw "Parent not found for updateOrInsert.";
-        this.lastNER = ner;
-        return ner;
-      }
-      // Finds the node in the tree and removes the entry from it, and the dom node as well.
-      deleteNode(node) {
-        return nerUtils.deleteNode(node, this);
-      }
-      // Called when a change is detected on the node. Finds the given node in the tree and updates it's entry.
-      // If the node does not exist the NER is inserted in its relative dom position.
-      applyChange(node, entry) {
-        try {
-          return this.lastNER = this.updateOrInsert(node, entry);
-        } catch (e4) {
-          log6(`Exception in applyChange():`, e4);
-        }
-      }
-      clear = () => {
-        nerUtils.clearCache(this);
-      };
-    };
+    init_ContentEntries();
+    ({ log: log5, warn: warn4 } = getLogger("NodeEntries", { color: "yellow", enabled: true }));
     GroupNode = class extends ContentEntry {
       type = "group";
       attributes;
@@ -2571,7 +2380,7 @@ var init_NodeEntryCache = __esm({
         this.attributes = attributes;
         this.children = children;
       }
-      static createNodeEntry(entry, parent, nodeCache) {
+      static createNodeFromEntry(entry, parent, nodeCache) {
         const ner = {
           entry,
           node: document.createElement("div"),
@@ -2585,8 +2394,8 @@ var init_NodeEntryCache = __esm({
         }
         if (Array.isArray(entry.children)) {
           entry.children.forEach((child) => nodeCache.createNodeFromEntry(child, ner));
-        } else if (entry.children) {
-          ner.node.innerText = entry.children;
+        } else {
+          throw "Expected array for GroupNode.children but received: " + typeof entry.children;
         }
         return ner;
       }
@@ -2600,7 +2409,7 @@ var init_NodeEntryCache = __esm({
           const childEntry = ContentEntries.convertNodeToEntry(childNode);
           if (childEntry) children.push(childEntry);
         });
-        log6(`GroupEntry`, node, children);
+        log5(`GroupEntry`, node, children);
         return new GroupEntry(attributes, children);
       }
     };
@@ -2614,7 +2423,7 @@ var init_NodeEntryCache = __esm({
         this.children = children;
         this.attributes = attributes || {};
       }
-      static createNodeEntry(entry, parent, nodeCache) {
+      static createNodeFromEntry(entry, parent, nodeCache) {
         const ner = {
           entry,
           node: document.createTextNode(entry.children),
@@ -2666,7 +2475,7 @@ var init_NodeEntryCache = __esm({
         super();
         this.attributes = attributes;
       }
-      static createNodeEntry(entry, parent, nodeCache) {
+      static createNodeFromEntry(entry, parent, nodeCache) {
         const ner = {
           entry,
           node: document.createElement("br"),
@@ -2694,6 +2503,224 @@ var init_NodeEntryCache = __esm({
   }
 });
 
+// src/components/shared/BlobEditor/lib/NodeEntryCache/nerUtils.ts
+function getParentPath(node, stopNode, cache) {
+  let lookupPath = [];
+  let currNode = node;
+  while (currNode) {
+    lookupPath.push(currNode);
+    if (currNode == cache.rootNER.node || currNode == stopNode) break;
+    currNode = currNode.parentNode;
+  }
+  return lookupPath;
+}
+function findNode(node, parent, cache) {
+  if (!node) throw "No node given to findNode()";
+  if (!cache.rootNER?.node) throw "No rootNER found on NodeEntryCache. Did you forget to call hydrateContent()?";
+  if (cache.rootNER.node == node) return cache.rootNER;
+  if (cache.lastNER?.node == node) {
+    return cache.lastNER;
+  }
+  let lookupPath = nerUtils.getParentPath(node, parent?.node, cache);
+  let currNER = parent || cache.rootNER;
+  let currNode = lookupPath.pop();
+  let nextNode = lookupPath.pop();
+  while (currNode) {
+    const isTarget = currNode == node;
+    const isParent = nextNode == node;
+    if (isTarget) {
+      log6(`isTarget`, currNode, nextNode);
+      return currNER;
+    }
+    for (const c3 of currNER.children) {
+      if (c3.node == node) return c3;
+      if (c3.node == nextNode) {
+        currNER = c3;
+        break;
+      }
+    }
+    ;
+    if (isParent) return void 0;
+    currNode = nextNode;
+    nextNode = lookupPath.pop();
+  }
+  return void 0;
+}
+function createNodeFromEntry(entry, parent, nodeCache) {
+  let ner;
+  switch (entry.type) {
+    case "text":
+      ner = TextNode.createNodeFromEntry(entry, parent, this);
+      break;
+    case "group":
+      ner = GroupNode.createNodeFromEntry(entry, parent, this);
+      break;
+    case "break":
+      ner = BreakNode.createNodeFromEntry(entry, parent, this);
+      break;
+    default:
+      throw "Unsupported entry type: " + entry.type;
+  }
+  if (ner) {
+    if (parent.children) parent.children.push(ner);
+    if (parent.node) parent.node.appendChild(ner.node);
+  }
+  return ner;
+}
+function createNode(node, parent, cache) {
+  if (!parent.node) {
+    throw "Error: No node found on parent NER to insert to.";
+  }
+  const entry = ContentEntries.convertNodeToEntry(node);
+  const ner = { node, entry, children: [], parent };
+  const pos = Array.from(parent.node.childNodes).findIndex((n2, i4) => n2 === node);
+  log6(`INSERT at:`, pos, "parent:", parent, "node:", node, "new ner:", ner);
+  if (!parent.children) parent.children = [];
+  parent.children.splice(pos, 0, ner);
+  if (Array.isArray(entry.children)) {
+  }
+  if (parent == cache.rootNER) {
+    cache.entries?.push(ner.entry);
+  } else {
+    if (parent.entry && !parent.entry.children) parent.entry.children = [];
+    if (Array.isArray(parent.entry?.children)) {
+      parent.entry?.children?.splice(pos, 0, entry);
+    }
+  }
+  {
+    return ner;
+  }
+}
+function updateNode(ner, cache) {
+  const entry = ContentEntries.convertNodeToEntry(ner.node);
+  if (!ner.entry) ner.entry = entry;
+  else {
+    ner.entry.type = entry.type;
+    ner.entry.children = entry.children;
+    ner.entry.attributes = entry.attributes;
+  }
+  log6(`UPDATE node:`, ner);
+  return ner;
+}
+function deleteNode(node, cache) {
+  log6(`deleteNode:`, node);
+}
+function clearCache(cache) {
+  if (Array.isArray(cache.entries)) while (cache.entries.pop()) {
+  }
+  ;
+  if (cache.lastNER != cache.rootNER) cache.lastNER = void 0;
+  if (cache.rootNER) {
+    cache.rootNER.children = [];
+    if (cache.rootNER.entry?.children) {
+      if (Array.isArray(cache.rootNER.entry.children)) {
+        while (cache.rootNER.entry.children.pop()) {
+        }
+        ;
+      }
+    }
+  }
+}
+var log6, warn5, nerUtils;
+var init_nerUtils = __esm({
+  "src/components/shared/BlobEditor/lib/NodeEntryCache/nerUtils.ts"() {
+    "use strict";
+    init_preact_module();
+    init_logging();
+    init_ContentEntries();
+    init_NodeEntries();
+    ({ log: log6, warn: warn5 } = getLogger("nerUtils", { color: "yellow", enabled: true }));
+    nerUtils = {
+      getParentPath,
+      findNode,
+      createNodeFromEntry,
+      createNode,
+      updateNode,
+      deleteNode,
+      clearCache
+    };
+  }
+});
+
+// src/components/shared/BlobEditor/lib/NodeEntryCache/NodeEntryCache.ts
+var log7, error3, NodeEntryCache;
+var init_NodeEntryCache = __esm({
+  "src/components/shared/BlobEditor/lib/NodeEntryCache/NodeEntryCache.ts"() {
+    "use strict";
+    init_preact_module();
+    init_ContentEntries();
+    init_nerUtils();
+    init_logging();
+    init_NodeEntries();
+    ({ log: log7, error: error3 } = getLogger("NodeEntryCache", { color: "yellow", enabled: true }));
+    NodeEntryCache = class {
+      entries;
+      rootNER;
+      lastNER = void 0;
+      // reference to last-edited node for faster/immdiate lookups
+      // Creates elements from the given list of entries, and insert them into the node tree.
+      hydrateContent(entries, node) {
+        this.entries = entries || [];
+        this.rootNER = {
+          node,
+          entry: void 0,
+          // root has no entry
+          parent: void 0,
+          // root has no parent
+          children: []
+        };
+        this.rootNER.entry = ContentEntries.convertNodeToEntry(node);
+        this.entries.forEach((e4) => this.createNodeFromEntry(e4, this.rootNER));
+        log7(`hydrated.`, entries, this.rootNER);
+      }
+      // From a given entry... creates the dom reference for it, and adds to the parent if given, or root.
+      // If the entry has children... the child dom elements will also be created and added recursively.
+      createNodeFromEntry(entry, parent) {
+        if (!this.rootNER) throw "rootNER has not been created. Create a root node or call hydrateContent first.";
+        if (!parent) parent = this.rootNER;
+        let ner = NER(void 0, entry, [], parent);
+        if (entry) ner = nerUtils.createNodeFromEntry(entry, parent, this);
+        if (!ner?.node) throw "Node->entry node could not be created from type: " + entry.type;
+        return ner;
+      }
+      // Locate an NER in the tree by a dom node reference.
+      findNode(node, parent) {
+        return nerUtils.findNode(node, parent, this);
+      }
+      // Locates and updates the NER for the node, of it exists, or inserts a new one.
+      updateOrInsert(node) {
+        console.log(`updateOrInsert`, node);
+        if (!node.parentNode) throw "parentNode does not exist.";
+        const isRoot = node == this.rootNER?.node;
+        let parent = isRoot ? this.rootNER : this.findNode(node.parentNode);
+        let ner = isRoot ? this.rootNER : this.findNode(node, parent);
+        log7(`found node?`, ner, ". parent:", parent, ". target is root?", isRoot);
+        if (ner) nerUtils.updateNode(ner, this);
+        else if (parent) ner = nerUtils.createNode(node, parent, this);
+        else throw "Parent not found for updateOrInsert.";
+        this.lastNER = ner;
+        return ner;
+      }
+      // Finds the node in the tree and removes the entry from it, and the dom node as well.
+      deleteNode(node) {
+        return nerUtils.deleteNode(node, this);
+      }
+      // Called when a change is detected on the node. Finds the given node in the tree and updates it's entry.
+      // If the node does not exist the NER is inserted in its relative dom position.
+      applyChange(node) {
+        try {
+          return this.lastNER = this.updateOrInsert(node);
+        } catch (e4) {
+          log7(`Exception in applyChange():`, e4);
+        }
+      }
+      clear = () => {
+        nerUtils.clearCache(this);
+      };
+    };
+  }
+});
+
 // src/components/shared/BlobEditor/lib/WEditor.ts
 var CHANGE_TIMEOUT_MS, AUTOSAVE_TIMEOUT_MS, CONTENT_ROOT_CLASS, DEFAULT_CONFIG, WEditor;
 var init_WEditor = __esm({
@@ -2701,7 +2728,6 @@ var init_WEditor = __esm({
     "use strict";
     init_preact_module();
     init_NodeEntryCache();
-    init_ContentEntries();
     CHANGE_TIMEOUT_MS = 500;
     AUTOSAVE_TIMEOUT_MS = 3e3;
     CONTENT_ROOT_CLASS = "w-content";
@@ -2789,8 +2815,7 @@ var init_WEditor = __esm({
       // updates the given node's entry with it's changed content
       applyChanges(node) {
         if (!node) throw "No node given to applyChanges()";
-        const entry = ContentEntries.convertNodeToEntry(node);
-        const change = this.nodeCache.applyChange(node, entry);
+        const change = this.nodeCache.applyChange(node);
         if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
         this.applyChangesTimeoutId = setTimeout(() => {
           this.commitChanges();

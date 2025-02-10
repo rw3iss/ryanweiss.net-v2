@@ -21,7 +21,7 @@ class _Application {
         AudioManager.register('hover', '/public/sounds/click.wav');
         AudioManager.register('click', '/public/sounds/cool-click.wav');
 
-        // addLogModule(new DebugPanelLogModule({ show: true }));
+        //addLogModule(new DebugPanelLogModule({ show: true }));
     }
 }
 

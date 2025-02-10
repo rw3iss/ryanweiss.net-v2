@@ -1,5 +1,5 @@
-import { getLogger } from '../../../lib/utils/logging.js';
-import { NodeEntryCache } from './lib/NodeEntryCache';
+import { getLogger } from '../../../../../lib/utils/logging.js';
+import { NodeEntryCache } from './NodeEntryCache.js';
 
 const { log, warn } = getLogger('ContentEntries', { color: 'red', enabled: false });
 

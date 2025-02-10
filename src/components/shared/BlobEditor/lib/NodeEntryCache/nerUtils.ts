@@ -1,8 +1,9 @@
 import { getLogger } from "lib/utils/logging.js";
-import { ContentEntry } from "../ContentEntries.js";
-import { NodeEntryCache, NodeEntryRef } from "./NodeEntryCache.js";
+import { BreakEntry, ContentEntries, ContentEntry, GroupEntry, TextEntry } from "./ContentEntries.js";
+import { NodeEntryCache } from "./NodeEntryCache.js";
+import { BreakNode, GroupNode, NodeEntryRef, TextNode } from "./NodeEntries.js";
 
-const { log, warn } = getLogger('NER', { color: 'yellow', enabled: true });
+const { log, warn } = getLogger('nerUtils', { color: 'yellow', enabled: true });
 
 function getParentPath(node, stopNode: Node | undefined, cache): Array<Node> {
     let lookupPath: Array<Node> = [];
@@ -22,7 +23,6 @@ function findNode(node: Node, parent: NodeEntryRef | undefined, cache): NodeEntr
     if (!cache.rootNER?.node) throw "No rootNER found on NodeEntryCache. Did you forget to call hydrateContent()?";
     if (cache.rootNER.node == node) return cache.rootNER;
     if (cache.lastNER?.node == node) {
-        log(`Last:`, cache.lastNER);
         return cache.lastNER;
     }
 
@@ -32,7 +32,7 @@ function findNode(node: Node, parent: NodeEntryRef | undefined, cache): NodeEntr
     let currNode = lookupPath.pop(); // starts at root
     let nextNode: Node | undefined = lookupPath.pop();
 
-    log(`findNode`, node, lookupPath)
+    //log(`findNode`, node, lookupPath)
     while (currNode) {
         const isTarget = currNode == node; // true only when it starts at the target
         const isParent = nextNode == node;
@@ -61,27 +61,57 @@ function findNode(node: Node, parent: NodeEntryRef | undefined, cache): NodeEntr
     return undefined;
 }
 
-// Sets the NER entry's contents to the new one, so initial reference is retained.
-function updateNode(ner, entry, cache: NodeEntryCache) {
-    if (!ner.entry) ner.entry = entry;
-    else {
-        ner.entry.type = entry.type;
-        ner.entry.children = entry.children;
-        ner.entry.attributes = entry.attributes;
+// creates an NER with a dom node from the given entry, and adds it to the parent NER.
+function createNodeFromEntry(entry: ContentEntry, parent: NodeEntryRef, nodeCache: NodeEntryCache): NodeEntryRef {
+    let ner;
+    switch (entry.type) {
+        case 'text':
+            ner = TextNode.createNodeFromEntry(entry as TextEntry, parent, this);
+            break;
+        case 'group':
+            ner = GroupNode.createNodeFromEntry(entry as GroupEntry, parent, this);
+            break;
+        case 'break':
+            ner = BreakNode.createNodeFromEntry(entry as BreakEntry, parent, this);
+            break;
+        default:
+            throw "Unsupported entry type: " + entry.type;
     }
-    log(`UPDATE node:`, ner);
+
+    // add new node to parent NER tree and dom:
+    if (ner) {
+        if (parent.children) parent.children.push(ner);
+        if (parent.node) parent.node.appendChild(ner.node);
+    }
+
     return ner;
 }
 
-// Finds the node's position in the parent's dom node and inserts a new NER in the tree there.
-function insertNode(parent: NodeEntryRef, node: Node, entry: ContentEntry, cache: NodeEntryCache) {
-    if (!parent.node) throw "Error: No node found on parent NER to insert to.";
+
+// Creates a new NER from the given dom node an the entry
+function createNode(node: Node, parent: NodeEntryRef, cache: NodeEntryCache) {
+    if (!parent.node) {
+        throw "Error: No node found on parent NER to insert to.";
+    }
+
+    // TODO: need to instead convertNodeToNER(node) ... which creates NER train
+    const entry = ContentEntries.convertNodeToEntry(node);
+    //const entry = ContentEntries.convertNodeToNodeEntry(node);
+    //const ner = createNerTreeFromNode(node);
     const ner = { node, entry, children: [], parent }; // entry will be created later
+
     const pos = Array.from(parent.node.childNodes).findIndex((n, i) => n === node);
-    log(`INSERT at:`, pos, 'parent:', parent, 'new:', ner);
+    log(`INSERT at:`, pos, 'parent:', parent, 'node:', node, 'new ner:', ner);
+
     if (!parent.children) parent.children = [];
     parent.children.splice(pos, 0, ner);
-    // we add root entries directly to cache.entries to retain the pure array for export
+
+    if (Array.isArray(entry.children)) {
+        // and new child entries need to be added to this NER:
+        //entry.children.forEach(c => createNode(
+    }
+
+    // we add first-level entries directly to cache.entries to retain the pure array for export
     if (parent == cache.rootNER) {
         cache.entries?.push(ner.entry);
     } else {
@@ -92,6 +122,22 @@ function insertNode(parent: NodeEntryRef, node: Node, entry: ContentEntry, cache
     } {
         return ner;
     }
+}
+
+// Updates the given NER references to a new entry.
+function updateNode(ner, cache: NodeEntryCache) {
+    // "convert" the node by creating a new entry and re-assigning the properties.
+    const entry = ContentEntries.convertNodeToEntry(ner.node);
+
+    if (!ner.entry) ner.entry = entry;
+    else {
+        ner.entry.type = entry.type;
+        ner.entry.children = entry.children;
+        ner.entry.attributes = entry.attributes;
+    }
+
+    log(`UPDATE node:`, ner);
+    return ner;
 }
 
 // deletes the node and associated entry from the tree
@@ -115,8 +161,9 @@ function clearCache(cache) {
 export const nerUtils = {
     getParentPath,
     findNode,
+    createNodeFromEntry,
+    createNode,
     updateNode,
-    insertNode,
     deleteNode,
     clearCache
 };
