@@ -1,8 +1,12 @@
 import { NodeEntryCache } from 'components/shared/BlobEditor/lib/NodeEntryCache/NodeEntryCache';
 import { Blob, BlobContent } from 'types/Blob';
 import { IPlugin } from '../plugins/IPlugin';
-import { BreakEntry, ContentEntries } from './NodeEntryCache/ContentEntries.js';
+import { BreakEntry, ContentEntries, TextEntry } from './NodeEntryCache/ContentEntries.js';
 import { nerUtils } from './NodeEntryCache/nerUtils.js';
+import { getLogger } from 'utils/logging';
+import { debugState } from '../../../../lib/utils/debug/DebugPanel.js';
+
+const { log, error } = getLogger('WEditor', { color: 'blue', enabled: true });
 
 const CHANGE_TIMEOUT_MS = 500; // time delay to save after last key/input
 const AUTOSAVE_TIMEOUT_MS = 3000; // time delay to save automatically
@@ -16,6 +20,7 @@ type WEditorConfig = {
 const DEFAULT_CONFIG = (): WEditorConfig => ({
     focusOnStart: false
 })
+
 
 export class WEditor {
 
@@ -52,6 +57,7 @@ export class WEditor {
 
         // setup event listeners:
         document.addEventListener('keydown', this.handleKeyDown);
+        document.addEventListener('keyup', this.handleKeyUp);
         this.contentEditable.addEventListener('input', this.handleContentChange);
 
         if (this.config.focusOnStart) {
@@ -72,40 +78,56 @@ export class WEditor {
         // todo: should hydrate node cache
     }
 
-    // todo: on shift+enter... should manually insert the break entry after the current node in it's parent
-    // ... so that it does not trigger a full re-build of the parent node and it's content.
-    // todo: on enter... should create the group node but without the break?
-    // bug: multiple break chilren arent added to ner.children but are seen in entry.children.
     private handleKeyDown = (e) => {
         if (e.target == this.contentEditable) {
             e.stopPropagation();
             if (e.key == 'Enter') {
                 this.handleEnter(e);
             } else if (e.key == 'Backspace') {
-                this.handleBackspace(e);
+                // if the node will be empty then prevent default and let the keyup handle it.
+                //e.preventDefault();
+                //this.handleBackspace(e);
+            }
+        }
+    }
+
+    // todo: on shift+enter... should manually insert the break entry after the current node in it's parent
+    // ... so that it does not trigger a full re-build of the parent node and it's content.
+    // todo: on enter... should create the group node but without the break?
+    // bug: multiple break chilren arent added to ner.children but are seen in entry.children.
+    private handleKeyUp = (e) => {
+        if (e.target == this.contentEditable) {
+            //e.stopPropagation();
+            if (e.key == 'Enter') {
+                //this.handleEnter(e);
+            } else if (e.key == 'Backspace') {
+                //this.handleBackspace(e);
             }
         }
     }
 
     private handleEnter = (e) => {
         const node = this.getCurrentEditingNode();
-        console.log(`Enter`, node, e);
+        log(`Enter`, node, e);
         if (e.shiftKey) {
-            console.log(`INSERT BREAK NODE AFTER:`, node);
+            // e.preventDefault();
 
-            // find the parent to add a new break to
-            const parent = nerUtils.findNER(node?.parentNode as Node, this.nodeCache);
-            if (!parent) throw "No parent NER found for node";
+            // log(`INSERT TEXT NODE AFTER:`, node);
 
-            // find this current node's position to insert the break after
-            const pos = Array.from(parent.node.childNodes).findIndex(c => c == node);
-            if (pos == -1) throw "Node not found in parent children?";
+            // // just insert a text node
 
-            //nerUtils.createNERFromEntry(new BreakEntry(), parent, this.nodeCache, pos + 1);
+            // // find the parent to add a new break to
+            // const parent = nerUtils.findNER(node?.parentNode as Node, this.nodeCache);
+            // if (!parent) throw "No parent NER found for node";
 
-            //insertNodeAfter(node, new BreakEntry, this.nodeCache);
-            //insertNewEntry(new BreakEntry());
-            e.preventDefault();
+            // // find this current node's position to insert the break after
+            // const pos = Array.from(parent.node.childNodes).findIndex(c => c == node);
+            // if (pos == -1) throw "Node not found in parent children?";
+
+            // if (!node) throw "Could not obtain editing node for handleEnter().";
+            // const ner = nerUtils.createNERAfterNode(node, new TextEntry("-"), parent, this.nodeCache);
+            // log(`NEW NER:`, ner);
+            // setCaretAfter(ner.node);
         }
     }
 
@@ -117,12 +139,12 @@ export class WEditor {
             //
             // if it's not a text node, it means we broke into the previous node and removed the last one.
             if (node.nodeType != Node.TEXT_NODE) {
-                console.log(`backspace on edit node:`, node, childNodes, node.innerHTML);
+                log(`backspace on edit node:`, node, childNodes, node.innerHTML);
                 // go through all node's children and remove any that no longer exist
                 const ner = nerUtils.findNER(node, this.nodeCache);
                 if (ner) {
                     setTimeout(() => {
-                        console.log(`nodes after timeout:`, node, childNodes, node.innerHTML)
+                        log(`nodes after timeout:`, node, childNodes, node.innerHTML)
                         ner.children.forEach((c, i) => {
                             const exists = Array.from(node.childNodes).find(cn => c.node == cn);
                             if (!exists) {
@@ -130,13 +152,13 @@ export class WEditor {
                                 const childEntry = c.entry;
                                 if (Array.isArray(ner.entry?.children)) {
                                     const di = ner.entry.children.findIndex(ec => ec == childEntry);
-                                    console.log(`DELETING child entry:`, di, childEntry);
+                                    log(`DELETING child entry:`, di, childEntry);
                                     if (di > -1) ner.entry.children.splice(di, 1);
                                 }
-                                console.log(`DELETING NER:`, i, c);
+                                log(`DELETING NER:`, i, c);
                                 ner.children.splice(i, 1);
                             } {
-                                console.log(`node still exists.`, c, i);
+                                log(`node still exists.`, c, i);
                             }
                         });
                     }, 0);
@@ -150,7 +172,16 @@ export class WEditor {
 
                 this.nodeCache.deleteNER(node);
             } else {
-                console.log(`backspace on text node.`)
+                // todo: need to get text on key up...
+                log(`backspace on text node:`, node, `text: "${node.textContent}", html: "${node.innerHTML}"`);
+                // if text has become empty, remove the node... ?
+
+                // try to find the text node?
+                let ner = nerUtils.findNER(node, this.nodeCache);
+                if (ner) log(`Text node FOUND:`, ner);
+                else {
+                    log(`! Text node NOT found !`, node);
+                }
             }
         }
     }
@@ -158,6 +189,32 @@ export class WEditor {
     private handleContentChange = (e) => {
         // Find the node where the edit took place
         let editNode: Node | undefined = this.getCurrentEditingNode();
+
+        switch (e.inputType) {
+            case "insertText":
+                log(`INSERT TEXT`, editNode)
+                break;
+            case "deleteContentBackward":
+                log(`DELETE`, editNode)
+                break;
+            case "insertParagraph":
+                log(`INSERT GROUP`, editNode)
+                break;
+            case "insertLineBreak":
+                log(`INSERT BREAK`, editNode)
+                break;
+            case "insertFromPaste":
+                log(`INSERT PASTE`, editNode);
+                break;
+            case "deleteByCut":
+                log(`DELETE MULTI`, editNode);
+                // todo: reconcile parent node...
+                break;
+            default:
+                console.log(`Unknown input type:`, e, editNode);
+                throw new Error("UNKNOWN INPUT TYPE: " + e.inputType);
+        }
+
         if (window.getSelection) {
             let range = window.getSelection()?.getRangeAt(0);
             editNode = range?.commonAncestorContainer;
@@ -165,6 +222,8 @@ export class WEditor {
 
         // Apply the changes immediately to the entry, for throttled commit later
         this.applyChanges(editNode);
+        debugState('entryTree', this.nodeCache.rootNER.entry);
+        debugState('nerTree', this.nodeCache.rootNER);
     }
 
     // updates the given node's entry with it's changed content
@@ -207,6 +266,8 @@ export class WEditor {
             this.contentEditable.innerHTML = '';
             this.nodeCache.clear();
             if (commit) this.commitChanges();
+            debugState('entryTree', this.nodeCache.rootNER.entry);
+            debugState('nerTree', this.nodeCache.rootNER);
         }
     }
 

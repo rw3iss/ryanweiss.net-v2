@@ -1,5 +1,8 @@
 import EventBus from "eventbusjs";
 import { getLogger, LogModule } from "lib/utils/logging.js";
+import safeStringify from 'safe-stringify';
+
+const { log, warn } = getLogger('DebugPanel', { color: 'red', enabled: true });
 
 type LogEntry = {
     id: string;
@@ -38,16 +41,23 @@ function renderLogEntry(message: any) {
     return Array.isArray(message) ?
         message.join(' ') :
         typeof message == 'object' ?
-            JSON.stringify(message) :
+            safeStringify(message) :
             `${message}`;
 }
 
+// send state to debug panel to show as JSON view.
+const DEBUG_STATE_NAMESPACE = 'objects';
+export function debugState(id, state) {
+    // get log modules?
+    EventBus.dispatch('debug-state', { id, state });
+}
 
 export class DebugPanel {
     private container: HTMLElement;
     private tabContainer: HTMLElement;
     private contentContainer: HTMLElement;
     private tabEntries: TabEntries = {};
+    private debugStates = {};
     private activeTab: string = "global";
 
     constructor(parent: HTMLElement) {
@@ -59,6 +69,7 @@ export class DebugPanel {
         this.container.appendChild(this.contentContainer);
         parent.appendChild(this.container);
 
+        this.addTab(DEBUG_STATE_NAMESPACE);
         this.addTab("global");
         this.setupEventListeners();
     }
@@ -86,6 +97,68 @@ export class DebugPanel {
             const { namespace, message } = event.target;
             this.addLog(namespace, message);
         });
+        EventBus.addEventListener("debug-state", (event: any) => {
+            const { id, state } = event.target;
+            if (!id || !state) return console.log("Invalid event data for debug-state. Expected {id,state}, got:", event);
+            this.handleDebugState(id, state);
+        });
+    }
+
+    // display an object for debugging.
+    private handleDebugState(id: string, state: any) {
+
+        const updateDebugState = (id, state) => {
+            console.log(`update debug`, id, state)
+            const safeState = safeStringify(state);
+            state = JSON.parse(safeState);
+            this.debugStates[id] = state; // todo: apply patched properties?
+            // redraw this debug state
+            const content = this.contentContainer.querySelector(
+                `[data-namespace=${DEBUG_STATE_NAMESPACE}]`
+            );
+            if (!content) return console.error("No content for debug namespace.");
+            const debugWrapper: HTMLElement | null = content.querySelector(`#debug-state-${id}`);
+            if (!debugWrapper) return console.error(`No debug state found for ${id}.`);
+            const jsonWrapper = debugWrapper.querySelector('.json-wrapper');
+            if (!jsonWrapper) return console.error(`No json wrapper found for existing state ${id}`);
+            //debugElement.innerText = printJson(state);
+            jsonWrapper.innerHTML = '';
+            const tree = jsonTree.create(state, jsonWrapper);
+            tree.expand();
+            log(`updated debug state`, debugWrapper);
+        }
+
+        const addDebugState = (id, state) => {
+            console.log(`add debug`, id, state)
+            const safeState = safeStringify(state);
+            state = JSON.parse(safeState);
+            this.debugStates[id] = state;
+            const content = this.contentContainer.querySelector(
+                `[data-namespace=${DEBUG_STATE_NAMESPACE}]`
+            );
+            if (!content) return console.error("No content for debug namespace.");
+            const debugWrapper = document.createElement('div');
+            debugWrapper.classList.add('debug-state');
+            debugWrapper.setAttribute('id', `debug-state-${id}`);
+
+            const label = document.createElement("div");
+            label.classList.add('debug-state-label');
+            label.innerText = `${id}`;
+            debugWrapper.appendChild(label);
+
+            const jsonWrapper = document.createElement('div');
+            jsonWrapper.classList.add('json-wrapper');
+            debugWrapper.appendChild(jsonWrapper);
+            const tree = jsonTree.create(state, jsonWrapper);
+            tree.expand();
+
+            content.appendChild(debugWrapper);
+            log(`added debug state`, debugWrapper);
+        }
+
+        log(`DEBUG STATE:`, id, state);
+        if (this.debugStates[id]) updateDebugState(id, state);
+        else addDebugState(id, state);
     }
 
     private addTab(namespace: string): void {
@@ -142,8 +215,12 @@ export class DebugPanel {
             } else {
                 const namespace = content.dataset.namespace;
                 if (namespace) {
-                    this.tabEntries[namespace] = [];
-                    content.innerHTML = "";
+                    if (namespace == DEBUG_STATE_NAMESPACE) {
+                        this.debugStates = {};
+                    } else {
+                        content.innerHTML = "";
+                        this.tabEntries[namespace] = [];
+                    }
                 }
             }
         };
@@ -173,7 +250,6 @@ export class DebugPanel {
         // add to global
         if (namespace != 'global') this.addLog('global', message);
     }
-
 
     private createLogElement(logEntry: LogEntry, namespace: string): HTMLElement {
         const logElement = document.createElement("div");

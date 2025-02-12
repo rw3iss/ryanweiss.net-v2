@@ -25,7 +25,7 @@ export class NodeEntryCache {
         // create a root entry from the container (a group), and re-assign the entry children so we can pull for the entries dataset later.
         this.rootNER.entry = ContentEntries.convertNodeToEntry(node);
         this.rootNER.entry.children = entries;
-        this.rootNER.entry.children.forEach(e => this.createNERFromEntry(e, this.rootNER));
+        this.rootNER.entry.children.forEach(e => this.createNERFromEntry(e, this.rootNER)); 111
 
         log(`hydrated.`, entries, this.rootNER);
     }
@@ -59,7 +59,7 @@ export class NodeEntryCache {
         else log(`node not found. creating...`, node, 'parentNER:', parent);
 
         if (ner) nerUtils.updateNER(ner, this);
-        else if (parent) ner = nerUtils.createNER(node, parent, this);
+        else if (parent) ner = nerUtils.createNERFromNode(node, parent, this);
 
         else throw "Parent NER not found for updateOrInsert."
 

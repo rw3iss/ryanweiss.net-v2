@@ -58,14 +58,14 @@ $focus-color: rgb(10, 157, 215);
             outline: none;
             padding: $padding;
             border-radius: $border-radius;
-            line-height: 1.8; // Increased line height for better readability
+            line-height: 1.2; // Increased line height for better readability
             box-shadow: 0 0 0 2px rgba($focus-color, 0.2);
 
             div,
             .group-entry {
                 //border-top: 1px solid #234;
-                padding: 10px;
-                line-height: 1.2em;
+                padding: 10px 0px;
+                //line-height: 1.2em;
             }
 
             &:focus,

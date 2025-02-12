@@ -293,7 +293,7 @@ function doLog(namespace, args) {
   logModules.forEach((m3) => m3.onLog(logEvent));
   console.log.apply(console, args);
 }
-var DISABLED_LOGGER, loggers, logModules, DEFAULT_LOG_COLOR, Colors, getLogger, log, warn, error, Logger, windowParams, isLogAllMode, logOnly;
+var DISABLED_LOGGER, loggers, logModules, addLogModule, DEFAULT_LOG_COLOR, Colors, getLogger, log, warn, error, Logger, windowParams, isLogAllMode, logOnly;
 var init_logging = __esm({
   "src/lib/utils/logging.ts"() {
     "use strict";
@@ -303,6 +303,7 @@ var init_logging = __esm({
     } };
     loggers = {};
     logModules = [];
+    addLogModule = (m3) => logModules.push(m3);
     DEFAULT_LOG_COLOR = "yellow";
     Colors = {
       reset: "\x1B[0m",
@@ -487,6 +488,362 @@ var init_AudioManager = __esm({
   }
 });
 
+// node_modules/eventbusjs/lib/eventbus.min.js
+var require_eventbus_min = __commonJS({
+  "node_modules/eventbusjs/lib/eventbus.min.js"(exports, module) {
+    "use strict";
+    init_preact_module();
+    (function(root, factory) {
+      if (typeof exports === "object" && typeof module === "object") module.exports = factory();
+      else if (typeof define === "function" && define.amd) define("EventBus", [], factory);
+      else if (typeof exports === "object") exports["EventBus"] = factory();
+      else root["EventBus"] = factory();
+    })(exports, function() {
+      var EventBusClass = {};
+      EventBusClass = function() {
+        this.listeners = {};
+      };
+      EventBusClass.prototype = { addEventListener: function(type, callback, scope) {
+        var args = [];
+        var numOfArgs = arguments.length;
+        for (var i4 = 0; i4 < numOfArgs; i4++) {
+          args.push(arguments[i4]);
+        }
+        args = args.length > 3 ? args.splice(3, args.length - 1) : [];
+        if (typeof this.listeners[type] != "undefined") {
+          this.listeners[type].push({ scope, callback, args });
+        } else {
+          this.listeners[type] = [{ scope, callback, args }];
+        }
+      }, removeEventListener: function(type, callback, scope) {
+        if (typeof this.listeners[type] != "undefined") {
+          var numOfCallbacks = this.listeners[type].length;
+          var newArray = [];
+          for (var i4 = 0; i4 < numOfCallbacks; i4++) {
+            var listener = this.listeners[type][i4];
+            if (listener.scope == scope && listener.callback == callback) {
+            } else {
+              newArray.push(listener);
+            }
+          }
+          this.listeners[type] = newArray;
+        }
+      }, hasEventListener: function(type, callback, scope) {
+        if (typeof this.listeners[type] != "undefined") {
+          var numOfCallbacks = this.listeners[type].length;
+          if (callback === void 0 && scope === void 0) {
+            return numOfCallbacks > 0;
+          }
+          for (var i4 = 0; i4 < numOfCallbacks; i4++) {
+            var listener = this.listeners[type][i4];
+            if ((scope ? listener.scope == scope : true) && listener.callback == callback) {
+              return true;
+            }
+          }
+        }
+        return false;
+      }, dispatch: function(type, target) {
+        var event = { type, target };
+        var args = [];
+        var numOfArgs = arguments.length;
+        for (var i4 = 0; i4 < numOfArgs; i4++) {
+          args.push(arguments[i4]);
+        }
+        args = args.length > 2 ? args.splice(2, args.length - 1) : [];
+        args = [event].concat(args);
+        if (typeof this.listeners[type] != "undefined") {
+          var listeners = this.listeners[type].slice();
+          var numOfCallbacks = listeners.length;
+          for (var i4 = 0; i4 < numOfCallbacks; i4++) {
+            var listener = listeners[i4];
+            if (listener && listener.callback) {
+              var concatArgs = args.concat(listener.args);
+              listener.callback.apply(listener.scope, concatArgs);
+            }
+          }
+        }
+      }, getEvents: function() {
+        var str = "";
+        for (var type in this.listeners) {
+          var numOfCallbacks = this.listeners[type].length;
+          for (var i4 = 0; i4 < numOfCallbacks; i4++) {
+            var listener = this.listeners[type][i4];
+            str += listener.scope && listener.scope.className ? listener.scope.className : "anonymous";
+            str += " listen for '" + type + "'\n";
+          }
+        }
+        return str;
+      } };
+      var EventBus3 = new EventBusClass();
+      return EventBus3;
+    });
+  }
+});
+
+// node_modules/safe-stringify/index.js
+function safeStringifyReplacer(seen) {
+  return function(key, value) {
+    if (typeof value?.toJSON === "function") {
+      value = value.toJSON();
+    }
+    if (!(value !== null && typeof value === "object")) {
+      return value;
+    }
+    if (seen.has(value)) {
+      return "[Circular]";
+    }
+    seen.add(value);
+    const newValue = Array.isArray(value) ? [] : {};
+    for (const [key2, value2] of Object.entries(value)) {
+      newValue[key2] = safeStringifyReplacer(seen)(key2, value2);
+    }
+    seen.delete(value);
+    return newValue;
+  };
+}
+function safeStringify(object, { indentation } = {}) {
+  const seen = /* @__PURE__ */ new WeakSet();
+  return JSON.stringify(object, safeStringifyReplacer(seen), indentation);
+}
+var init_safe_stringify = __esm({
+  "node_modules/safe-stringify/index.js"() {
+    "use strict";
+    init_preact_module();
+  }
+});
+
+// src/lib/utils/debug/DebugPanel.ts
+function renderLogEntry(message) {
+  return Array.isArray(message) ? message.join(" ") : typeof message == "object" ? safeStringify(message) : `${message}`;
+}
+function debugState(id, state) {
+  import_eventbusjs.default.dispatch("debug-state", { id, state });
+}
+var import_eventbusjs, log4, warn3, DebugPanelLogModule, DEBUG_STATE_NAMESPACE, DebugPanel;
+var init_DebugPanel = __esm({
+  "src/lib/utils/debug/DebugPanel.ts"() {
+    "use strict";
+    init_preact_module();
+    import_eventbusjs = __toESM(require_eventbus_min());
+    init_logging();
+    init_safe_stringify();
+    ({ log: log4, warn: warn3 } = getLogger("DebugPanel", { color: "red", enabled: true }));
+    DebugPanelLogModule = class {
+      name = "DebugPanel";
+      debugPanel;
+      constructor(opts = {}) {
+        this.debugPanel = new DebugPanel(document.body);
+        if (opts.show) this.debugPanel.show();
+      }
+      onLog(log10) {
+        console.log(`onLog:`, log10);
+        this.debugPanel.addLog(log10.namespace, log10.args);
+      }
+    };
+    DEBUG_STATE_NAMESPACE = "objects";
+    DebugPanel = class {
+      container;
+      tabContainer;
+      contentContainer;
+      tabEntries = {};
+      debugStates = {};
+      activeTab = "global";
+      constructor(parent) {
+        this.container = this.createContainer();
+        this.tabContainer = this.createTabContainer();
+        this.contentContainer = this.createContentContainer();
+        this.container.appendChild(this.tabContainer);
+        this.container.appendChild(this.contentContainer);
+        parent.appendChild(this.container);
+        this.addTab(DEBUG_STATE_NAMESPACE);
+        this.addTab("global");
+        this.setupEventListeners();
+      }
+      createContainer() {
+        const container = document.createElement("div");
+        container.classList.add("debug-panel");
+        return container;
+      }
+      createTabContainer() {
+        const tabContainer = document.createElement("div");
+        tabContainer.classList.add("debug-panel-tabs");
+        return tabContainer;
+      }
+      createContentContainer() {
+        const contentContainer = document.createElement("div");
+        contentContainer.classList.add("debug-panel-content");
+        return contentContainer;
+      }
+      setupEventListeners() {
+        import_eventbusjs.default.addEventListener("log", (event) => {
+          const { namespace, message } = event.target;
+          this.addLog(namespace, message);
+        });
+        import_eventbusjs.default.addEventListener("debug-state", (event) => {
+          const { id, state } = event.target;
+          if (!id || !state) return console.log("Invalid event data for debug-state. Expected {id,state}, got:", event);
+          this.handleDebugState(id, state);
+        });
+      }
+      // display an object for debugging.
+      handleDebugState(id, state) {
+        const updateDebugState = (id2, state2) => {
+          console.log(`update debug`, id2, state2);
+          const safeState = safeStringify(state2);
+          state2 = JSON.parse(safeState);
+          this.debugStates[id2] = state2;
+          const content = this.contentContainer.querySelector(
+            `[data-namespace=${DEBUG_STATE_NAMESPACE}]`
+          );
+          if (!content) return console.error("No content for debug namespace.");
+          const debugWrapper = content.querySelector(`#debug-state-${id2}`);
+          if (!debugWrapper) return console.error(`No debug state found for ${id2}.`);
+          const jsonWrapper = debugWrapper.querySelector(".json-wrapper");
+          if (!jsonWrapper) return console.error(`No json wrapper found for existing state ${id2}`);
+          jsonWrapper.innerHTML = "";
+          const tree = jsonTree.create(state2, jsonWrapper);
+          tree.expand();
+          log4(`updated debug state`, debugWrapper);
+        };
+        const addDebugState = (id2, state2) => {
+          console.log(`add debug`, id2, state2);
+          const safeState = safeStringify(state2);
+          state2 = JSON.parse(safeState);
+          this.debugStates[id2] = state2;
+          const content = this.contentContainer.querySelector(
+            `[data-namespace=${DEBUG_STATE_NAMESPACE}]`
+          );
+          if (!content) return console.error("No content for debug namespace.");
+          const debugWrapper = document.createElement("div");
+          debugWrapper.classList.add("debug-state");
+          debugWrapper.setAttribute("id", `debug-state-${id2}`);
+          const label = document.createElement("div");
+          label.classList.add("debug-state-label");
+          label.innerText = `${id2}`;
+          debugWrapper.appendChild(label);
+          const jsonWrapper = document.createElement("div");
+          jsonWrapper.classList.add("json-wrapper");
+          debugWrapper.appendChild(jsonWrapper);
+          const tree = jsonTree.create(state2, jsonWrapper);
+          tree.expand();
+          content.appendChild(debugWrapper);
+          log4(`added debug state`, debugWrapper);
+        };
+        log4(`DEBUG STATE:`, id, state);
+        if (this.debugStates[id]) updateDebugState(id, state);
+        else addDebugState(id, state);
+      }
+      addTab(namespace) {
+        if (this.tabEntries[namespace]) return;
+        this.tabEntries[namespace] = [];
+        const tab = document.createElement("button");
+        tab.classList.add("debug-tab");
+        tab.textContent = namespace;
+        tab.onclick = () => this.switchTab(namespace);
+        this.tabContainer.appendChild(tab);
+        const content = document.createElement("div");
+        content.classList.add("debug-tab-content");
+        content.dataset.namespace = namespace;
+        this.contentContainer.appendChild(content);
+        if (namespace === "global") {
+          this.addClearButton(content, true);
+        } else {
+          this.addClearButton(content);
+        }
+        if (Object.keys(this.tabEntries).length === 1) {
+          this.switchTab(namespace);
+        }
+      }
+      switchTab(namespace) {
+        this.activeTab = namespace;
+        document.querySelectorAll(".debug-tab-content").forEach((el) => el.style.display = "none");
+        const activeContent = this.contentContainer.querySelector(
+          `[data-namespace="${namespace}"]`
+        );
+        if (activeContent) activeContent.style.display = "block";
+      }
+      addClearButton(content, isGlobal = false) {
+        const clearButton = document.createElement("button");
+        clearButton.classList.add("debug-clear-button");
+        clearButton.textContent = "Clear";
+        clearButton.onclick = () => {
+          if (isGlobal) {
+            Object.keys(this.tabEntries).forEach((key) => {
+              this.tabEntries[key] = [];
+              const tabContent = this.contentContainer.querySelector(
+                `[data-namespace="${key}"]`
+              );
+              if (tabContent) tabContent.innerHTML = "";
+            });
+          } else {
+            const namespace = content.dataset.namespace;
+            if (namespace) {
+              if (namespace == DEBUG_STATE_NAMESPACE) {
+                this.debugStates = {};
+              } else {
+                content.innerHTML = "";
+                this.tabEntries[namespace] = [];
+              }
+            }
+          }
+        };
+        content.appendChild(clearButton);
+      }
+      addLog(namespace, message) {
+        if (!this.tabEntries[namespace]) {
+          this.addTab(namespace);
+        }
+        const logEntry = {
+          id: `${namespace}-${Date.now()}-${Math.random()}`,
+          message,
+          timestamp: /* @__PURE__ */ new Date()
+        };
+        this.tabEntries[namespace].push(logEntry);
+        const content = this.contentContainer.querySelector(
+          `[data-namespace="${namespace}"]`
+        );
+        if (!content) return;
+        const logElement = this.createLogElement(logEntry, namespace);
+        content.appendChild(logElement);
+        if (namespace != "global") this.addLog("global", message);
+      }
+      createLogElement(logEntry, namespace) {
+        const logElement = document.createElement("div");
+        logElement.classList.add("debug-log-entry");
+        logElement.dataset.logId = logEntry.id;
+        const logText = document.createElement("div");
+        logText.innerText = `[${logEntry.timestamp.toLocaleTimeString()}] ${renderLogEntry(logEntry.message)}`;
+        logText.classList.add("debug-log-entry-text");
+        const copyButton = document.createElement("button");
+        copyButton.innerText = "\u{1F4CB}";
+        copyButton.classList.add("debug-copy-button");
+        copyButton.onclick = () => navigator.clipboard.writeText(logText.innerHTML);
+        const deleteButton = document.createElement("button");
+        deleteButton.innerText = "\u274C";
+        deleteButton.classList.add("debug-delete-button");
+        deleteButton.onclick = () => this.removeLogEntry(namespace, logEntry.id, logElement);
+        logElement.appendChild(logText);
+        logElement.appendChild(copyButton);
+        logElement.appendChild(deleteButton);
+        return logElement;
+      }
+      removeLogEntry(namespace, logId, logElement) {
+        this.tabEntries[namespace] = this.tabEntries[namespace].filter(
+          (entry) => entry.id !== logId
+        );
+        logElement.remove();
+      }
+      show() {
+        console.log(`SHOW`);
+        this.container.classList.add("visible");
+      }
+      hide() {
+        this.container.classList.remove("visible");
+      }
+    };
+  }
+});
+
 // src/components/pages/Entry/style.scss
 var init_style = __esm({
   "src/components/pages/Entry/style.scss"() {
@@ -611,7 +968,9 @@ var init_PastePlugin = __esm({
     "use strict";
     init_preact_module();
     PastePlugin = class {
-      constructor() {
+      config;
+      constructor(config) {
+        this.config = config;
       }
       initialize(editor, container) {
         container.addEventListener("paste", this.handlePaste);
@@ -630,12 +989,11 @@ var init_PastePlugin = __esm({
         const clipboardData = e4.clipboardData || window.clipboardData;
         if (!clipboardData) return;
         let pastedContent = clipboardData.getData("text/html") || clipboardData.getData("text/plain");
-        console.log(`paste after`, pastedContent);
-        if (pastedContent && this.containsHTML(pastedContent)) {
+        if (pastedContent && this.containsHTML(pastedContent) && this.config.sanitize) {
           pastedContent = this.sanitizeContent(pastedContent);
         }
-        console.log(`paste after`, pastedContent);
-        this.insertSanitizedContent(pastedContent, e4.target);
+        console.log(`paste`, pastedContent);
+        this.insertContent(pastedContent, e4.target);
       };
       containsHTML(content) {
         return /<[^>]+>/i.test(content);
@@ -644,7 +1002,7 @@ var init_PastePlugin = __esm({
       sanitizeContent(content) {
         return content.replace(/style=(["'])(?:(?=(\\?))\2.)*?\1/g, "");
       }
-      insertSanitizedContent(content, target) {
+      insertContent(content, target) {
         const selection = window.getSelection();
         if (selection && selection.rangeCount) {
           const range = selection.getRangeAt(0);
@@ -655,6 +1013,10 @@ var init_PastePlugin = __esm({
           while (node = tempDiv.firstChild) {
             range.insertNode(node);
           }
+          const space = document.createTextNode(" ");
+          const br = document.createElement("br");
+          range.insertNode(space);
+          range.insertNode(br);
           range.collapse(false);
           selection.removeAllRanges();
           selection.addRange(range);
@@ -1264,98 +1626,6 @@ var init_Blob = __esm({
   }
 });
 
-// node_modules/eventbusjs/lib/eventbus.min.js
-var require_eventbus_min = __commonJS({
-  "node_modules/eventbusjs/lib/eventbus.min.js"(exports, module) {
-    "use strict";
-    init_preact_module();
-    (function(root, factory) {
-      if (typeof exports === "object" && typeof module === "object") module.exports = factory();
-      else if (typeof define === "function" && define.amd) define("EventBus", [], factory);
-      else if (typeof exports === "object") exports["EventBus"] = factory();
-      else root["EventBus"] = factory();
-    })(exports, function() {
-      var EventBusClass = {};
-      EventBusClass = function() {
-        this.listeners = {};
-      };
-      EventBusClass.prototype = { addEventListener: function(type, callback, scope) {
-        var args = [];
-        var numOfArgs = arguments.length;
-        for (var i4 = 0; i4 < numOfArgs; i4++) {
-          args.push(arguments[i4]);
-        }
-        args = args.length > 3 ? args.splice(3, args.length - 1) : [];
-        if (typeof this.listeners[type] != "undefined") {
-          this.listeners[type].push({ scope, callback, args });
-        } else {
-          this.listeners[type] = [{ scope, callback, args }];
-        }
-      }, removeEventListener: function(type, callback, scope) {
-        if (typeof this.listeners[type] != "undefined") {
-          var numOfCallbacks = this.listeners[type].length;
-          var newArray = [];
-          for (var i4 = 0; i4 < numOfCallbacks; i4++) {
-            var listener = this.listeners[type][i4];
-            if (listener.scope == scope && listener.callback == callback) {
-            } else {
-              newArray.push(listener);
-            }
-          }
-          this.listeners[type] = newArray;
-        }
-      }, hasEventListener: function(type, callback, scope) {
-        if (typeof this.listeners[type] != "undefined") {
-          var numOfCallbacks = this.listeners[type].length;
-          if (callback === void 0 && scope === void 0) {
-            return numOfCallbacks > 0;
-          }
-          for (var i4 = 0; i4 < numOfCallbacks; i4++) {
-            var listener = this.listeners[type][i4];
-            if ((scope ? listener.scope == scope : true) && listener.callback == callback) {
-              return true;
-            }
-          }
-        }
-        return false;
-      }, dispatch: function(type, target) {
-        var event = { type, target };
-        var args = [];
-        var numOfArgs = arguments.length;
-        for (var i4 = 0; i4 < numOfArgs; i4++) {
-          args.push(arguments[i4]);
-        }
-        args = args.length > 2 ? args.splice(2, args.length - 1) : [];
-        args = [event].concat(args);
-        if (typeof this.listeners[type] != "undefined") {
-          var listeners = this.listeners[type].slice();
-          var numOfCallbacks = listeners.length;
-          for (var i4 = 0; i4 < numOfCallbacks; i4++) {
-            var listener = listeners[i4];
-            if (listener && listener.callback) {
-              var concatArgs = args.concat(listener.args);
-              listener.callback.apply(listener.scope, concatArgs);
-            }
-          }
-        }
-      }, getEvents: function() {
-        var str = "";
-        for (var type in this.listeners) {
-          var numOfCallbacks = this.listeners[type].length;
-          for (var i4 = 0; i4 < numOfCallbacks; i4++) {
-            var listener = this.listeners[type][i4];
-            str += listener.scope && listener.scope.className ? listener.scope.className : "anonymous";
-            str += " listen for '" + type + "'\n";
-          }
-        }
-        return str;
-      } };
-      var EventBus2 = new EventBusClass();
-      return EventBus2;
-    });
-  }
-});
-
 // src/components/shared/BlobEditor/lib/ApiClient.ts
 var ApiClient;
 var init_ApiClient = __esm({
@@ -1885,18 +2155,18 @@ var init_CacheService = __esm({
 });
 
 // src/components/shared/BlobEditor/lib/BlobService.ts
-var import_eventbusjs, BlobService;
+var import_eventbusjs2, BlobService;
 var init_BlobService = __esm({
   "src/components/shared/BlobEditor/lib/BlobService.ts"() {
     "use strict";
     init_preact_module();
-    import_eventbusjs = __toESM(require_eventbus_min());
+    import_eventbusjs2 = __toESM(require_eventbus_min());
     init_ApiClient();
     init_CacheService();
     BlobService = class {
       apiClient;
       cacheService;
-      eventBus = import_eventbusjs.default;
+      eventBus = import_eventbusjs2.default;
       constructor() {
         this.apiClient = new ApiClient();
         this.cacheService = new CacheService("blobService");
@@ -1941,13 +2211,13 @@ var init_BlobService = __esm({
 });
 
 // src/components/shared/BlobEditor/lib/NodeEntryCache/ContentEntries.ts
-var log4, warn3, ContentEntry, TextEntry, HeaderEntry, FileEntry, BreakEntry, PreEntry, CodeEntry, GroupEntry, LinkEntry, CustomEntry, ContentEntries;
+var log5, warn4, ContentEntry, TextEntry, HeaderEntry, FileEntry, BreakEntry, PreEntry, CodeEntry, GroupEntry, LinkEntry, CustomEntry, ContentEntries;
 var init_ContentEntries = __esm({
   "src/components/shared/BlobEditor/lib/NodeEntryCache/ContentEntries.ts"() {
     "use strict";
     init_preact_module();
     init_logging();
-    ({ log: log4, warn: warn3 } = getLogger("ContentEntries", { color: "red", enabled: false }));
+    ({ log: log5, warn: warn4 } = getLogger("ContentEntries", { color: "red", enabled: false }));
     ContentEntry = class {
       static convertToHTML(entry, parent) {
         throw new Error("Method not implemented");
@@ -2328,16 +2598,16 @@ var init_ContentEntries = __esm({
       static convertNodeToEntry(node) {
         if (!node || !node.nodeType) throw `${node ? "Invalid" : "No"} node given to convertNodeToEntry`;
         let entry;
-        log4(`convertNodeToEntry(), node:`, node.nodeType, node.tagName, node);
+        log5(`convertNodeToEntry(), node:`, node.nodeType, node.tagName, node);
         if (node.nodeType === Node.TEXT_NODE) {
           entry = TextEntry.convertNodeToEntry(node);
-          log4(`made text node`, node, entry);
+          log5(`made text node`, node, entry);
         } else if (node.nodeName === "DIV") {
           const div = node;
           if (div.getAttribute("custom") === "true") {
             entry = CustomEntry.convertNodeToEntry(div);
           } else {
-            log4(`making group:`, node);
+            log5(`making group:`, node);
             entry = GroupEntry.convertNodeToEntry(div);
           }
         } else if (node.nodeName === "A") {
@@ -2352,7 +2622,7 @@ var init_ContentEntries = __esm({
           entry = CodeEntry.convertNodeToEntry(node);
         } else if (node.nodeName === "BR") {
           entry = BreakEntry.convertNodeToEntry(node);
-          log4(`made break node`, node.tagName, node, entry);
+          log5(`made break node`, node.tagName, node, entry);
         }
         if (!entry) throw "Could not convert node type to entry: " + node.nodeType;
         return entry;
@@ -2365,14 +2635,14 @@ var init_ContentEntries = __esm({
 function NER(node, entry, children, parent) {
   return { node, entry, children, parent };
 }
-var log5, warn4, GroupNode, TextNode, BreakNode;
+var log6, warn5, GroupNode, TextNode, BreakNode;
 var init_NodeEntries = __esm({
   "src/components/shared/BlobEditor/lib/NodeEntryCache/NodeEntries.ts"() {
     "use strict";
     init_preact_module();
     init_logging();
     init_ContentEntries();
-    ({ log: log5, warn: warn4 } = getLogger("NodeEntries", { color: "yellow", enabled: true }));
+    ({ log: log6, warn: warn5 } = getLogger("NodeEntries", { color: "yellow", enabled: true }));
     GroupNode = class extends ContentEntry {
       type = "group";
       attributes;
@@ -2395,7 +2665,6 @@ var init_NodeEntries = __esm({
           }
         }
         if (Array.isArray(entry.children)) {
-          console.log(`group children:`, entry.children);
           entry.children.forEach((child) => nodeCache.createNERFromEntry(child, ner));
         } else {
           throw "Expected array for GroupNode.children but received: " + typeof entry.children;
@@ -2412,7 +2681,6 @@ var init_NodeEntries = __esm({
           const childEntry = ContentEntries.convertNodeToEntry(childNode);
           if (childEntry) children.push(childEntry);
         });
-        log5(`GroupEntry`, node, children);
         return new GroupEntry(attributes, children);
       }
     };
@@ -2490,7 +2758,6 @@ var init_NodeEntries = __esm({
             ner.node.setAttribute(key, value);
           }
         }
-        console.log(`created BREAK`, ner);
         return ner;
       }
       static convertNodeToEntry(node) {
@@ -2532,7 +2799,7 @@ function findNER(node, cache, parent) {
     const isTarget = currNode == node;
     const isParent = nextNode == node;
     if (isTarget) {
-      warn5(`IS TARGET?`, currNode, nextNode);
+      warn6(`IS TARGET?`, currNode, nextNode);
       return currNER;
     }
     for (const c3 of currNER.children) {
@@ -2570,6 +2837,7 @@ function createNERFromEntry(entry, parent, nodeCache, insertPos) {
       break;
   }
   if (!ner) throw "Error: Could not create NER from entry type: " + entry.type;
+  log7(`createNERFromEntry`, ner, insertPos);
   if (insertPos) {
     parent.children.splice(insertPos, 0, ner);
     const childNodes = Array.from(parent.node.childNodes);
@@ -2577,8 +2845,12 @@ function createNERFromEntry(entry, parent, nodeCache, insertPos) {
     else {
       if (insertPos == 0) parent.node.insertBefore(ner.node, parent.node.firstChild);
       else {
-        const prevNode = childNodes[insertPos];
-        if (!prevNode) throw "No prevNode found at pos: " + insertPos;
+        const prevNode = childNodes[insertPos - 1];
+        if (!prevNode) {
+          console.log(`No previous node?`, insertPos, childNodes, parent);
+          throw "No prevNode found at pos: " + (insertPos - 1);
+        }
+        console.log(`inserting node after:`, prevNode, "new node:", ner.node, "at:", insertPos);
         prevNode.after(ner.node);
       }
     }
@@ -2586,7 +2858,7 @@ function createNERFromEntry(entry, parent, nodeCache, insertPos) {
     parent.children.push(ner);
     parent.node.appendChild(ner.node);
   }
-  log6(`createNERFromEntry result:`, entry, ner);
+  log7(`${entry.type} NER result:`, entry, ner);
   return ner;
 }
 function createNERFromNodeEntry(node, entry, parent) {
@@ -2594,59 +2866,73 @@ function createNERFromNodeEntry(node, entry, parent) {
   if (Array.isArray(entry.children)) {
     entry.children.forEach((childEntry, i4) => {
       const childNode = node.childNodes[i4];
-      console.log(`dom child match?`, i4, childEntry, childNode);
       createNERFromNodeEntry(childNode, childEntry, ner);
     });
   }
   parent.children.push(ner);
   return ner;
 }
-function createNER(node, parent, cache) {
+function createNERFromNode(node, parent, cache) {
   if (!parent?.node) throw "Error: No node found on parent NER to insert to.";
   const entry = ContentEntries.convertNodeToEntry(node);
   const ner = createNERFromNodeEntry(node, entry, parent);
   if (Array.isArray(parent.entry?.children)) {
     const pos = Array.from(parent.node.childNodes).findIndex((c3) => c3 == node);
-    console.log(`Inserting entry into parent at POS:`, pos);
-    parent.entry.children.splice(pos, 0, entry);
+    console.log(`Inserting entry into parent at POS:`, pos + 1);
+    parent.entry.children.splice(pos + 1, 0, entry);
   }
-  log6(`NER created:`, ner);
+  log7(`NER created:`, ner);
+  return ner;
+}
+function createNERAfterNode(node, entry, parent, cache) {
+  const pos = Array.from(parent.node.childNodes).findIndex((n2) => n2 == node);
+  return createNERFromEntry(entry, parent, cache, pos + 1);
+}
+function updateNER(ner, cache) {
+  if (ner.node.nodeType == Node.TEXT_NODE) {
+    console.log(`updating entry node...`);
+    ner.entry.children = ner.node.textContent;
+  } else {
+    reconcileNodeChildren(ner, cache);
+  }
+  log7(`UPDATE node finished:`, ner);
   return ner;
 }
 function reconcileNodeChildren(ner, nodeCache) {
   console.log(`reconcile children`, ner);
   if (ner.node.nodeType != Node.TEXT_NODE) {
     const nodeChildren = Array.from(ner.node.childNodes);
-    ner.children.forEach((c3, i4) => {
-      const exists = nodeChildren.find((nc) => nc == c3.node);
-      if (!exists) {
-        console.log(`DANGLING NER, REMOVING...`, c3, i4);
-        ner.children.splice(i4, 1);
-        console.log(`Child NER removed.`, ner);
-      }
-    });
-    nodeChildren.forEach((nc) => {
-      const exists = ner.children.find((c3) => c3.node == nc);
-      if (!exists) {
-        console.log(`NER NOT FOUND, creating for node:`, nc);
-        let childNer = createNER(nc, ner, nodeCache);
-        console.log(`created new child:`, childNer);
-      }
-    });
+    let noMoreChanges = false;
+    while (!noMoreChanges) {
+      noMoreChanges = true;
+      ner.children.forEach((c3, i4) => {
+        const exists = nodeChildren.find((nc) => nc == c3.node);
+        if (!exists) {
+          console.log(`DANGLING NER, REMOVING...`, c3, i4);
+          if (Array.isArray(ner.entry?.children)) ner.entry.children.splice(i4, 1);
+          ner.children.splice(i4, 1);
+          noMoreChanges = false;
+          console.log(`Child NER removed from parent:`, ner);
+        }
+      });
+    }
+    noMoreChanges = false;
+    while (!noMoreChanges) {
+      noMoreChanges = true;
+      let nodeChildren2 = Array.from(ner.node.childNodes);
+      nodeChildren2.forEach((nc) => {
+        const exists = ner.children.find((c3) => c3.node == nc);
+        if (!exists) {
+          console.log(`NER NOT FOUND, creating for node:`, nc);
+          let childNer = createNERFromNode(nc, ner, nodeCache);
+          noMoreChanges = false;
+        }
+      });
+    }
   }
-}
-function updateNER(ner, cache) {
-  if (ner.node.nodeType == Node.TEXT_NODE) {
-    ner.entry.children = ner.node.textContent;
-  } else {
-    console.log(`updating group node...`);
-    reconcileNodeChildren(ner, cache);
-  }
-  log6(`UPDATE node finished:`, ner);
-  return ner;
 }
 function deleteNER(node, cache) {
-  log6(`deleteNode:`, node);
+  log7(`deleteNode:`, node);
 }
 function clearCache(cache) {
   if (Array.isArray(cache.entries)) while (cache.entries.pop()) {
@@ -2664,7 +2950,7 @@ function clearCache(cache) {
     }
   }
 }
-var log6, warn5, nerUtils;
+var log7, warn6, nerUtils;
 var init_nerUtils = __esm({
   "src/components/shared/BlobEditor/lib/NodeEntryCache/nerUtils.ts"() {
     "use strict";
@@ -2672,12 +2958,13 @@ var init_nerUtils = __esm({
     init_logging();
     init_ContentEntries();
     init_NodeEntries();
-    ({ log: log6, warn: warn5 } = getLogger("nerUtils", { color: "yellow", enabled: true }));
+    ({ log: log7, warn: warn6 } = getLogger("nerUtils", { color: "yellow", enabled: true }));
     nerUtils = {
       getParentPath,
       findNER,
       createNERFromEntry,
-      createNER,
+      createNERFromNode,
+      createNERAfterNode,
       updateNER,
       deleteNER,
       clearCache
@@ -2686,7 +2973,7 @@ var init_nerUtils = __esm({
 });
 
 // src/components/shared/BlobEditor/lib/NodeEntryCache/NodeEntryCache.ts
-var log7, error3, NodeEntryCache;
+var log8, error3, NodeEntryCache;
 var init_NodeEntryCache = __esm({
   "src/components/shared/BlobEditor/lib/NodeEntryCache/NodeEntryCache.ts"() {
     "use strict";
@@ -2694,7 +2981,7 @@ var init_NodeEntryCache = __esm({
     init_ContentEntries();
     init_nerUtils();
     init_logging();
-    ({ log: log7, error: error3 } = getLogger("NodeEntryCache", { color: "yellow", enabled: true }));
+    ({ log: log8, error: error3 } = getLogger("NodeEntryCache", { color: "yellow", enabled: true }));
     NodeEntryCache = class {
       entries;
       rootNER;
@@ -2714,7 +3001,8 @@ var init_NodeEntryCache = __esm({
         this.rootNER.entry = ContentEntries.convertNodeToEntry(node);
         this.rootNER.entry.children = entries;
         this.rootNER.entry.children.forEach((e4) => this.createNERFromEntry(e4, this.rootNER));
-        log7(`hydrated.`, entries, this.rootNER);
+        111;
+        log8(`hydrated.`, entries, this.rootNER);
       }
       // From a given entry... creates the dom reference for it, and adds to the parent if given, or root.
       // If the entry has children... the child dom elements will also be created and added recursively.
@@ -2736,10 +3024,10 @@ var init_NodeEntryCache = __esm({
         const isRootNode = node == this.rootNER?.node;
         let parent = isRootNode ? this.rootNER : this.findNER(node.parentNode);
         let ner = isRootNode ? this.rootNER : this.findNER(node, parent);
-        if (ner) log7(`found node`, isRootNode ? "[ROOT]" : "", node == this.lastNER?.node ? "[LAST]" : "", ner);
-        else log7(`node not found. creating...`, node, "parentNER:", parent);
+        if (ner) log8(`found node`, isRootNode ? "[ROOT]" : "", node == this.lastNER?.node ? "[LAST]" : "", ner);
+        else log8(`node not found. creating...`, node, "parentNER:", parent);
         if (ner) nerUtils.updateNER(ner, this);
-        else if (parent) ner = nerUtils.createNER(node, parent, this);
+        else if (parent) ner = nerUtils.createNERFromNode(node, parent, this);
         else throw "Parent NER not found for updateOrInsert.";
         return this.lastNER = ner;
       }
@@ -2753,7 +3041,7 @@ var init_NodeEntryCache = __esm({
         try {
           return this.lastNER = this.updateOrInsert(node);
         } catch (e4) {
-          log7(`Exception in applyChange():`, e4);
+          log8(`Exception in applyChange():`, e4);
         }
       }
       clear = () => {
@@ -2767,13 +3055,16 @@ var init_NodeEntryCache = __esm({
 });
 
 // src/components/shared/BlobEditor/lib/WEditor.ts
-var CHANGE_TIMEOUT_MS, AUTOSAVE_TIMEOUT_MS, CONTENT_ROOT_CLASS, DEFAULT_CONFIG, WEditor;
+var log9, error4, CHANGE_TIMEOUT_MS, AUTOSAVE_TIMEOUT_MS, CONTENT_ROOT_CLASS, DEFAULT_CONFIG, WEditor;
 var init_WEditor = __esm({
   "src/components/shared/BlobEditor/lib/WEditor.ts"() {
     "use strict";
     init_preact_module();
     init_NodeEntryCache();
     init_nerUtils();
+    init_logging();
+    init_DebugPanel();
+    ({ log: log9, error: error4 } = getLogger("WEditor", { color: "blue", enabled: true }));
     CHANGE_TIMEOUT_MS = 500;
     AUTOSAVE_TIMEOUT_MS = 3e3;
     CONTENT_ROOT_CLASS = "w-content";
@@ -2804,6 +3095,7 @@ var init_WEditor = __esm({
         }
         this.plugins.forEach((plugin) => plugin.initialize(this, this.container));
         document.addEventListener("keydown", this.handleKeyDown);
+        document.addEventListener("keyup", this.handleKeyUp);
         this.contentEditable.addEventListener("input", this.handleContentChange);
         if (this.config.focusOnStart) {
           this.contentEditable.focus();
@@ -2816,30 +3108,30 @@ var init_WEditor = __esm({
         this.contentEditable.innerHTML = "";
         this.nodeCache.hydrateContent(this.blob.content.entries, this.contentEditable);
       }
-      // todo: on shift+enter... should manually insert the break entry after the current node in it's parent
-      // ... so that it does not trigger a full re-build of the parent node and it's content.
-      // todo: on enter... should create the group node but without the break?
-      // bug: multiple break chilren arent added to ner.children but are seen in entry.children.
       handleKeyDown = (e4) => {
         if (e4.target == this.contentEditable) {
           e4.stopPropagation();
           if (e4.key == "Enter") {
             this.handleEnter(e4);
           } else if (e4.key == "Backspace") {
-            this.handleBackspace(e4);
+          }
+        }
+      };
+      // todo: on shift+enter... should manually insert the break entry after the current node in it's parent
+      // ... so that it does not trigger a full re-build of the parent node and it's content.
+      // todo: on enter... should create the group node but without the break?
+      // bug: multiple break chilren arent added to ner.children but are seen in entry.children.
+      handleKeyUp = (e4) => {
+        if (e4.target == this.contentEditable) {
+          if (e4.key == "Enter") {
+          } else if (e4.key == "Backspace") {
           }
         }
       };
       handleEnter = (e4) => {
         const node = this.getCurrentEditingNode();
-        console.log(`Enter`, node, e4);
+        log9(`Enter`, node, e4);
         if (e4.shiftKey) {
-          console.log(`INSERT BREAK NODE AFTER:`, node);
-          const parent = nerUtils.findNER(node?.parentNode, this.nodeCache);
-          if (!parent) throw "No parent NER found for node";
-          const pos = Array.from(parent.node.childNodes).findIndex((c3) => c3 == node);
-          if (pos == -1) throw "Node not found in parent children?";
-          e4.preventDefault();
         }
       };
       handleBackspace = (e4) => {
@@ -2847,25 +3139,25 @@ var init_WEditor = __esm({
         const childNodes = Array.from(node.childNodes);
         if (node) {
           if (node.nodeType != Node.TEXT_NODE) {
-            console.log(`backspace on edit node:`, node, childNodes, node.innerHTML);
+            log9(`backspace on edit node:`, node, childNodes, node.innerHTML);
             const ner = nerUtils.findNER(node, this.nodeCache);
             if (ner) {
               setTimeout(() => {
-                console.log(`nodes after timeout:`, node, childNodes, node.innerHTML);
+                log9(`nodes after timeout:`, node, childNodes, node.innerHTML);
                 ner.children.forEach((c3, i4) => {
                   const exists = Array.from(node.childNodes).find((cn) => c3.node == cn);
                   if (!exists) {
                     const childEntry = c3.entry;
                     if (Array.isArray(ner.entry?.children)) {
                       const di = ner.entry.children.findIndex((ec) => ec == childEntry);
-                      console.log(`DELETING child entry:`, di, childEntry);
+                      log9(`DELETING child entry:`, di, childEntry);
                       if (di > -1) ner.entry.children.splice(di, 1);
                     }
-                    console.log(`DELETING NER:`, i4, c3);
+                    log9(`DELETING NER:`, i4, c3);
                     ner.children.splice(i4, 1);
                   }
                   {
-                    console.log(`node still exists.`, c3, i4);
+                    log9(`node still exists.`, c3, i4);
                   }
                 });
               }, 0);
@@ -2876,17 +3168,47 @@ var init_WEditor = __esm({
             }
             this.nodeCache.deleteNER(node);
           } else {
-            console.log(`backspace on text node.`);
+            log9(`backspace on text node:`, node, `text: "${node.textContent}", html: "${node.innerHTML}"`);
+            let ner = nerUtils.findNER(node, this.nodeCache);
+            if (ner) log9(`Text node FOUND:`, ner);
+            else {
+              log9(`! Text node NOT found !`, node);
+            }
           }
         }
       };
       handleContentChange = (e4) => {
         let editNode = this.getCurrentEditingNode();
+        switch (e4.inputType) {
+          case "insertText":
+            log9(`INSERT TEXT`, editNode);
+            break;
+          case "deleteContentBackward":
+            log9(`DELETE`, editNode);
+            break;
+          case "insertParagraph":
+            log9(`INSERT GROUP`, editNode);
+            break;
+          case "insertLineBreak":
+            log9(`INSERT BREAK`, editNode);
+            break;
+          case "insertFromPaste":
+            log9(`INSERT PASTE`, editNode);
+            break;
+          case "deleteByCut":
+            log9(`DELETE MULTI`, editNode);
+            break;
+          default:
+            console.log(`Unknown input type:`, e4, editNode);
+            throw new Error("UNKNOWN INPUT TYPE: " + e4.inputType);
+        }
         if (window.getSelection) {
           let range = window.getSelection()?.getRangeAt(0);
           editNode = range?.commonAncestorContainer;
         }
         this.applyChanges(editNode);
+        debugState("entryTree", this.nodeCache.rootNER.entry);
+        debugState("nerTree", this.nodeCache.rootNER);
       };
       // updates the given node's entry with it's changed content
       applyChanges(node) {
@@ -2917,6 +3239,8 @@ var init_WEditor = __esm({
           this.contentEditable.innerHTML = "";
           this.nodeCache.clear();
           if (commit) this.commitChanges();
+          debugState("entryTree", this.nodeCache.rootNER.entry);
+          debugState("nerTree", this.nodeCache.rootNER);
         }
       }
       getCurrentEditingNode() {
@@ -3158,8 +3482,8 @@ var init_BlobEditor2 = __esm({
                 null
               );
               loadBlob = mostRecentBlob || new Blob2();
-            } catch (error4) {
-              console.error("Failed to load blobs:", error4);
+            } catch (error5) {
+              console.error("Failed to load blobs:", error5);
               loadBlob = new Blob2();
             }
             setCurrentBlob(loadBlob);
@@ -3176,7 +3500,7 @@ var init_BlobEditor2 = __esm({
               new ToolbarPlugin(),
               new TabPlugin(),
               new FilePlugin(),
-              new PastePlugin()
+              new PastePlugin({ sanitize: false })
             ]
           );
           editorRef.current.loadBlob(currentBlob);
@@ -6182,6 +6506,8 @@ var IndexedDBManager = class _IndexedDBManager {
 
 // src/Application.ts
 init_AudioManager();
+init_DebugPanel();
+init_logging();
 var _Application = class {
   constructor() {
   }
@@ -6192,6 +6518,7 @@ var _Application = class {
     if (idbTables) for (var t3 of idbTables) dbManager.addStore(t3.name, t3.indexes);
     AudioManager_default.register("hover", "/public/sounds/click.wav");
     AudioManager_default.register("click", "/public/sounds/cool-click.wav");
+    addLogModule(new DebugPanelLogModule({ show: true }));
   }
 };
 var Application = new _Application();

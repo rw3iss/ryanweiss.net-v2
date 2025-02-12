@@ -13,6 +13,6 @@ NodeEntryCache.applyChange(node):
             path = nerUtils.getParentPath(node, parentNER)
         nerUtils.updateNER(ner):
             entry = ContentEntries.convertNodeToEntry(node)
-        nerUtils.createNER(node, parent):                       // create an NER with a beginning node...
+        nerUtils.createNERFromNode(node, parent):                       // create an NER with a beginning node...
             entry = ContentEntries.convertNodeToEntry(node)
-            ner = createNER(node, entry, parent, cache)
+            ner = createNERFromNode(node, entry, parent, cache)

@@ -3,7 +3,10 @@ import { IPlugin } from './IPlugin';
 
 export class PastePlugin implements IPlugin {
 
-    constructor() {
+    private config;
+
+    constructor(config: {}) {
+        this.config = config;
     }
 
     initialize(editor: WEditor, container: HTMLElement) {
@@ -28,14 +31,14 @@ export class PastePlugin implements IPlugin {
 
         let pastedContent = clipboardData.getData('text/html') || clipboardData.getData('text/plain');
 
-        console.log(`paste after`, pastedContent)
-        if (pastedContent && this.containsHTML(pastedContent)) {
+        if (pastedContent && this.containsHTML(pastedContent) && this.config.sanitize) {
             pastedContent = this.sanitizeContent(pastedContent);
         }
 
-        console.log(`paste after`, pastedContent)
+        console.log(`paste`, pastedContent)
+        // todo: need to tell system to create and insert node from pasted div container...
 
-        this.insertSanitizedContent(pastedContent, e.target as HTMLElement);
+        this.insertContent(pastedContent, e.target as HTMLElement);
     };
 
     private containsHTML(content: string): boolean {
@@ -48,7 +51,7 @@ export class PastePlugin implements IPlugin {
         return content.replace(/style=(["'])(?:(?=(\\?))\2.)*?\1/g, '');
     }
 
-    private insertSanitizedContent(content: string, target: HTMLElement) {
+    private insertContent(content: string, target: HTMLElement) {
         const selection = window.getSelection();
         if (selection && selection.rangeCount) {
             const range = selection.getRangeAt(0);
@@ -63,6 +66,11 @@ export class PastePlugin implements IPlugin {
             while ((node = tempDiv.firstChild)) {
                 range.insertNode(node);
             }
+
+            const space = document.createTextNode(" ");
+            const br = document.createElement("br");
+            range.insertNode(space);
+            range.insertNode(br);
 
             // Collapse the range after the inserted content
             range.collapse(false);

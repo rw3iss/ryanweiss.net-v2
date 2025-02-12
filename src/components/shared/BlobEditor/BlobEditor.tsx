@@ -49,7 +49,7 @@ export const BlobEditor: FunctionComponent<Props> = ({ blob: initialBlob }) => {
                     new ToolbarPlugin(),
                     new TabPlugin(),
                     new FilePlugin(),
-                    new PastePlugin()
+                    new PastePlugin({ sanitize: false })
                 ]
             );
             editorRef.current.loadBlob(currentBlob);

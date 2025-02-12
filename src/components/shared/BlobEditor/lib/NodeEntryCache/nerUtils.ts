@@ -5,6 +5,7 @@ import { BreakNode, GroupNode, NER, NodeEntryRef, TextNode } from "./NodeEntries
 
 const { log, warn } = getLogger('nerUtils', { color: 'yellow', enabled: true });
 
+// Returns a top-down node array path from the root or stop node to the given node using the node parents.
 function getParentPath(node, stopNode: Node | undefined, cache: NodeEntryCache): Array<Node> {
     let lookupPath: Array<Node> = [];
     let currNode: Node | undefined = node;
@@ -17,19 +18,21 @@ function getParentPath(node, stopNode: Node | undefined, cache: NodeEntryCache):
     return lookupPath;
 }
 
-// Find's the given node in the cache tree, if it exists, starting from the parent node if given.
+// Find's the given node in the tree, if it exists, starting from the parent node if given.
 function findNER(node: Node, cache: NodeEntryCache, parent?: NodeEntryRef | undefined): NodeEntryRef | undefined {
     if (!node) throw "No node given to findNode()";
     if (!cache.rootNER?.node) throw "No rootNER found on NodeEntryCache. Did you forget to call hydrateContent()?";
+
+    // Check if the node is "cached", ie. it was the last edited node or its parent.
     if (cache.lastNER?.node == node) return cache.lastNER;
     if (cache.lastNER?.parent?.node == node) return cache.lastNER.parent;
     if (cache.rootNER.node == node) return cache.rootNER;
 
-    // Create path from node to rootNER node, then walk back through to find the target child NER
+    // Create dom path from node to the root (or stop) node, then walk back down to find the target NER
     let lookupPath: Array<Node> = nerUtils.getParentPath(node, parent?.node, cache);
     let currNER = parent || cache.rootNER;
-    let currNode = lookupPath.pop(); // starts at root
-    let nextNode: Node | undefined = lookupPath.pop();
+    let currNode = lookupPath.pop(); // start at root or stop node
+    let nextNode: Node | undefined = lookupPath.pop(); // check if next (child) matches, or if current is the parent.
 
     //log(`findNode`, node, lookupPath)
     while (currNode) {
@@ -50,7 +53,7 @@ function findNER(node: Node, cache: NodeEntryCache, parent?: NodeEntryRef | unde
             }
         };
 
-        // node not found in the children so it doesn't exist
+        // NER doesn't exist in the children.
         if (isParent) return undefined;
 
         currNode = nextNode;
@@ -60,10 +63,12 @@ function findNER(node: Node, cache: NodeEntryCache, parent?: NodeEntryRef | unde
     return undefined;
 }
 
-// creates an NER with a dom node from the given entry, and its children, and adds it to the parent NER.
+
+// Creates an NER with a new dom node from the given entry, and adds it to the parent NER, at insertPos if given.
 function createNERFromEntry(entry: ContentEntry, parent: NodeEntryRef, nodeCache: NodeEntryCache, insertPos?: number): NodeEntryRef {
     if (!entry) throw "No entry given to createNERFromEntry";
     if (!parent) throw "No parent given to createNERFromEntry";
+
     let ner;
     switch (entry.type) {
         case 'text':
@@ -83,18 +88,27 @@ function createNERFromEntry(entry: ContentEntry, parent: NodeEntryRef, nodeCache
     }
     if (!ner) throw "Error: Could not create NER from entry type: " + entry.type;
 
+    log(`createNERFromEntry`, ner, insertPos);//, parent.node.childNodes);
+
     // add new node to parent NER tree and dom:
     // todo: add the node to the parent in its position of the new node
     if (insertPos) {
+        // add to parent NER tree
         parent.children.splice(insertPos, 0, ner);
+
+        // add to parent dom tree:
         const childNodes = Array.from(parent.node.childNodes);
-        if (!childNodes.length) parent.node.appendChild(ner.node); // no others, just add
+        if (!childNodes.length) parent.node.appendChild(ner.node); // no other children, just append
         else {
-            // insert before others or after previous
+            // insert before others if pos=0, or after its previous node
             if (insertPos == 0) parent.node.insertBefore(ner.node, parent.node.firstChild);
             else {
-                const prevNode = childNodes[insertPos];
-                if (!prevNode) throw "No prevNode found at pos: " + insertPos;
+                const prevNode = childNodes[insertPos - 1];
+                if (!prevNode) {
+                    console.log(`No previous node?`, insertPos, childNodes, parent)
+                    throw "No prevNode found at pos: " + (insertPos - 1);
+                }
+                console.log(`inserting node after:`, prevNode, 'new node:', ner.node, 'at:', insertPos)
                 prevNode.after(ner.node);
             }
         }
@@ -103,7 +117,7 @@ function createNERFromEntry(entry: ContentEntry, parent: NodeEntryRef, nodeCache
         parent.node.appendChild(ner.node);
     }
 
-    log(`createNERFromEntry result:`, entry, ner);
+    log(`${entry.type} NER result:`, entry, ner);
 
     return ner;
 }
@@ -114,7 +128,7 @@ function createNERFromNodeEntry(node: Node, entry: ContentEntry, parent: NodeEnt
     if (Array.isArray(entry.children)) {
         entry.children.forEach((childEntry, i) => {
             const childNode = node.childNodes[i];
-            console.log(`dom child match?`, i, childEntry, childNode);
+            //console.log(`dom child match?`, i, childEntry, childNode);
             createNERFromNodeEntry(childNode, childEntry, ner);
             //const childNer = { node: childNode, entry: childEntry, children: [], parent };
             //createNERFromNode(childNode, childEntry, childNer);
@@ -126,7 +140,7 @@ function createNERFromNodeEntry(node: Node, entry: ContentEntry, parent: NodeEnt
 }
 
 // Creates and insert a new entry and NER from the given dom node.
-function createNER(node: Node, parent: NodeEntryRef, cache: NodeEntryCache): NodeEntryRef {
+function createNERFromNode(node: Node, parent: NodeEntryRef, cache: NodeEntryCache): NodeEntryRef {
     if (!parent?.node) throw "Error: No node found on parent NER to insert to.";
     const entry = ContentEntries.convertNodeToEntry(node);
     const ner = createNERFromNodeEntry(node, entry, parent);
@@ -135,44 +149,22 @@ function createNER(node: Node, parent: NodeEntryRef, cache: NodeEntryCache): Nod
     if (Array.isArray(parent.entry?.children)) {
         // todo: add in position
         const pos = Array.from(parent.node.childNodes).findIndex(c => c == node);
-        console.log(`Inserting entry into parent at POS:`, pos);
-        parent.entry.children.splice(pos, 0, entry);
+        console.log(`Inserting entry into parent at POS:`, pos + 1);
+        parent.entry.children.splice(pos + 1, 0, entry);
     }
     // // the node already existed so we assume we do not need to add to the parent dom again. todo?
     log(`NER created:`, ner);
     return ner;
 }
 
-// function insertNodeAfter(node: Node, entry: ContentEntry
-// Goes through the dom childNodes of the given NER node and adds or removes child NERs as needed.
-function reconcileNodeChildren(ner: NodeEntryRef, nodeCache: NodeEntryCache) {
-    console.log(`reconcile children`, ner)
-    if (ner.node.nodeType != Node.TEXT_NODE) {
-        const nodeChildren = Array.from(ner.node.childNodes);
-
-        // now through child NER's and remove those with no-longer-existing nodes
-        ner.children.forEach((c, i) => {
-            const exists = nodeChildren.find(nc => nc == c.node);
-            if (!exists) {
-                console.log(`DANGLING NER, REMOVING...`, c, i);
-                ner.children.splice(i, 1);
-                console.log(`Child NER removed.`, ner);
-            }
-        });
-
-        // go through all dom nodes and add new NER's for non-existing:
-        nodeChildren.forEach(nc => {
-            // find ner in the children
-            const exists = ner.children.find(c => c.node == nc);
-            if (!exists) {
-                console.log(`NER NOT FOUND, creating for node:`, nc)
-                let childNer = createNER(nc, ner, nodeCache);
-                console.log(`created new child:`, childNer);
-            }
-        });
-
-    }
+function createNERAfterNode(node: Node, entry: ContentEntry, parent: NodeEntryRef, cache: NodeEntryCache): NodeEntryRef {
+    // create a new node after node... create ner...
+    // find position of the node in the parent:
+    const pos = Array.from(parent.node.childNodes).findIndex(n => n == node);
+    return createNERFromEntry(entry, parent, cache, pos + 1); // insert after
 }
+
+
 
 // Updates the given NER references to a new entry.
 function updateNER(ner, cache: NodeEntryCache) {
@@ -186,11 +178,12 @@ function updateNER(ner, cache: NodeEntryCache) {
 
     if (ner.node.nodeType == Node.TEXT_NODE) {
         // just update the text
+        console.log(`updating entry node...`)
         // updateEntry(ner.entry, ner.node); // update the entry by type...
         ner.entry.children = ner.node.textContent;
     } else {
         // reconcile the node children
-        console.log(`updating group node...`)
+        //console.log(`syncing group node children...`, ner)
         reconcileNodeChildren(ner, cache);
         //updateEntry(ner.entry, ner.node);
     }
@@ -205,6 +198,53 @@ function updateNER(ner, cache: NodeEntryCache) {
     log(`UPDATE node finished:`, ner);//, prevChildren);
     return ner;
 }
+
+
+// function insertNodeAfter(node: Node, entry: ContentEntry
+// Goes through the dom childNodes of the given NER node and adds or removes child NERs as needed.
+function reconcileNodeChildren(ner: NodeEntryRef, nodeCache: NodeEntryCache) {
+    console.log(`reconcile children`, ner)
+    if (ner.node.nodeType != Node.TEXT_NODE) {
+        const nodeChildren = Array.from(ner.node.childNodes);
+
+        // now through child NER's and remove those with no-longer-existing nodes
+        let noMoreChanges = false;
+        while (!noMoreChanges) {
+            noMoreChanges = true;
+            ner.children.forEach((c, i) => {
+                const exists = nodeChildren.find(nc => nc == c.node);
+                if (!exists) {
+                    console.log(`DANGLING NER, REMOVING...`, c, i);
+                    if (Array.isArray(ner.entry?.children)) ner.entry.children.splice(i, 1);
+                    ner.children.splice(i, 1);
+                    // need to remove from entries as well...
+                    noMoreChanges = false;
+                    console.log(`Child NER removed from parent:`, ner);
+                }
+            });
+        }
+
+        // go through all dom nodes and add new NER's for non-existing:
+        noMoreChanges = false;
+        while (!noMoreChanges) {
+            noMoreChanges = true;
+            // keep re-getting child nodes so indexes stay upates
+            let nodeChildren = Array.from(ner.node.childNodes);
+            nodeChildren.forEach(nc => {
+                // find ner in the children
+                const exists = ner.children.find(c => c.node == nc);
+                if (!exists) {
+                    console.log(`NER NOT FOUND, creating for node:`, nc)
+                    let childNer = createNERFromNode(nc, ner, nodeCache);
+                    noMoreChanges = false;
+                    //console.log(`created new child:`, childNer);
+                }
+            });
+        }
+
+    }
+}
+
 
 // deletes the node and associated entry from the tree
 function deleteNER(node, cache) {
@@ -228,7 +268,8 @@ export const nerUtils = {
     getParentPath,
     findNER,
     createNERFromEntry,
-    createNER,
+    createNERFromNode,
+    createNERAfterNode,
     updateNER,
     deleteNER,
     clearCache

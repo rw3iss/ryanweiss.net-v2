@@ -39,7 +39,7 @@ export class GroupNode extends ContentEntry {
             }
         }
         if (Array.isArray(entry.children)) {
-            console.log(`group children:`, entry.children)
+            //console.log(`group children:`, entry.children)
             entry.children.forEach(child => nodeCache.createNERFromEntry(child, ner));
         } else {
             throw "Expected array for GroupNode.children but received: " + typeof entry.children;
@@ -59,7 +59,6 @@ export class GroupNode extends ContentEntry {
             const childEntry = ContentEntries.convertNodeToEntry(childNode);
             if (childEntry) children.push(childEntry);
         });
-        log(`GroupEntry`, node, children);
         return new GroupEntry(attributes, children);
     }
 }
@@ -150,7 +149,6 @@ export class BreakNode extends ContentEntry {
                 ner.node.setAttribute(key, value);
             }
         }
-        console.log(`created BREAK`, ner)
         return ner;
     }
 
