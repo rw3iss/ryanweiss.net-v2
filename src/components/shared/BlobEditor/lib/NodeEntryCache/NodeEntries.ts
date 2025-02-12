@@ -5,9 +5,9 @@ import { NodeEntryCache } from "./NodeEntryCache.js";
 const { log, warn } = getLogger('NodeEntries', { color: 'yellow', enabled: true });
 
 export type NodeEntryRef = {
-    node: Node | undefined;
+    node: Node;
     entry: ContentEntry | undefined;
-    children: Array<NodeEntryRef> | undefined;
+    children: Array<NodeEntryRef>;
     parent: NodeEntryRef | undefined;
 }
 
@@ -26,7 +26,7 @@ export class GroupNode extends ContentEntry {
         this.children = children;
     }
 
-    static createNodeFromEntry(entry: GroupEntry, parent: NodeEntryRef, nodeCache: NodeEntryCache): NodeEntryRef {
+    static createNERFromEntry(entry: GroupEntry, parent: NodeEntryRef, nodeCache: NodeEntryCache): NodeEntryRef {
         const ner: NodeEntryRef = {
             entry,
             node: document.createElement('div'),
@@ -39,7 +39,8 @@ export class GroupNode extends ContentEntry {
             }
         }
         if (Array.isArray(entry.children)) {
-            entry.children.forEach(child => nodeCache.createNodeFromEntry(child, ner));
+            console.log(`group children:`, entry.children)
+            entry.children.forEach(child => nodeCache.createNERFromEntry(child, ner));
         } else {
             throw "Expected array for GroupNode.children but received: " + typeof entry.children;
         }
@@ -75,7 +76,7 @@ export class TextNode extends ContentEntry {
         this.attributes = attributes || {};
     }
 
-    static createNodeFromEntry(entry: TextEntry, parent: NodeEntryRef, nodeCache: NodeEntryCache): NodeEntryRef {
+    static createNERFromEntry(entry: TextEntry, parent: NodeEntryRef, nodeCache: NodeEntryCache): NodeEntryRef {
         //console.log(`TextNode.createNodeEntry(), entry:`, entry, 'parent:', parent)
         const ner = {
             entry,
@@ -137,7 +138,7 @@ export class BreakNode extends ContentEntry {
         this.attributes = attributes;
     }
 
-    static createNodeFromEntry(entry: BreakEntry, parent: NodeEntryRef, nodeCache: NodeEntryCache): NodeEntryRef {
+    static createNERFromEntry(entry: BreakEntry, parent: NodeEntryRef, nodeCache: NodeEntryCache): NodeEntryRef {
         const ner = {
             entry,
             node: document.createElement('br'),
@@ -149,6 +150,7 @@ export class BreakNode extends ContentEntry {
                 ner.node.setAttribute(key, value);
             }
         }
+        console.log(`created BREAK`, ner)
         return ner;
     }
 

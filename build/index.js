@@ -2290,10 +2290,12 @@ var init_ContentEntries = __esm({
     };
     ContentEntries = class {
       // make an html node from entry, append to parent, return NER for { node, entry, children } which is appended to current node in node cache nodeTree.
-      static convertToHTMLByType(entry, parent, nodeCache) {
+      static convertToHTMLByType(entry, parent) {
+        console.trace();
+        throw "DO NOT USE";
         switch (entry.type) {
           case "text":
-            TextEntry.convertToHTML(entry, parent, nodeCache);
+            TextEntry.convertToHTML(entry, parent);
             break;
           case "group":
             GroupEntry.convertToHTML(entry, parent);
@@ -2380,7 +2382,7 @@ var init_NodeEntries = __esm({
         this.attributes = attributes;
         this.children = children;
       }
-      static createNodeFromEntry(entry, parent, nodeCache) {
+      static createNERFromEntry(entry, parent, nodeCache) {
         const ner = {
           entry,
           node: document.createElement("div"),
@@ -2393,7 +2395,8 @@ var init_NodeEntries = __esm({
           }
         }
         if (Array.isArray(entry.children)) {
-          entry.children.forEach((child) => nodeCache.createNodeFromEntry(child, ner));
+          console.log(`group children:`, entry.children);
+          entry.children.forEach((child) => nodeCache.createNERFromEntry(child, ner));
         } else {
           throw "Expected array for GroupNode.children but received: " + typeof entry.children;
         }
@@ -2423,7 +2426,7 @@ var init_NodeEntries = __esm({
         this.children = children;
         this.attributes = attributes || {};
       }
-      static createNodeFromEntry(entry, parent, nodeCache) {
+      static createNERFromEntry(entry, parent, nodeCache) {
         const ner = {
           entry,
           node: document.createTextNode(entry.children),
@@ -2475,7 +2478,7 @@ var init_NodeEntries = __esm({
         super();
         this.attributes = attributes;
       }
-      static createNodeFromEntry(entry, parent, nodeCache) {
+      static createNERFromEntry(entry, parent, nodeCache) {
         const ner = {
           entry,
           node: document.createElement("br"),
@@ -2487,6 +2490,7 @@ var init_NodeEntries = __esm({
             ner.node.setAttribute(key, value);
           }
         }
+        console.log(`created BREAK`, ner);
         return ner;
       }
       static convertNodeToEntry(node) {
@@ -2514,13 +2518,12 @@ function getParentPath(node, stopNode, cache) {
   }
   return lookupPath;
 }
-function findNode(node, parent, cache) {
+function findNER(node, cache, parent) {
   if (!node) throw "No node given to findNode()";
   if (!cache.rootNER?.node) throw "No rootNER found on NodeEntryCache. Did you forget to call hydrateContent()?";
+  if (cache.lastNER?.node == node) return cache.lastNER;
+  if (cache.lastNER?.parent?.node == node) return cache.lastNER.parent;
   if (cache.rootNER.node == node) return cache.rootNER;
-  if (cache.lastNER?.node == node) {
-    return cache.lastNER;
-  }
   let lookupPath = nerUtils.getParentPath(node, parent?.node, cache);
   let currNER = parent || cache.rootNER;
   let currNode = lookupPath.pop();
@@ -2529,7 +2532,7 @@ function findNode(node, parent, cache) {
     const isTarget = currNode == node;
     const isParent = nextNode == node;
     if (isTarget) {
-      log6(`isTarget`, currNode, nextNode);
+      warn5(`IS TARGET?`, currNode, nextNode);
       return currNER;
     }
     for (const c3 of currNER.children) {
@@ -2546,63 +2549,103 @@ function findNode(node, parent, cache) {
   }
   return void 0;
 }
-function createNodeFromEntry(entry, parent, nodeCache) {
+function createNERFromEntry(entry, parent, nodeCache, insertPos) {
+  if (!entry) throw "No entry given to createNERFromEntry";
+  if (!parent) throw "No parent given to createNERFromEntry";
   let ner;
   switch (entry.type) {
     case "text":
-      ner = TextNode.createNodeFromEntry(entry, parent, this);
+      console.log(`creating text NER.`);
+      ner = TextNode.createNERFromEntry(entry, parent, this);
       break;
     case "group":
-      ner = GroupNode.createNodeFromEntry(entry, parent, this);
+      console.log(`creating group NER.`);
+      ner = GroupNode.createNERFromEntry(entry, parent, this);
       break;
     case "break":
-      ner = BreakNode.createNodeFromEntry(entry, parent, this);
+      console.log(`creating break NER.`);
+      ner = BreakNode.createNERFromEntry(entry, parent, this);
       break;
     default:
-      throw "Unsupported entry type: " + entry.type;
+      break;
   }
-  if (ner) {
-    if (parent.children) parent.children.push(ner);
-    if (parent.node) parent.node.appendChild(ner.node);
-  }
-  return ner;
-}
-function createNode(node, parent, cache) {
-  if (!parent.node) {
-    throw "Error: No node found on parent NER to insert to.";
-  }
-  const entry = ContentEntries.convertNodeToEntry(node);
-  const ner = { node, entry, children: [], parent };
-  const pos = Array.from(parent.node.childNodes).findIndex((n2, i4) => n2 === node);
-  log6(`INSERT at:`, pos, "parent:", parent, "node:", node, "new ner:", ner);
-  if (!parent.children) parent.children = [];
-  parent.children.splice(pos, 0, ner);
-  if (Array.isArray(entry.children)) {
-  }
-  if (parent == cache.rootNER) {
-    cache.entries?.push(ner.entry);
-  } else {
-    if (parent.entry && !parent.entry.children) parent.entry.children = [];
-    if (Array.isArray(parent.entry?.children)) {
-      parent.entry?.children?.splice(pos, 0, entry);
+  if (!ner) throw "Error: Could not create NER from entry type: " + entry.type;
+  if (insertPos) {
+    parent.children.splice(insertPos, 0, ner);
+    const childNodes = Array.from(parent.node.childNodes);
+    if (!childNodes.length) parent.node.appendChild(ner.node);
+    else {
+      if (insertPos == 0) parent.node.insertBefore(ner.node, parent.node.firstChild);
+      else {
+        const prevNode = childNodes[insertPos];
+        if (!prevNode) throw "No prevNode found at pos: " + insertPos;
+        prevNode.after(ner.node);
+      }
     }
+  } else {
+    parent.children.push(ner);
+    parent.node.appendChild(ner.node);
   }
-  {
-    return ner;
-  }
-}
-function updateNode(ner, cache) {
-  const entry = ContentEntries.convertNodeToEntry(ner.node);
-  if (!ner.entry) ner.entry = entry;
-  else {
-    ner.entry.type = entry.type;
-    ner.entry.children = entry.children;
-    ner.entry.attributes = entry.attributes;
-  }
-  log6(`UPDATE node:`, ner);
+  log6(`createNERFromEntry result:`, entry, ner);
   return ner;
 }
-function deleteNode(node, cache) {
+function createNERFromNodeEntry(node, entry, parent) {
+  const ner = NER(node, entry, [], parent);
+  if (Array.isArray(entry.children)) {
+    entry.children.forEach((childEntry, i4) => {
+      const childNode = node.childNodes[i4];
+      console.log(`dom child match?`, i4, childEntry, childNode);
+      createNERFromNodeEntry(childNode, childEntry, ner);
+    });
+  }
+  parent.children.push(ner);
+  return ner;
+}
+function createNER(node, parent, cache) {
+  if (!parent?.node) throw "Error: No node found on parent NER to insert to.";
+  const entry = ContentEntries.convertNodeToEntry(node);
+  const ner = createNERFromNodeEntry(node, entry, parent);
+  if (Array.isArray(parent.entry?.children)) {
+    const pos = Array.from(parent.node.childNodes).findIndex((c3) => c3 == node);
+    console.log(`Inserting entry into parent at POS:`, pos);
+    parent.entry.children.splice(pos, 0, entry);
+  }
+  log6(`NER created:`, ner);
+  return ner;
+}
+function reconcileNodeChildren(ner, nodeCache) {
+  console.log(`reconcile children`, ner);
+  if (ner.node.nodeType != Node.TEXT_NODE) {
+    const nodeChildren = Array.from(ner.node.childNodes);
+    ner.children.forEach((c3, i4) => {
+      const exists = nodeChildren.find((nc) => nc == c3.node);
+      if (!exists) {
+        console.log(`DANGLING NER, REMOVING...`, c3, i4);
+        ner.children.splice(i4, 1);
+        console.log(`Child NER removed.`, ner);
+      }
+    });
+    nodeChildren.forEach((nc) => {
+      const exists = ner.children.find((c3) => c3.node == nc);
+      if (!exists) {
+        console.log(`NER NOT FOUND, creating for node:`, nc);
+        let childNer = createNER(nc, ner, nodeCache);
+        console.log(`created new child:`, childNer);
+      }
+    });
+  }
+}
+function updateNER(ner, cache) {
+  if (ner.node.nodeType == Node.TEXT_NODE) {
+    ner.entry.children = ner.node.textContent;
+  } else {
+    console.log(`updating group node...`);
+    reconcileNodeChildren(ner, cache);
+  }
+  log6(`UPDATE node finished:`, ner);
+  return ner;
+}
+function deleteNER(node, cache) {
   log6(`deleteNode:`, node);
 }
 function clearCache(cache) {
@@ -2632,11 +2675,11 @@ var init_nerUtils = __esm({
     ({ log: log6, warn: warn5 } = getLogger("nerUtils", { color: "yellow", enabled: true }));
     nerUtils = {
       getParentPath,
-      findNode,
-      createNodeFromEntry,
-      createNode,
-      updateNode,
-      deleteNode,
+      findNER,
+      createNERFromEntry,
+      createNER,
+      updateNER,
+      deleteNER,
       clearCache
     };
   }
@@ -2651,7 +2694,6 @@ var init_NodeEntryCache = __esm({
     init_ContentEntries();
     init_nerUtils();
     init_logging();
-    init_NodeEntries();
     ({ log: log7, error: error3 } = getLogger("NodeEntryCache", { color: "yellow", enabled: true }));
     NodeEntryCache = class {
       entries;
@@ -2670,40 +2712,40 @@ var init_NodeEntryCache = __esm({
           children: []
         };
         this.rootNER.entry = ContentEntries.convertNodeToEntry(node);
-        this.entries.forEach((e4) => this.createNodeFromEntry(e4, this.rootNER));
+        this.rootNER.entry.children = entries;
+        this.rootNER.entry.children.forEach((e4) => this.createNERFromEntry(e4, this.rootNER));
         log7(`hydrated.`, entries, this.rootNER);
       }
       // From a given entry... creates the dom reference for it, and adds to the parent if given, or root.
       // If the entry has children... the child dom elements will also be created and added recursively.
-      createNodeFromEntry(entry, parent) {
+      createNERFromEntry(entry, parent) {
         if (!this.rootNER) throw "rootNER has not been created. Create a root node or call hydrateContent first.";
         if (!parent) parent = this.rootNER;
-        let ner = NER(void 0, entry, [], parent);
-        if (entry) ner = nerUtils.createNodeFromEntry(entry, parent, this);
+        const ner = nerUtils.createNERFromEntry(entry, parent, this);
         if (!ner?.node) throw "Node->entry node could not be created from type: " + entry.type;
         return ner;
       }
       // Locate an NER in the tree by a dom node reference.
-      findNode(node, parent) {
-        return nerUtils.findNode(node, parent, this);
+      findNER(node, parent) {
+        return nerUtils.findNER(node, this, parent);
+        ;
       }
       // Locates and updates the NER for the node, of it exists, or inserts a new one.
       updateOrInsert(node) {
-        console.log(`updateOrInsert`, node);
-        if (!node.parentNode) throw "parentNode does not exist.";
-        const isRoot = node == this.rootNER?.node;
-        let parent = isRoot ? this.rootNER : this.findNode(node.parentNode);
-        let ner = isRoot ? this.rootNER : this.findNode(node, parent);
-        log7(`found node?`, ner, ". parent:", parent, ". target is root?", isRoot);
-        if (ner) nerUtils.updateNode(ner, this);
-        else if (parent) ner = nerUtils.createNode(node, parent, this);
-        else throw "Parent not found for updateOrInsert.";
-        this.lastNER = ner;
-        return ner;
+        if (!node.parentNode) throw "node.parentNode does not exist. Invalid node?";
+        const isRootNode = node == this.rootNER?.node;
+        let parent = isRootNode ? this.rootNER : this.findNER(node.parentNode);
+        let ner = isRootNode ? this.rootNER : this.findNER(node, parent);
+        if (ner) log7(`found node`, isRootNode ? "[ROOT]" : "", node == this.lastNER?.node ? "[LAST]" : "", ner);
+        else log7(`node not found. creating...`, node, "parentNER:", parent);
+        if (ner) nerUtils.updateNER(ner, this);
+        else if (parent) ner = nerUtils.createNER(node, parent, this);
+        else throw "Parent NER not found for updateOrInsert.";
+        return this.lastNER = ner;
       }
       // Finds the node in the tree and removes the entry from it, and the dom node as well.
-      deleteNode(node) {
-        return nerUtils.deleteNode(node, this);
+      deleteNER(node) {
+        return nerUtils.deleteNER(node, this);
       }
       // Called when a change is detected on the node. Finds the given node in the tree and updates it's entry.
       // If the node does not exist the NER is inserted in its relative dom position.
@@ -2717,6 +2759,9 @@ var init_NodeEntryCache = __esm({
       clear = () => {
         nerUtils.clearCache(this);
       };
+      getEntries = () => {
+        return this.entries;
+      };
     };
   }
 });
@@ -2728,6 +2773,7 @@ var init_WEditor = __esm({
     "use strict";
     init_preact_module();
     init_NodeEntryCache();
+    init_nerUtils();
     CHANGE_TIMEOUT_MS = 500;
     AUTOSAVE_TIMEOUT_MS = 3e3;
     CONTENT_ROOT_CLASS = "w-content";
@@ -2787,20 +2833,50 @@ var init_WEditor = __esm({
       handleEnter = (e4) => {
         const node = this.getCurrentEditingNode();
         console.log(`Enter`, node, e4);
+        if (e4.shiftKey) {
+          console.log(`INSERT BREAK NODE AFTER:`, node);
+          const parent = nerUtils.findNER(node?.parentNode, this.nodeCache);
+          if (!parent) throw "No parent NER found for node";
+          const pos = Array.from(parent.node.childNodes).findIndex((c3) => c3 == node);
+          if (pos == -1) throw "Node not found in parent children?";
+          e4.preventDefault();
+        }
       };
       handleBackspace = (e4) => {
         const node = this.getCurrentEditingNode();
+        const childNodes = Array.from(node.childNodes);
         if (node) {
-          console.log(`backspace on edit node:`, node, node.childNodes, node.innerHTML);
-          if (node.innerHTML == "<br>") {
-            this.nodeCache.deleteNode(node);
+          if (node.nodeType != Node.TEXT_NODE) {
+            console.log(`backspace on edit node:`, node, childNodes, node.innerHTML);
+            const ner = nerUtils.findNER(node, this.nodeCache);
+            if (ner) {
+              setTimeout(() => {
+                console.log(`nodes after timeout:`, node, childNodes, node.innerHTML);
+                ner.children.forEach((c3, i4) => {
+                  const exists = Array.from(node.childNodes).find((cn) => c3.node == cn);
+                  if (!exists) {
+                    const childEntry = c3.entry;
+                    if (Array.isArray(ner.entry?.children)) {
+                      const di = ner.entry.children.findIndex((ec) => ec == childEntry);
+                      console.log(`DELETING child entry:`, di, childEntry);
+                      if (di > -1) ner.entry.children.splice(di, 1);
+                    }
+                    console.log(`DELETING NER:`, i4, c3);
+                    ner.children.splice(i4, 1);
+                  }
+                  {
+                    console.log(`node still exists.`, c3, i4);
+                  }
+                });
+              }, 0);
+            } else {
+              console.error(`NER not found on backspace??`);
+            }
             if (node.classList.contains(CONTENT_ROOT_CLASS)) {
             }
-            return;
+            this.nodeCache.deleteNER(node);
           } else {
-            if (node.nodeType != Node.TEXT_NODE) {
-              console.log(`DELETE by node type...`, node, node.nodeType, node.classList, "parent:", node.parentNode);
-            }
+            console.log(`backspace on text node.`);
           }
         }
       };
@@ -2831,7 +2907,7 @@ var init_WEditor = __esm({
         if (!this.contentEditable) throw "Cannot apply changes: ContentEditable is null";
         if (this.autoSaveTimeoutId) this.autoSaveTimeoutId = clearTimeout(this.autoSaveTimeoutId);
         if (this.applyChangesTimeoutId) this.applyChangesTimeoutId = clearTimeout(this.applyChangesTimeoutId);
-        const content = { entries: this.nodeCache.entries };
+        const content = { entries: this.nodeCache.getEntries() };
         this.onChangeHandler(content);
         return content;
       }

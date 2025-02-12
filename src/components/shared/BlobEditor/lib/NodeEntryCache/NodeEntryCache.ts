@@ -8,7 +8,7 @@ const { log, error } = getLogger('NodeEntryCache', { color: 'yellow', enabled: t
 export class NodeEntryCache {
     public entries: Array<ContentEntry> | undefined;
     public rootNER: NodeEntryRef | undefined;
-    private lastNER: NodeEntryRef | undefined = undefined; // reference to last-edited node for faster/immdiate lookups
+    public lastNER: NodeEntryRef | undefined = undefined; // reference to last-edited node for faster/immdiate lookups
 
     // Creates elements from the given list of entries, and insert them into the node tree.
     public hydrateContent(entries: Array<ContentEntry>, node: Node) {
@@ -22,56 +22,53 @@ export class NodeEntryCache {
             children: []
         };
 
-        this.rootNER.entry = ContentEntries.convertNodeToEntry(node); // creates group entry for root
-        this.entries.forEach(e => this.createNodeFromEntry(e, this.rootNER)); // convert entries to NER with new dom nodes
+        // create a root entry from the container (a group), and re-assign the entry children so we can pull for the entries dataset later.
+        this.rootNER.entry = ContentEntries.convertNodeToEntry(node);
+        this.rootNER.entry.children = entries;
+        this.rootNER.entry.children.forEach(e => this.createNERFromEntry(e, this.rootNER));
 
-        //this.createNodeEntry(this.rootNER.entry, null)
         log(`hydrated.`, entries, this.rootNER);
     }
 
     // From a given entry... creates the dom reference for it, and adds to the parent if given, or root.
     // If the entry has children... the child dom elements will also be created and added recursively.
-    public createNodeFromEntry(entry: ContentEntry, parent?: NodeEntryRef) {
+    public createNERFromEntry(entry: ContentEntry, parent?: NodeEntryRef) {
         if (!this.rootNER) throw "rootNER has not been created. Create a root node or call hydrateContent first.";
         if (!parent) parent = this.rootNER; // default to rootNER
-
         // create the base node to start with
-        let ner: NodeEntryRef = NER(undefined, entry, [], parent);
-        if (entry) ner = nerUtils.createNodeFromEntry(entry, parent, this);
-
+        const ner = nerUtils.createNERFromEntry(entry, parent, this);
         if (!ner?.node) throw "Node->entry node could not be created from type: " + entry.type;
         return ner;
     }
 
     // Locate an NER in the tree by a dom node reference.
-    public findNode(node: Node, parent?): NodeEntryRef | undefined {
-        return nerUtils.findNode(node, parent, this);
+    public findNER(node: Node, parent?): NodeEntryRef | undefined {
+        return nerUtils.findNER(node, this, parent);;
     }
 
     // Locates and updates the NER for the node, of it exists, or inserts a new one.
     public updateOrInsert(node: Node): NodeEntryRef {
-        console.log(`updateOrInsert`, node);
-        if (!node.parentNode) throw "parentNode does not exist."
+        if (!node.parentNode) throw "node.parentNode does not exist. Invalid node?"
 
-        // todo: the node contents should be replaced with new entry...
+        // if the update is on the root, the update is a removal of a previous element.
+        const isRootNode = node == this.rootNER?.node;
+        let parent = isRootNode ? this.rootNER : this.findNER(node.parentNode as Node);
+        let ner = isRootNode ? this.rootNER : this.findNER(node, parent);
 
-        // if the node is the root... it should... always insert?
-        const isRoot = node == this.rootNER?.node;
+        if (ner) log(`found node`, isRootNode ? '[ROOT]' : '', node == this.lastNER?.node ? '[LAST]' : '', ner);
+        else log(`node not found. creating...`, node, 'parentNER:', parent);
 
-        let parent = isRoot ? this.rootNER : this.findNode(node.parentNode as Node);
-        let ner = isRoot ? this.rootNER : this.findNode(node, parent);
-        log(`found node?`, ner, '. parent:', parent, '. target is root?', isRoot);
-        if (ner) nerUtils.updateNode(ner, this);
-        else if (parent) ner = nerUtils.createNode(node, parent, this);
-        else throw "Parent not found for updateOrInsert."
+        if (ner) nerUtils.updateNER(ner, this);
+        else if (parent) ner = nerUtils.createNER(node, parent, this);
 
-        this.lastNER = ner;
-        return ner;
+        else throw "Parent NER not found for updateOrInsert."
+
+        return this.lastNER = ner;
     }
 
     // Finds the node in the tree and removes the entry from it, and the dom node as well.
-    public deleteNode(node) {
-        return nerUtils.deleteNode(node, this);
+    public deleteNER(node) {
+        return nerUtils.deleteNER(node, this);
     }
 
     // Called when a change is detected on the node. Finds the given node in the tree and updates it's entry.
@@ -90,6 +87,10 @@ export class NodeEntryCache {
 
     public clear = () => {
         nerUtils.clearCache(this);
+    }
+
+    public getEntries = () => {
+        return this.entries;
     }
 
 }

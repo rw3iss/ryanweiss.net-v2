@@ -1,7 +1,7 @@
 import { NodeEntryCache } from 'components/shared/BlobEditor/lib/NodeEntryCache/NodeEntryCache';
 import { Blob, BlobContent } from 'types/Blob';
 import { IPlugin } from '../plugins/IPlugin';
-import { ContentEntries } from './NodeEntryCache/ContentEntries.js';
+import { BreakEntry, ContentEntries } from './NodeEntryCache/ContentEntries.js';
 import { nerUtils } from './NodeEntryCache/nerUtils.js';
 
 const CHANGE_TIMEOUT_MS = 500; // time delay to save after last key/input
@@ -90,27 +90,67 @@ export class WEditor {
     private handleEnter = (e) => {
         const node = this.getCurrentEditingNode();
         console.log(`Enter`, node, e);
+        if (e.shiftKey) {
+            console.log(`INSERT BREAK NODE AFTER:`, node);
+
+            // find the parent to add a new break to
+            const parent = nerUtils.findNER(node?.parentNode as Node, this.nodeCache);
+            if (!parent) throw "No parent NER found for node";
+
+            // find this current node's position to insert the break after
+            const pos = Array.from(parent.node.childNodes).findIndex(c => c == node);
+            if (pos == -1) throw "Node not found in parent children?";
+
+            //nerUtils.createNERFromEntry(new BreakEntry(), parent, this.nodeCache, pos + 1);
+
+            //insertNodeAfter(node, new BreakEntry, this.nodeCache);
+            //insertNewEntry(new BreakEntry());
+            e.preventDefault();
+        }
     }
 
     private handleBackspace = (e) => {
-        const node = this.getCurrentEditingNode();
+        const node = this.getCurrentEditingNode() as HTMLElement;
+        const childNodes = Array.from(node.childNodes);
         // if the current editing node has no children or content, delete it from the tree
         if (node) {
             //
-            console.log(`backspace on edit node:`, node, node.childNodes, node.innerHTML);
-            if (node.innerHTML == '<br>') {
-                //console.log(`DELETE NODE`, node);
-                this.nodeCache.deleteNode(node);
-                // if it's the root node don't delete it...
+            // if it's not a text node, it means we broke into the previous node and removed the last one.
+            if (node.nodeType != Node.TEXT_NODE) {
+                console.log(`backspace on edit node:`, node, childNodes, node.innerHTML);
+                // go through all node's children and remove any that no longer exist
+                const ner = nerUtils.findNER(node, this.nodeCache);
+                if (ner) {
+                    setTimeout(() => {
+                        console.log(`nodes after timeout:`, node, childNodes, node.innerHTML)
+                        ner.children.forEach((c, i) => {
+                            const exists = Array.from(node.childNodes).find(cn => c.node == cn);
+                            if (!exists) {
+                                // remove from ner.entry.children and ner.children.
+                                const childEntry = c.entry;
+                                if (Array.isArray(ner.entry?.children)) {
+                                    const di = ner.entry.children.findIndex(ec => ec == childEntry);
+                                    console.log(`DELETING child entry:`, di, childEntry);
+                                    if (di > -1) ner.entry.children.splice(di, 1);
+                                }
+                                console.log(`DELETING NER:`, i, c);
+                                ner.children.splice(i, 1);
+                            } {
+                                console.log(`node still exists.`, c, i);
+                            }
+                        });
+                    }, 0);
+                } else {
+                    console.error(`NER not found on backspace??`)
+                }
+
                 if (node.classList.contains(CONTENT_ROOT_CLASS)) {
                     //node.innerHTML = '';
                 }
-                return;// e.preventDefault();
+
+                this.nodeCache.deleteNER(node);
             } else {
-                if (node.nodeType != Node.TEXT_NODE) {
-                    console.log(`DELETE by node type...`, node, node.nodeType, node.classList, 'parent:', node.parentNode)
-                    //return e.preventDefault();
-                }
+                console.log(`backspace on text node.`)
             }
         }
     }
@@ -156,7 +196,7 @@ export class WEditor {
         if (this.autoSaveTimeoutId) this.autoSaveTimeoutId = clearTimeout(this.autoSaveTimeoutId);
         if (this.applyChangesTimeoutId) this.applyChangesTimeoutId = clearTimeout(this.applyChangesTimeoutId);
 
-        const content: BlobContent = { entries: this.nodeCache.entries };
+        const content: BlobContent = { entries: this.nodeCache.getEntries() };
         this.onChangeHandler(content);
         return content;
     }

@@ -418,10 +418,12 @@ export class CustomEntry extends ContentEntry {
 export class ContentEntries {
 
     // make an html node from entry, append to parent, return NER for { node, entry, children } which is appended to current node in node cache nodeTree.
-    static convertToHTMLByType(entry: ContentEntry, parent: HTMLElement, nodeCache: NodeEntryCache) {
+    static convertToHTMLByType(entry: ContentEntry, parent: HTMLElement) {
+        console.trace();
+        throw "DO NOT USE";
         switch (entry.type) {
             case 'text':
-                TextEntry.convertToHTML(entry as TextEntry, parent, nodeCache);
+                TextEntry.convertToHTML(entry as TextEntry, parent);
                 break;
             case 'group':
                 GroupEntry.convertToHTML(entry as GroupEntry, parent);
