@@ -5,7 +5,7 @@
     bottom: 10px;
     right: 10px;
     width: 50vw;
-    height: 70vh;
+    height: calc(100vh - 20px);
     min-height: 150px;
     background: #222;
     border-radius: 8px;
@@ -175,24 +175,24 @@
     flex: 1 0 100%;
     display: flex;
     flex-direction: column;
-    margin: 5px 0;
+    margin-bottom: 5px;
 
-    .label {
-        font-size: 14px;
+    .debug-state-label {
+        font-size: 12px;
         font-weight: bold;
-        padding: 5px;
-        color: black;
+        padding: 5px 0px;
     }
 
     > .jsontree_tree {
     }
 
     .jsontree_tree {
-        font-size: 12px;
-        padding: 4px 0;
+        font-size: 10px;
+        padding: 4px;
         margin-left: 0;
         line-height: 1em;
-        background: white;
+        background: rgb(231, 231, 228);
+        border-radius: 5px;
         color: #555;
 
         .jsontree_child-nodes {
