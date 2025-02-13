@@ -73,6 +73,7 @@ export class WEditor {
 
         // create a root node:
         this.nodeCache.hydrateContent(this.blob.content.entries, this.contentEditable);
+        this.debugState();
 
         //this.convertToHTML(this.blob.content, this.contentEditable);
         // todo: should hydrate node cache
@@ -222,7 +223,11 @@ export class WEditor {
 
         // Apply the changes immediately to the entry, for throttled commit later
         this.applyChanges(editNode);
-        debugState('entryTree', this.nodeCache.rootNER.entry);
+        this.debugState();
+    }
+
+    private debugState() {
+        debugState('entryTree', this.nodeCache.rootNER?.entry);
         debugState('nerTree', this.nodeCache.rootNER);
     }
 
@@ -266,8 +271,7 @@ export class WEditor {
             this.contentEditable.innerHTML = '';
             this.nodeCache.clear();
             if (commit) this.commitChanges();
-            debugState('entryTree', this.nodeCache.rootNER.entry);
-            debugState('nerTree', this.nodeCache.rootNER);
+            this.debugState();
         }
     }
 

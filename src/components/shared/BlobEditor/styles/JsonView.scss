@@ -1,0 +1,56 @@
+.json-node {
+    //border-left: 2px solid #ccc;
+    position: relative;
+    margin-left: 20px;
+    padding-left: 0px;
+    font-size: 12px;
+    line-height: 1em;
+
+    .json-properties {
+        display: flex;
+        flex-direction: column;
+        transition: height 0.2s ease-in-out;
+    }
+
+    .json-property {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        padding: 3px 0;
+
+        &.object {
+            flex-direction: column;
+        }
+    }
+
+    .json-key {
+        font-weight: bold;
+        margin-right: 5px;
+        color: #878787;
+    }
+
+    .json-value {
+        color: #79b0eb;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .json-toggle {
+        margin-right: 5px;
+        border: none;
+        background: none;
+        cursor: pointer;
+        color: #555;
+        position: absolute;
+        top: 2px;
+        left: -25px;
+    }
+
+    .json-toggle:hover {
+        color: #dedede;
+    }
+
+    .collapsed .json-properties {
+        display: none;
+    }
+}

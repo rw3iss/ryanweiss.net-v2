@@ -55,8 +55,8 @@ export class NodeEntryCache {
         let parent = isRootNode ? this.rootNER : this.findNER(node.parentNode as Node);
         let ner = isRootNode ? this.rootNER : this.findNER(node, parent);
 
-        if (ner) log(`found node`, isRootNode ? '[ROOT]' : '', node == this.lastNER?.node ? '[LAST]' : '', ner);
-        else log(`node not found. creating...`, node, 'parentNER:', parent);
+        //if (ner) log(`found node`, isRootNode ? '[ROOT]' : '', node == this.lastNER?.node ? '[LAST]' : '', ner);
+        //else log(`node not found. creating...`, node, 'parentNER:', parent);
 
         if (ner) nerUtils.updateNER(ner, this);
         else if (parent) ner = nerUtils.createNERFromNode(node, parent, this);

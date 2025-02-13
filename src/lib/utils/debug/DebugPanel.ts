@@ -1,6 +1,8 @@
 import EventBus from "eventbusjs";
 import { getLogger, LogModule } from "lib/utils/logging.js";
 import safeStringify from 'safe-stringify';
+import { getWindowSize, makeResizable } from "components/shared/BlobEditor/lib/utils/domUtils.js";
+import { JsonView } from "components/shared/BlobEditor/lib/JsonView.js";
 
 const { log, warn } = getLogger('DebugPanel', { color: 'red', enabled: true });
 
@@ -30,10 +32,7 @@ export class DebugPanelLogModule implements LogModule {
     }
 
     public onLog(log: LogEvent) {
-        // tell the debug panel
-        console.log(`onLog:`, log)
         this.debugPanel.addLog(log.namespace, log.args);
-        //console.log(`onLog`, log);
     }
 }
 
@@ -71,6 +70,8 @@ export class DebugPanel {
 
         this.addTab(DEBUG_STATE_NAMESPACE);
         this.addTab("global");
+
+        this.setupResizable();
         this.setupEventListeners();
     }
 
@@ -92,6 +93,19 @@ export class DebugPanel {
         return contentContainer;
     }
 
+    private setupResizable() {
+        const { width, height } = getWindowSize();
+
+        makeResizable(this.container, {
+            handles: ['left', 'top', 'top-left'],
+            maxWidth: width - 20,
+            maxHeight: height - 20,
+            minWidth: 200,
+            minHeight: 150
+            //onResize: (width, height) => console.log(`Resized: ${width}x${height}`)
+        });
+    }
+
     private setupEventListeners(): void {
         EventBus.addEventListener("log", (event: any) => {
             const { namespace, message } = event.target;
@@ -107,12 +121,11 @@ export class DebugPanel {
     // display an object for debugging.
     private handleDebugState(id: string, state: any) {
 
+        const safeState = safeStringify(state);
+        state = JSON.parse(safeState);
+
         const updateDebugState = (id, state) => {
-            console.log(`update debug`, id, state)
-            const safeState = safeStringify(state);
-            state = JSON.parse(safeState);
-            this.debugStates[id] = state; // todo: apply patched properties?
-            // redraw this debug state
+            //console.log(`update debug`, id, state);
             const content = this.contentContainer.querySelector(
                 `[data-namespace=${DEBUG_STATE_NAMESPACE}]`
             );
@@ -123,23 +136,34 @@ export class DebugPanel {
             if (!jsonWrapper) return console.error(`No json wrapper found for existing state ${id}`);
             //debugElement.innerText = printJson(state);
             jsonWrapper.innerHTML = '';
-            const tree = jsonTree.create(state, jsonWrapper);
-            tree.expand();
-            log(`updated debug state`, debugWrapper);
+            this.debugStates[id].state = state;
+            this.debugStates[id].jsonView.updateJson(state);
+            // const tree = jsonTree.create(state, jsonWrapper);
+            // tree.expand();
+            //log(`updated debug state`, debugWrapper);
         }
 
         const addDebugState = (id, state) => {
-            console.log(`add debug`, id, state)
-            const safeState = safeStringify(state);
-            state = JSON.parse(safeState);
-            this.debugStates[id] = state;
+            //console.log(`add debug`, id, state)
             const content = this.contentContainer.querySelector(
                 `[data-namespace=${DEBUG_STATE_NAMESPACE}]`
             );
             if (!content) return console.error("No content for debug namespace.");
+
+            // create debug state
             const debugWrapper = document.createElement('div');
             debugWrapper.classList.add('debug-state');
             debugWrapper.setAttribute('id', `debug-state-${id}`);
+
+            const toggleButton = document.createElement("button");
+            toggleButton.classList.add("json-toggle");
+            toggleButton.textContent = '[-]';
+            toggleButton.onclick = () => {
+                const isCollapsed = debugWrapper.classList.contains("collapsed");
+                debugWrapper.classList.toggle("collapsed", !isCollapsed);
+                toggleButton.textContent = isCollapsed ? "[-]" : "[+]";
+            };
+            debugWrapper.appendChild(toggleButton);
 
             const label = document.createElement("div");
             label.classList.add('debug-state-label');
@@ -149,14 +173,26 @@ export class DebugPanel {
             const jsonWrapper = document.createElement('div');
             jsonWrapper.classList.add('json-wrapper');
             debugWrapper.appendChild(jsonWrapper);
-            const tree = jsonTree.create(state, jsonWrapper);
-            tree.expand();
 
+            const jsonView = new JsonView(state, jsonWrapper as HTMLElement,
+                {
+                    expandObjs: [
+                        /children/,
+                        /children\/(.*)/,
+                        /entry/
+                    ]
+                }
+            );
+            this.debugStates[id] = { state, jsonView };
+
+            // const tree = jsonTree.create(state, jsonWrapper);
+            // tree.expand();
             content.appendChild(debugWrapper);
-            log(`added debug state`, debugWrapper);
+
+            //log(`added debug state`, debugWrapper);
         }
 
-        log(`DEBUG STATE:`, id, state);
+        //log(`DEBUG STATE:`, id, state);
         if (this.debugStates[id]) updateDebugState(id, state);
         else addDebugState(id, state);
     }
@@ -227,7 +263,7 @@ export class DebugPanel {
         content.appendChild(clearButton);
     }
 
-    private addLog(namespace: string, message: Array<any> | object | string): void {
+    public addLog(namespace: string, message: Array<any> | object | string): void {
         if (!this.tabEntries[namespace]) {
             this.addTab(namespace);
         }
@@ -288,7 +324,7 @@ export class DebugPanel {
     }
 
     public show(): void {
-        console.log(`SHOW`)
+        //console.log(`SHOW`)
         this.container.classList.add("visible");
     }
 

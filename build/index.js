@@ -612,6 +612,176 @@ var init_safe_stringify = __esm({
   }
 });
 
+// src/components/shared/BlobEditor/lib/utils/domUtils.ts
+function makeResizable(container, options = {}) {
+  container.querySelectorAll(".resize-handle").forEach((handle) => handle.remove());
+  const {
+    handles = ["right", "bottom", "bottom-right"],
+    maxWidth = Infinity,
+    maxHeight = Infinity,
+    minWidth = 100,
+    minHeight = 100,
+    onResize = () => {
+    }
+  } = options;
+  let resizing = false;
+  let resizeDirection = null;
+  let startX = 0, startY = 0;
+  let startWidth = 0, startHeight = 0;
+  function createHandle(position) {
+    const handle = document.createElement("div");
+    handle.classList.add("resize-handle", `resize-${position}`);
+    handle.addEventListener("mousedown", (e4) => startResizing(e4, position));
+    container.appendChild(handle);
+  }
+  function startResizing(event, direction) {
+    resizing = true;
+    resizeDirection = direction;
+    startX = event.clientX;
+    startY = event.clientY;
+    startWidth = container.offsetWidth;
+    startHeight = container.offsetHeight;
+    event.preventDefault();
+    document.addEventListener("mousemove", resize);
+    document.addEventListener("mouseup", stopResizing);
+  }
+  function resize(event) {
+    if (!resizing || !resizeDirection) return;
+    let newWidth = startWidth;
+    let newHeight = startHeight;
+    const deltaX = event.clientX - startX;
+    const deltaY = event.clientY - startY;
+    if (resizeDirection.includes("right")) {
+      newWidth = Math.min(Math.max(startWidth + deltaX, minWidth), maxWidth);
+    }
+    if (resizeDirection.includes("left")) {
+      newWidth = Math.min(Math.max(startWidth - deltaX, minWidth), maxWidth);
+    }
+    if (resizeDirection.includes("bottom")) {
+      newHeight = Math.min(Math.max(startHeight + deltaY, minHeight), maxHeight);
+    }
+    if (resizeDirection.includes("top")) {
+      newHeight = Math.min(Math.max(startHeight - deltaY, minHeight), maxHeight);
+    }
+    container.style.width = `${newWidth}px`;
+    container.style.height = `${newHeight}px`;
+    onResize(newWidth, newHeight);
+  }
+  function stopResizing() {
+    resizing = false;
+    resizeDirection = null;
+    document.removeEventListener("mousemove", resize);
+    document.removeEventListener("mouseup", stopResizing);
+  }
+  handles.forEach((handle) => createHandle(handle));
+}
+function getWindowSize() {
+  const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+  const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+  return { width, height };
+}
+var init_domUtils = __esm({
+  "src/components/shared/BlobEditor/lib/utils/domUtils.ts"() {
+    "use strict";
+    init_preact_module();
+  }
+});
+
+// src/components/shared/BlobEditor/lib/JsonView.ts
+var DEFAULT_OPTIONS, JsonView;
+var init_JsonView = __esm({
+  "src/components/shared/BlobEditor/lib/JsonView.ts"() {
+    "use strict";
+    init_preact_module();
+    DEFAULT_OPTIONS = () => ({
+      expandAll: false,
+      expandObjects: []
+    });
+    JsonView = class {
+      json;
+      parentContainer;
+      options;
+      constructor(json, parentContainer, options) {
+        this.json = json;
+        this.parentContainer = parentContainer;
+        this.options = options || DEFAULT_OPTIONS();
+        this.render();
+      }
+      render() {
+        this.parentContainer.innerHTML = "";
+        const rootNode = this.drawJsonNode(this.json);
+        this.parentContainer.appendChild(rootNode);
+      }
+      drawJsonNode(jsonObj, currPath = "") {
+        const nodeContainer = document.createElement("div");
+        nodeContainer.classList.add("json-node");
+        const propertiesContainer = document.createElement("div");
+        propertiesContainer.classList.add("json-properties");
+        for (const key in jsonObj) {
+          if (Object.prototype.hasOwnProperty.call(jsonObj, key)) {
+            const keyPath = `${currPath}${key}`;
+            const propertyRow = document.createElement("div");
+            propertyRow.classList.add("json-property");
+            const label = document.createElement("span");
+            label.classList.add("json-key");
+            label.textContent = key + ": ";
+            const valueContainer = document.createElement("div");
+            valueContainer.classList.add("json-value");
+            const value = jsonObj[key];
+            const isObject = typeof value === "object" && value !== null;
+            const isArray = Array.isArray(value);
+            if (isObject) {
+              if (isArray) label.textContent = `${key} (${value.length})`;
+              else label.textContent = key;
+              const hasChildren = isArray && value.length > 0 ? true : Object.keys(value).length > 0;
+              propertyRow.classList.add("object");
+              const toggleButton = document.createElement("button");
+              toggleButton.classList.add("json-toggle");
+              const childNode = this.drawJsonNode(value, keyPath + "/");
+              if (this.options.expandAll) {
+                toggleButton.textContent = "[-]";
+              } else {
+                let expand = false;
+                if (isArray && hasChildren) {
+                  expand = true;
+                } else {
+                  this.options.expandObjs?.forEach((e4) => {
+                    if (new RegExp(e4).test(keyPath)) expand = true;
+                  });
+                }
+                if (expand) {
+                  toggleButton.textContent = "[-]";
+                } else {
+                  toggleButton.textContent = "[+]";
+                  childNode.classList.add("collapsed");
+                }
+              }
+              toggleButton.onclick = () => {
+                const isCollapsed = childNode.classList.contains("collapsed");
+                childNode.classList.toggle("collapsed", !isCollapsed);
+                toggleButton.textContent = isCollapsed ? "[-]" : "[+]";
+              };
+              propertyRow.appendChild(toggleButton);
+              valueContainer.appendChild(childNode);
+            } else {
+              valueContainer.textContent = String(value);
+            }
+            propertyRow.appendChild(label);
+            propertyRow.appendChild(valueContainer);
+            propertiesContainer.appendChild(propertyRow);
+          }
+        }
+        nodeContainer.appendChild(propertiesContainer);
+        return nodeContainer;
+      }
+      updateJson(newJson) {
+        this.json = newJson;
+        this.render();
+      }
+    };
+  }
+});
+
 // src/lib/utils/debug/DebugPanel.ts
 function renderLogEntry(message) {
   return Array.isArray(message) ? message.join(" ") : typeof message == "object" ? safeStringify(message) : `${message}`;
@@ -627,6 +797,8 @@ var init_DebugPanel = __esm({
     import_eventbusjs = __toESM(require_eventbus_min());
     init_logging();
     init_safe_stringify();
+    init_domUtils();
+    init_JsonView();
     ({ log: log4, warn: warn3 } = getLogger("DebugPanel", { color: "red", enabled: true }));
     DebugPanelLogModule = class {
       name = "DebugPanel";
@@ -636,7 +808,6 @@ var init_DebugPanel = __esm({
         if (opts.show) this.debugPanel.show();
       }
       onLog(log10) {
-        console.log(`onLog:`, log10);
         this.debugPanel.addLog(log10.namespace, log10.args);
       }
     };
@@ -657,6 +828,7 @@ var init_DebugPanel = __esm({
         parent.appendChild(this.container);
         this.addTab(DEBUG_STATE_NAMESPACE);
         this.addTab("global");
+        this.setupResizable();
         this.setupEventListeners();
       }
       createContainer() {
@@ -674,6 +846,17 @@ var init_DebugPanel = __esm({
         contentContainer.classList.add("debug-panel-content");
         return contentContainer;
       }
+      setupResizable() {
+        const { width, height } = getWindowSize();
+        makeResizable(this.container, {
+          handles: ["left", "top", "top-left"],
+          maxWidth: width - 20,
+          maxHeight: height - 20,
+          minWidth: 200,
+          minHeight: 150
+          //onResize: (width, height) => console.log(`Resized: ${width}x${height}`)
+        });
+      }
       setupEventListeners() {
         import_eventbusjs.default.addEventListener("log", (event) => {
           const { namespace, message } = event.target;
@@ -687,11 +870,9 @@ var init_DebugPanel = __esm({
       }
       // display an object for debugging.
       handleDebugState(id, state) {
+        const safeState = safeStringify(state);
+        state = JSON.parse(safeState);
         const updateDebugState = (id2, state2) => {
-          console.log(`update debug`, id2, state2);
-          const safeState = safeStringify(state2);
-          state2 = JSON.parse(safeState);
-          this.debugStates[id2] = state2;
           const content = this.contentContainer.querySelector(
             `[data-namespace=${DEBUG_STATE_NAMESPACE}]`
           );
@@ -701,15 +882,10 @@ var init_DebugPanel = __esm({
           const jsonWrapper = debugWrapper.querySelector(".json-wrapper");
           if (!jsonWrapper) return console.error(`No json wrapper found for existing state ${id2}`);
           jsonWrapper.innerHTML = "";
-          const tree = jsonTree.create(state2, jsonWrapper);
-          tree.expand();
-          log4(`updated debug state`, debugWrapper);
+          this.debugStates[id2].state = state2;
+          this.debugStates[id2].jsonView.updateJson(state2);
         };
         const addDebugState = (id2, state2) => {
-          console.log(`add debug`, id2, state2);
-          const safeState = safeStringify(state2);
-          state2 = JSON.parse(safeState);
-          this.debugStates[id2] = state2;
           const content = this.contentContainer.querySelector(
             `[data-namespace=${DEBUG_STATE_NAMESPACE}]`
           );
@@ -717,6 +893,15 @@ var init_DebugPanel = __esm({
           const debugWrapper = document.createElement("div");
           debugWrapper.classList.add("debug-state");
           debugWrapper.setAttribute("id", `debug-state-${id2}`);
+          const toggleButton = document.createElement("button");
+          toggleButton.classList.add("json-toggle");
+          toggleButton.textContent = "[-]";
+          toggleButton.onclick = () => {
+            const isCollapsed = debugWrapper.classList.contains("collapsed");
+            debugWrapper.classList.toggle("collapsed", !isCollapsed);
+            toggleButton.textContent = isCollapsed ? "[-]" : "[+]";
+          };
+          debugWrapper.appendChild(toggleButton);
           const label = document.createElement("div");
           label.classList.add("debug-state-label");
           label.innerText = `${id2}`;
@@ -724,12 +909,20 @@ var init_DebugPanel = __esm({
           const jsonWrapper = document.createElement("div");
           jsonWrapper.classList.add("json-wrapper");
           debugWrapper.appendChild(jsonWrapper);
-          const tree = jsonTree.create(state2, jsonWrapper);
-          tree.expand();
+          const jsonView = new JsonView(
+            state2,
+            jsonWrapper,
+            {
+              expandObjs: [
+                /children/,
+                /children\/(.*)/,
+                /entry/
+              ]
+            }
+          );
+          this.debugStates[id2] = { state: state2, jsonView };
           content.appendChild(debugWrapper);
-          log4(`added debug state`, debugWrapper);
         };
-        log4(`DEBUG STATE:`, id, state);
         if (this.debugStates[id]) updateDebugState(id, state);
         else addDebugState(id, state);
       }
@@ -834,7 +1027,6 @@ var init_DebugPanel = __esm({
         logElement.remove();
       }
       show() {
-        console.log(`SHOW`);
         this.container.classList.add("visible");
       }
       hide() {
@@ -2837,7 +3029,6 @@ function createNERFromEntry(entry, parent, nodeCache, insertPos) {
       break;
   }
   if (!ner) throw "Error: Could not create NER from entry type: " + entry.type;
-  log7(`createNERFromEntry`, ner, insertPos);
   if (insertPos) {
     parent.children.splice(insertPos, 0, ner);
     const childNodes = Array.from(parent.node.childNodes);
@@ -2858,7 +3049,6 @@ function createNERFromEntry(entry, parent, nodeCache, insertPos) {
     parent.children.push(ner);
     parent.node.appendChild(ner.node);
   }
-  log7(`${entry.type} NER result:`, entry, ner);
   return ner;
 }
 function createNERFromNodeEntry(node, entry, parent) {
@@ -2890,7 +3080,6 @@ function createNERAfterNode(node, entry, parent, cache) {
 }
 function updateNER(ner, cache) {
   if (ner.node.nodeType == Node.TEXT_NODE) {
-    console.log(`updating entry node...`);
     ner.entry.children = ner.node.textContent;
   } else {
     reconcileNodeChildren(ner, cache);
@@ -2899,7 +3088,6 @@ function updateNER(ner, cache) {
   return ner;
 }
 function reconcileNodeChildren(ner, nodeCache) {
-  console.log(`reconcile children`, ner);
   if (ner.node.nodeType != Node.TEXT_NODE) {
     const nodeChildren = Array.from(ner.node.childNodes);
     let noMoreChanges = false;
@@ -2912,7 +3100,6 @@ function reconcileNodeChildren(ner, nodeCache) {
           if (Array.isArray(ner.entry?.children)) ner.entry.children.splice(i4, 1);
           ner.children.splice(i4, 1);
           noMoreChanges = false;
-          console.log(`Child NER removed from parent:`, ner);
         }
       });
     }
@@ -2923,7 +3110,7 @@ function reconcileNodeChildren(ner, nodeCache) {
       nodeChildren2.forEach((nc) => {
         const exists = ner.children.find((c3) => c3.node == nc);
         if (!exists) {
-          console.log(`NER NOT FOUND, creating for node:`, nc);
+          console.log(`CREATING NER CHILD for node:`, nc);
           let childNer = createNERFromNode(nc, ner, nodeCache);
           noMoreChanges = false;
         }
@@ -3024,8 +3211,6 @@ var init_NodeEntryCache = __esm({
         const isRootNode = node == this.rootNER?.node;
         let parent = isRootNode ? this.rootNER : this.findNER(node.parentNode);
         let ner = isRootNode ? this.rootNER : this.findNER(node, parent);
-        if (ner) log8(`found node`, isRootNode ? "[ROOT]" : "", node == this.lastNER?.node ? "[LAST]" : "", ner);
-        else log8(`node not found. creating...`, node, "parentNER:", parent);
         if (ner) nerUtils.updateNER(ner, this);
         else if (parent) ner = nerUtils.createNERFromNode(node, parent, this);
         else throw "Parent NER not found for updateOrInsert.";
@@ -3107,6 +3292,7 @@ var init_WEditor = __esm({
         if (!this.blob) return console.error("No blob given to load.");
         this.contentEditable.innerHTML = "";
         this.nodeCache.hydrateContent(this.blob.content.entries, this.contentEditable);
+        this.debugState();
       }
       handleKeyDown = (e4) => {
         if (e4.target == this.contentEditable) {
@@ -3207,9 +3393,12 @@ var init_WEditor = __esm({
           editNode = range?.commonAncestorContainer;
         }
         this.applyChanges(editNode);
-        debugState("entryTree", this.nodeCache.rootNER.entry);
-        debugState("nerTree", this.nodeCache.rootNER);
+        this.debugState();
       };
+      debugState() {
+        debugState("entryTree", this.nodeCache.rootNER?.entry);
+        debugState("nerTree", this.nodeCache.rootNER);
+      }
       // updates the given node's entry with it's changed content
       applyChanges(node) {
         if (!node) throw "No node given to applyChanges()";
@@ -3239,8 +3428,7 @@ var init_WEditor = __esm({
           this.contentEditable.innerHTML = "";
           this.nodeCache.clear();
           if (commit) this.commitChanges();
-          debugState("entryTree", this.nodeCache.rootNER.entry);
-          debugState("nerTree", this.nodeCache.rootNER);
+          this.debugState();
         }
       }
       getCurrentEditingNode() {

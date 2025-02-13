@@ -88,7 +88,7 @@ function createNERFromEntry(entry: ContentEntry, parent: NodeEntryRef, nodeCache
     }
     if (!ner) throw "Error: Could not create NER from entry type: " + entry.type;
 
-    log(`createNERFromEntry`, ner, insertPos);//, parent.node.childNodes);
+    //log(`createNERFromEntry`, ner, insertPos);//, parent.node.childNodes);
 
     // add new node to parent NER tree and dom:
     // todo: add the node to the parent in its position of the new node
@@ -117,7 +117,7 @@ function createNERFromEntry(entry: ContentEntry, parent: NodeEntryRef, nodeCache
         parent.node.appendChild(ner.node);
     }
 
-    log(`${entry.type} NER result:`, entry, ner);
+    //log(`${entry.type} NER result:`, entry, ner);
 
     return ner;
 }
@@ -178,7 +178,7 @@ function updateNER(ner, cache: NodeEntryCache) {
 
     if (ner.node.nodeType == Node.TEXT_NODE) {
         // just update the text
-        console.log(`updating entry node...`)
+        //console.log(`updating text NER...`)
         // updateEntry(ner.entry, ner.node); // update the entry by type...
         ner.entry.children = ner.node.textContent;
     } else {
@@ -203,7 +203,7 @@ function updateNER(ner, cache: NodeEntryCache) {
 // function insertNodeAfter(node: Node, entry: ContentEntry
 // Goes through the dom childNodes of the given NER node and adds or removes child NERs as needed.
 function reconcileNodeChildren(ner: NodeEntryRef, nodeCache: NodeEntryCache) {
-    console.log(`reconcile children`, ner)
+    //console.log(`reconcile children`, ner)
     if (ner.node.nodeType != Node.TEXT_NODE) {
         const nodeChildren = Array.from(ner.node.childNodes);
 
@@ -219,7 +219,7 @@ function reconcileNodeChildren(ner: NodeEntryRef, nodeCache: NodeEntryCache) {
                     ner.children.splice(i, 1);
                     // need to remove from entries as well...
                     noMoreChanges = false;
-                    console.log(`Child NER removed from parent:`, ner);
+                    //console.log(`Child NER removed from parent:`, ner);
                 }
             });
         }
@@ -234,7 +234,7 @@ function reconcileNodeChildren(ner: NodeEntryRef, nodeCache: NodeEntryCache) {
                 // find ner in the children
                 const exists = ner.children.find(c => c.node == nc);
                 if (!exists) {
-                    console.log(`NER NOT FOUND, creating for node:`, nc)
+                    console.log(`CREATING NER CHILD for node:`, nc)
                     let childNer = createNERFromNode(nc, ner, nodeCache);
                     noMoreChanges = false;
                     //console.log(`created new child:`, childNer);
