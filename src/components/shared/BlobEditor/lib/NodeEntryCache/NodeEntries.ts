@@ -11,9 +11,7 @@ export type NodeEntryRef = {
     parent: NodeEntryRef | undefined;
 }
 
-export function NER(node, entry, children, parent): NodeEntryRef {
-    return { node, entry, children, parent };
-}
+export const NER = (node, entry, children, parent) => ({ node, entry, children, parent });
 
 export class GroupNode extends ContentEntry {
     type = 'group';

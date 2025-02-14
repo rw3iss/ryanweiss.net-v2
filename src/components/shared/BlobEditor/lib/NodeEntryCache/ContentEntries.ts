@@ -1,5 +1,4 @@
-import { getLogger } from '../../../../../lib/utils/logging.js';
-import { NodeEntryCache } from './NodeEntryCache.js';
+import { getLogger } from 'lib/utils/logging.js';
 
 const { log, warn } = getLogger('ContentEntries', { color: 'red', enabled: false });
 
@@ -9,9 +8,7 @@ interface BaseEntry {
     children?: string | ContentEntry[] | null;
 }
 
-
-
-export abstract class ContentEntry {
+export abstract class ContentEntry implements BaseEntry {
     abstract type: string;
     abstract attributes?: { [key: string]: string };
     abstract children?: string | ContentEntry[];
@@ -68,8 +65,8 @@ export class TextEntry extends ContentEntry {
             }
             node = wrapper;
         }
-        const ner = { node, entry };
         parent.appendChild(node);
+        const ner = NER(node, entry, [], parent);
         return ner;
 
     }

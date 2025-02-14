@@ -12,7 +12,10 @@ export class NodeEntryCache {
 
     // Creates elements from the given list of entries, and insert them into the node tree.
     public hydrateContent(entries: Array<ContentEntry>, node: Node) {
-        this.entries = entries || [];
+        this.entries = entries || [{
+            type: 'break',
+            children: []
+        }];
 
         // create a root node to start
         this.rootNER = {
@@ -24,7 +27,7 @@ export class NodeEntryCache {
 
         // create a root entry from the container (a group), and re-assign the entry children so we can pull for the entries dataset later.
         this.rootNER.entry = ContentEntries.convertNodeToEntry(node);
-        this.rootNER.entry.children = entries;
+        this.rootNER.entry.children = this.entries;
         this.rootNER.entry.children.forEach(e => this.createNERFromEntry(e, this.rootNER)); 111
 
         log(`hydrated.`, entries, this.rootNER);
@@ -53,6 +56,10 @@ export class NodeEntryCache {
         // if the update is on the root, the update is a removal of a previous element.
         const isRootNode = node == this.rootNER?.node;
         let parent = isRootNode ? this.rootNER : this.findNER(node.parentNode as Node);
+        if (!parent && node.parentNode.parentNode) {
+            parent = this.findNER(node.parentNode.parentNode as Node);
+            console.log(`Looking for parent ancestor: `, parent, node.parentNode.parentNode)
+        }
         let ner = isRootNode ? this.rootNER : this.findNER(node, parent);
 
         //if (ner) log(`found node`, isRootNode ? '[ROOT]' : '', node == this.lastNER?.node ? '[LAST]' : '', ner);
@@ -60,8 +67,11 @@ export class NodeEntryCache {
 
         if (ner) nerUtils.updateNER(ner, this);
         else if (parent) ner = nerUtils.createNERFromNode(node, parent, this);
-
-        else throw "Parent NER not found for updateOrInsert."
+        else {
+            // if parent wasn't found... its most likely a new text node on the initial blank content area.
+            console.log(`Parent NER not found for node:`, node, node.parentNode, ner);
+            throw "Parent NER not found for updateOrInsert."
+        }
 
         return this.lastNER = ner;
     }

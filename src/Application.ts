@@ -23,6 +23,7 @@ class _Application {
 
         addLogModule(new DebugPanelLogModule({ show: true }));
     }
+
 }
 
 const Application = new _Application();

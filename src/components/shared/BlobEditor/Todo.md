@@ -1,6 +1,8 @@
 
 # BUGS:
 
+* From initial blank, enter for new group, then go back initial and enter text, gives: NodeEntryCache: Exception in applyChange(): Parent NER not found for updateOrInsert.
+
 * createNER seems to be inserting in wrong position. (for break)
 - Solution: Check insertPos.
 

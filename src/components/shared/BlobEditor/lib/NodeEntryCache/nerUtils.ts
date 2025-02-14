@@ -130,8 +130,6 @@ function createNERFromNodeEntry(node: Node, entry: ContentEntry, parent: NodeEnt
             const childNode = node.childNodes[i];
             //console.log(`dom child match?`, i, childEntry, childNode);
             createNERFromNodeEntry(childNode, childEntry, ner);
-            //const childNer = { node: childNode, entry: childEntry, children: [], parent };
-            //createNERFromNode(childNode, childEntry, childNer);
         });
     }
     // add the ner to the parent:
@@ -203,7 +201,7 @@ function updateNER(ner, cache: NodeEntryCache) {
 // function insertNodeAfter(node: Node, entry: ContentEntry
 // Goes through the dom childNodes of the given NER node and adds or removes child NERs as needed.
 function reconcileNodeChildren(ner: NodeEntryRef, nodeCache: NodeEntryCache) {
-    //console.log(`reconcile children`, ner)
+    console.log(`reconcile children`, ner)
     if (ner.node.nodeType != Node.TEXT_NODE) {
         const nodeChildren = Array.from(ner.node.childNodes);
 
@@ -262,6 +260,7 @@ function clearCache(cache) {
                 while (cache.rootNER.entry.children.pop()) { };
             }
     }
+    cache.rootNER.entry.children.push({ type: 'break', children: [] });
 }
 
 export const nerUtils = {

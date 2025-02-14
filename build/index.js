@@ -687,24 +687,1255 @@ var init_domUtils = __esm({
   }
 });
 
+// node_modules/jsondiffpatch/lib/processor.js
+var Processor, processor_default;
+var init_processor = __esm({
+  "node_modules/jsondiffpatch/lib/processor.js"() {
+    "use strict";
+    init_preact_module();
+    Processor = class {
+      constructor(options) {
+        this.selfOptions = options || {};
+        this.pipes = {};
+      }
+      options(options) {
+        if (options) {
+          this.selfOptions = options;
+        }
+        return this.selfOptions;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      pipe(name, pipeArg) {
+        let pipe = pipeArg;
+        if (typeof name === "string") {
+          if (typeof pipe === "undefined") {
+            return this.pipes[name];
+          } else {
+            this.pipes[name] = pipe;
+          }
+        }
+        if (name && name.name) {
+          pipe = name;
+          if (pipe.processor === this) {
+            return pipe;
+          }
+          this.pipes[pipe.name] = pipe;
+        }
+        pipe.processor = this;
+        return pipe;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      process(input, pipe) {
+        let context = input;
+        context.options = this.options();
+        let nextPipe = pipe || input.pipe || "default";
+        let lastPipe;
+        while (nextPipe) {
+          if (typeof context.nextAfterChildren !== "undefined") {
+            context.next = context.nextAfterChildren;
+            context.nextAfterChildren = null;
+          }
+          if (typeof nextPipe === "string") {
+            nextPipe = this.pipe(nextPipe);
+          }
+          nextPipe.process(context);
+          lastPipe = nextPipe;
+          nextPipe = null;
+          if (context) {
+            if (context.next) {
+              context = context.next;
+              nextPipe = context.pipe || lastPipe;
+            }
+          }
+        }
+        return context.hasResult ? context.result : void 0;
+      }
+    };
+    processor_default = Processor;
+  }
+});
+
+// node_modules/jsondiffpatch/lib/pipe.js
+var Pipe, pipe_default;
+var init_pipe = __esm({
+  "node_modules/jsondiffpatch/lib/pipe.js"() {
+    "use strict";
+    init_preact_module();
+    Pipe = class {
+      constructor(name) {
+        this.name = name;
+        this.filters = [];
+      }
+      process(input) {
+        if (!this.processor) {
+          throw new Error("add this pipe to a processor before using it");
+        }
+        const debug = this.debug;
+        const length = this.filters.length;
+        const context = input;
+        for (let index = 0; index < length; index++) {
+          const filter = this.filters[index];
+          if (debug) {
+            this.log(`filter: ${filter.filterName}`);
+          }
+          filter(context);
+          if (typeof context === "object" && context.exiting) {
+            context.exiting = false;
+            break;
+          }
+        }
+        if (!context.next && this.resultCheck) {
+          this.resultCheck(context);
+        }
+      }
+      log(msg) {
+        console.log(`[jsondiffpatch] ${this.name} pipe, ${msg}`);
+      }
+      append(...args) {
+        this.filters.push(...args);
+        return this;
+      }
+      prepend(...args) {
+        this.filters.unshift(...args);
+        return this;
+      }
+      indexOf(filterName) {
+        if (!filterName) {
+          throw new Error("a filter name is required");
+        }
+        for (let index = 0; index < this.filters.length; index++) {
+          const filter = this.filters[index];
+          if (filter.filterName === filterName) {
+            return index;
+          }
+        }
+        throw new Error(`filter not found: ${filterName}`);
+      }
+      list() {
+        return this.filters.map((f4) => f4.filterName);
+      }
+      after(filterName, ...params) {
+        const index = this.indexOf(filterName);
+        this.filters.splice(index + 1, 0, ...params);
+        return this;
+      }
+      before(filterName, ...params) {
+        const index = this.indexOf(filterName);
+        this.filters.splice(index, 0, ...params);
+        return this;
+      }
+      replace(filterName, ...params) {
+        const index = this.indexOf(filterName);
+        this.filters.splice(index, 1, ...params);
+        return this;
+      }
+      remove(filterName) {
+        const index = this.indexOf(filterName);
+        this.filters.splice(index, 1);
+        return this;
+      }
+      clear() {
+        this.filters.length = 0;
+        return this;
+      }
+      shouldHaveResult(should) {
+        if (should === false) {
+          this.resultCheck = null;
+          return;
+        }
+        if (this.resultCheck) {
+          return;
+        }
+        this.resultCheck = (context) => {
+          if (!context.hasResult) {
+            console.log(context);
+            const error5 = new Error(`${this.name} failed`);
+            error5.noResult = true;
+            throw error5;
+          }
+        };
+        return this;
+      }
+    };
+    pipe_default = Pipe;
+  }
+});
+
+// node_modules/jsondiffpatch/lib/contexts/context.js
+var Context;
+var init_context = __esm({
+  "node_modules/jsondiffpatch/lib/contexts/context.js"() {
+    "use strict";
+    init_preact_module();
+    Context = class {
+      setResult(result) {
+        this.result = result;
+        this.hasResult = true;
+        return this;
+      }
+      exit() {
+        this.exiting = true;
+        return this;
+      }
+      push(child, name) {
+        child.parent = this;
+        if (typeof name !== "undefined") {
+          child.childName = name;
+        }
+        child.root = this.root || this;
+        child.options = child.options || this.options;
+        if (!this.children) {
+          this.children = [child];
+          this.nextAfterChildren = this.next || null;
+          this.next = child;
+        } else {
+          this.children[this.children.length - 1].next = child;
+          this.children.push(child);
+        }
+        child.next = this;
+        return this;
+      }
+    };
+  }
+});
+
+// node_modules/jsondiffpatch/lib/clone.js
+function cloneRegExp(re) {
+  const regexMatch = /^\/(.*)\/([gimyu]*)$/.exec(re.toString());
+  return new RegExp(regexMatch[1], regexMatch[2]);
+}
+function clone(arg) {
+  if (typeof arg !== "object") {
+    return arg;
+  }
+  if (arg === null) {
+    return null;
+  }
+  if (Array.isArray(arg)) {
+    return arg.map(clone);
+  }
+  if (arg instanceof Date) {
+    return new Date(arg.getTime());
+  }
+  if (arg instanceof RegExp) {
+    return cloneRegExp(arg);
+  }
+  const cloned = {};
+  for (const name in arg) {
+    if (Object.prototype.hasOwnProperty.call(arg, name)) {
+      cloned[name] = clone(arg[name]);
+    }
+  }
+  return cloned;
+}
+var init_clone = __esm({
+  "node_modules/jsondiffpatch/lib/clone.js"() {
+    "use strict";
+    init_preact_module();
+  }
+});
+
+// node_modules/jsondiffpatch/lib/contexts/diff.js
+var DiffContext, diff_default;
+var init_diff = __esm({
+  "node_modules/jsondiffpatch/lib/contexts/diff.js"() {
+    "use strict";
+    init_preact_module();
+    init_context();
+    init_clone();
+    DiffContext = class extends Context {
+      constructor(left, right) {
+        super();
+        this.left = left;
+        this.right = right;
+        this.pipe = "diff";
+      }
+      setResult(result) {
+        if (this.options.cloneDiffValues && typeof result === "object") {
+          const clone2 = typeof this.options.cloneDiffValues === "function" ? this.options.cloneDiffValues : clone;
+          if (typeof result[0] === "object") {
+            result[0] = clone2(result[0]);
+          }
+          if (typeof result[1] === "object") {
+            result[1] = clone2(result[1]);
+          }
+        }
+        return super.setResult(result);
+      }
+    };
+    diff_default = DiffContext;
+  }
+});
+
+// node_modules/jsondiffpatch/lib/contexts/patch.js
+var PatchContext, patch_default;
+var init_patch = __esm({
+  "node_modules/jsondiffpatch/lib/contexts/patch.js"() {
+    "use strict";
+    init_preact_module();
+    init_context();
+    PatchContext = class extends Context {
+      constructor(left, delta) {
+        super();
+        this.left = left;
+        this.delta = delta;
+        this.pipe = "patch";
+      }
+    };
+    patch_default = PatchContext;
+  }
+});
+
+// node_modules/jsondiffpatch/lib/contexts/reverse.js
+var ReverseContext, reverse_default;
+var init_reverse = __esm({
+  "node_modules/jsondiffpatch/lib/contexts/reverse.js"() {
+    "use strict";
+    init_preact_module();
+    init_context();
+    ReverseContext = class extends Context {
+      constructor(delta) {
+        super();
+        this.delta = delta;
+        this.pipe = "reverse";
+      }
+    };
+    reverse_default = ReverseContext;
+  }
+});
+
+// node_modules/jsondiffpatch/lib/filters/trivial.js
+var diffFilter, patchFilter, reverseFilter;
+var init_trivial = __esm({
+  "node_modules/jsondiffpatch/lib/filters/trivial.js"() {
+    "use strict";
+    init_preact_module();
+    diffFilter = function trivialMatchesDiffFilter(context) {
+      if (context.left === context.right) {
+        context.setResult(void 0).exit();
+        return;
+      }
+      if (typeof context.left === "undefined") {
+        if (typeof context.right === "function") {
+          throw new Error("functions are not supported");
+        }
+        context.setResult([context.right]).exit();
+        return;
+      }
+      if (typeof context.right === "undefined") {
+        context.setResult([context.left, 0, 0]).exit();
+        return;
+      }
+      if (typeof context.left === "function" || typeof context.right === "function") {
+        throw new Error("functions are not supported");
+      }
+      context.leftType = context.left === null ? "null" : typeof context.left;
+      context.rightType = context.right === null ? "null" : typeof context.right;
+      if (context.leftType !== context.rightType) {
+        context.setResult([context.left, context.right]).exit();
+        return;
+      }
+      if (context.leftType === "boolean" || context.leftType === "number") {
+        context.setResult([context.left, context.right]).exit();
+        return;
+      }
+      if (context.leftType === "object") {
+        context.leftIsArray = Array.isArray(context.left);
+      }
+      if (context.rightType === "object") {
+        context.rightIsArray = Array.isArray(context.right);
+      }
+      if (context.leftIsArray !== context.rightIsArray) {
+        context.setResult([context.left, context.right]).exit();
+        return;
+      }
+      if (context.left instanceof RegExp) {
+        if (context.right instanceof RegExp) {
+          context.setResult([context.left.toString(), context.right.toString()]).exit();
+        } else {
+          context.setResult([context.left, context.right]).exit();
+        }
+      }
+    };
+    diffFilter.filterName = "trivial";
+    patchFilter = function trivialMatchesPatchFilter(context) {
+      if (typeof context.delta === "undefined") {
+        context.setResult(context.left).exit();
+        return;
+      }
+      context.nested = !Array.isArray(context.delta);
+      if (context.nested) {
+        return;
+      }
+      const nonNestedDelta = context.delta;
+      if (nonNestedDelta.length === 1) {
+        context.setResult(nonNestedDelta[0]).exit();
+        return;
+      }
+      if (nonNestedDelta.length === 2) {
+        if (context.left instanceof RegExp) {
+          const regexArgs = /^\/(.*)\/([gimyu]+)$/.exec(nonNestedDelta[1]);
+          if (regexArgs) {
+            context.setResult(new RegExp(regexArgs[1], regexArgs[2])).exit();
+            return;
+          }
+        }
+        context.setResult(nonNestedDelta[1]).exit();
+        return;
+      }
+      if (nonNestedDelta.length === 3 && nonNestedDelta[2] === 0) {
+        context.setResult(void 0).exit();
+      }
+    };
+    patchFilter.filterName = "trivial";
+    reverseFilter = function trivialReferseFilter(context) {
+      if (typeof context.delta === "undefined") {
+        context.setResult(context.delta).exit();
+        return;
+      }
+      context.nested = !Array.isArray(context.delta);
+      if (context.nested) {
+        return;
+      }
+      const nonNestedDelta = context.delta;
+      if (nonNestedDelta.length === 1) {
+        context.setResult([nonNestedDelta[0], 0, 0]).exit();
+        return;
+      }
+      if (nonNestedDelta.length === 2) {
+        context.setResult([nonNestedDelta[1], nonNestedDelta[0]]).exit();
+        return;
+      }
+      if (nonNestedDelta.length === 3 && nonNestedDelta[2] === 0) {
+        context.setResult([nonNestedDelta[0]]).exit();
+      }
+    };
+    reverseFilter.filterName = "trivial";
+  }
+});
+
+// node_modules/jsondiffpatch/lib/filters/nested.js
+var collectChildrenDiffFilter, objectsDiffFilter, patchFilter2, collectChildrenPatchFilter, reverseFilter2, collectChildrenReverseFilter;
+var init_nested = __esm({
+  "node_modules/jsondiffpatch/lib/filters/nested.js"() {
+    "use strict";
+    init_preact_module();
+    init_diff();
+    init_patch();
+    init_reverse();
+    collectChildrenDiffFilter = (context) => {
+      if (!context || !context.children) {
+        return;
+      }
+      const length = context.children.length;
+      let child;
+      let result = context.result;
+      for (let index = 0; index < length; index++) {
+        child = context.children[index];
+        if (typeof child.result === "undefined") {
+          continue;
+        }
+        result = result || {};
+        result[child.childName] = child.result;
+      }
+      if (result && context.leftIsArray) {
+        result._t = "a";
+      }
+      context.setResult(result).exit();
+    };
+    collectChildrenDiffFilter.filterName = "collectChildren";
+    objectsDiffFilter = (context) => {
+      if (context.leftIsArray || context.leftType !== "object") {
+        return;
+      }
+      const left = context.left;
+      const right = context.right;
+      let name;
+      let child;
+      const propertyFilter = context.options.propertyFilter;
+      for (name in left) {
+        if (!Object.prototype.hasOwnProperty.call(left, name)) {
+          continue;
+        }
+        if (propertyFilter && !propertyFilter(name, context)) {
+          continue;
+        }
+        child = new diff_default(left[name], right[name]);
+        context.push(child, name);
+      }
+      for (name in right) {
+        if (!Object.prototype.hasOwnProperty.call(right, name)) {
+          continue;
+        }
+        if (propertyFilter && !propertyFilter(name, context)) {
+          continue;
+        }
+        if (typeof left[name] === "undefined") {
+          child = new diff_default(void 0, right[name]);
+          context.push(child, name);
+        }
+      }
+      if (!context.children || context.children.length === 0) {
+        context.setResult(void 0).exit();
+        return;
+      }
+      context.exit();
+    };
+    objectsDiffFilter.filterName = "objects";
+    patchFilter2 = function nestedPatchFilter(context) {
+      if (!context.nested) {
+        return;
+      }
+      const nestedDelta = context.delta;
+      if (nestedDelta._t) {
+        return;
+      }
+      const objectDelta = nestedDelta;
+      let name;
+      let child;
+      for (name in objectDelta) {
+        child = new patch_default(context.left[name], objectDelta[name]);
+        context.push(child, name);
+      }
+      context.exit();
+    };
+    patchFilter2.filterName = "objects";
+    collectChildrenPatchFilter = function collectChildrenPatchFilter2(context) {
+      if (!context || !context.children) {
+        return;
+      }
+      const deltaWithChildren = context.delta;
+      if (deltaWithChildren._t) {
+        return;
+      }
+      const object = context.left;
+      const length = context.children.length;
+      let child;
+      for (let index = 0; index < length; index++) {
+        child = context.children[index];
+        const property = child.childName;
+        if (Object.prototype.hasOwnProperty.call(context.left, property) && child.result === void 0) {
+          delete object[property];
+        } else if (object[property] !== child.result) {
+          object[property] = child.result;
+        }
+      }
+      context.setResult(object).exit();
+    };
+    collectChildrenPatchFilter.filterName = "collectChildren";
+    reverseFilter2 = function nestedReverseFilter(context) {
+      if (!context.nested) {
+        return;
+      }
+      const nestedDelta = context.delta;
+      if (nestedDelta._t) {
+        return;
+      }
+      const objectDelta = context.delta;
+      let name;
+      let child;
+      for (name in objectDelta) {
+        child = new reverse_default(objectDelta[name]);
+        context.push(child, name);
+      }
+      context.exit();
+    };
+    reverseFilter2.filterName = "objects";
+    collectChildrenReverseFilter = (context) => {
+      if (!context || !context.children) {
+        return;
+      }
+      const deltaWithChildren = context.delta;
+      if (deltaWithChildren._t) {
+        return;
+      }
+      const length = context.children.length;
+      let child;
+      const delta = {};
+      for (let index = 0; index < length; index++) {
+        child = context.children[index];
+        const property = child.childName;
+        if (delta[property] !== child.result) {
+          delta[property] = child.result;
+        }
+      }
+      context.setResult(delta).exit();
+    };
+    collectChildrenReverseFilter.filterName = "collectChildren";
+  }
+});
+
+// node_modules/jsondiffpatch/lib/filters/lcs.js
+var defaultMatch, lengthMatrix, backtrack, get, lcs_default;
+var init_lcs = __esm({
+  "node_modules/jsondiffpatch/lib/filters/lcs.js"() {
+    "use strict";
+    init_preact_module();
+    defaultMatch = function(array1, array2, index1, index2) {
+      return array1[index1] === array2[index2];
+    };
+    lengthMatrix = function(array1, array2, match, context) {
+      const len1 = array1.length;
+      const len2 = array2.length;
+      let x2, y3;
+      const matrix = new Array(len1 + 1);
+      for (x2 = 0; x2 < len1 + 1; x2++) {
+        matrix[x2] = new Array(len2 + 1);
+        for (y3 = 0; y3 < len2 + 1; y3++) {
+          matrix[x2][y3] = 0;
+        }
+      }
+      matrix.match = match;
+      for (x2 = 1; x2 < len1 + 1; x2++) {
+        for (y3 = 1; y3 < len2 + 1; y3++) {
+          if (match(array1, array2, x2 - 1, y3 - 1, context)) {
+            matrix[x2][y3] = matrix[x2 - 1][y3 - 1] + 1;
+          } else {
+            matrix[x2][y3] = Math.max(matrix[x2 - 1][y3], matrix[x2][y3 - 1]);
+          }
+        }
+      }
+      return matrix;
+    };
+    backtrack = function(matrix, array1, array2, context) {
+      let index1 = array1.length;
+      let index2 = array2.length;
+      const subsequence = {
+        sequence: [],
+        indices1: [],
+        indices2: []
+      };
+      while (index1 !== 0 && index2 !== 0) {
+        const sameLetter = matrix.match(array1, array2, index1 - 1, index2 - 1, context);
+        if (sameLetter) {
+          subsequence.sequence.unshift(array1[index1 - 1]);
+          subsequence.indices1.unshift(index1 - 1);
+          subsequence.indices2.unshift(index2 - 1);
+          --index1;
+          --index2;
+        } else {
+          const valueAtMatrixAbove = matrix[index1][index2 - 1];
+          const valueAtMatrixLeft = matrix[index1 - 1][index2];
+          if (valueAtMatrixAbove > valueAtMatrixLeft) {
+            --index2;
+          } else {
+            --index1;
+          }
+        }
+      }
+      return subsequence;
+    };
+    get = function(array1, array2, match, context) {
+      const innerContext = context || {};
+      const matrix = lengthMatrix(array1, array2, match || defaultMatch, innerContext);
+      return backtrack(matrix, array1, array2, innerContext);
+    };
+    lcs_default = {
+      get
+    };
+  }
+});
+
+// node_modules/jsondiffpatch/lib/filters/arrays.js
+function arraysHaveMatchByRef(array1, array2, len1, len2) {
+  for (let index1 = 0; index1 < len1; index1++) {
+    const val1 = array1[index1];
+    for (let index2 = 0; index2 < len2; index2++) {
+      const val2 = array2[index2];
+      if (index1 !== index2 && val1 === val2) {
+        return true;
+      }
+    }
+  }
+}
+function matchItems(array1, array2, index1, index2, context) {
+  const value1 = array1[index1];
+  const value2 = array2[index2];
+  if (value1 === value2) {
+    return true;
+  }
+  if (typeof value1 !== "object" || typeof value2 !== "object") {
+    return false;
+  }
+  const objectHash = context.objectHash;
+  if (!objectHash) {
+    return context.matchByPosition && index1 === index2;
+  }
+  context.hashCache1 = context.hashCache1 || [];
+  let hash1 = context.hashCache1[index1];
+  if (typeof hash1 === "undefined") {
+    context.hashCache1[index1] = hash1 = objectHash(value1, index1);
+  }
+  if (typeof hash1 === "undefined") {
+    return false;
+  }
+  context.hashCache2 = context.hashCache2 || [];
+  let hash2 = context.hashCache2[index2];
+  if (typeof hash2 === "undefined") {
+    context.hashCache2[index2] = hash2 = objectHash(value2, index2);
+  }
+  if (typeof hash2 === "undefined") {
+    return false;
+  }
+  return hash1 === hash2;
+}
+var ARRAY_MOVE, diffFilter2, compare, patchFilter3, collectChildrenPatchFilter3, reverseFilter3, reverseArrayDeltaIndex, collectChildrenReverseFilter2;
+var init_arrays = __esm({
+  "node_modules/jsondiffpatch/lib/filters/arrays.js"() {
+    "use strict";
+    init_preact_module();
+    init_diff();
+    init_patch();
+    init_reverse();
+    init_lcs();
+    ARRAY_MOVE = 3;
+    diffFilter2 = function arraysDiffFilter(context) {
+      if (!context.leftIsArray) {
+        return;
+      }
+      const matchContext = {
+        objectHash: context.options && context.options.objectHash,
+        matchByPosition: context.options && context.options.matchByPosition
+      };
+      let commonHead = 0;
+      let commonTail = 0;
+      let index;
+      let index1;
+      let index2;
+      const array1 = context.left;
+      const array2 = context.right;
+      const len1 = array1.length;
+      const len2 = array2.length;
+      let child;
+      if (len1 > 0 && len2 > 0 && !matchContext.objectHash && typeof matchContext.matchByPosition !== "boolean") {
+        matchContext.matchByPosition = !arraysHaveMatchByRef(array1, array2, len1, len2);
+      }
+      while (commonHead < len1 && commonHead < len2 && matchItems(array1, array2, commonHead, commonHead, matchContext)) {
+        index = commonHead;
+        child = new diff_default(array1[index], array2[index]);
+        context.push(child, index);
+        commonHead++;
+      }
+      while (commonTail + commonHead < len1 && commonTail + commonHead < len2 && matchItems(array1, array2, len1 - 1 - commonTail, len2 - 1 - commonTail, matchContext)) {
+        index1 = len1 - 1 - commonTail;
+        index2 = len2 - 1 - commonTail;
+        child = new diff_default(array1[index1], array2[index2]);
+        context.push(child, index2);
+        commonTail++;
+      }
+      let result;
+      if (commonHead + commonTail === len1) {
+        if (len1 === len2) {
+          context.setResult(void 0).exit();
+          return;
+        }
+        result = result || {
+          _t: "a"
+        };
+        for (index = commonHead; index < len2 - commonTail; index++) {
+          result[index] = [array2[index]];
+        }
+        context.setResult(result).exit();
+        return;
+      }
+      if (commonHead + commonTail === len2) {
+        result = result || {
+          _t: "a"
+        };
+        for (index = commonHead; index < len1 - commonTail; index++) {
+          result[`_${index}`] = [array1[index], 0, 0];
+        }
+        context.setResult(result).exit();
+        return;
+      }
+      delete matchContext.hashCache1;
+      delete matchContext.hashCache2;
+      const trimmed1 = array1.slice(commonHead, len1 - commonTail);
+      const trimmed2 = array2.slice(commonHead, len2 - commonTail);
+      const seq = lcs_default.get(trimmed1, trimmed2, matchItems, matchContext);
+      const removedItems = [];
+      result = result || {
+        _t: "a"
+      };
+      for (index = commonHead; index < len1 - commonTail; index++) {
+        if (seq.indices1.indexOf(index - commonHead) < 0) {
+          result[`_${index}`] = [array1[index], 0, 0];
+          removedItems.push(index);
+        }
+      }
+      let detectMove = true;
+      if (context.options && context.options.arrays && context.options.arrays.detectMove === false) {
+        detectMove = false;
+      }
+      let includeValueOnMove = false;
+      if (context.options && context.options.arrays && context.options.arrays.includeValueOnMove) {
+        includeValueOnMove = true;
+      }
+      const removedItemsLength = removedItems.length;
+      for (index = commonHead; index < len2 - commonTail; index++) {
+        const indexOnArray2 = seq.indices2.indexOf(index - commonHead);
+        if (indexOnArray2 < 0) {
+          let isMove = false;
+          if (detectMove && removedItemsLength > 0) {
+            for (let removeItemIndex1 = 0; removeItemIndex1 < removedItemsLength; removeItemIndex1++) {
+              index1 = removedItems[removeItemIndex1];
+              if (matchItems(trimmed1, trimmed2, index1 - commonHead, index - commonHead, matchContext)) {
+                result[`_${index1}`].splice(1, 2, index, ARRAY_MOVE);
+                if (!includeValueOnMove) {
+                  result[`_${index1}`][0] = "";
+                }
+                index2 = index;
+                child = new diff_default(array1[index1], array2[index2]);
+                context.push(child, index2);
+                removedItems.splice(removeItemIndex1, 1);
+                isMove = true;
+                break;
+              }
+            }
+          }
+          if (!isMove) {
+            result[index] = [array2[index]];
+          }
+        } else {
+          index1 = seq.indices1[indexOnArray2] + commonHead;
+          index2 = seq.indices2[indexOnArray2] + commonHead;
+          child = new diff_default(array1[index1], array2[index2]);
+          context.push(child, index2);
+        }
+      }
+      context.setResult(result).exit();
+    };
+    diffFilter2.filterName = "arrays";
+    compare = {
+      numerically(a3, b2) {
+        return a3 - b2;
+      },
+      numericallyBy(name) {
+        return (a3, b2) => a3[name] - b2[name];
+      }
+    };
+    patchFilter3 = function nestedPatchFilter2(context) {
+      if (!context.nested) {
+        return;
+      }
+      const nestedDelta = context.delta;
+      if (nestedDelta._t !== "a") {
+        return;
+      }
+      let index;
+      let index1;
+      const delta = nestedDelta;
+      const array = context.left;
+      let toRemove = [];
+      let toInsert = [];
+      const toModify = [];
+      for (index in delta) {
+        if (index !== "_t") {
+          if (index[0] === "_") {
+            const removedOrMovedIndex = index;
+            if (delta[removedOrMovedIndex][2] === 0 || delta[removedOrMovedIndex][2] === ARRAY_MOVE) {
+              toRemove.push(parseInt(index.slice(1), 10));
+            } else {
+              throw new Error(`only removal or move can be applied at original array indices, invalid diff type: ${delta[removedOrMovedIndex][2]}`);
+            }
+          } else {
+            const numberIndex = index;
+            if (delta[numberIndex].length === 1) {
+              toInsert.push({
+                index: parseInt(numberIndex, 10),
+                value: delta[numberIndex][0]
+              });
+            } else {
+              toModify.push({
+                index: parseInt(numberIndex, 10),
+                delta: delta[numberIndex]
+              });
+            }
+          }
+        }
+      }
+      toRemove = toRemove.sort(compare.numerically);
+      for (index = toRemove.length - 1; index >= 0; index--) {
+        index1 = toRemove[index];
+        const indexDiff = delta[`_${index1}`];
+        const removedValue = array.splice(index1, 1)[0];
+        if (indexDiff[2] === ARRAY_MOVE) {
+          toInsert.push({
+            index: indexDiff[1],
+            value: removedValue
+          });
+        }
+      }
+      toInsert = toInsert.sort(compare.numericallyBy("index"));
+      const toInsertLength = toInsert.length;
+      for (index = 0; index < toInsertLength; index++) {
+        const insertion = toInsert[index];
+        array.splice(insertion.index, 0, insertion.value);
+      }
+      const toModifyLength = toModify.length;
+      let child;
+      if (toModifyLength > 0) {
+        for (index = 0; index < toModifyLength; index++) {
+          const modification = toModify[index];
+          child = new patch_default(array[modification.index], modification.delta);
+          context.push(child, modification.index);
+        }
+      }
+      if (!context.children) {
+        context.setResult(array).exit();
+        return;
+      }
+      context.exit();
+    };
+    patchFilter3.filterName = "arrays";
+    collectChildrenPatchFilter3 = function collectChildrenPatchFilter4(context) {
+      if (!context || !context.children) {
+        return;
+      }
+      const deltaWithChildren = context.delta;
+      if (deltaWithChildren._t !== "a") {
+        return;
+      }
+      const array = context.left;
+      const length = context.children.length;
+      let child;
+      for (let index = 0; index < length; index++) {
+        child = context.children[index];
+        const arrayIndex = child.childName;
+        array[arrayIndex] = child.result;
+      }
+      context.setResult(array).exit();
+    };
+    collectChildrenPatchFilter3.filterName = "arraysCollectChildren";
+    reverseFilter3 = function arraysReverseFilter(context) {
+      if (!context.nested) {
+        const nonNestedDelta = context.delta;
+        if (nonNestedDelta[2] === ARRAY_MOVE) {
+          const arrayMoveDelta = nonNestedDelta;
+          context.newName = `_${arrayMoveDelta[1]}`;
+          context.setResult([
+            arrayMoveDelta[0],
+            parseInt(context.childName.substring(1), 10),
+            ARRAY_MOVE
+          ]).exit();
+        }
+        return;
+      }
+      const nestedDelta = context.delta;
+      if (nestedDelta._t !== "a") {
+        return;
+      }
+      const arrayDelta = nestedDelta;
+      let name;
+      let child;
+      for (name in arrayDelta) {
+        if (name === "_t") {
+          continue;
+        }
+        child = new reverse_default(arrayDelta[name]);
+        context.push(child, name);
+      }
+      context.exit();
+    };
+    reverseFilter3.filterName = "arrays";
+    reverseArrayDeltaIndex = (delta, index, itemDelta) => {
+      if (typeof index === "string" && index[0] === "_") {
+        return parseInt(index.substring(1), 10);
+      } else if (Array.isArray(itemDelta) && itemDelta[2] === 0) {
+        return `_${index}`;
+      }
+      let reverseIndex = +index;
+      for (const deltaIndex in delta) {
+        const deltaItem = delta[deltaIndex];
+        if (Array.isArray(deltaItem)) {
+          if (deltaItem[2] === ARRAY_MOVE) {
+            const moveFromIndex = parseInt(deltaIndex.substring(1), 10);
+            const moveToIndex = deltaItem[1];
+            if (moveToIndex === +index) {
+              return moveFromIndex;
+            }
+            if (moveFromIndex <= reverseIndex && moveToIndex > reverseIndex) {
+              reverseIndex++;
+            } else if (moveFromIndex >= reverseIndex && moveToIndex < reverseIndex) {
+              reverseIndex--;
+            }
+          } else if (deltaItem[2] === 0) {
+            const deleteIndex = parseInt(deltaIndex.substring(1), 10);
+            if (deleteIndex <= reverseIndex) {
+              reverseIndex++;
+            }
+          } else if (deltaItem.length === 1 && parseInt(deltaIndex, 10) <= reverseIndex) {
+            reverseIndex--;
+          }
+        }
+      }
+      return reverseIndex;
+    };
+    collectChildrenReverseFilter2 = (context) => {
+      if (!context || !context.children) {
+        return;
+      }
+      const deltaWithChildren = context.delta;
+      if (deltaWithChildren._t !== "a") {
+        return;
+      }
+      const arrayDelta = deltaWithChildren;
+      const length = context.children.length;
+      let child;
+      const delta = {
+        _t: "a"
+      };
+      for (let index = 0; index < length; index++) {
+        child = context.children[index];
+        let name = child.newName;
+        if (typeof name === "undefined") {
+          name = reverseArrayDeltaIndex(arrayDelta, child.childName, child.result);
+        }
+        if (delta[name] !== child.result) {
+          delta[name] = child.result;
+        }
+      }
+      context.setResult(delta).exit();
+    };
+    collectChildrenReverseFilter2.filterName = "arraysCollectChildren";
+  }
+});
+
+// node_modules/jsondiffpatch/lib/filters/dates.js
+var diffFilter3;
+var init_dates = __esm({
+  "node_modules/jsondiffpatch/lib/filters/dates.js"() {
+    "use strict";
+    init_preact_module();
+    diffFilter3 = function datesDiffFilter(context) {
+      if (context.left instanceof Date) {
+        if (context.right instanceof Date) {
+          if (context.left.getTime() !== context.right.getTime()) {
+            context.setResult([context.left, context.right]);
+          } else {
+            context.setResult(void 0);
+          }
+        } else {
+          context.setResult([context.left, context.right]);
+        }
+        context.exit();
+      } else if (context.right instanceof Date) {
+        context.setResult([context.left, context.right]).exit();
+      }
+    };
+    diffFilter3.filterName = "dates";
+  }
+});
+
+// node_modules/jsondiffpatch/lib/filters/texts.js
+function getDiffMatchPatch(options, required) {
+  var _a;
+  if (!cachedDiffPatch) {
+    let instance;
+    if ((_a = options === null || options === void 0 ? void 0 : options.textDiff) === null || _a === void 0 ? void 0 : _a.diffMatchPatch) {
+      instance = new options.textDiff.diffMatchPatch();
+    } else {
+      if (!required) {
+        return null;
+      }
+      const error5 = new Error("The diff-match-patch library was not provided. Pass the library in through the options or use the `jsondiffpatch/with-text-diffs` entry-point.");
+      error5.diff_match_patch_not_found = true;
+      throw error5;
+    }
+    cachedDiffPatch = {
+      diff: function(txt1, txt2) {
+        return instance.patch_toText(instance.patch_make(txt1, txt2));
+      },
+      patch: function(txt1, patch2) {
+        const results = instance.patch_apply(instance.patch_fromText(patch2), txt1);
+        for (let i4 = 0; i4 < results[1].length; i4++) {
+          if (!results[1][i4]) {
+            const error5 = new Error("text patch failed");
+            error5.textPatchFailed = true;
+          }
+        }
+        return results[0];
+      }
+    };
+  }
+  return cachedDiffPatch;
+}
+var TEXT_DIFF, DEFAULT_MIN_LENGTH, cachedDiffPatch, diffFilter4, patchFilter4, textDeltaReverse, reverseFilter4;
+var init_texts = __esm({
+  "node_modules/jsondiffpatch/lib/filters/texts.js"() {
+    "use strict";
+    init_preact_module();
+    TEXT_DIFF = 2;
+    DEFAULT_MIN_LENGTH = 60;
+    cachedDiffPatch = null;
+    diffFilter4 = function textsDiffFilter(context) {
+      if (context.leftType !== "string") {
+        return;
+      }
+      const left = context.left;
+      const right = context.right;
+      const minLength = context.options && context.options.textDiff && context.options.textDiff.minLength || DEFAULT_MIN_LENGTH;
+      if (left.length < minLength || right.length < minLength) {
+        context.setResult([left, right]).exit();
+        return;
+      }
+      const diffMatchPatch = getDiffMatchPatch(context.options);
+      if (!diffMatchPatch) {
+        context.setResult([left, right]).exit();
+        return;
+      }
+      const diff2 = diffMatchPatch.diff;
+      context.setResult([diff2(left, right), 0, TEXT_DIFF]).exit();
+    };
+    diffFilter4.filterName = "texts";
+    patchFilter4 = function textsPatchFilter(context) {
+      if (context.nested) {
+        return;
+      }
+      const nonNestedDelta = context.delta;
+      if (nonNestedDelta[2] !== TEXT_DIFF) {
+        return;
+      }
+      const textDiffDelta = nonNestedDelta;
+      const patch2 = getDiffMatchPatch(context.options, true).patch;
+      context.setResult(patch2(context.left, textDiffDelta[0])).exit();
+    };
+    patchFilter4.filterName = "texts";
+    textDeltaReverse = function(delta) {
+      let i4;
+      let l3;
+      let line;
+      let lineTmp;
+      let header = null;
+      const headerRegex = /^@@ +-(\d+),(\d+) +\+(\d+),(\d+) +@@$/;
+      let lineHeader;
+      const lines = delta.split("\n");
+      for (i4 = 0, l3 = lines.length; i4 < l3; i4++) {
+        line = lines[i4];
+        const lineStart = line.slice(0, 1);
+        if (lineStart === "@") {
+          header = headerRegex.exec(line);
+          lineHeader = i4;
+          lines[lineHeader] = "@@ -" + header[3] + "," + header[4] + " +" + header[1] + "," + header[2] + " @@";
+        } else if (lineStart === "+") {
+          lines[i4] = "-" + lines[i4].slice(1);
+          if (lines[i4 - 1].slice(0, 1) === "+") {
+            lineTmp = lines[i4];
+            lines[i4] = lines[i4 - 1];
+            lines[i4 - 1] = lineTmp;
+          }
+        } else if (lineStart === "-") {
+          lines[i4] = "+" + lines[i4].slice(1);
+        }
+      }
+      return lines.join("\n");
+    };
+    reverseFilter4 = function textsReverseFilter(context) {
+      if (context.nested) {
+        return;
+      }
+      const nonNestedDelta = context.delta;
+      if (nonNestedDelta[2] !== TEXT_DIFF) {
+        return;
+      }
+      const textDiffDelta = nonNestedDelta;
+      context.setResult([textDeltaReverse(textDiffDelta[0]), 0, TEXT_DIFF]).exit();
+    };
+    reverseFilter4.filterName = "texts";
+  }
+});
+
+// node_modules/jsondiffpatch/lib/diffpatcher.js
+var DiffPatcher, diffpatcher_default;
+var init_diffpatcher = __esm({
+  "node_modules/jsondiffpatch/lib/diffpatcher.js"() {
+    "use strict";
+    init_preact_module();
+    init_processor();
+    init_pipe();
+    init_diff();
+    init_patch();
+    init_reverse();
+    init_clone();
+    init_trivial();
+    init_nested();
+    init_arrays();
+    init_dates();
+    init_texts();
+    DiffPatcher = class {
+      constructor(options) {
+        this.processor = new processor_default(options);
+        this.processor.pipe(new pipe_default("diff").append(collectChildrenDiffFilter, diffFilter, diffFilter3, diffFilter4, objectsDiffFilter, diffFilter2).shouldHaveResult());
+        this.processor.pipe(new pipe_default("patch").append(collectChildrenPatchFilter, collectChildrenPatchFilter3, patchFilter, patchFilter4, patchFilter2, patchFilter3).shouldHaveResult());
+        this.processor.pipe(new pipe_default("reverse").append(collectChildrenReverseFilter, collectChildrenReverseFilter2, reverseFilter, reverseFilter4, reverseFilter2, reverseFilter3).shouldHaveResult());
+      }
+      options(options) {
+        return this.processor.options(options);
+      }
+      diff(left, right) {
+        return this.processor.process(new diff_default(left, right));
+      }
+      patch(left, delta) {
+        return this.processor.process(new patch_default(left, delta));
+      }
+      reverse(delta) {
+        return this.processor.process(new reverse_default(delta));
+      }
+      unpatch(right, delta) {
+        return this.patch(right, this.reverse(delta));
+      }
+      clone(value) {
+        return clone(value);
+      }
+    };
+    diffpatcher_default = DiffPatcher;
+  }
+});
+
+// node_modules/jsondiffpatch/lib/index.js
+function diff(left, right) {
+  if (!defaultInstance) {
+    defaultInstance = new diffpatcher_default();
+  }
+  return defaultInstance.diff(left, right);
+}
+function patch(left, delta) {
+  if (!defaultInstance) {
+    defaultInstance = new diffpatcher_default();
+  }
+  return defaultInstance.patch(left, delta);
+}
+var defaultInstance;
+var init_lib = __esm({
+  "node_modules/jsondiffpatch/lib/index.js"() {
+    "use strict";
+    init_preact_module();
+    init_diffpatcher();
+  }
+});
+
 // src/components/shared/BlobEditor/lib/JsonView.ts
 var DEFAULT_OPTIONS, JsonView;
 var init_JsonView = __esm({
   "src/components/shared/BlobEditor/lib/JsonView.ts"() {
     "use strict";
     init_preact_module();
+    init_lib();
     DEFAULT_OPTIONS = () => ({
       expandAll: false,
-      expandObjects: []
+      expandObjects: [],
+      useViewState: true
     });
     JsonView = class {
       json;
       parentContainer;
       options;
+      viewStates = {};
+      // viewstate tree for retaining view during state updates
       constructor(json, parentContainer, options) {
         this.json = json;
         this.parentContainer = parentContainer;
-        this.options = options || DEFAULT_OPTIONS();
+        this.options = Object.assign({}, DEFAULT_OPTIONS(), options || {});
         this.render();
       }
       render() {
@@ -722,6 +1953,7 @@ var init_JsonView = __esm({
             const keyPath = `${currPath}${key}`;
             const propertyRow = document.createElement("div");
             propertyRow.classList.add("json-property");
+            propertyRow.setAttribute("data-path", keyPath);
             const label = document.createElement("span");
             label.classList.add("json-key");
             label.textContent = key + ": ";
@@ -749,6 +1981,9 @@ var init_JsonView = __esm({
                     if (new RegExp(e4).test(keyPath)) expand = true;
                   });
                 }
+                if (this.options.useViewState) {
+                  if (typeof this.viewStates[keyPath] != "undefined") expand = !this.viewStates[keyPath];
+                }
                 if (expand) {
                   toggleButton.textContent = "[-]";
                 } else {
@@ -759,6 +1994,8 @@ var init_JsonView = __esm({
               toggleButton.onclick = () => {
                 const isCollapsed = childNode.classList.contains("collapsed");
                 childNode.classList.toggle("collapsed", !isCollapsed);
+                this.viewStates[keyPath] = !isCollapsed;
+                console.log(`viewStates updated.`, this.viewStates);
                 toggleButton.textContent = isCollapsed ? "[-]" : "[+]";
               };
               propertyRow.appendChild(toggleButton);
@@ -775,7 +2012,8 @@ var init_JsonView = __esm({
         return nodeContainer;
       }
       updateJson(newJson) {
-        this.json = newJson;
+        const delta = diff(this.json, newJson);
+        patch(this.json, delta);
         this.render();
       }
     };
@@ -2252,20 +3490,20 @@ var require_lib = __commonJS({
     });
     Object.defineProperty(exports, "CookieStorage", {
       enumerable: true,
-      get: function get() {
+      get: function get2() {
         return _CookieStorage["default"];
       }
     });
     Object.defineProperty(exports, "MemoryStorage", {
       enumerable: true,
-      get: function get() {
+      get: function get2() {
         return _MemoryStorage["default"];
       }
     });
     exports["default"] = void 0;
     Object.defineProperty(exports, "isSupported", {
       enumerable: true,
-      get: function get() {
+      get: function get2() {
         return _isSupported["default"];
       }
     });
@@ -2456,8 +3694,8 @@ var init_ContentEntries = __esm({
           }
           node = wrapper;
         }
-        const ner = { node, entry };
         parent.appendChild(node);
+        const ner = NER(node, entry, [], parent);
         return ner;
       }
       static convertNodeToEntry(node) {
@@ -2824,10 +4062,7 @@ var init_ContentEntries = __esm({
 });
 
 // src/components/shared/BlobEditor/lib/NodeEntryCache/NodeEntries.ts
-function NER(node, entry, children, parent) {
-  return { node, entry, children, parent };
-}
-var log6, warn5, GroupNode, TextNode, BreakNode;
+var log6, warn5, NER2, GroupNode, TextNode, BreakNode;
 var init_NodeEntries = __esm({
   "src/components/shared/BlobEditor/lib/NodeEntryCache/NodeEntries.ts"() {
     "use strict";
@@ -2835,6 +4070,7 @@ var init_NodeEntries = __esm({
     init_logging();
     init_ContentEntries();
     ({ log: log6, warn: warn5 } = getLogger("NodeEntries", { color: "yellow", enabled: true }));
+    NER2 = (node, entry, children, parent) => ({ node, entry, children, parent });
     GroupNode = class extends ContentEntry {
       type = "group";
       attributes;
@@ -3052,7 +4288,7 @@ function createNERFromEntry(entry, parent, nodeCache, insertPos) {
   return ner;
 }
 function createNERFromNodeEntry(node, entry, parent) {
-  const ner = NER(node, entry, [], parent);
+  const ner = NER2(node, entry, [], parent);
   if (Array.isArray(entry.children)) {
     entry.children.forEach((childEntry, i4) => {
       const childNode = node.childNodes[i4];
@@ -3088,6 +4324,7 @@ function updateNER(ner, cache) {
   return ner;
 }
 function reconcileNodeChildren(ner, nodeCache) {
+  console.log(`reconcile children`, ner);
   if (ner.node.nodeType != Node.TEXT_NODE) {
     const nodeChildren = Array.from(ner.node.childNodes);
     let noMoreChanges = false;
@@ -3136,6 +4373,7 @@ function clearCache(cache) {
       }
     }
   }
+  cache.rootNER.entry.children.push({ type: "break", children: [] });
 }
 var log7, warn6, nerUtils;
 var init_nerUtils = __esm({
@@ -3176,7 +4414,10 @@ var init_NodeEntryCache = __esm({
       // reference to last-edited node for faster/immdiate lookups
       // Creates elements from the given list of entries, and insert them into the node tree.
       hydrateContent(entries, node) {
-        this.entries = entries || [];
+        this.entries = entries || [{
+          type: "break",
+          children: []
+        }];
         this.rootNER = {
           node,
           entry: void 0,
@@ -3186,7 +4427,7 @@ var init_NodeEntryCache = __esm({
           children: []
         };
         this.rootNER.entry = ContentEntries.convertNodeToEntry(node);
-        this.rootNER.entry.children = entries;
+        this.rootNER.entry.children = this.entries;
         this.rootNER.entry.children.forEach((e4) => this.createNERFromEntry(e4, this.rootNER));
         111;
         log8(`hydrated.`, entries, this.rootNER);
@@ -3210,10 +4451,17 @@ var init_NodeEntryCache = __esm({
         if (!node.parentNode) throw "node.parentNode does not exist. Invalid node?";
         const isRootNode = node == this.rootNER?.node;
         let parent = isRootNode ? this.rootNER : this.findNER(node.parentNode);
+        if (!parent && node.parentNode.parentNode) {
+          parent = this.findNER(node.parentNode.parentNode);
+          console.log(`Looking for parent ancestor: `, parent, node.parentNode.parentNode);
+        }
         let ner = isRootNode ? this.rootNER : this.findNER(node, parent);
         if (ner) nerUtils.updateNER(ner, this);
         else if (parent) ner = nerUtils.createNERFromNode(node, parent, this);
-        else throw "Parent NER not found for updateOrInsert.";
+        else {
+          console.log(`Parent NER not found for node:`, node, node.parentNode, ner);
+          throw "Parent NER not found for updateOrInsert.";
+        }
         return this.lastNER = ner;
       }
       // Finds the node in the tree and removes the entry from it, and the dom node as well.
@@ -3300,6 +4548,7 @@ var init_WEditor = __esm({
           if (e4.key == "Enter") {
             this.handleEnter(e4);
           } else if (e4.key == "Backspace") {
+            this.handleBackspace(e4);
           }
         }
       };
@@ -3320,12 +4569,14 @@ var init_WEditor = __esm({
         if (e4.shiftKey) {
         }
       };
+      // TODO: Detect backspace on keydown... if the current node is empty, delete the node in entry and ner tree, and allow the event to continue deleting it in the dom.
       handleBackspace = (e4) => {
         const node = this.getCurrentEditingNode();
         const childNodes = Array.from(node.childNodes);
         if (node) {
           if (node.nodeType != Node.TEXT_NODE) {
             log9(`backspace on edit node:`, node, childNodes, node.innerHTML);
+            return;
             const ner = nerUtils.findNER(node, this.nodeCache);
             if (ner) {
               setTimeout(() => {
@@ -3354,7 +4605,8 @@ var init_WEditor = __esm({
             }
             this.nodeCache.deleteNER(node);
           } else {
-            log9(`backspace on text node:`, node, `text: "${node.textContent}", html: "${node.innerHTML}"`);
+            log9(`backspace on text node:`, node);
+            return;
             let ner = nerUtils.findNER(node, this.nodeCache);
             if (ner) log9(`Text node FOUND:`, ner);
             else {
@@ -3365,24 +4617,19 @@ var init_WEditor = __esm({
       };
       handleContentChange = (e4) => {
         let editNode = this.getCurrentEditingNode();
+        log9(`handleContentChange(): ${e4.inputType}`, editNode);
         switch (e4.inputType) {
           case "insertText":
-            log9(`INSERT TEXT`, editNode);
             break;
           case "deleteContentBackward":
-            log9(`DELETE`, editNode);
             break;
           case "insertParagraph":
-            log9(`INSERT GROUP`, editNode);
             break;
           case "insertLineBreak":
-            log9(`INSERT BREAK`, editNode);
             break;
           case "insertFromPaste":
-            log9(`INSERT PASTE`, editNode);
             break;
           case "deleteByCut":
-            log9(`DELETE MULTI`, editNode);
             break;
           default:
             console.log(`Unknown input type:`, e4, editNode);
@@ -4205,7 +5452,7 @@ var init_vanilla_picker = __esm({
         }
       }, {
         key: "rgba",
-        get: function get() {
+        get: function get2() {
           if (this._rgba) {
             return this._rgba;
           }
@@ -4223,17 +5470,17 @@ var init_vanilla_picker = __esm({
         }
       }, {
         key: "rgbString",
-        get: function get() {
+        get: function get2() {
           return this.printRGB();
         }
       }, {
         key: "rgbaString",
-        get: function get() {
+        get: function get2() {
           return this.printRGB(true);
         }
       }, {
         key: "hsla",
-        get: function get() {
+        get: function get2() {
           if (this._hsla) {
             return this._hsla;
           }
@@ -4251,17 +5498,17 @@ var init_vanilla_picker = __esm({
         }
       }, {
         key: "hslString",
-        get: function get() {
+        get: function get2() {
           return this.printHSL();
         }
       }, {
         key: "hslaString",
-        get: function get() {
+        get: function get2() {
           return this.printHSL(true);
         }
       }, {
         key: "hex",
-        get: function get() {
+        get: function get2() {
           var rgb = this.rgba, hex = rgb.map(function(x2, i4) {
             return i4 < 3 ? x2.toString(16) : Math.round(x2 * 255).toString(16);
           });

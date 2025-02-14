@@ -87,7 +87,7 @@ export class WEditor {
             } else if (e.key == 'Backspace') {
                 // if the node will be empty then prevent default and let the keyup handle it.
                 //e.preventDefault();
-                //this.handleBackspace(e);
+                this.handleBackspace(e);
             }
         }
     }
@@ -132,6 +132,7 @@ export class WEditor {
         }
     }
 
+    // TODO: Detect backspace on keydown... if the current node is empty, delete the node in entry and ner tree, and allow the event to continue deleting it in the dom.
     private handleBackspace = (e) => {
         const node = this.getCurrentEditingNode() as HTMLElement;
         const childNodes = Array.from(node.childNodes);
@@ -141,6 +142,7 @@ export class WEditor {
             // if it's not a text node, it means we broke into the previous node and removed the last one.
             if (node.nodeType != Node.TEXT_NODE) {
                 log(`backspace on edit node:`, node, childNodes, node.innerHTML);
+                return;
                 // go through all node's children and remove any that no longer exist
                 const ner = nerUtils.findNER(node, this.nodeCache);
                 if (ner) {
@@ -174,7 +176,8 @@ export class WEditor {
                 this.nodeCache.deleteNER(node);
             } else {
                 // todo: need to get text on key up...
-                log(`backspace on text node:`, node, `text: "${node.textContent}", html: "${node.innerHTML}"`);
+                log(`backspace on text node:`, node);
+                return; //, `text: "${node.textContent}", html: "${node.innerHTML}"`);
                 // if text has become empty, remove the node... ?
 
                 // try to find the text node?
@@ -190,25 +193,19 @@ export class WEditor {
     private handleContentChange = (e) => {
         // Find the node where the edit took place
         let editNode: Node | undefined = this.getCurrentEditingNode();
-
+        log(`handleContentChange(): ${e.inputType}`, editNode);
         switch (e.inputType) {
             case "insertText":
-                log(`INSERT TEXT`, editNode)
                 break;
             case "deleteContentBackward":
-                log(`DELETE`, editNode)
                 break;
             case "insertParagraph":
-                log(`INSERT GROUP`, editNode)
                 break;
             case "insertLineBreak":
-                log(`INSERT BREAK`, editNode)
                 break;
             case "insertFromPaste":
-                log(`INSERT PASTE`, editNode);
                 break;
             case "deleteByCut":
-                log(`DELETE MULTI`, editNode);
                 // todo: reconcile parent node...
                 break;
             default:

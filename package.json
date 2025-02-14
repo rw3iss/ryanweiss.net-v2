@@ -41,6 +41,7 @@
         "codemirror": "^6.0.1",
         "dotenv": "^16.4.7",
         "eventbusjs": "^0.2.0",
+        "jsondiffpatch": "^0.6.0",
         "jsonwebtoken": "^9.0.2",
         "jwt-decode": "^4.0.0",
         "local-storage-fallback": "^5.0.0",

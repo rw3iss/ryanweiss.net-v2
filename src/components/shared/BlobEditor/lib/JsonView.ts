@@ -1,24 +1,27 @@
-import safeStringify from 'safe-stringify';
+import * as jsondiffpatch from 'jsondiffpatch';
 
 type JsonViewOptions = {
     expandAll?: boolean;
     expandObjs?: Array<string | RegExp>;
+    useViewState?: boolean;
 }
 
 const DEFAULT_OPTIONS = () => ({
     expandAll: false,
-    expandObjects: []
+    expandObjects: [],
+    useViewState: true
 });
 
 export class JsonView {
     private json: any;
     private parentContainer: HTMLElement;
     private options: JsonViewOptions;
+    private viewStates = {}; // viewstate tree for retaining view during state updates
 
     constructor(json: any, parentContainer: HTMLElement, options?: JsonViewOptions) {
         this.json = json;
         this.parentContainer = parentContainer;
-        this.options = options || DEFAULT_OPTIONS();
+        this.options = Object.assign({}, DEFAULT_OPTIONS(), options || {});
         this.render();
     }
 
@@ -40,6 +43,7 @@ export class JsonView {
                 const keyPath = `${currPath}${key}`;
                 const propertyRow = document.createElement("div");
                 propertyRow.classList.add("json-property");
+                propertyRow.setAttribute("data-path", keyPath);
 
                 const label = document.createElement("span");
                 label.classList.add("json-key");
@@ -80,6 +84,12 @@ export class JsonView {
                                 if (new RegExp(e).test(keyPath)) expand = true;
                             });
                         }
+
+                        // if a viewstate exists use that always:
+                        if (this.options.useViewState) {
+                            if (typeof this.viewStates[keyPath] != 'undefined') expand = !this.viewStates[keyPath];
+                        }
+
                         if (expand) {
                             toggleButton.textContent = "[-]";
                         } else {
@@ -92,6 +102,8 @@ export class JsonView {
                     toggleButton.onclick = () => {
                         const isCollapsed = childNode.classList.contains("collapsed");
                         childNode.classList.toggle("collapsed", !isCollapsed);
+                        this.viewStates[keyPath] = !isCollapsed;
+                        console.log(`viewStates updated.`, this.viewStates);
                         toggleButton.textContent = isCollapsed ? "[-]" : "[+]";
                     };
 
@@ -112,7 +124,13 @@ export class JsonView {
     }
 
     public updateJson(newJson: any): void {
-        this.json = newJson;
+        const delta = jsondiffpatch.diff(this.json, newJson);
+        //console.log(`json delta`, delta)
+        jsondiffpatch.patch(this.json, delta);
+        //this.json = newJson;
+        // todo: only render changed nodes... how? use data-path="" for each node?
+        // ... could keep track of each path in a viewstate... during render... restore viewstate...
+
         this.render();
     }
 }
