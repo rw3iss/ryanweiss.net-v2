@@ -1,14 +1,17 @@
 import { getLogger } from 'lib/utils/logging.js';
+import { v4 as uuid } from 'uuid';
 
 const { log, warn } = getLogger('ContentEntries', { color: 'red', enabled: false });
 
 interface BaseEntry {
+    id?: string;
     type: string;
     attributes?: { [key: string]: string };
     children?: string | ContentEntry[] | null;
 }
 
 export abstract class ContentEntry implements BaseEntry {
+    public id?: string;
     abstract type: string;
     abstract attributes?: { [key: string]: string };
     abstract children?: string | ContentEntry[];
@@ -411,8 +414,8 @@ export class CustomEntry extends ContentEntry {
     }
 }
 
-
 export class ContentEntries {
+    static nextId = 0;
 
     // make an html node from entry, append to parent, return NER for { node, entry, children } which is appended to current node in node cache nodeTree.
     static convertToHTMLByType(entry: ContentEntry, parent: HTMLElement) {
@@ -491,6 +494,7 @@ export class ContentEntries {
 
         if (!entry) throw "Could not convert node type to entry: " + node.nodeType;
 
+        entry.id = ContentEntries.nextId++;
         return entry;
     }
 }

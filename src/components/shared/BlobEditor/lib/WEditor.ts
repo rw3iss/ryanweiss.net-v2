@@ -1,7 +1,6 @@
 import { NodeEntryCache } from 'components/shared/BlobEditor/lib/NodeEntryCache/NodeEntryCache';
 import { Blob, BlobContent } from 'types/Blob';
 import { IPlugin } from '../plugins/IPlugin';
-import { BreakEntry, ContentEntries, TextEntry } from './NodeEntryCache/ContentEntries.js';
 import { nerUtils } from './NodeEntryCache/nerUtils.js';
 import { getLogger } from 'utils/logging';
 import { debugState } from '../../../../lib/utils/debug/DebugPanel.js';
@@ -15,15 +14,13 @@ const CONTENT_ROOT_CLASS = 'w-content';
 
 type WEditorConfig = {
     focusOnStart: boolean;
-}
+};
 
 const DEFAULT_CONFIG = (): WEditorConfig => ({
     focusOnStart: false
-})
-
+});
 
 export class WEditor {
-
     private contentEditable: HTMLDivElement | null;
 
     private applyChangesTimeoutId: Timeout | null = null;
@@ -31,6 +28,8 @@ export class WEditor {
 
     private blob: Blob;
     private nodeCache: NodeEntryCache;
+
+    private lastContentChangeType: string | undefined;
 
     constructor(
         private container: HTMLElement,
@@ -53,7 +52,7 @@ export class WEditor {
         }
 
         // init plugins:
-        this.plugins.forEach(plugin => plugin.initialize(this, this.container));
+        this.plugins.forEach((plugin) => plugin.initialize(this, this.container));
 
         // setup event listeners:
         document.addEventListener('keydown', this.handleKeyDown);
@@ -68,7 +67,7 @@ export class WEditor {
     public loadBlob(blob?) {
         if (blob) this.blob = blob;
         if (!this.contentEditable) return console.error('Cannot load blob: ContentEditable is null');
-        if (!this.blob) return console.error("No blob given to load.");
+        if (!this.blob) return console.error('No blob given to load.');
         this.contentEditable.innerHTML = '';
 
         // create a root node:
@@ -90,7 +89,7 @@ export class WEditor {
                 this.handleBackspace(e);
             }
         }
-    }
+    };
 
     // todo: on shift+enter... should manually insert the break entry after the current node in it's parent
     // ... so that it does not trigger a full re-build of the parent node and it's content.
@@ -105,32 +104,16 @@ export class WEditor {
                 //this.handleBackspace(e);
             }
         }
-    }
+    };
 
     private handleEnter = (e) => {
         const node = this.getCurrentEditingNode();
         log(`Enter`, node, e);
+        this.lastEnterNode = node;
         if (e.shiftKey) {
             // e.preventDefault();
-
-            // log(`INSERT TEXT NODE AFTER:`, node);
-
-            // // just insert a text node
-
-            // // find the parent to add a new break to
-            // const parent = nerUtils.findNER(node?.parentNode as Node, this.nodeCache);
-            // if (!parent) throw "No parent NER found for node";
-
-            // // find this current node's position to insert the break after
-            // const pos = Array.from(parent.node.childNodes).findIndex(c => c == node);
-            // if (pos == -1) throw "Node not found in parent children?";
-
-            // if (!node) throw "Could not obtain editing node for handleEnter().";
-            // const ner = nerUtils.createNERAfterNode(node, new TextEntry("-"), parent, this.nodeCache);
-            // log(`NEW NER:`, ner);
-            // setCaretAfter(ner.node);
         }
-    }
+    };
 
     // TODO: Detect backspace on keydown... if the current node is empty, delete the node in entry and ner tree, and allow the event to continue deleting it in the dom.
     private handleBackspace = (e) => {
@@ -147,26 +130,27 @@ export class WEditor {
                 const ner = nerUtils.findNER(node, this.nodeCache);
                 if (ner) {
                     setTimeout(() => {
-                        log(`nodes after timeout:`, node, childNodes, node.innerHTML)
+                        log(`nodes after timeout:`, node, childNodes, node.innerHTML);
                         ner.children.forEach((c, i) => {
-                            const exists = Array.from(node.childNodes).find(cn => c.node == cn);
+                            const exists = Array.from(node.childNodes).find((cn) => c.node == cn);
                             if (!exists) {
                                 // remove from ner.entry.children and ner.children.
                                 const childEntry = c.entry;
                                 if (Array.isArray(ner.entry?.children)) {
-                                    const di = ner.entry.children.findIndex(ec => ec == childEntry);
+                                    const di = ner.entry.children.findIndex((ec) => ec == childEntry);
                                     log(`DELETING child entry:`, di, childEntry);
                                     if (di > -1) ner.entry.children.splice(di, 1);
                                 }
                                 log(`DELETING NER:`, i, c);
                                 ner.children.splice(i, 1);
-                            } {
+                            }
+                            {
                                 log(`node still exists.`, c, i);
                             }
                         });
                     }, 0);
                 } else {
-                    console.error(`NER not found on backspace??`)
+                    console.error(`NER not found on backspace??`);
                 }
 
                 if (node.classList.contains(CONTENT_ROOT_CLASS)) {
@@ -188,29 +172,40 @@ export class WEditor {
                 }
             }
         }
-    }
+    };
 
     private handleContentChange = (e) => {
         // Find the node where the edit took place
         let editNode: Node | undefined = this.getCurrentEditingNode();
         log(`handleContentChange(): ${e.inputType}`, editNode);
+
         switch (e.inputType) {
-            case "insertText":
+            case 'insertText':
                 break;
-            case "deleteContentBackward":
+            case 'deleteContentBackward':
                 break;
-            case "insertParagraph":
+            case 'insertParagraph':
                 break;
-            case "insertLineBreak":
+            case 'insertLineBreak':
+                // if (this.lastEnterNode && this.lastEnterNode != editNode) {
+                //     console.log(`ENTER in parent.`, editNode, this.lastEnterNode, this.lastEnterNode.nextSibling, this.lastEnterNode.nextSibling?.nextSibling, this.lastEnterNode.nextSibling?.nodeName);
+                //     const doubleSibling = this.lastEnterNode.nextSibling?.nextSibling;
+                //     if (doubleSibling?.nodeName == 'BR') {
+                //         //console.log(`REMOVING BREAK.`);
+                //         doubleSibling.remove();
+                //     }
+                // } else {
+                //     console.log(`ENTER in child.`, editNode, this.lastEnterNode);
+                // }
                 break;
-            case "insertFromPaste":
+            case 'insertFromPaste':
                 break;
-            case "deleteByCut":
+            case 'deleteByCut':
                 // todo: reconcile parent node...
                 break;
             default:
                 console.log(`Unknown input type:`, e, editNode);
-                throw new Error("UNKNOWN INPUT TYPE: " + e.inputType);
+                throw new Error('UNKNOWN INPUT TYPE: ' + e.inputType);
         }
 
         if (window.getSelection) {
@@ -219,9 +214,12 @@ export class WEditor {
         }
 
         // Apply the changes immediately to the entry, for throttled commit later
-        this.applyChanges(editNode);
+        this.applyChanges(editNode, e.inputType);
+
+        this.lastContentChangeType = e.inputType;
+
         this.debugState();
-    }
+    };
 
     private debugState() {
         debugState('entryTree', this.nodeCache.rootNER?.entry);
@@ -229,10 +227,10 @@ export class WEditor {
     }
 
     // updates the given node's entry with it's changed content
-    private applyChanges(node) {
-        if (!node) throw "No node given to applyChanges()";
+    private applyChanges(node, inputType) {
+        if (!node) throw 'No node given to applyChanges()';
 
-        const change = this.nodeCache.applyChange(node);
+        const change = this.nodeCache.applyChange(node, inputType);
         // todo: can store or serialize change object to backend or other clients.
 
         // Signal to save all pending changes after timeout.
@@ -251,7 +249,7 @@ export class WEditor {
 
     // Converts content area HTML to JSON. Any html elements associated with custom "types" will be ignored convert to JSON through their handlers.
     public commitChanges(): BlobContent | null {
-        if (!this.contentEditable) throw "Cannot apply changes: ContentEditable is null";
+        if (!this.contentEditable) throw 'Cannot apply changes: ContentEditable is null';
 
         // Clear the auto-save and auto-change timeouts since we're saving now
         if (this.autoSaveTimeoutId) this.autoSaveTimeoutId = clearTimeout(this.autoSaveTimeoutId);
@@ -278,5 +276,4 @@ export class WEditor {
             return range?.commonAncestorContainer;
         }
     }
-
 }

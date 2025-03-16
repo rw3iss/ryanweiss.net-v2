@@ -1,0 +1,82 @@
+{
+
+    "extends": [
+        "eslint:recommended",
+        "plugin:prettier/recommended",
+        "plugin:react/recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:storybook/recommended",
+        "prettier",
+        "plugin:prettier/recommended"
+    ],
+    "plugins": [
+        "@typescript-eslint/tslint", "react", "prettier"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    },
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaVersion": "latest"
+    },
+    "env": {
+        "browser": true,
+        "node": true,
+        "es6": true,
+        "jest": true
+    },
+    "ignorePatterns": [
+        "node_modules",
+        "build",
+        "dist",
+        "public",
+        "*.stories.js", "*.test.js", "**/build/*", "storybook-static/*"
+    ],
+    "rules": {
+        "eqeqeq": "error",
+        "no-console": "warn",
+        // "array-element-newline": [
+        //     "error",
+        //     ""
+        // ],
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "react/prop-types": [
+            2,
+            {
+            "ignore": ["className", "sideOffset", "checked"]
+            }
+        ],
+        "import/no-extraneous-dependencies": "on",
+        "import/prefer-default-export": "off",
+        "no-confusing-arrow": "off",
+        "arrow-parens": [
+            "error",
+            "as-needed"
+        ],
+        "comma-dangle": [
+            "error",
+            {
+                "arrays": "never",
+                "objects": "never",
+                "imports": "never",
+                "exports": "never",
+                "functions": "never"
+            }
+        ],
+        "no-plusplus": "off",
+        "no-async-promise-executor": "off",
+        "prettier/prettier": [
+            "error",
+            {
+                "endOfLine": "auto"
+            }
+        ],
+        "sort-imports": [
+            "off"
+        ]
+    }
+}

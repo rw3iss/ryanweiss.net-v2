@@ -3649,6 +3649,7 @@ var init_ContentEntries = __esm({
     init_logging();
     ({ log: log5, warn: warn4 } = getLogger("ContentEntries", { color: "red", enabled: false }));
     ContentEntry = class {
+      id;
       static convertToHTML(entry, parent) {
         throw new Error("Method not implemented");
       }
@@ -3988,7 +3989,8 @@ var init_ContentEntries = __esm({
         return new _CustomEntry(attributes, children);
       }
     };
-    ContentEntries = class {
+    ContentEntries = class _ContentEntries {
+      static nextId = 0;
       // make an html node from entry, append to parent, return NER for { node, entry, children } which is appended to current node in node cache nodeTree.
       static convertToHTMLByType(entry, parent) {
         console.trace();
@@ -4055,6 +4057,7 @@ var init_ContentEntries = __esm({
           log5(`made break node`, node.tagName, node, entry);
         }
         if (!entry) throw "Could not convert node type to entry: " + node.nodeType;
+        entry.id = _ContentEntries.nextId++;
         return entry;
       }
     };
@@ -4123,12 +4126,7 @@ var init_NodeEntries = __esm({
         this.attributes = attributes || {};
       }
       static createNERFromEntry(entry, parent, nodeCache) {
-        const ner = {
-          entry,
-          node: document.createTextNode(entry.children),
-          children: [],
-          parent
-        };
+        const ner = NER2(document.createTextNode(entry.children), entry, [], parent);
         if (entry.attributes) {
           if (entry.attributes["bold"]) {
             ner.node.classList.add("bold");
@@ -4175,12 +4173,7 @@ var init_NodeEntries = __esm({
         this.attributes = attributes;
       }
       static createNERFromEntry(entry, parent, nodeCache) {
-        const ner = {
-          entry,
-          node: document.createElement("br"),
-          children: [],
-          parent
-        };
+        const ner = NER2(document.createElement("br"), entry, [], parent);
         if (entry.attributes) {
           for (const [key, value] of Object.entries(entry.attributes)) {
             ner.node.setAttribute(key, value);
@@ -4277,7 +4270,7 @@ function createNERFromEntry(entry, parent, nodeCache, insertPos) {
           console.log(`No previous node?`, insertPos, childNodes, parent);
           throw "No prevNode found at pos: " + (insertPos - 1);
         }
-        console.log(`inserting node after:`, prevNode, "new node:", ner.node, "at:", insertPos);
+        console.log(`inserting node after:`, prevNode, `new node (ID: ${ner.id}):`, ner.node, "at:", insertPos);
         prevNode.after(ner.node);
       }
     }
@@ -4304,7 +4297,7 @@ function createNERFromNode(node, parent, cache) {
   const ner = createNERFromNodeEntry(node, entry, parent);
   if (Array.isArray(parent.entry?.children)) {
     const pos = Array.from(parent.node.childNodes).findIndex((c3) => c3 == node);
-    console.log(`Inserting entry into parent at POS:`, pos + 1);
+    console.log(`Inserting entry (ID: ${entry.id}) into parent at POS:`, pos + 1);
     parent.entry.children.splice(pos + 1, 0, entry);
   }
   log7(`NER created:`, ner);
@@ -4373,7 +4366,7 @@ function clearCache(cache) {
       }
     }
   }
-  cache.rootNER.entry.children.push({ type: "break", children: [] });
+  cache.rootNER.entry.children.push(...DEFAULT_ENTRIES());
 }
 var log7, warn6, nerUtils;
 var init_nerUtils = __esm({
@@ -4382,6 +4375,7 @@ var init_nerUtils = __esm({
     init_preact_module();
     init_logging();
     init_ContentEntries();
+    init_NodeEntryCache();
     init_NodeEntries();
     ({ log: log7, warn: warn6 } = getLogger("nerUtils", { color: "yellow", enabled: true }));
     nerUtils = {
@@ -4398,7 +4392,7 @@ var init_nerUtils = __esm({
 });
 
 // src/components/shared/BlobEditor/lib/NodeEntryCache/NodeEntryCache.ts
-var log8, error3, NodeEntryCache;
+var log8, error3, DEFAULT_ENTRIES, NodeEntryCache2;
 var init_NodeEntryCache = __esm({
   "src/components/shared/BlobEditor/lib/NodeEntryCache/NodeEntryCache.ts"() {
     "use strict";
@@ -4406,30 +4400,30 @@ var init_NodeEntryCache = __esm({
     init_ContentEntries();
     init_nerUtils();
     init_logging();
+    init_NodeEntries();
     ({ log: log8, error: error3 } = getLogger("NodeEntryCache", { color: "yellow", enabled: true }));
-    NodeEntryCache = class {
+    DEFAULT_ENTRIES = () => [
+      {
+        id: ContentEntries.nextId++,
+        type: "break",
+        attributes: {},
+        children: []
+      }
+    ];
+    NodeEntryCache2 = class {
       entries;
       rootNER;
       lastNER = void 0;
       // reference to last-edited node for faster/immdiate lookups
+      lastInputType;
+      // keeps track of previous input, so we can better manage removing duplicate breaks upon new text
       // Creates elements from the given list of entries, and insert them into the node tree.
       hydrateContent(entries, node) {
-        this.entries = entries || [{
-          type: "break",
-          children: []
-        }];
-        this.rootNER = {
-          node,
-          entry: void 0,
-          // root has no entry
-          parent: void 0,
-          // root has no parent
-          children: []
-        };
+        this.entries = entries || DEFAULT_ENTRIES();
+        this.rootNER = NER2(node, void 0, [], void 0);
         this.rootNER.entry = ContentEntries.convertNodeToEntry(node);
         this.rootNER.entry.children = this.entries;
         this.rootNER.entry.children.forEach((e4) => this.createNERFromEntry(e4, this.rootNER));
-        111;
         log8(`hydrated.`, entries, this.rootNER);
       }
       // From a given entry... creates the dom reference for it, and adds to the parent if given, or root.
@@ -4447,7 +4441,7 @@ var init_NodeEntryCache = __esm({
         ;
       }
       // Locates and updates the NER for the node, of it exists, or inserts a new one.
-      updateOrInsert(node) {
+      updateOrInsert(node, inputType) {
         if (!node.parentNode) throw "node.parentNode does not exist. Invalid node?";
         const isRootNode = node == this.rootNER?.node;
         let parent = isRootNode ? this.rootNER : this.findNER(node.parentNode);
@@ -4456,6 +4450,10 @@ var init_NodeEntryCache = __esm({
           console.log(`Looking for parent ancestor: `, parent, node.parentNode.parentNode);
         }
         let ner = isRootNode ? this.rootNER : this.findNER(node, parent);
+        if (!ner && node.nodeType == Node.TEXT_NODE) {
+          const ns = node.nextSibling;
+          console.log(`NEW TEXT:`, node, `nextSibling:`, ns, "prevSibling:", node.previousSibling, "prevPrev:", node.previousSibling?.previousSibling, "inputType:", inputType, "lastInputType", this.lastInputType);
+        }
         if (ner) nerUtils.updateNER(ner, this);
         else if (parent) ner = nerUtils.createNERFromNode(node, parent, this);
         else {
@@ -4470,9 +4468,10 @@ var init_NodeEntryCache = __esm({
       }
       // Called when a change is detected on the node. Finds the given node in the tree and updates it's entry.
       // If the node does not exist the NER is inserted in its relative dom position.
-      applyChange(node) {
+      applyChange(node, inputType) {
         try {
-          return this.lastNER = this.updateOrInsert(node);
+          return this.lastNER = this.updateOrInsert(node, inputType);
+          this.lastInputType = inputType;
         } catch (e4) {
           log8(`Exception in applyChange():`, e4);
         }
@@ -4510,7 +4509,7 @@ var init_WEditor = __esm({
         this.onChangeHandler = onChangeHandler;
         this.plugins = plugins;
         this.config = config;
-        this.nodeCache = new NodeEntryCache();
+        this.nodeCache = new NodeEntryCache2();
         this.initialize();
       }
       contentEditable;
@@ -4518,6 +4517,7 @@ var init_WEditor = __esm({
       autoSaveTimeoutId = null;
       blob;
       nodeCache;
+      lastContentChangeType;
       initialize() {
         if (!this.container) return console.error("WEditor initialization failed: Container is null");
         if (!this.contentEditable) {
@@ -4566,6 +4566,7 @@ var init_WEditor = __esm({
       handleEnter = (e4) => {
         const node = this.getCurrentEditingNode();
         log9(`Enter`, node, e4);
+        this.lastEnterNode = node;
         if (e4.shiftKey) {
         }
       };
@@ -4639,7 +4640,8 @@ var init_WEditor = __esm({
           let range = window.getSelection()?.getRangeAt(0);
           editNode = range?.commonAncestorContainer;
         }
-        this.applyChanges(editNode);
+        this.applyChanges(editNode, e4.inputType);
+        this.lastContentChangeType = e4.inputType;
         this.debugState();
       };
       debugState() {
@@ -4647,9 +4649,9 @@ var init_WEditor = __esm({
         debugState("nerTree", this.nodeCache.rootNER);
       }
       // updates the given node's entry with it's changed content
-      applyChanges(node) {
+      applyChanges(node, inputType) {
         if (!node) throw "No node given to applyChanges()";
-        const change = this.nodeCache.applyChange(node);
+        const change = this.nodeCache.applyChange(node, inputType);
         if (this.applyChangesTimeoutId) clearTimeout(this.applyChangesTimeoutId);
         this.applyChangesTimeoutId = setTimeout(() => {
           this.commitChanges();

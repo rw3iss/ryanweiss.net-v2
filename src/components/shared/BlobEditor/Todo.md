@@ -1,6 +1,8 @@
 
 # BUGS:
 
+* On initial text node... backspace fully deletes text node, adds break
+* On initial node... enter text... 
 * From initial blank, enter for new group, then go back initial and enter text, gives: NodeEntryCache: Exception in applyChange(): Parent NER not found for updateOrInsert.
 
 * createNER seems to be inserting in wrong position. (for break)
@@ -18,6 +20,7 @@
 - Solutions:
     a) When the new group is created from the new dom node, remove any internal <br> nodes first.
     b) Create custom Enter handler to create a new group manually, insert, and set the caret position.
+    - on enter, if input type is 'insertLineBreak' (or insertParagraph) ... let it proceed but set a flag that it's a new line break... and delete the next sibling if it's a break?
 
 * Pasting content on initial node fails to insert a break after, and styles become "stuck" on subsequent nodes.
 - Solution: Should start with a group, or otherwise a default break, line a new group.

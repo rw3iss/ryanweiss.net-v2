@@ -5,30 +5,32 @@ import { NER, NodeEntryRef } from './NodeEntries.js';
 
 const { log, error } = getLogger('NodeEntryCache', { color: 'yellow', enabled: true });
 
+export const DEFAULT_ENTRIES = () => ([
+    {
+        id: ContentEntries.nextId++,
+        type: 'break',
+        attributes: {},
+        children: []
+    }
+]);
+
 export class NodeEntryCache {
     public entries: Array<ContentEntry> | undefined;
     public rootNER: NodeEntryRef | undefined;
     public lastNER: NodeEntryRef | undefined = undefined; // reference to last-edited node for faster/immdiate lookups
+    private lastInputType: string | undefined; // keeps track of previous input, so we can better manage removing duplicate breaks upon new text
 
     // Creates elements from the given list of entries, and insert them into the node tree.
     public hydrateContent(entries: Array<ContentEntry>, node: Node) {
-        this.entries = entries || [{
-            type: 'break',
-            children: []
-        }];
+        this.entries = entries || DEFAULT_ENTRIES();
 
         // create a root node to start
-        this.rootNER = {
-            node,
-            entry: undefined,  // root has no entry
-            parent: undefined, // root has no parent
-            children: []
-        };
+        this.rootNER = NER(node, undefined, [], undefined);
 
         // create a root entry from the container (a group), and re-assign the entry children so we can pull for the entries dataset later.
         this.rootNER.entry = ContentEntries.convertNodeToEntry(node);
         this.rootNER.entry.children = this.entries;
-        this.rootNER.entry.children.forEach(e => this.createNERFromEntry(e, this.rootNER)); 111
+        this.rootNER.entry.children.forEach(e => this.createNERFromEntry(e, this.rootNER));
 
         log(`hydrated.`, entries, this.rootNER);
     }
@@ -50,7 +52,7 @@ export class NodeEntryCache {
     }
 
     // Locates and updates the NER for the node, of it exists, or inserts a new one.
-    public updateOrInsert(node: Node): NodeEntryRef {
+    public updateOrInsert(node: Node, inputType?: string): NodeEntryRef {
         if (!node.parentNode) throw "node.parentNode does not exist. Invalid node?"
 
         // if the update is on the root, the update is a removal of a previous element.
@@ -64,6 +66,13 @@ export class NodeEntryCache {
 
         //if (ner) log(`found node`, isRootNode ? '[ROOT]' : '', node == this.lastNER?.node ? '[LAST]' : '', ner);
         //else log(`node not found. creating...`, node, 'parentNER:', parent);
+
+        // TODO: if node is new, and is text node... it will remove an added <br> and create the text node... so we want to first confirm the sibling is a break, then remove the break NER and entry, then let it create the text node.
+        if (!ner && node.nodeType == Node.TEXT_NODE) {
+            const ns = node.nextSibling;
+            console.log(`NEW TEXT:`, node, `nextSibling:`, ns, 'prevSibling:', node.previousSibling, 'prevPrev:', node.previousSibling?.previousSibling, 'inputType:', inputType, 'lastInputType', this.lastInputType);
+            // if nextSibling is null, or doesn't match the next entry in the ner parent, and its a break, then delete that ner node and entry.
+        }
 
         if (ner) nerUtils.updateNER(ner, this);
         else if (parent) ner = nerUtils.createNERFromNode(node, parent, this);
@@ -83,13 +92,14 @@ export class NodeEntryCache {
 
     // Called when a change is detected on the node. Finds the given node in the tree and updates it's entry.
     // If the node does not exist the NER is inserted in its relative dom position.
-    public applyChange(node: Node) {
+    public applyChange(node: Node, inputType: string) {
         //log(`applyChange`, 'isRoot?', node == this.rootNER?.node, 'node:', node, 'entry:', entry)
         try {
             // todo: move this to WEditor?
             // if its a text entry, check the parent... if it only has a break, remove the break.
             //console.log(`converted:`, entry);
-            return this.lastNER = this.updateOrInsert(node);
+            return this.lastNER = this.updateOrInsert(node, inputType);
+            this.lastInputType = inputType;
         } catch (e) {
             log(`Exception in applyChange():`, e);
         }

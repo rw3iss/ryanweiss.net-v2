@@ -1,6 +1,6 @@
 import { getLogger } from "lib/utils/logging.js";
 import { BreakEntry, ContentEntries, ContentEntry, GroupEntry, TextEntry } from "./ContentEntries.js";
-import { NodeEntryCache } from "./NodeEntryCache.js";
+import { DEFAULT_ENTRIES, NodeEntryCache } from "./NodeEntryCache.js";
 import { BreakNode, GroupNode, NER, NodeEntryRef, TextNode } from "./NodeEntries.js";
 
 const { log, warn } = getLogger('nerUtils', { color: 'yellow', enabled: true });
@@ -108,7 +108,7 @@ function createNERFromEntry(entry: ContentEntry, parent: NodeEntryRef, nodeCache
                     console.log(`No previous node?`, insertPos, childNodes, parent)
                     throw "No prevNode found at pos: " + (insertPos - 1);
                 }
-                console.log(`inserting node after:`, prevNode, 'new node:', ner.node, 'at:', insertPos)
+                console.log(`inserting node after:`, prevNode, `new node (ID: ${ner.id}):`, ner.node, 'at:', insertPos)
                 prevNode.after(ner.node);
             }
         }
@@ -147,7 +147,7 @@ function createNERFromNode(node: Node, parent: NodeEntryRef, cache: NodeEntryCac
     if (Array.isArray(parent.entry?.children)) {
         // todo: add in position
         const pos = Array.from(parent.node.childNodes).findIndex(c => c == node);
-        console.log(`Inserting entry into parent at POS:`, pos + 1);
+        console.log(`Inserting entry (ID: ${entry.id}) into parent at POS:`, pos + 1);
         parent.entry.children.splice(pos + 1, 0, entry);
     }
     // // the node already existed so we assume we do not need to add to the parent dom again. todo?
@@ -260,7 +260,7 @@ function clearCache(cache) {
                 while (cache.rootNER.entry.children.pop()) { };
             }
     }
-    cache.rootNER.entry.children.push({ type: 'break', children: [] });
+    cache.rootNER.entry.children.push(...DEFAULT_ENTRIES());
 }
 
 export const nerUtils = {

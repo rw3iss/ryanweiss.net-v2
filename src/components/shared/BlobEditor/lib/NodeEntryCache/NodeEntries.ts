@@ -75,12 +75,7 @@ export class TextNode extends ContentEntry {
 
     static createNERFromEntry(entry: TextEntry, parent: NodeEntryRef, nodeCache: NodeEntryCache): NodeEntryRef {
         //console.log(`TextNode.createNodeEntry(), entry:`, entry, 'parent:', parent)
-        const ner = {
-            entry,
-            node: document.createTextNode(entry.children),
-            children: [],
-            parent
-        };
+        const ner = NER(document.createTextNode(entry.children), entry, [], parent);
 
         if (entry.attributes) {
             if (entry.attributes['bold']) {
@@ -136,12 +131,7 @@ export class BreakNode extends ContentEntry {
     }
 
     static createNERFromEntry(entry: BreakEntry, parent: NodeEntryRef, nodeCache: NodeEntryCache): NodeEntryRef {
-        const ner = {
-            entry,
-            node: document.createElement('br'),
-            children: [],
-            parent
-        };
+        const ner = NER(document.createElement('br'), entry, [], parent);
         if (entry.attributes) {
             for (const [key, value] of Object.entries(entry.attributes)) {
                 ner.node.setAttribute(key, value);
