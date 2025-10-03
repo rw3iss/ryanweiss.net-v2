@@ -9,13 +9,13 @@ import WorkPage from 'components/pages/Work';
 import { ColorPage } from '../components/pages/Colors/ColorPage';
 
 export default {
-    "/": (p?) => <HomePage />,
-    "/work": (p?) => <WorkPage />,
-    "/play": (p?) => <PlayPage />,
-    "/info": (p?) => <InfoPage />,
-    "/editor": (p?) => <OtherPage />,
-    "/colors": (p?) => <ColorPage />,
-    "/timeline": (p?) => <TimelinePage />,
-    "/entries/:slug": (p?) => <EntryPage />,
-    "*": (p?) => <NotFoundPage />
+	"/": (p?) => <HomePage />,
+	"/work": (p?) => <WorkPage />,
+	"/play": (p?) => <PlayPage />,
+	"/info": (p?) => <InfoPage />,
+	"/editor": (p?) => <OtherPage />,
+	"/colors": (p?) => <ColorPage />,
+	"/timeline": (p?) => <TimelinePage />,
+	"/entries/:slug": (p?) => <EntryPage />,
+	"*": (p?) => <NotFoundPage />
 }

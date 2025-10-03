@@ -809,49 +809,90 @@
 .debug-state .jsontree_tree .jsontree_label-wrapper {
   margin-left: 5px;
 }
+.json-view {
+  margin-left: 10px;
+}
 .json-node {
   position: relative;
-  margin-left: 20px;
+  margin-left: calc(25px + 7px);
   padding-left: 0px;
-  font-size: 12px;
+  font-size: 20px;
   line-height: 1em;
 }
 .json-node .json-properties {
   display: flex;
   flex-direction: column;
   transition: height 0.2s ease-in-out;
+  width: 100%;
 }
 .json-node .json-property {
   position: relative;
   display: flex;
   align-items: flex-start;
-  padding: 3px 0;
+  padding: 10px 0;
 }
 .json-node .json-property.object {
   flex-direction: column;
+  width: 100%;
+}
+.json-node .json-property.object > .json-key,
+.json-node .json-property.object > .json-value {
+  width: 100%;
+}
+.json-node .json-property.object:hover > .json-key {
+  color: #55faf7;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  transition: color 0.1s linear, text-shadow 0.1s linear;
+}
+.json-node .json-property.object:hover > .json-key .json-toggle {
+  color: #55faf7;
+  transition: color 0.1s linear, text-shadow 0.1s linear;
 }
 .json-node .json-key {
   font-weight: bold;
   margin-right: 5px;
   color: #878787;
+  padding: 2px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  transition: color 0.1s linear, text-shadow 0.1s linear;
 }
-.json-node .json-value {
-  color: #79b0eb;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-.json-node .json-toggle {
-  margin-right: 5px;
+.json-node .json-key .json-toggle {
+  padding: 2px;
+  padding-right: calc(2px + 5px);
   border: none;
   background: none;
   cursor: pointer;
   color: #555;
   position: absolute;
-  top: 2px;
+  text-align: center;
+  width: calc(20px * 1.25);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: calc(10px / 1.25);
   left: -25px;
+  font-size: calc(20px / 1.25);
+  transition: color 0.1s linear, text-shadow 0.1s linear;
 }
-.json-node .json-toggle:hover {
-  color: #dedede;
+.json-node .json-value {
+  color: #79b0eb;
+  white-space: pre-wrap;
+  padding: 2px;
+  word-break: break-word;
+}
+.json-node .json-value.image {
+  border-radius: 4px;
+}
+.json-node .json-value.image img {
+  max-width: 200px;
+  border-radius: 4px;
+}
+.json-node .json-value.image > a:hover {
+  box-shadow: 0 0 15px 5px #ced8dd;
+  transition: box-shadow 0.1s ease-in-out;
 }
 .json-node .collapsed .json-properties {
   display: none;
@@ -1022,11 +1063,11 @@
   display: block;
   margin-left: 5px;
 }
-#other .bio .right #skills .skill-types h4 {
-  font-family: "Mario";
-}
 #other .bio .right #skills .skill-types h4:not(:first-child) {
   margin-top: 10px;
+}
+#other .bio .right #skills .skill-types h4 {
+  font-family: "Mario";
 }
 #other .bio .right #skills .skill-types ul {
   display: flex;
@@ -1855,8 +1896,7 @@ body {
   overflow-x: hidden;
   color: #123;
   font-family:
-    "Fira Code",
-    "Fira Mono",
+    "8bit",
     Menlo,
     Consolas,
     "DejaVu Sans Mono",
@@ -2619,7 +2659,6 @@ h6 {
   margin-top: -32px;
   margin-left: -32px;
   opacity: 0;
-  transition: opacity 0.25s ease-in-out;
 }
 #app .content-wrapper .page .container .stage .stage-content .loader .loader-ring {
   display: inline-block;
@@ -2647,6 +2686,9 @@ h6 {
 }
 #app .content-wrapper .page .container .stage .stage-content .loader .loader-ring div:nth-child(3) {
   animation-delay: -0.15s;
+}
+#app .content-wrapper .page .container .stage .stage-content .loader {
+  transition: opacity 0.25s ease-in-out;
 }
 #app .content-wrapper .page .container.loading .stage .loader {
   opacity: 1;

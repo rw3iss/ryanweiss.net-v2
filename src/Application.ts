@@ -5,26 +5,25 @@ import AudioManager from './lib/AudioManager.js';
 import { DebugPanel, DebugPanelLogModule } from './lib/utils/debug/DebugPanel';
 import { addLogModule } from './lib/utils/logging.js';
 
-class _Application {
+class Application {
 
-    constructor() {
-        // init globals and singletons
-    }
+	constructor() {
+		// init globals and singletons
+	}
 
-    // Things to initialize before client can start...
-    // Don't take too long... App waits for this method until it mounts.
-    async init() {
-        //console.log(`Application.init()`)
-        const dbManager = new IndexedDBManager(APP_ID, 1);
-        if (idbTables) for (var t of idbTables) dbManager.addStore(t.name, t.indexes);
+	// Things to initialize before client can start...
+	// Don't take too long... App waits for this method until it mounts.
+	async init() {
+		//console.log(`Application.init()`)
+		const dbManager = new IndexedDBManager(APP_ID, 1);
+		if (idbTables) for (var t of idbTables) dbManager.addStore(t.name, t.indexes);
 
-        AudioManager.register('hover', '/public/sounds/click.wav');
-        AudioManager.register('click', '/public/sounds/cool-click.wav');
+		AudioManager.register('hover', '/public/sounds/click.wav');
+		AudioManager.register('click', '/public/sounds/cool-click.wav');
 
-        addLogModule(new DebugPanelLogModule({ show: true }));
-    }
+		//addLogModule(new DebugPanelLogModule({ show: true }));
+	}
 
 }
 
-const Application = new _Application();
-export default Application;
+export default new Application(); 

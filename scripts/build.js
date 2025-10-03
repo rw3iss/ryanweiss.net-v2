@@ -94,9 +94,7 @@ async function build() {
     mkDirSync(OUTPUT_DIR);
 
     await esbuild
-        .build(
-            buildConfig
-        )
+        .build(buildConfig)
         .catch((e) => {
             console.error(`Error building:`, e);
             process.exit(1)

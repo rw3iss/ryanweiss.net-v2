@@ -1,56 +1,121 @@
+$fontSize: 20px;
+$ySpacing: 10px;
+$insetPerLevel: 7px;
+$btnToggleOffset: 25px;
+$marginLeft: 10px;
+$padding: 2px;
+
+$hoverColor: #55faf7;
+$animTime: 0.1s;
+
+.json-view {
+	margin-left: $marginLeft;
+}
+
 .json-node {
-    //border-left: 2px solid #ccc;
-    position: relative;
-    margin-left: 20px;
-    padding-left: 0px;
-    font-size: 12px;
-    line-height: 1em;
+	//border-left: 2px solid #ccc;
+	position: relative;
+	margin-left: calc(#{$btnToggleOffset} + #{$insetPerLevel});
+	padding-left: 0px;
+	font-size: $fontSize;
+	line-height: 1em;
 
-    .json-properties {
-        display: flex;
-        flex-direction: column;
-        transition: height 0.2s ease-in-out;
-    }
+	.json-properties {
+		display: flex;
+		flex-direction: column;
+		transition: height 0.2s ease-in-out;
+		width: 100%;
+	}
 
-    .json-property {
-        position: relative;
-        display: flex;
-        align-items: flex-start;
-        padding: 3px 0;
+	.json-property {
+		position: relative;
+		display: flex;
+		align-items: flex-start;
+		padding: $ySpacing 0;
 
-        &.object {
-            flex-direction: column;
-        }
-    }
+		&.object {
+			flex-direction: column;
+			width: 100%;
 
-    .json-key {
-        font-weight: bold;
-        margin-right: 5px;
-        color: #878787;
-    }
+			> .json-key,
+			> .json-value {
+				width: 100%;
+			}
 
-    .json-value {
-        color: #79b0eb;
-        white-space: pre-wrap;
-        word-break: break-word;
-    }
+			&:hover {
+				> .json-key {
+					color: $hoverColor;
+					text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+					cursor: pointer;
+					transition:
+						color $animTime linear,
+						text-shadow $animTime linear;
 
-    .json-toggle {
-        margin-right: 5px;
-        border: none;
-        background: none;
-        cursor: pointer;
-        color: #555;
-        position: absolute;
-        top: 2px;
-        left: -25px;
-    }
+					.json-toggle {
+						color: $hoverColor;
+						transition:
+							color $animTime linear,
+							text-shadow $animTime linear;
+					}
+				}
+			}
+		}
+	}
 
-    .json-toggle:hover {
-        color: #dedede;
-    }
+	.json-key {
+		font-weight: bold;
+		margin-right: 5px;
+		color: #878787;
+		padding: $padding;
+		text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+		transition:
+			color $animTime linear,
+			text-shadow $animTime linear;
 
-    .collapsed .json-properties {
-        display: none;
-    }
+		.json-toggle {
+			padding: $padding;
+			padding-right: calc(#{$padding} + 5px);
+			border: none;
+			background: none;
+			cursor: pointer;
+			color: #555;
+			position: absolute;
+			text-align: center;
+			width: calc(#{$fontSize} * 1.25);
+			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+			white-space: nowrap;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			top: calc(#{$ySpacing} / 1.25);
+			left: -$btnToggleOffset;
+			font-size: calc(#{$fontSize} / 1.25);
+			transition:
+				color $animTime linear,
+				text-shadow $animTime linear;
+		}
+	}
+
+	.json-value {
+		color: #79b0eb;
+		white-space: pre-wrap;
+		padding: $padding;
+		word-break: break-word;
+
+		&.image {
+			border-radius: 4px;
+			img {
+				max-width: 200px;
+				border-radius: 4px;
+			}
+			> a:hover {
+				box-shadow: 0 0 15px 5px #ced8dd; /* Horizontal offset, vertical offset, blur radius, spread radius, and color */
+				transition: box-shadow $animTime ease-in-out;
+			}
+		}
+	}
+
+	.collapsed .json-properties {
+		display: none;
+	}
 }
