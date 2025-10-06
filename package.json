@@ -38,6 +38,7 @@
 		"@codemirror/view": "^6.38.4",
 		"better-local-storage-fallback": "^1.0.0",
 		"codemirror": "^6.0.2",
+		"dev-debug-panel": "^1.0.3",
 		"dotenv": "^17.2.3",
 		"eventbusjs": "^0.2.0",
 		"get-loggers": "^1.1.4",

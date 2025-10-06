@@ -3,7 +3,6 @@ import { Blob, BlobContent } from 'types/Blob';
 import { IPlugin } from '../plugins/IPlugin';
 import { nerUtils } from './NodeEntryCache/nerUtils.js';
 import { getLogger } from 'utils/logging';
-import { debugState } from '../../../../lib/utils/debug/DebugPanel.js';
 
 const { log, error } = getLogger('WEditor', { color: 'blue', enabled: true });
 
@@ -72,7 +71,7 @@ export class WEditor {
 
         // create a root node:
         this.nodeCache.hydrateContent(this.blob.content.entries, this.contentEditable);
-        this.debugState();
+        //this.debugState();
 
         //this.convertToHTML(this.blob.content, this.contentEditable);
         // todo: should hydrate node cache
@@ -218,13 +217,13 @@ export class WEditor {
 
         this.lastContentChangeType = e.inputType;
 
-        this.debugState();
+        //this.debugState();
     };
 
-    private debugState() {
-        debugState('entryTree', this.nodeCache.rootNER?.entry);
-        debugState('nerTree', this.nodeCache.rootNER);
-    }
+    // private debugState() {
+    //     debugState('entryTree', this.nodeCache.rootNER?.entry);
+    //     debugState('nerTree', this.nodeCache.rootNER);
+    // }
 
     // updates the given node's entry with it's changed content
     private applyChanges(node, inputType) {
@@ -266,7 +265,7 @@ export class WEditor {
             this.contentEditable.innerHTML = '';
             this.nodeCache.clear();
             if (commit) this.commitChanges();
-            this.debugState();
+            //this.debugState();
         }
     }
 

@@ -1,0 +1,39 @@
+name: Deploy to Remote Server
+
+on:
+  push:
+    branches:
+      - main # Trigger on pushes to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # Run on an Ubuntu virtual environment
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Action to check out the current repository
+
+      - name: Deploy and Build on Remote Server
+        uses: appleboy/ssh-action@v1.0.0 # Use the appleboy/ssh-action
+        with:
+          host: ${{ secrets.SSH_HOST }} # Remote server hostname from GitHub secrets
+          username: ${{ secrets.SSH_USERNAME }} # Remote server username from GitHub secrets
+          key: ${{ secrets.SSH_PRIVATE_KEY }} # Private SSH key from GitHub secrets
+          script: |
+            # Navigate to your application directory on the remote server
+            cd /web/sites/
+
+            # Pull the latest code changes
+            git pull origin main
+
+            # Install dependencies (if applicable)
+            # npm install # Example for Node.js
+            # pip install -r requirements.txt # Example for Python
+
+            # Build the application
+            # npm run build # Example for Node.js
+            # make # Example for C/C++
+            # go build -o myapp # Example for Go
+
+            # Restart application service (if applicable)
+            # sudo systemctl restart your-service-name # Example for systemd

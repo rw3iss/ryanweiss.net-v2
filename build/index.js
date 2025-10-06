@@ -374,8 +374,8 @@ var require_eventbus_min = __commonJS({
         }
         return str;
       } };
-      var EventBus3 = new EventBusClass();
-      return EventBus3;
+      var EventBus2 = new EventBusClass();
+      return EventBus2;
     });
   }
 });
@@ -2044,6 +2044,1189 @@ var _AudioManager = class {
 var AudioManager = new _AudioManager();
 var AudioManager_default = AudioManager;
 
+// node_modules/dev-debug-panel/dist/index.umd.js
+init_preact_module();
+var DebugPanelLogger = (() => {
+  var Ge = Object.create;
+  var V2 = Object.defineProperty;
+  var Ue = Object.getOwnPropertyDescriptor;
+  var Ke = Object.getOwnPropertyNames;
+  var Qe = Object.getPrototypeOf, Ze = Object.prototype.hasOwnProperty;
+  var Ae = (r3, e4) => () => (e4 || r3((e4 = { exports: {} }).exports, e4), e4.exports), et = (r3, e4) => {
+    for (var t3 in e4) V2(r3, t3, { get: e4[t3], enumerable: true });
+  }, Ne = (r3, e4, t3, n2) => {
+    if (e4 && typeof e4 == "object" || typeof e4 == "function") for (let i4 of Ke(e4)) !Ze.call(r3, i4) && i4 !== t3 && V2(r3, i4, { get: () => e4[i4], enumerable: !(n2 = Ue(e4, i4)) || n2.enumerable });
+    return r3;
+  };
+  var ke = (r3, e4, t3) => (t3 = r3 != null ? Ge(Qe(r3)) : {}, Ne(e4 || !r3 || !r3.__esModule ? V2(t3, "default", { value: r3, enumerable: true }) : t3, r3)), tt = (r3) => Ne(V2({}, "__esModule", { value: true }), r3);
+  var Oe = Ae(($3, Z) => {
+    (function(r3, e4) {
+      typeof $3 == "object" && typeof Z == "object" ? Z.exports = e4() : typeof define == "function" && define.amd ? define("EventBus", [], e4) : typeof $3 == "object" ? $3.EventBus = e4() : r3.EventBus = e4();
+    })($3, function() {
+      var r3 = {};
+      r3 = function() {
+        this.listeners = {};
+      }, r3.prototype = { addEventListener: function(t3, n2, i4) {
+        for (var o3 = [], s3 = arguments.length, a3 = 0; a3 < s3; a3++) o3.push(arguments[a3]);
+        o3 = o3.length > 3 ? o3.splice(3, o3.length - 1) : [], typeof this.listeners[t3] < "u" ? this.listeners[t3].push({ scope: i4, callback: n2, args: o3 }) : this.listeners[t3] = [{ scope: i4, callback: n2, args: o3 }];
+      }, removeEventListener: function(t3, n2, i4) {
+        if (typeof this.listeners[t3] < "u") {
+          for (var o3 = this.listeners[t3].length, s3 = [], a3 = 0; a3 < o3; a3++) {
+            var l3 = this.listeners[t3][a3];
+            l3.scope == i4 && l3.callback == n2 || s3.push(l3);
+          }
+          this.listeners[t3] = s3;
+        }
+      }, hasEventListener: function(t3, n2, i4) {
+        if (typeof this.listeners[t3] < "u") {
+          var o3 = this.listeners[t3].length;
+          if (n2 === void 0 && i4 === void 0) return o3 > 0;
+          for (var s3 = 0; s3 < o3; s3++) {
+            var a3 = this.listeners[t3][s3];
+            if ((!i4 || a3.scope == i4) && a3.callback == n2) return true;
+          }
+        }
+        return false;
+      }, dispatch: function(t3, n2) {
+        for (var i4 = { type: t3, target: n2 }, o3 = [], s3 = arguments.length, a3 = 0; a3 < s3; a3++) o3.push(arguments[a3]);
+        if (o3 = o3.length > 2 ? o3.splice(2, o3.length - 1) : [], o3 = [i4].concat(o3), typeof this.listeners[t3] < "u") for (var l3 = this.listeners[t3].slice(), u4 = l3.length, a3 = 0; a3 < u4; a3++) {
+          var d3 = l3[a3];
+          if (d3 && d3.callback) {
+            var p3 = o3.concat(d3.args);
+            d3.callback.apply(d3.scope, p3);
+          }
+        }
+      }, getEvents: function() {
+        var t3 = "";
+        for (var n2 in this.listeners) for (var i4 = this.listeners[n2].length, o3 = 0; o3 < i4; o3++) {
+          var s3 = this.listeners[n2][o3];
+          t3 += s3.scope && s3.scope.className ? s3.scope.className : "anonymous", t3 += " listen for '" + n2 + `'
+`;
+        }
+        return t3;
+      } };
+      var e4 = new r3();
+      return e4;
+    });
+  });
+  var He = Ae((St, Ie) => {
+    Ie.exports = P2;
+    P2.default = P2;
+    P2.stable = Me;
+    P2.stableStringify = Me;
+    var X = "[...]", _e = "[Circular]", D3 = [], T3 = [];
+    function Fe() {
+      return { depthLimit: Number.MAX_SAFE_INTEGER, edgesLimit: Number.MAX_SAFE_INTEGER };
+    }
+    function P2(r3, e4, t3, n2) {
+      typeof n2 > "u" && (n2 = Fe()), ee(r3, "", 0, [], void 0, 0, n2);
+      var i4;
+      try {
+        T3.length === 0 ? i4 = JSON.stringify(r3, e4, t3) : i4 = JSON.stringify(r3, ze(e4), t3);
+      } catch {
+        return JSON.stringify("[unable to serialize, circular reference is too complex to analyze]");
+      } finally {
+        for (; D3.length !== 0; ) {
+          var o3 = D3.pop();
+          o3.length === 4 ? Object.defineProperty(o3[0], o3[1], o3[3]) : o3[0][o3[1]] = o3[2];
+        }
+      }
+      return i4;
+    }
+    function k3(r3, e4, t3, n2) {
+      var i4 = Object.getOwnPropertyDescriptor(n2, t3);
+      i4.get !== void 0 ? i4.configurable ? (Object.defineProperty(n2, t3, { value: r3 }), D3.push([n2, t3, e4, i4])) : T3.push([e4, t3, r3]) : (n2[t3] = r3, D3.push([n2, t3, e4]));
+    }
+    function ee(r3, e4, t3, n2, i4, o3, s3) {
+      o3 += 1;
+      var a3;
+      if (typeof r3 == "object" && r3 !== null) {
+        for (a3 = 0; a3 < n2.length; a3++) if (n2[a3] === r3) {
+          k3(_e, r3, e4, i4);
+          return;
+        }
+        if (typeof s3.depthLimit < "u" && o3 > s3.depthLimit) {
+          k3(X, r3, e4, i4);
+          return;
+        }
+        if (typeof s3.edgesLimit < "u" && t3 + 1 > s3.edgesLimit) {
+          k3(X, r3, e4, i4);
+          return;
+        }
+        if (n2.push(r3), Array.isArray(r3)) for (a3 = 0; a3 < r3.length; a3++) ee(r3[a3], a3, a3, n2, r3, o3, s3);
+        else {
+          var l3 = Object.keys(r3);
+          for (a3 = 0; a3 < l3.length; a3++) {
+            var u4 = l3[a3];
+            ee(r3[u4], u4, a3, n2, r3, o3, s3);
+          }
+        }
+        n2.pop();
+      }
+    }
+    function rt(r3, e4) {
+      return r3 < e4 ? -1 : r3 > e4 ? 1 : 0;
+    }
+    function Me(r3, e4, t3, n2) {
+      typeof n2 > "u" && (n2 = Fe());
+      var i4 = te(r3, "", 0, [], void 0, 0, n2) || r3, o3;
+      try {
+        T3.length === 0 ? o3 = JSON.stringify(i4, e4, t3) : o3 = JSON.stringify(i4, ze(e4), t3);
+      } catch {
+        return JSON.stringify("[unable to serialize, circular reference is too complex to analyze]");
+      } finally {
+        for (; D3.length !== 0; ) {
+          var s3 = D3.pop();
+          s3.length === 4 ? Object.defineProperty(s3[0], s3[1], s3[3]) : s3[0][s3[1]] = s3[2];
+        }
+      }
+      return o3;
+    }
+    function te(r3, e4, t3, n2, i4, o3, s3) {
+      o3 += 1;
+      var a3;
+      if (typeof r3 == "object" && r3 !== null) {
+        for (a3 = 0; a3 < n2.length; a3++) if (n2[a3] === r3) {
+          k3(_e, r3, e4, i4);
+          return;
+        }
+        try {
+          if (typeof r3.toJSON == "function") return;
+        } catch {
+          return;
+        }
+        if (typeof s3.depthLimit < "u" && o3 > s3.depthLimit) {
+          k3(X, r3, e4, i4);
+          return;
+        }
+        if (typeof s3.edgesLimit < "u" && t3 + 1 > s3.edgesLimit) {
+          k3(X, r3, e4, i4);
+          return;
+        }
+        if (n2.push(r3), Array.isArray(r3)) for (a3 = 0; a3 < r3.length; a3++) te(r3[a3], a3, a3, n2, r3, o3, s3);
+        else {
+          var l3 = {}, u4 = Object.keys(r3).sort(rt);
+          for (a3 = 0; a3 < u4.length; a3++) {
+            var d3 = u4[a3];
+            te(r3[d3], d3, a3, n2, r3, o3, s3), l3[d3] = r3[d3];
+          }
+          if (typeof i4 < "u") D3.push([i4, e4, r3]), i4[e4] = l3;
+          else return l3;
+        }
+        n2.pop();
+      }
+    }
+    function ze(r3) {
+      return r3 = typeof r3 < "u" ? r3 : function(e4, t3) {
+        return t3;
+      }, function(e4, t3) {
+        if (T3.length > 0) for (var n2 = 0; n2 < T3.length; n2++) {
+          var i4 = T3[n2];
+          if (i4[1] === e4 && i4[0] === t3) {
+            t3 = i4[2], T3.splice(n2, 1);
+            break;
+          }
+        }
+        return r3.call(this, e4, t3);
+      };
+    }
+  });
+  var wt = {};
+  et(wt, { DebugPanel: () => Q2, JsonView: () => M2, ScreenPosition: () => je, debug: () => Ye, getWindowSize: () => z3, makeDraggable: () => W, makeResizable: () => G2 });
+  var nt = ".debug-panel{position:fixed;z-index:99999;background:#222;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.3);display:flex;flex-direction:column;overflow:hidden;font-family:Arial,sans-serif;color:#fff;transition:transform .2s ease-in-out,visibility .2s ease-in-out}.debug-panel.visible{visibility:visible;transform:translateY(0)}.debug-panel:not(.visible){visibility:hidden;transform:translateY(10px);pointer-events:none}.debug-panel .debug-panel-tabs{display:flex;flex-wrap:wrap;background:#111;padding:5px;gap:5px;border-bottom:1px solid hsla(0,0%,100%,.1);cursor:grab;user-select:none}.debug-panel .debug-panel-tabs:active{cursor:grabbing}.debug-panel .debug-panel-tabs .debug-tab{background:#333;color:#ccc;padding:5px 10px;border:none;border-radius:4px;cursor:pointer;transition:background .2s ease-in-out}.debug-panel .debug-panel-tabs .debug-tab:hover{background:#444;color:#fff}.debug-panel .debug-panel-tabs .debug-tab:focus{outline:none}.debug-panel .debug-panel-tabs .debug-tab.active{background:#007bff;color:#fff}.debug-panel .debug-panel-content{flex:1;display:flex;flex-direction:column;overflow-y:auto;padding:0px 15px;background:#1a1a1a}.debug-panel .debug-panel-content .debug-tab-content{display:none;flex-direction:column;flex:1;gap:5px}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry{background:#292929;color:#ddd;padding:5px 8px;border-radius:4px;font-size:12px;word-break:break-word;border-left:3px solid #007bff;position:relative;display:flex;align-items:center}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry:hover .debug-delete-button,.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry:hover .debug-copy-button{opacity:1}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-log-entry-text{flex:1;padding-right:70px}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-action-button,.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-delete-button,.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-copy-button{position:absolute;top:50%;transform:translateY(-50%);background:rgba(100,100,100,.8);color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:bold;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s ease-in-out,background .2s ease-in-out}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-action-button:hover,.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-delete-button:hover,.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-copy-button:hover{background:#969696}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-copy-button{right:36px;background:rgba(85,170,255,.8)}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-copy-button:hover{background:#28f}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-delete-button{right:8px;background:rgba(255,85,85,.8)}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-delete-button:hover{background:#f22}.debug-panel .debug-toolbar{display:flex;width:100%;align-items:center;justify-content:flex-end;gap:8px;padding:8px;background:#111;border-top:1px solid hsla(0,0%,100%,.1);flex-wrap:wrap}.debug-panel .debug-toolbar .debug-keyboard-hint{margin-right:auto;color:#999;font-size:11px;white-space:nowrap}.debug-panel .debug-toolbar .debug-opacity-container{display:flex;align-items:center;gap:5px;max-width:100px;min-width:40px;flex-shrink:1;padding:5px 0}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-label{font-size:11px;color:#999;white-space:nowrap}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-slider{flex:1;min-width:40px;width:100%;max-width:100%;height:4px;background:#444;border-radius:2px;outline:none;-webkit-appearance:none;appearance:none}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;background:#007bff;cursor:pointer;border-radius:50%;position:relative;top:-4px;transition:background .2s}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-slider::-webkit-slider-thumb:hover{background:#0056b3}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-slider::-moz-range-thumb{width:14px;height:14px;background:#007bff;cursor:pointer;border-radius:50%;border:none;position:relative;top:-4px;transition:background .2s}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-slider::-moz-range-thumb:hover{background:#0056b3}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-slider::-webkit-slider-runnable-track{height:4px;background:#444;border-radius:2px}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-slider::-moz-range-track{height:4px;background:#444;border-radius:2px}.debug-panel .debug-toolbar button{background:#d9534f;color:#fff;border:none;padding:6px 12px;border-radius:4px;font-size:12px;cursor:pointer;transition:background .2s;white-space:nowrap;flex-shrink:0}.debug-panel .debug-toolbar button:hover{background:#c9302c}.debug-panel .debug-toolbar button:focus{outline:none}.debug-panel .debug-toolbar{container-type:inline-size}@container (max-width: 350px){.debug-panel .debug-toolbar{flex-direction:column;align-items:stretch}.debug-panel .debug-toolbar .debug-keyboard-hint{display:none}.debug-panel .debug-toolbar .debug-opacity-container{max-width:100%;justify-content:center}}.debug-panel.narrow-panel .debug-toolbar{flex-direction:column;align-items:stretch}.debug-panel.narrow-panel .debug-toolbar .debug-keyboard-hint{margin-right:0;text-align:center}.debug-panel.narrow-panel .debug-toolbar .debug-opacity-container{max-width:100%;justify-content:center}.debug-panel .resize-handle{position:absolute;background:hsla(0,0%,100%,.1);z-index:10;transition:background .2s}.debug-panel .resize-handle:hover{background:hsla(0,0%,100%,.3)}.debug-panel .resize-left,.debug-panel .resize-right{top:0;bottom:0;width:6px;cursor:ew-resize}.debug-panel .resize-left{left:-3px}.debug-panel .resize-right{right:-3px}.debug-panel .resize-top,.debug-panel .resize-bottom{left:0;right:0;height:6px;cursor:ns-resize}.debug-panel .resize-top{top:-3px}.debug-panel .resize-bottom{bottom:-3px}.debug-panel .resize-top-left,.debug-panel .resize-top-right,.debug-panel .resize-bottom-left,.debug-panel .resize-bottom-right{width:10px;height:10px}.debug-panel .resize-top-left{left:-3px;top:-3px;cursor:nwse-resize}.debug-panel .resize-top-right{right:-3px;top:-3px;cursor:nesw-resize}.debug-panel .resize-bottom-left{left:-3px;bottom:-3px;cursor:nesw-resize}.debug-panel .resize-bottom-right{right:-3px;bottom:-3px;cursor:nwse-resize}.debug-state{position:relative;flex:1 0 100%;display:flex;flex-direction:column;margin-bottom:10px;margin-left:10px}.debug-state .json-toggle{position:absolute;top:7px;left:-20px;margin-right:5px;border:none;background:none;cursor:pointer;color:#888;font-size:14px;padding:0;width:20px;height:20px;transition:color .2s}.debug-state .json-toggle:hover{color:#fff}.debug-state .json-toggle:focus{outline:none}.debug-state .debug-state-label{font-size:13px;font-weight:bold;padding:5px 0;color:#ccc}.debug-state .debug-state-label:hover{color:#fff;cursor:pointer;text-decoration:underline}.debug-state .json-wrapper{padding:5px;margin-left:-15px;background:#292929;border-radius:4px;border-left:3px solid #28a745}.debug-state.collapsed .json-wrapper{display:none}";
+  if (typeof document < "u") {
+    let r3 = document.createElement("style");
+    r3.textContent = nt, document.head.appendChild(r3);
+  }
+  var it = ".json-node{position:relative;margin-left:20px;padding-left:0;font-size:12px;line-height:1.4em}.json-node .json-properties{display:flex;flex-direction:column}.json-node .json-property{position:relative;display:flex;align-items:flex-start;padding:2px 0}.json-node .json-property.object{flex-direction:column}.json-node .json-key{font-weight:bold;margin-right:5px;color:#9cdcfe}.json-node .json-key.clickable{cursor:pointer}.json-node .json-key.clickable:hover{color:#4fc3f7;text-decoration:underline}.json-node .json-value{color:#ce9178;white-space:pre-wrap;word-break:break-word;flex:1}.json-node .json-toggle{position:absolute;top:2px;left:-20px;border:none;background:none;cursor:pointer;color:#888;font-size:12px;padding:0;width:16px;height:16px;transition:color .2s}.json-node .json-toggle:hover{color:#fff}.json-node .json-toggle:focus{outline:none}.json-node .collapsed .json-properties{display:none}";
+  if (typeof document < "u") {
+    let r3 = document.createElement("style");
+    r3.textContent = it, document.head.appendChild(r3);
+  }
+  var K2 = ke(Oe(), 1), De = ke(He(), 1);
+  function ot(r3) {
+    var e4;
+    let t3 = /^\/(.*)\/([gimyu]*)$/.exec(r3.toString());
+    if (!t3) throw new Error("Invalid RegExp");
+    return new RegExp((e4 = t3[1]) !== null && e4 !== void 0 ? e4 : "", t3[2]);
+  }
+  function j3(r3) {
+    if (typeof r3 != "object") return r3;
+    if (r3 === null) return null;
+    if (Array.isArray(r3)) return r3.map(j3);
+    if (r3 instanceof Date) return new Date(r3.getTime());
+    if (r3 instanceof RegExp) return ot(r3);
+    let e4 = {};
+    for (let t3 in r3) Object.prototype.hasOwnProperty.call(r3, t3) && (e4[t3] = j3(r3[t3]));
+    return e4;
+  }
+  function $e(r3, e4) {
+    if (r3.length === 0) throw new Error(e4 || "Expected a non-empty array");
+  }
+  var Pe = (r3) => r3[r3.length - 1];
+  var S2 = class {
+    setResult(e4) {
+      return this.result = e4, this.hasResult = true, this;
+    }
+    exit() {
+      return this.exiting = true, this;
+    }
+    push(e4, t3) {
+      return e4.parent = this, typeof t3 < "u" && (e4.childName = t3), e4.root = this.root || this, e4.options = e4.options || this.options, this.children ? ($e(this.children), Pe(this.children).next = e4, this.children.push(e4)) : (this.children = [e4], this.nextAfterChildren = this.next || null, this.next = e4), e4.next = this, this;
+    }
+  };
+  var ne = class extends S2 {
+    constructor(e4, t3) {
+      super(), this.left = e4, this.right = t3, this.pipe = "diff";
+    }
+    prepareDeltaResult(e4) {
+      var t3, n2, i4, o3;
+      if (typeof e4 == "object" && (!((t3 = this.options) === null || t3 === void 0) && t3.omitRemovedValues && Array.isArray(e4) && e4.length > 1 && (e4.length === 2 || e4[2] === 0 || e4[2] === 3) && (e4[0] = 0), !((n2 = this.options) === null || n2 === void 0) && n2.cloneDiffValues)) {
+        let s3 = typeof ((i4 = this.options) === null || i4 === void 0 ? void 0 : i4.cloneDiffValues) == "function" ? (o3 = this.options) === null || o3 === void 0 ? void 0 : o3.cloneDiffValues : j3;
+        typeof e4[0] == "object" && (e4[0] = s3(e4[0])), typeof e4[1] == "object" && (e4[1] = s3(e4[1]));
+      }
+      return e4;
+    }
+    setResult(e4) {
+      return this.prepareDeltaResult(e4), super.setResult(e4);
+    }
+  }, L2 = ne;
+  var ie = class extends S2 {
+    constructor(e4, t3) {
+      super(), this.left = e4, this.delta = t3, this.pipe = "patch";
+    }
+  }, O2 = ie;
+  var re = class extends S2 {
+    constructor(e4) {
+      super(), this.delta = e4, this.pipe = "reverse";
+    }
+  }, _2 = re;
+  var oe = class {
+    constructor(e4) {
+      this.name = e4, this.filters = [];
+    }
+    process(e4) {
+      if (!this.processor) throw new Error("add this pipe to a processor before using it");
+      let t3 = this.debug, n2 = this.filters.length, i4 = e4;
+      for (let o3 = 0; o3 < n2; o3++) {
+        let s3 = this.filters[o3];
+        if (s3 && (t3 && this.log(`filter: ${s3.filterName}`), s3(i4), typeof i4 == "object" && i4.exiting)) {
+          i4.exiting = false;
+          break;
+        }
+      }
+      !i4.next && this.resultCheck && this.resultCheck(i4);
+    }
+    log(e4) {
+      console.log(`[jsondiffpatch] ${this.name} pipe, ${e4}`);
+    }
+    append(...e4) {
+      return this.filters.push(...e4), this;
+    }
+    prepend(...e4) {
+      return this.filters.unshift(...e4), this;
+    }
+    indexOf(e4) {
+      if (!e4) throw new Error("a filter name is required");
+      for (let t3 = 0; t3 < this.filters.length; t3++) {
+        let n2 = this.filters[t3];
+        if (n2?.filterName === e4) return t3;
+      }
+      throw new Error(`filter not found: ${e4}`);
+    }
+    list() {
+      return this.filters.map((e4) => e4.filterName);
+    }
+    after(e4, ...t3) {
+      let n2 = this.indexOf(e4);
+      return this.filters.splice(n2 + 1, 0, ...t3), this;
+    }
+    before(e4, ...t3) {
+      let n2 = this.indexOf(e4);
+      return this.filters.splice(n2, 0, ...t3), this;
+    }
+    replace(e4, ...t3) {
+      let n2 = this.indexOf(e4);
+      return this.filters.splice(n2, 1, ...t3), this;
+    }
+    remove(e4) {
+      let t3 = this.indexOf(e4);
+      return this.filters.splice(t3, 1), this;
+    }
+    clear() {
+      return this.filters.length = 0, this;
+    }
+    shouldHaveResult(e4) {
+      return e4 === false ? (this.resultCheck = null, this) : this.resultCheck ? this : (this.resultCheck = (t3) => {
+        if (!t3.hasResult) {
+          console.log(t3);
+          let n2 = new Error(`${this.name} failed`);
+          throw n2.noResult = true, n2;
+        }
+      }, this);
+    }
+  }, q3 = oe;
+  var se = class {
+    constructor(e4) {
+      this.selfOptions = e4 || {}, this.pipes = {};
+    }
+    options(e4) {
+      return e4 && (this.selfOptions = e4), this.selfOptions;
+    }
+    pipe(e4, t3) {
+      let n2 = t3;
+      if (typeof e4 == "string") {
+        if (typeof n2 > "u") return this.pipes[e4];
+        this.pipes[e4] = n2;
+      }
+      if (e4 && e4.name) {
+        if (n2 = e4, n2.processor === this) return n2;
+        this.pipes[n2.name] = n2;
+      }
+      if (!n2) throw new Error(`pipe is not defined: ${e4}`);
+      return n2.processor = this, n2;
+    }
+    process(e4, t3) {
+      let n2 = e4;
+      n2.options = this.options();
+      let i4 = t3 || e4.pipe || "default", o3;
+      for (; i4; ) typeof n2.nextAfterChildren < "u" && (n2.next = n2.nextAfterChildren, n2.nextAfterChildren = null), typeof i4 == "string" && (i4 = this.pipe(i4)), i4.process(n2), o3 = i4, i4 = null, n2 && n2.next && (n2 = n2.next, i4 = n2.pipe || o3);
+      return n2.hasResult ? n2.result : void 0;
+    }
+  }, We = se;
+  var st = (r3, e4, t3, n2) => r3[t3] === e4[n2], at = (r3, e4, t3, n2) => {
+    var i4, o3, s3;
+    let a3 = r3.length, l3 = e4.length, u4, d3, p3 = new Array(a3 + 1);
+    for (u4 = 0; u4 < a3 + 1; u4++) {
+      let f4 = new Array(l3 + 1);
+      for (d3 = 0; d3 < l3 + 1; d3++) f4[d3] = 0;
+      p3[u4] = f4;
+    }
+    for (p3.match = t3, u4 = 1; u4 < a3 + 1; u4++) {
+      let f4 = p3[u4];
+      if (f4 === void 0) throw new Error("LCS matrix row is undefined");
+      let c3 = p3[u4 - 1];
+      if (c3 === void 0) throw new Error("LCS matrix row is undefined");
+      for (d3 = 1; d3 < l3 + 1; d3++) t3(r3, e4, u4 - 1, d3 - 1, n2) ? f4[d3] = ((i4 = c3[d3 - 1]) !== null && i4 !== void 0 ? i4 : 0) + 1 : f4[d3] = Math.max((o3 = c3[d3]) !== null && o3 !== void 0 ? o3 : 0, (s3 = f4[d3 - 1]) !== null && s3 !== void 0 ? s3 : 0);
+    }
+    return p3;
+  }, lt = (r3, e4, t3, n2) => {
+    let i4 = e4.length, o3 = t3.length, s3 = { sequence: [], indices1: [], indices2: [] };
+    for (; i4 !== 0 && o3 !== 0; ) {
+      if (r3.match === void 0) throw new Error("LCS matrix match function is undefined");
+      if (r3.match(e4, t3, i4 - 1, o3 - 1, n2)) s3.sequence.unshift(e4[i4 - 1]), s3.indices1.unshift(i4 - 1), s3.indices2.unshift(o3 - 1), --i4, --o3;
+      else {
+        let l3 = r3[i4];
+        if (l3 === void 0) throw new Error("LCS matrix row is undefined");
+        let u4 = l3[o3 - 1];
+        if (u4 === void 0) throw new Error("LCS matrix value is undefined");
+        let d3 = r3[i4 - 1];
+        if (d3 === void 0) throw new Error("LCS matrix row is undefined");
+        let p3 = d3[o3];
+        if (p3 === void 0) throw new Error("LCS matrix value is undefined");
+        u4 > p3 ? --o3 : --i4;
+      }
+    }
+    return s3;
+  }, dt = (r3, e4, t3, n2) => {
+    let i4 = n2 || {}, o3 = at(r3, e4, t3 || st, i4);
+    return lt(o3, r3, e4, i4);
+  }, Be = { get: dt };
+  var A3 = 3;
+  function ut(r3, e4, t3, n2) {
+    for (let i4 = 0; i4 < t3; i4++) {
+      let o3 = r3[i4];
+      for (let s3 = 0; s3 < n2; s3++) {
+        let a3 = e4[s3];
+        if (i4 !== s3 && o3 === a3) return true;
+      }
+    }
+    return false;
+  }
+  function Y(r3, e4, t3, n2, i4) {
+    let o3 = r3[t3], s3 = e4[n2];
+    if (o3 === s3) return true;
+    if (typeof o3 != "object" || typeof s3 != "object") return false;
+    let a3 = i4.objectHash;
+    if (!a3) return i4.matchByPosition && t3 === n2;
+    i4.hashCache1 = i4.hashCache1 || [];
+    let l3 = i4.hashCache1[t3];
+    if (typeof l3 > "u" && (i4.hashCache1[t3] = l3 = a3(o3, t3)), typeof l3 > "u") return false;
+    i4.hashCache2 = i4.hashCache2 || [];
+    let u4 = i4.hashCache2[n2];
+    return typeof u4 > "u" && (i4.hashCache2[n2] = u4 = a3(s3, n2)), typeof u4 > "u" ? false : l3 === u4;
+  }
+  var ae = function(e4) {
+    var t3, n2, i4, o3, s3;
+    if (!e4.leftIsArray) return;
+    let a3 = { objectHash: (t3 = e4.options) === null || t3 === void 0 ? void 0 : t3.objectHash, matchByPosition: (n2 = e4.options) === null || n2 === void 0 ? void 0 : n2.matchByPosition }, l3 = 0, u4 = 0, d3, p3, f4, c3 = e4.left, h3 = e4.right, g2 = c3.length, m3 = h3.length, y3;
+    for (g2 > 0 && m3 > 0 && !a3.objectHash && typeof a3.matchByPosition != "boolean" && (a3.matchByPosition = !ut(c3, h3, g2, m3)); l3 < g2 && l3 < m3 && Y(c3, h3, l3, l3, a3); ) d3 = l3, y3 = new L2(c3[d3], h3[d3]), e4.push(y3, d3), l3++;
+    for (; u4 + l3 < g2 && u4 + l3 < m3 && Y(c3, h3, g2 - 1 - u4, m3 - 1 - u4, a3); ) p3 = g2 - 1 - u4, f4 = m3 - 1 - u4, y3 = new L2(c3[p3], h3[f4]), e4.push(y3, f4), u4++;
+    let b2;
+    if (l3 + u4 === g2) {
+      if (g2 === m3) {
+        e4.setResult(void 0).exit();
+        return;
+      }
+      for (b2 = b2 || { _t: "a" }, d3 = l3; d3 < m3 - u4; d3++) b2[d3] = [h3[d3]], e4.prepareDeltaResult(b2[d3]);
+      e4.setResult(b2).exit();
+      return;
+    }
+    if (l3 + u4 === m3) {
+      for (b2 = b2 || { _t: "a" }, d3 = l3; d3 < g2 - u4; d3++) {
+        let w3 = `_${d3}`;
+        b2[w3] = [c3[d3], 0, 0], e4.prepareDeltaResult(b2[w3]);
+      }
+      e4.setResult(b2).exit();
+      return;
+    }
+    a3.hashCache1 = void 0, a3.hashCache2 = void 0;
+    let R = c3.slice(l3, g2 - u4), x2 = h3.slice(l3, m3 - u4), v3 = Be.get(R, x2, Y, a3), E2 = [];
+    for (b2 = b2 || { _t: "a" }, d3 = l3; d3 < g2 - u4; d3++) if (v3.indices1.indexOf(d3 - l3) < 0) {
+      let w3 = `_${d3}`;
+      b2[w3] = [c3[d3], 0, 0], e4.prepareDeltaResult(b2[w3]), E2.push(d3);
+    }
+    let I2 = true;
+    !((i4 = e4.options) === null || i4 === void 0) && i4.arrays && e4.options.arrays.detectMove === false && (I2 = false);
+    let H2 = false;
+    !((s3 = (o3 = e4.options) === null || o3 === void 0 ? void 0 : o3.arrays) === null || s3 === void 0) && s3.includeValueOnMove && (H2 = true);
+    let N2 = E2.length;
+    for (d3 = l3; d3 < m3 - u4; d3++) {
+      let w3 = v3.indices2.indexOf(d3 - l3);
+      if (w3 < 0) {
+        let C3 = false;
+        if (I2 && N2 > 0) for (let B3 = 0; B3 < N2; B3++) {
+          p3 = E2[B3];
+          let J2 = p3 === void 0 ? void 0 : b2[`_${p3}`];
+          if (p3 !== void 0 && J2 && Y(R, x2, p3 - l3, d3 - l3, a3)) {
+            J2.splice(1, 2, d3, A3), J2.splice(1, 2, d3, A3), H2 || (J2[0] = ""), f4 = d3, y3 = new L2(c3[p3], h3[f4]), e4.push(y3, f4), E2.splice(B3, 1), C3 = true;
+            break;
+          }
+        }
+        C3 || (b2[d3] = [h3[d3]], e4.prepareDeltaResult(b2[d3]));
+      } else {
+        if (v3.indices1[w3] === void 0) throw new Error(`Invalid indexOnArray2: ${w3}, seq.indices1: ${v3.indices1}`);
+        if (p3 = v3.indices1[w3] + l3, v3.indices2[w3] === void 0) throw new Error(`Invalid indexOnArray2: ${w3}, seq.indices2: ${v3.indices2}`);
+        f4 = v3.indices2[w3] + l3, y3 = new L2(c3[p3], h3[f4]), e4.push(y3, f4);
+      }
+    }
+    e4.setResult(b2).exit();
+  };
+  ae.filterName = "arrays";
+  var Je = { numerically(r3, e4) {
+    return r3 - e4;
+  }, numericallyBy(r3) {
+    return (e4, t3) => e4[r3] - t3[r3];
+  } }, le = function(e4) {
+    var t3;
+    if (!e4.nested) return;
+    let n2 = e4.delta;
+    if (n2._t !== "a") return;
+    let i4, o3, s3 = n2, a3 = e4.left, l3 = [], u4 = [], d3 = [];
+    for (i4 in s3) if (i4 !== "_t") if (i4[0] === "_") {
+      let c3 = i4;
+      if (s3[c3] !== void 0 && (s3[c3][2] === 0 || s3[c3][2] === A3)) l3.push(Number.parseInt(i4.slice(1), 10));
+      else throw new Error(`only removal or move can be applied at original array indices, invalid diff type: ${(t3 = s3[c3]) === null || t3 === void 0 ? void 0 : t3[2]}`);
+    } else {
+      let c3 = i4;
+      s3[c3].length === 1 ? u4.push({ index: Number.parseInt(c3, 10), value: s3[c3][0] }) : d3.push({ index: Number.parseInt(c3, 10), delta: s3[c3] });
+    }
+    for (l3 = l3.sort(Je.numerically), i4 = l3.length - 1; i4 >= 0; i4--) {
+      if (o3 = l3[i4], o3 === void 0) continue;
+      let c3 = s3[`_${o3}`], h3 = a3.splice(o3, 1)[0];
+      c3?.[2] === A3 && u4.push({ index: c3[1], value: h3 });
+    }
+    u4 = u4.sort(Je.numericallyBy("index"));
+    let p3 = u4.length;
+    for (i4 = 0; i4 < p3; i4++) {
+      let c3 = u4[i4];
+      c3 !== void 0 && a3.splice(c3.index, 0, c3.value);
+    }
+    let f4 = d3.length;
+    if (f4 > 0) for (i4 = 0; i4 < f4; i4++) {
+      let c3 = d3[i4];
+      if (c3 === void 0) continue;
+      let h3 = new O2(a3[c3.index], c3.delta);
+      e4.push(h3, c3.index);
+    }
+    if (!e4.children) {
+      e4.setResult(a3).exit();
+      return;
+    }
+    e4.exit();
+  };
+  le.filterName = "arrays";
+  var de = function(e4) {
+    if (!e4 || !e4.children || e4.delta._t !== "a") return;
+    let n2 = e4.left, i4 = e4.children.length;
+    for (let o3 = 0; o3 < i4; o3++) {
+      let s3 = e4.children[o3];
+      if (s3 === void 0) continue;
+      let a3 = s3.childName;
+      n2[a3] = s3.result;
+    }
+    e4.setResult(n2).exit();
+  };
+  de.filterName = "arraysCollectChildren";
+  var ue = function(e4) {
+    if (!e4.nested) {
+      let i4 = e4.delta;
+      if (i4[2] === A3) {
+        let o3 = i4;
+        e4.newName = `_${o3[1]}`, e4.setResult([o3[0], Number.parseInt(e4.childName.substring(1), 10), A3]).exit();
+      }
+      return;
+    }
+    let t3 = e4.delta;
+    if (t3._t !== "a") return;
+    let n2 = t3;
+    for (let i4 in n2) {
+      if (i4 === "_t") continue;
+      let o3 = new _2(n2[i4]);
+      e4.push(o3, i4);
+    }
+    e4.exit();
+  };
+  ue.filterName = "arrays";
+  var ct = (r3, e4, t3) => {
+    if (typeof e4 == "string" && e4[0] === "_") return Number.parseInt(e4.substring(1), 10);
+    if (Array.isArray(t3) && t3[2] === 0) return `_${e4}`;
+    let n2 = +e4;
+    for (let i4 in r3) {
+      let o3 = r3[i4];
+      if (Array.isArray(o3)) if (o3[2] === A3) {
+        let s3 = Number.parseInt(i4.substring(1), 10), a3 = o3[1];
+        if (a3 === +e4) return s3;
+        s3 <= n2 && a3 > n2 ? n2++ : s3 >= n2 && a3 < n2 && n2--;
+      } else o3[2] === 0 ? Number.parseInt(i4.substring(1), 10) <= n2 && n2++ : o3.length === 1 && Number.parseInt(i4, 10) <= n2 && n2--;
+    }
+    return n2;
+  }, ce = (r3) => {
+    if (!r3 || !r3.children) return;
+    let e4 = r3.delta;
+    if (e4._t !== "a") return;
+    let t3 = e4, n2 = r3.children.length, i4 = { _t: "a" };
+    for (let o3 = 0; o3 < n2; o3++) {
+      let s3 = r3.children[o3];
+      if (s3 === void 0) continue;
+      let a3 = s3.newName;
+      if (typeof a3 > "u") {
+        if (s3.childName === void 0) throw new Error("child.childName is undefined");
+        a3 = ct(t3, s3.childName, s3.result);
+      }
+      i4[a3] !== s3.result && (i4[a3] = s3.result);
+    }
+    r3.setResult(i4).exit();
+  };
+  ce.filterName = "arraysCollectChildren";
+  var pe = function(e4) {
+    e4.left instanceof Date ? (e4.right instanceof Date ? e4.left.getTime() !== e4.right.getTime() ? e4.setResult([e4.left, e4.right]) : e4.setResult(void 0) : e4.setResult([e4.left, e4.right]), e4.exit()) : e4.right instanceof Date && e4.setResult([e4.left, e4.right]).exit();
+  };
+  pe.filterName = "dates";
+  var fe = (r3) => {
+    if (!r3 || !r3.children) return;
+    let e4 = r3.children.length, t3 = r3.result;
+    for (let n2 = 0; n2 < e4; n2++) {
+      let i4 = r3.children[n2];
+      if (i4 !== void 0 && !(typeof i4.result > "u")) {
+        if (t3 = t3 || {}, i4.childName === void 0) throw new Error("diff child.childName is undefined");
+        t3[i4.childName] = i4.result;
+      }
+    }
+    t3 && r3.leftIsArray && (t3._t = "a"), r3.setResult(t3).exit();
+  };
+  fe.filterName = "collectChildren";
+  var he = (r3) => {
+    var e4;
+    if (r3.leftIsArray || r3.leftType !== "object") return;
+    let t3 = r3.left, n2 = r3.right, i4 = (e4 = r3.options) === null || e4 === void 0 ? void 0 : e4.propertyFilter;
+    for (let o3 in t3) {
+      if (!Object.prototype.hasOwnProperty.call(t3, o3) || i4 && !i4(o3, r3)) continue;
+      let s3 = new L2(t3[o3], n2[o3]);
+      r3.push(s3, o3);
+    }
+    for (let o3 in n2) if (Object.prototype.hasOwnProperty.call(n2, o3) && !(i4 && !i4(o3, r3)) && typeof t3[o3] > "u") {
+      let s3 = new L2(void 0, n2[o3]);
+      r3.push(s3, o3);
+    }
+    if (!r3.children || r3.children.length === 0) {
+      r3.setResult(void 0).exit();
+      return;
+    }
+    r3.exit();
+  };
+  he.filterName = "objects";
+  var ge = function(e4) {
+    if (!e4.nested) return;
+    let t3 = e4.delta;
+    if (t3._t) return;
+    let n2 = t3;
+    for (let i4 in n2) {
+      let o3 = new O2(e4.left[i4], n2[i4]);
+      e4.push(o3, i4);
+    }
+    e4.exit();
+  };
+  ge.filterName = "objects";
+  var be = function(e4) {
+    if (!e4 || !e4.children || e4.delta._t) return;
+    let n2 = e4.left, i4 = e4.children.length;
+    for (let o3 = 0; o3 < i4; o3++) {
+      let s3 = e4.children[o3];
+      if (s3 === void 0) continue;
+      let a3 = s3.childName;
+      Object.prototype.hasOwnProperty.call(e4.left, a3) && s3.result === void 0 ? delete n2[a3] : n2[a3] !== s3.result && (n2[a3] = s3.result);
+    }
+    e4.setResult(n2).exit();
+  };
+  be.filterName = "collectChildren";
+  var me = function(e4) {
+    if (!e4.nested || e4.delta._t) return;
+    let n2 = e4.delta;
+    for (let i4 in n2) {
+      let o3 = new _2(n2[i4]);
+      e4.push(o3, i4);
+    }
+    e4.exit();
+  };
+  me.filterName = "objects";
+  var ye = (r3) => {
+    if (!r3 || !r3.children || r3.delta._t) return;
+    let t3 = r3.children.length, n2 = {};
+    for (let i4 = 0; i4 < t3; i4++) {
+      let o3 = r3.children[i4];
+      if (o3 === void 0) continue;
+      let s3 = o3.childName;
+      n2[s3] !== o3.result && (n2[s3] = o3.result);
+    }
+    r3.setResult(n2).exit();
+  };
+  ye.filterName = "collectChildren";
+  var ve = null;
+  function Ve(r3, e4) {
+    var t3;
+    if (!ve) {
+      let n2;
+      if (!((t3 = r3?.textDiff) === null || t3 === void 0) && t3.diffMatchPatch) n2 = new r3.textDiff.diffMatchPatch();
+      else {
+        if (!e4) return null;
+        let i4 = new Error("The diff-match-patch library was not provided. Pass the library in through the options or use the `jsondiffpatch/with-text-diffs` entry-point.");
+        throw i4.diff_match_patch_not_found = true, i4;
+      }
+      ve = { diff: (i4, o3) => n2.patch_toText(n2.patch_make(i4, o3)), patch: (i4, o3) => {
+        let s3 = n2.patch_apply(n2.patch_fromText(o3), i4);
+        for (let a3 of s3[1]) if (!a3) {
+          let l3 = new Error("text patch failed");
+          throw l3.textPatchFailed = true, l3;
+        }
+        return s3[0];
+      } };
+    }
+    return ve;
+  }
+  var xe = function(e4) {
+    var t3, n2;
+    if (e4.leftType !== "string") return;
+    let i4 = e4.left, o3 = e4.right, s3 = ((n2 = (t3 = e4.options) === null || t3 === void 0 ? void 0 : t3.textDiff) === null || n2 === void 0 ? void 0 : n2.minLength) || 60;
+    if (i4.length < s3 || o3.length < s3) {
+      e4.setResult([i4, o3]).exit();
+      return;
+    }
+    let a3 = Ve(e4.options);
+    if (!a3) {
+      e4.setResult([i4, o3]).exit();
+      return;
+    }
+    let l3 = a3.diff;
+    e4.setResult([l3(i4, o3), 0, 2]).exit();
+  };
+  xe.filterName = "texts";
+  var we = function(e4) {
+    if (e4.nested) return;
+    let t3 = e4.delta;
+    if (t3[2] !== 2) return;
+    let n2 = t3, i4 = Ve(e4.options, true).patch;
+    e4.setResult(i4(e4.left, n2[0])).exit();
+  };
+  we.filterName = "texts";
+  var gt = (r3) => {
+    var e4, t3, n2;
+    let i4 = /^@@ +-(\d+),(\d+) +\+(\d+),(\d+) +@@$/, o3 = r3.split(`
+`);
+    for (let s3 = 0; s3 < o3.length; s3++) {
+      let a3 = o3[s3];
+      if (a3 === void 0) continue;
+      let l3 = a3.slice(0, 1);
+      if (l3 === "@") {
+        let u4 = i4.exec(a3);
+        if (u4 !== null) {
+          let d3 = s3;
+          o3[d3] = `@@ -${u4[3]},${u4[4]} +${u4[1]},${u4[2]} @@`;
+        }
+      } else if (l3 === "+") {
+        if (o3[s3] = `-${(e4 = o3[s3]) === null || e4 === void 0 ? void 0 : e4.slice(1)}`, ((t3 = o3[s3 - 1]) === null || t3 === void 0 ? void 0 : t3.slice(0, 1)) === "+") {
+          let u4 = o3[s3];
+          o3[s3] = o3[s3 - 1], o3[s3 - 1] = u4;
+        }
+      } else l3 === "-" && (o3[s3] = `+${(n2 = o3[s3]) === null || n2 === void 0 ? void 0 : n2.slice(1)}`);
+    }
+    return o3.join(`
+`);
+  }, Ee = function(e4) {
+    if (e4.nested) return;
+    let t3 = e4.delta;
+    if (t3[2] !== 2) return;
+    let n2 = t3;
+    e4.setResult([gt(n2[0]), 0, 2]).exit();
+  };
+  Ee.filterName = "texts";
+  var Ce = function(e4) {
+    if (e4.left === e4.right) {
+      e4.setResult(void 0).exit();
+      return;
+    }
+    if (typeof e4.left > "u") {
+      if (typeof e4.right == "function") throw new Error("functions are not supported");
+      e4.setResult([e4.right]).exit();
+      return;
+    }
+    if (typeof e4.right > "u") {
+      e4.setResult([e4.left, 0, 0]).exit();
+      return;
+    }
+    if (typeof e4.left == "function" || typeof e4.right == "function") throw new Error("functions are not supported");
+    if (e4.leftType = e4.left === null ? "null" : typeof e4.left, e4.rightType = e4.right === null ? "null" : typeof e4.right, e4.leftType !== e4.rightType) {
+      e4.setResult([e4.left, e4.right]).exit();
+      return;
+    }
+    if (e4.leftType === "boolean" || e4.leftType === "number") {
+      e4.setResult([e4.left, e4.right]).exit();
+      return;
+    }
+    if (e4.leftType === "object" && (e4.leftIsArray = Array.isArray(e4.left)), e4.rightType === "object" && (e4.rightIsArray = Array.isArray(e4.right)), e4.leftIsArray !== e4.rightIsArray) {
+      e4.setResult([e4.left, e4.right]).exit();
+      return;
+    }
+    e4.left instanceof RegExp && (e4.right instanceof RegExp ? e4.setResult([e4.left.toString(), e4.right.toString()]).exit() : e4.setResult([e4.left, e4.right]).exit());
+  };
+  Ce.filterName = "trivial";
+  var Le = function(e4) {
+    if (typeof e4.delta > "u") {
+      e4.setResult(e4.left).exit();
+      return;
+    }
+    if (e4.nested = !Array.isArray(e4.delta), e4.nested) return;
+    let t3 = e4.delta;
+    if (t3.length === 1) {
+      e4.setResult(t3[0]).exit();
+      return;
+    }
+    if (t3.length === 2) {
+      if (e4.left instanceof RegExp) {
+        let n2 = /^\/(.*)\/([gimyu]+)$/.exec(t3[1]);
+        if (n2?.[1]) {
+          e4.setResult(new RegExp(n2[1], n2[2])).exit();
+          return;
+        }
+      }
+      e4.setResult(t3[1]).exit();
+      return;
+    }
+    t3.length === 3 && t3[2] === 0 && e4.setResult(void 0).exit();
+  };
+  Le.filterName = "trivial";
+  var Se = function(e4) {
+    if (typeof e4.delta > "u") {
+      e4.setResult(e4.delta).exit();
+      return;
+    }
+    if (e4.nested = !Array.isArray(e4.delta), e4.nested) return;
+    let t3 = e4.delta;
+    if (t3.length === 1) {
+      e4.setResult([t3[0], 0, 0]).exit();
+      return;
+    }
+    if (t3.length === 2) {
+      e4.setResult([t3[1], t3[0]]).exit();
+      return;
+    }
+    t3.length === 3 && t3[2] === 0 && e4.setResult([t3[0]]).exit();
+  };
+  Se.filterName = "trivial";
+  var Re = class {
+    constructor(e4) {
+      this.processor = new We(e4), this.processor.pipe(new q3("diff").append(fe, Ce, pe, xe, he, ae).shouldHaveResult()), this.processor.pipe(new q3("patch").append(be, de, Le, we, ge, le).shouldHaveResult()), this.processor.pipe(new q3("reverse").append(ye, ce, Se, Ee, me, ue).shouldHaveResult());
+    }
+    options(e4) {
+      return this.processor.options(e4);
+    }
+    diff(e4, t3) {
+      return this.processor.process(new L2(e4, t3));
+    }
+    patch(e4, t3) {
+      return this.processor.process(new O2(e4, t3));
+    }
+    reverse(e4) {
+      return this.processor.process(new _2(e4));
+    }
+    unpatch(e4, t3) {
+      return this.patch(e4, this.reverse(t3));
+    }
+    clone(e4) {
+      return j3(e4);
+    }
+  }, Te = Re;
+  var F2;
+  function Xe(r3, e4) {
+    return F2 || (F2 = new Te()), F2.diff(r3, e4);
+  }
+  function qe(r3, e4) {
+    return F2 || (F2 = new Te()), F2.patch(r3, e4);
+  }
+  var vt = () => ({ expandAll: false, expandObjects: [], useViewState: true }), M2 = class {
+    constructor(e4, t3, n2) {
+      this.viewStates = {};
+      this.json = e4, this.parentContainer = t3, this.options = Object.assign({}, vt(), n2 || {}), this.render();
+    }
+    render() {
+      this.parentContainer.innerHTML = "";
+      let e4 = this.drawJsonNode(this.json);
+      this.parentContainer.appendChild(e4);
+    }
+    toggleExpandNode(e4, t3, n2) {
+      let i4 = e4.classList.contains("collapsed");
+      e4.classList.toggle("collapsed", !i4), this.viewStates[t3] = !i4, n2 && (n2.textContent = i4 ? "[-]" : "[+]");
+    }
+    drawJsonNode(e4, t3 = "") {
+      let n2 = document.createElement("div");
+      n2.classList.add("json-node");
+      let i4 = document.createElement("div");
+      i4.classList.add("json-properties");
+      for (let o3 in e4) if (Object.prototype.hasOwnProperty.call(e4, o3)) {
+        let s3 = `${t3}${o3}`, a3 = document.createElement("div");
+        a3.classList.add("json-property"), a3.setAttribute("data-path", s3);
+        let l3 = document.createElement("span");
+        l3.classList.add("json-key"), l3.textContent = o3 + ": ";
+        let u4 = document.createElement("div");
+        u4.classList.add("json-value");
+        let d3 = e4[o3], p3 = typeof d3 == "object" && d3 !== null, f4 = Array.isArray(d3);
+        if (p3) {
+          l3.classList.add("clickable"), f4 ? l3.textContent = `${o3} (${d3.length})` : l3.textContent = o3;
+          let c3 = f4 && d3.length > 0 ? true : Object.keys(d3).length > 0;
+          a3.classList.add("object");
+          let h3 = document.createElement("button");
+          h3.classList.add("json-toggle");
+          let g2 = this.drawJsonNode(d3, s3 + "/");
+          if (this.options.expandAll) h3.textContent = "[-]";
+          else {
+            let m3 = false;
+            f4 && c3 ? m3 = true : this.options.expandObjs?.forEach((y3) => {
+              new RegExp(y3).test(s3) && (m3 = true);
+            }), this.options.useViewState && typeof this.viewStates[s3] < "u" && (m3 = !this.viewStates[s3]), m3 ? h3.textContent = "[-]" : (h3.textContent = "[+]", g2.classList.add("collapsed"));
+          }
+          h3.onclick = () => this.toggleExpandNode(g2, s3, h3), l3.onclick = () => this.toggleExpandNode(g2, s3, h3), a3.appendChild(h3), u4.appendChild(g2);
+        } else u4.textContent = String(d3);
+        a3.appendChild(l3), a3.appendChild(u4), i4.appendChild(a3);
+      }
+      return n2.appendChild(i4), n2;
+    }
+    updateJson(e4) {
+      let t3 = Xe(this.json, e4);
+      qe(this.json, t3), this.render();
+    }
+  };
+  function G2(r3, e4 = {}) {
+    r3.querySelectorAll(".resize-handle").forEach((x2) => x2.remove());
+    let { handles: t3 = ["top", "left", "right", "bottom", "top-left", "top-right", "bottom-left", "bottom-right"], maxWidth: n2 = 1 / 0, maxHeight: i4 = 1 / 0, minWidth: o3 = 100, minHeight: s3 = 100, onResize: a3 = () => {
+    } } = e4, l3 = false, u4 = null, d3 = 0, p3 = 0, f4 = 0, c3 = 0, h3 = 0, g2 = 0;
+    function m3(x2) {
+      let v3 = document.createElement("div");
+      v3.classList.add("resize-handle", `resize-${x2}`), v3.addEventListener("mousedown", (E2) => y3(E2, x2)), r3.appendChild(v3);
+    }
+    function y3(x2, v3) {
+      l3 = true, u4 = v3, d3 = x2.clientX, p3 = x2.clientY, f4 = r3.offsetWidth, c3 = r3.offsetHeight, h3 = r3.offsetLeft, g2 = r3.offsetTop, x2.preventDefault(), x2.stopPropagation(), document.addEventListener("mousemove", b2), document.addEventListener("mouseup", R);
+    }
+    function b2(x2) {
+      if (!l3 || !u4) return;
+      let v3 = f4, E2 = c3, I2 = h3, H2 = g2, N2 = x2.clientX - d3, w3 = x2.clientY - p3;
+      if (u4.includes("right") && (v3 = Math.min(Math.max(f4 + N2, o3), n2)), u4.includes("left")) {
+        let C3 = f4 - N2;
+        C3 >= o3 && C3 <= n2 && (v3 = C3, I2 = h3 + N2);
+      }
+      if (u4.includes("bottom") && (E2 = Math.min(Math.max(c3 + w3, s3), i4)), u4.includes("top")) {
+        let C3 = c3 - w3;
+        C3 >= s3 && C3 <= i4 && (E2 = C3, H2 = g2 + w3);
+      }
+      r3.style.width = `${v3}px`, r3.style.height = `${E2}px`, r3.style.left = `${I2}px`, r3.style.top = `${H2}px`, a3(v3, E2);
+    }
+    function R() {
+      l3 = false, u4 = null, document.removeEventListener("mousemove", b2), document.removeEventListener("mouseup", R);
+    }
+    t3.forEach((x2) => m3(x2));
+  }
+  function W(r3, e4, t3 = {}) {
+    let n2 = e4 || r3, i4 = false, o3 = 0, s3 = 0, a3 = 0, l3 = 0, { onDragStart: u4, onDrag: d3, onDragEnd: p3 } = t3;
+    function f4(g2) {
+      let m3 = g2.target;
+      if (m3.tagName === "BUTTON" || m3.closest("button")) return;
+      i4 = true, o3 = g2.clientX, s3 = g2.clientY;
+      let y3 = getComputedStyle(r3);
+      a3 = parseInt(y3.left) || r3.offsetLeft, l3 = parseInt(y3.top) || r3.offsetTop, y3.position !== "absolute" && y3.position !== "fixed" && (r3.style.position = "absolute", r3.style.left = `${a3}px`, r3.style.top = `${l3}px`), g2.preventDefault(), n2.style.cursor = "grabbing", u4 && u4(g2), document.addEventListener("mousemove", c3), document.addEventListener("mouseup", h3);
+    }
+    function c3(g2) {
+      if (!i4) return;
+      let m3 = g2.clientX - o3, y3 = g2.clientY - s3, b2 = a3 + m3, R = l3 + y3;
+      r3.style.left = `${b2}px`, r3.style.top = `${R}px`, d3 && d3(b2, R);
+    }
+    function h3() {
+      i4 && (i4 = false, n2.style.cursor = "grab", p3 && p3(), document.removeEventListener("mousemove", c3), document.removeEventListener("mouseup", h3));
+    }
+    return n2.style.cursor = "grab", n2.addEventListener("mousedown", f4), () => {
+      n2.removeEventListener("mousedown", f4), document.removeEventListener("mousemove", c3), document.removeEventListener("mouseup", h3);
+    };
+  }
+  function z3() {
+    let r3 = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth, e4 = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    return { width: r3, height: e4 };
+  }
+  var U = "objects", je = ((l3) => (l3.TopLeft = "topLeft", l3.Top = "top", l3.TopRight = "topRight", l3.Right = "right", l3.BottomRight = "bottomRight", l3.Bottom = "bottom", l3.BottomLeft = "bottomLeft", l3.Left = "left", l3))(je || {}), xt = 280, Q2 = class {
+    constructor(e4 = {}) {
+      this.tabEntries = {};
+      this.debugStates = {};
+      this.activeTab = "global";
+      this.options = { position: "bottomRight", width: 600, height: 400, snap: false, snapPadding: 20, ...e4 }, this.container = this.createContainer(), this.tabContainer = this.createTabContainer(), this.contentContainer = this.createContentContainer(), this.container.appendChild(this.tabContainer), this.container.appendChild(this.contentContainer), this.toolbar = this.createGlobalToolbar(), this.container.appendChild(this.toolbar), document.body.appendChild(this.container), this.addTab(U), this.addTab("global"), this.restoreSettings(), this.setupResizable(), this.setupDraggable(), this.setupEventListeners(), this.setupKeyboardShortcut(), e4.show && !this.loadSettings() && this.show();
+    }
+    createContainer() {
+      let e4 = document.createElement("div");
+      return e4.classList.add("debug-panel"), e4.style.width = `${this.options.width}px`, e4.style.height = `${this.options.height}px`, e4.style.position = "fixed", e4.style.opacity = "1", e4;
+    }
+    createTabContainer() {
+      let e4 = document.createElement("div");
+      return e4.classList.add("debug-panel-tabs"), e4;
+    }
+    createContentContainer() {
+      let e4 = document.createElement("div");
+      return e4.classList.add("debug-panel-content"), e4;
+    }
+    createGlobalToolbar() {
+      let e4 = document.createElement("div");
+      e4.classList.add("debug-toolbar");
+      let t3 = document.createElement("span");
+      t3.classList.add("debug-keyboard-hint"), t3.textContent = "Ctrl+Alt+D to hide/show", t3.style.color = "#999", t3.style.fontSize = "11px";
+      let n2 = document.createElement("div");
+      n2.classList.add("debug-opacity-container");
+      let i4 = document.createElement("label");
+      i4.classList.add("debug-opacity-label"), i4.textContent = "O", i4.style.fontSize = "11px", i4.style.color = "#999", i4.style.marginRight = "5px", this.opacitySlider = document.createElement("input"), this.opacitySlider.type = "range", this.opacitySlider.min = "20", this.opacitySlider.max = "100", this.opacitySlider.value = "100", this.opacitySlider.classList.add("debug-opacity-slider"), this.opacitySlider.oninput = () => this.handleOpacityChange(), n2.appendChild(this.opacitySlider);
+      let o3 = document.createElement("button");
+      o3.classList.add("debug-clear-button"), o3.textContent = "Clear", o3.onclick = () => this.clearCurrentTab();
+      let s3 = document.createElement("button");
+      return s3.classList.add("debug-hide-button"), s3.textContent = "Hide", s3.onclick = () => this.hide(), e4.appendChild(t3), e4.appendChild(n2), e4.appendChild(o3), e4.appendChild(s3), e4;
+    }
+    setupResizable() {
+      let { width: e4, height: t3 } = z3();
+      G2(this.container, { handles: ["top", "left", "right", "bottom", "top-left", "top-right", "bottom-left", "bottom-right"], maxWidth: e4 - 20, maxHeight: t3 - 20, minWidth: 200, minHeight: 150, onResize: (n2) => {
+        this.updateToolbarLayout(n2), this.saveSettings();
+      } });
+    }
+    setupDraggable() {
+      this.options.snap ? W(this.container, this.tabContainer, { onDrag: (e4, t3) => this.handleSnapWhileDragging(e4, t3), onDragEnd: () => this.saveSettings() }) : W(this.container, this.tabContainer, { onDragEnd: () => this.saveSettings() });
+    }
+    setupPosition() {
+      let { width: e4, height: t3 } = z3(), n2 = this.options.width || 600, i4 = this.options.height || 400, o3 = 0, s3 = 0;
+      switch (this.options.position) {
+        case "topLeft":
+          o3 = 0, s3 = 0;
+          break;
+        case "top":
+          o3 = (e4 - n2) / 2, s3 = 0;
+          break;
+        case "topRight":
+          o3 = e4 - n2, s3 = 0;
+          break;
+        case "right":
+          o3 = e4 - n2, s3 = (t3 - i4) / 2;
+          break;
+        case "bottomRight":
+          o3 = e4 - n2, s3 = t3 - i4;
+          break;
+        case "bottom":
+          o3 = (e4 - n2) / 2, s3 = t3 - i4;
+          break;
+        case "bottomLeft":
+          o3 = 0, s3 = t3 - i4;
+          break;
+        case "left":
+          o3 = 0, s3 = (t3 - i4) / 2;
+          break;
+      }
+      this.container.style.left = `${o3}px`, this.container.style.top = `${s3}px`;
+    }
+    setupKeyboardShortcut() {
+      document.addEventListener("keydown", (e4) => {
+        e4.ctrlKey && e4.altKey && e4.key.toLowerCase() === "d" && (e4.preventDefault(), this.toggle());
+      });
+    }
+    setupEventListeners() {
+      K2.default.addEventListener("log", (e4) => {
+        let { namespace: t3, message: n2 } = e4.target;
+        this.log(t3, n2);
+      }), K2.default.addEventListener("debug", (e4) => {
+        let { id: t3, state: n2 } = e4.target;
+        if (!t3 || !n2) {
+          console.log("Invalid event data for debug-state. Expected {id, state}, got:", e4);
+          return;
+        }
+        this.debug(t3, n2);
+      });
+    }
+    restoreSettings() {
+      let e4 = this.loadSettings();
+      if (e4) {
+        this.container.style.left = `${e4.left}px`, this.container.style.top = `${e4.top}px`, this.container.style.width = `${e4.width}px`, this.container.style.height = `${e4.height}px`;
+        let t3 = e4.opacity !== void 0 ? e4.opacity : 1;
+        this.container.style.opacity = String(t3), this.opacitySlider && (this.opacitySlider.value = String(Math.round(t3 * 100))), e4.visible ? this.container.classList.add("visible") : this.container.classList.remove("visible");
+      } else this.setupPosition();
+    }
+    loadSettings() {
+      try {
+        let e4 = localStorage.getItem("debugPanelSettings");
+        if (e4) return JSON.parse(e4);
+      } catch (e4) {
+        console.error("Failed to load debug panel settings:", e4);
+      }
+      return null;
+    }
+    saveSettings() {
+      try {
+        let e4 = parseFloat(this.container.style.opacity) || 1, t3 = { left: parseInt(this.container.style.left) || this.container.offsetLeft, top: parseInt(this.container.style.top) || this.container.offsetTop, width: this.container.offsetWidth, height: this.container.offsetHeight, visible: this.container.classList.contains("visible"), opacity: e4 };
+        localStorage.setItem("debugPanelSettings", JSON.stringify(t3));
+      } catch (e4) {
+        console.error("Failed to save debug panel settings:", e4);
+      }
+    }
+    debug(e4, t3) {
+      let n2 = e4, i4 = (0, De.default)(t3), o3 = JSON.parse(i4);
+      this.debugStates[n2] ? this.updateDebugState(n2, o3) : this.addDebugState(n2, o3);
+    }
+    updateDebugState(e4, t3) {
+      let n2 = this.contentContainer.querySelector(`[data-namespace="${U}"]`);
+      if (!n2) {
+        console.error("No content for debug namespace.");
+        return;
+      }
+      let i4 = n2.querySelector(`#debug-state-${e4}`);
+      if (!i4) {
+        console.error(`No debug state found for ${e4}.`);
+        return;
+      }
+      let o3 = i4.querySelector(".json-wrapper");
+      if (!o3) {
+        console.error(`No json wrapper found for existing state ${e4}`);
+        return;
+      }
+      o3.innerHTML = "", this.debugStates[e4].state = t3, this.debugStates[e4].jsonView.updateJson(t3);
+    }
+    addDebugState(e4, t3) {
+      let n2 = this.contentContainer.querySelector(`[data-namespace="${U}"]`);
+      if (!n2) {
+        console.error("No content for debug namespace.");
+        return;
+      }
+      let i4 = document.createElement("div");
+      i4.classList.add("debug-state"), i4.setAttribute("id", `debug-state-${e4}`);
+      let o3 = () => {
+        let d3 = this.debugStates[e4].isExpanded;
+        this.debugStates[e4].isExpanded = !d3, i4.classList.toggle("collapsed", d3), s3.textContent = d3 ? "[+]" : "[-]";
+      }, s3 = document.createElement("button");
+      s3.classList.add("json-toggle"), s3.textContent = "[-]", s3.onclick = o3, i4.appendChild(s3);
+      let a3 = document.createElement("div");
+      a3.classList.add("debug-state-label"), a3.innerText = e4 || "untitled", a3.onclick = o3, i4.appendChild(a3);
+      let l3 = document.createElement("div");
+      l3.classList.add("json-wrapper"), i4.appendChild(l3);
+      let u4 = new M2(t3, l3, {});
+      this.debugStates[e4] = { state: t3, jsonView: u4, isExpanded: true }, n2.appendChild(i4);
+    }
+    addTab(e4) {
+      if (this.tabEntries[e4]) return;
+      this.tabEntries[e4] = [];
+      let t3 = document.createElement("button");
+      t3.classList.add("debug-tab"), t3.textContent = e4, t3.onclick = () => this.switchTab(e4), this.tabContainer.appendChild(t3);
+      let n2 = document.createElement("div");
+      n2.classList.add("debug-tab-content"), n2.dataset.namespace = e4, this.contentContainer.appendChild(n2), Object.keys(this.tabEntries).length === 1 && this.switchTab(e4);
+    }
+    clearCurrentTab() {
+      this.clearTab(this.activeTab);
+    }
+    clearTab(e4) {
+      let t3 = this.contentContainer.querySelector(`[data-namespace="${e4}"]`);
+      t3 && (this.tabEntries[e4] = [], e4 === U && Object.keys(this.debugStates).forEach((n2) => {
+        delete this.debugStates[n2];
+      }), t3.innerHTML = "");
+    }
+    switchTab(e4) {
+      this.activeTab = e4, this.tabContainer.querySelectorAll(".debug-tab").forEach((n2, i4) => {
+        let o3 = Object.keys(this.tabEntries)[i4];
+        n2.classList.toggle("active", o3 === e4);
+      }), this.contentContainer.querySelectorAll(".debug-tab-content").forEach((n2) => {
+        n2.style.display = "none";
+      });
+      let t3 = this.contentContainer.querySelector(`[data-namespace="${e4}"]`);
+      t3 && (t3.style.display = "block");
+    }
+    log(e4, t3) {
+      this.tabEntries[e4] || this.addTab(e4);
+      let n2 = { id: `${e4}-${Date.now()}-${Math.random()}`, message: t3, timestamp: /* @__PURE__ */ new Date() };
+      this.tabEntries[e4].push(n2);
+      let i4 = this.contentContainer.querySelector(`[data-namespace="${e4}"]`);
+      if (!i4) return;
+      let o3 = this.createLogElement(n2, e4);
+      i4.appendChild(o3), e4 !== "global" && this.log("global", t3);
+    }
+    createLogElement(e4, t3) {
+      let n2 = document.createElement("div");
+      n2.classList.add("debug-log-entry"), n2.dataset.logId = e4.id;
+      let i4 = document.createElement("div");
+      i4.innerText = `[${e4.timestamp.toLocaleTimeString()}] ${this.renderLogEntry(e4.message)}`, i4.classList.add("debug-log-entry-text");
+      let o3 = document.createElement("button");
+      o3.innerText = "\u{1F4CB}", o3.classList.add("debug-copy-button"), o3.onclick = () => navigator.clipboard.writeText(i4.innerText);
+      let s3 = document.createElement("button");
+      return s3.innerText = "\u274C", s3.classList.add("debug-delete-button"), s3.onclick = () => this.removeLogEntry(t3, e4.id, n2), n2.appendChild(i4), n2.appendChild(o3), n2.appendChild(s3), n2;
+    }
+    removeLogEntry(e4, t3, n2) {
+      this.tabEntries[e4] = this.tabEntries[e4].filter((i4) => i4.id !== t3), n2.remove();
+    }
+    renderLogEntry(e4) {
+      return Array.isArray(e4) ? e4.join(" ") : typeof e4 == "object" ? (0, De.default)(e4) : String(e4);
+    }
+    updateToolbarLayout(e4) {
+      e4 < xt ? this.container.classList.add("narrow-panel") : this.container.classList.remove("narrow-panel");
+    }
+    handleOpacityChange() {
+      let t3 = parseInt(this.opacitySlider.value) / 100;
+      this.container.classList.contains("visible") && (this.container.style.opacity = String(t3)), this.saveSettings();
+    }
+    handleSnapWhileDragging(e4, t3) {
+      let n2 = this.options.snapPadding || 20, { width: i4, height: o3 } = z3(), s3 = this.container.offsetWidth, a3 = this.container.offsetHeight, l3 = e4, u4 = t3;
+      e4 < n2 ? l3 = 0 : e4 + s3 > i4 - n2 && (l3 = i4 - s3), t3 < n2 ? u4 = 0 : t3 + a3 > o3 - n2 && (u4 = o3 - a3), (l3 !== e4 || u4 !== t3) && (this.container.style.left = `${l3}px`, this.container.style.top = `${u4}px`);
+    }
+    show() {
+      this.container.classList.add("visible");
+      let e4 = parseFloat(this.container.style.opacity) || 1;
+      this.container.style.opacity = String(e4), this.saveSettings();
+    }
+    hide() {
+      this.container.classList.remove("visible"), this.saveSettings();
+    }
+    toggle() {
+      this.container.classList.contains("visible") ? this.hide() : this.show();
+    }
+  };
+  function Ye(r3, e4) {
+    K2.default.dispatch("debug", { idOrState: r3, state: e4 });
+  }
+  return tt(wt);
+})();
+
 // src/Application.ts
 var Application = class {
   constructor() {
@@ -2055,6 +3238,7 @@ var Application = class {
     if (idbTables) for (var t3 of idbTables) dbManager.addStore(t3.name, t3.indexes);
     AudioManager_default.register("hover", "/public/sounds/click.wav");
     AudioManager_default.register("click", "/public/sounds/cool-click.wav");
+    const dp = new (void 0)();
   }
 };
 var Application_default = new Application();
@@ -5046,24 +6230,8 @@ var NodeEntryCache2 = class {
   };
 };
 
-// src/lib/utils/debug/DebugPanel.ts
-init_preact_module();
-var import_eventbusjs2 = __toESM(require_eventbus_min());
-
-// src/components/shared/BlobEditor/lib/utils/domUtils.ts
-init_preact_module();
-
-// src/components/shared/BlobEditor/lib/JsonView.ts
-init_preact_module();
-
-// src/lib/utils/debug/DebugPanel.ts
-var { log: log8, warn: warn6 } = getLogger("DebugPanel", { color: "red", enabled: true });
-function debugState(id, state) {
-  import_eventbusjs2.default.dispatch("debug-state", { id, state });
-}
-
 // src/components/shared/BlobEditor/lib/WEditor.ts
-var { log: log9, error: error4 } = getLogger("WEditor", { color: "blue", enabled: true });
+var { log: log8, error: error4 } = getLogger("WEditor", { color: "blue", enabled: true });
 var CHANGE_TIMEOUT_MS = 500;
 var AUTOSAVE_TIMEOUT_MS = 3e3;
 var CONTENT_ROOT_CLASS = "w-content";
@@ -5107,7 +6275,6 @@ var WEditor = class {
     if (!this.blob) return console.error("No blob given to load.");
     this.contentEditable.innerHTML = "";
     this.nodeCache.hydrateContent(this.blob.content.entries, this.contentEditable);
-    this.debugState();
   }
   handleKeyDown = (e4) => {
     if (e4.target == this.contentEditable) {
@@ -5132,7 +6299,7 @@ var WEditor = class {
   };
   handleEnter = (e4) => {
     const node = this.getCurrentEditingNode();
-    log9(`Enter`, node, e4);
+    log8(`Enter`, node, e4);
     this.lastEnterNode = node;
     if (e4.shiftKey) {
     }
@@ -5143,26 +6310,26 @@ var WEditor = class {
     const childNodes = Array.from(node.childNodes);
     if (node) {
       if (node.nodeType != Node.TEXT_NODE) {
-        log9(`backspace on edit node:`, node, childNodes, node.innerHTML);
+        log8(`backspace on edit node:`, node, childNodes, node.innerHTML);
         return;
         const ner = nerUtils.findNER(node, this.nodeCache);
         if (ner) {
           setTimeout(() => {
-            log9(`nodes after timeout:`, node, childNodes, node.innerHTML);
+            log8(`nodes after timeout:`, node, childNodes, node.innerHTML);
             ner.children.forEach((c3, i4) => {
               const exists = Array.from(node.childNodes).find((cn) => c3.node == cn);
               if (!exists) {
                 const childEntry = c3.entry;
                 if (Array.isArray(ner.entry?.children)) {
                   const di = ner.entry.children.findIndex((ec) => ec == childEntry);
-                  log9(`DELETING child entry:`, di, childEntry);
+                  log8(`DELETING child entry:`, di, childEntry);
                   if (di > -1) ner.entry.children.splice(di, 1);
                 }
-                log9(`DELETING NER:`, i4, c3);
+                log8(`DELETING NER:`, i4, c3);
                 ner.children.splice(i4, 1);
               }
               {
-                log9(`node still exists.`, c3, i4);
+                log8(`node still exists.`, c3, i4);
               }
             });
           }, 0);
@@ -5173,19 +6340,19 @@ var WEditor = class {
         }
         this.nodeCache.deleteNER(node);
       } else {
-        log9(`backspace on text node:`, node);
+        log8(`backspace on text node:`, node);
         return;
         let ner = nerUtils.findNER(node, this.nodeCache);
-        if (ner) log9(`Text node FOUND:`, ner);
+        if (ner) log8(`Text node FOUND:`, ner);
         else {
-          log9(`! Text node NOT found !`, node);
+          log8(`! Text node NOT found !`, node);
         }
       }
     }
   };
   handleContentChange = (e4) => {
     let editNode = this.getCurrentEditingNode();
-    log9(`handleContentChange(): ${e4.inputType}`, editNode);
+    log8(`handleContentChange(): ${e4.inputType}`, editNode);
     switch (e4.inputType) {
       case "insertText":
         break;
@@ -5209,12 +6376,11 @@ var WEditor = class {
     }
     this.applyChanges(editNode, e4.inputType);
     this.lastContentChangeType = e4.inputType;
-    this.debugState();
   };
-  debugState() {
-    debugState("entryTree", this.nodeCache.rootNER?.entry);
-    debugState("nerTree", this.nodeCache.rootNER);
-  }
+  // private debugState() {
+  //     debugState('entryTree', this.nodeCache.rootNER?.entry);
+  //     debugState('nerTree', this.nodeCache.rootNER);
+  // }
   // updates the given node's entry with it's changed content
   applyChanges(node, inputType) {
     if (!node) throw "No node given to applyChanges()";
@@ -5244,7 +6410,6 @@ var WEditor = class {
       this.contentEditable.innerHTML = "";
       this.nodeCache.clear();
       if (commit) this.commitChanges();
-      this.debugState();
     }
   }
   getCurrentEditingNode() {
