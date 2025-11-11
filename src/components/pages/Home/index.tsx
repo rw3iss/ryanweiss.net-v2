@@ -1,58 +1,62 @@
+import { useState } from 'preact/hooks';
+import { MysticalBackground } from '../../shared/MysticalBackground/MysticalBackground';
+import { BeltNavigator } from '../../shared/BeltNavigator/BeltNavigator';
+import { ItemDetailView } from '../../shared/ItemDetailView/ItemDetailView';
+import { portfolioData, PortfolioItem } from '../../../data/portfolioData';
 import './style.scss';
-import { useEffect } from 'preact/hooks';
-import { EnhancedJsonView } from '../../shared/JsonView/EnhancedJsonView';
 
-const data = {
-	'updated': new Date().toLocaleDateString(),
-	'Home': {
-		'Featured': {
-			'Look at this': {
-				image: 'https://auction-site-staging-storage.s3.us-east-2.amazonaws.com/products/72583/Screenshot20250904144307.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVN3I3QVJQ2HWDYQY%2F20251003%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20251003T025804Z&X-Amz-Expires=86400&X-Amz-Signature=a34a323c62b6b7b320aa5272b052bfe845a46a426e93356d855d4acb649f4f68&X-Amz-SignedHeaders=host'
-			},
-		},
-		'Contact': {
-			'Email': 'rw3iss@gmail.com'
-		}
-	},
+const HomePage = () => {
+    const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
+    const [activeRowIndex, setActiveRowIndex] = useState(0);
 
-	'Work': {
-		'Latest': {
-			'Project Label': {
-				date: new Date()
-			}
-		},
-	}
-}
+    // Sort portfolio data by order field to ensure correct display order
+    const sortedPortfolioData = [...portfolioData].sort((a, b) => a.order - b.order);
 
-const HomePage = (props) => {
+    const handleItemClick = (item: PortfolioItem) => {
+        setSelectedItem(item);
+    };
 
-	// const jsonWrapper = createRef(undefined);
+    const handleCloseDetail = () => {
+        setSelectedItem(null);
+    };
 
-	// useEffect(() => {
-	// 	if (jsonWrapper.current) {
-	// 		const jsonView = new JsonView(data, jsonWrapper.current as HTMLElement, {
-	// 			expandObjs: [/children/, /children\/(.*)/, /entry/]
-	// 		});
-	// 	}
-	// }, [jsonWrapper.current])
+    const handleRowChange = (index: number) => {
+        setActiveRowIndex(index);
+    };
 
-	return (
-		<div className="page" id="home">
+    return (
+        <div className="homepage">
+            <MysticalBackground />
 
-			<div className="json-wrapper" ref={dom => {
-				if (dom) {
-					console.log(`new json view`)
-					const jsonView = new EnhancedJsonView(data, dom, {
-						expandObjs: [/children/, /children\/(.*)/, /entry/, 'Home']
-					});
-					return () => { } // unmounted, cleanup?
-				}
-			}} />
+            {/* Section navigation in upper left */}
+            <div className="homepage__navigation">
+                <div className="homepage__section-title">{sortedPortfolioData[activeRowIndex].label}</div>
+                <div className="homepage__section-links">
+                    {sortedPortfolioData.map((row, index) => (
+                        <button
+                            key={row.key}
+                            className={`homepage__section-link ${
+                                index === activeRowIndex ? 'homepage__section-link--active' : ''
+                            }`}
+                            onClick={() => handleRowChange(index)}>
+                            {row.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
 
-			{/* <EntryList entries={entries} /> */}
+            <div className="homepage__content">
+                <BeltNavigator
+                    rows={sortedPortfolioData}
+                    onItemClick={handleItemClick}
+                    onRowChange={handleRowChange}
+                    activeRowIndex={activeRowIndex}
+                />
+            </div>
 
-		</div>
-	);
+            <ItemDetailView item={selectedItem} onClose={handleCloseDetail} />
+        </div>
+    );
 };
 
 export default HomePage;

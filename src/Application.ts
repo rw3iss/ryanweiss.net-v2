@@ -3,7 +3,7 @@ import { APP_ID } from 'env';
 import { IndexedDBManager } from 'lib/IndexedDBManager';
 import AudioManager from './lib/AudioManager.js';
 import { addLogModule } from './lib/utils/logging.js';
-import { DebugPanel } from 'dev-debug-panel';
+// import { DebugPanel } from 'dev-debug-panel';
 
 class Application {
 
@@ -21,7 +21,7 @@ class Application {
 		AudioManager.register('hover', '/public/sounds/click.wav');
 		AudioManager.register('click', '/public/sounds/cool-click.wav');
 
-		const dp = new DebugPanel();
+		// const dp = new DebugPanel();
 		//addLogModule(new DebugPanelLogModule({ show: true }));
 	}
 

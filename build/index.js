@@ -790,20 +790,20 @@ var require_lib = __commonJS({
     });
     Object.defineProperty(exports, "CookieStorage", {
       enumerable: true,
-      get: function get2() {
+      get: function get() {
         return _CookieStorage["default"];
       }
     });
     Object.defineProperty(exports, "MemoryStorage", {
       enumerable: true,
-      get: function get2() {
+      get: function get() {
         return _MemoryStorage["default"];
       }
     });
     exports["default"] = void 0;
     Object.defineProperty(exports, "isSupported", {
       enumerable: true,
-      get: function get2() {
+      get: function get() {
         return _isSupported["default"];
       }
     });
@@ -886,10 +886,10 @@ var require_alea = __commonJS({
       }
       function Mash() {
         var n2 = 4022871197;
-        var mash = function(data2) {
-          data2 = String(data2);
-          for (var i4 = 0; i4 < data2.length; i4++) {
-            n2 += data2.charCodeAt(i4);
+        var mash = function(data) {
+          data = String(data);
+          for (var i4 = 0; i4 < data.length; i4++) {
+            n2 += data.charCodeAt(i4);
             var h3 = 0.02519603282416938 * n2;
             n2 = h3 >>> 0;
             h3 -= n2;
@@ -2044,1189 +2044,6 @@ var _AudioManager = class {
 var AudioManager = new _AudioManager();
 var AudioManager_default = AudioManager;
 
-// node_modules/dev-debug-panel/dist/index.umd.js
-init_preact_module();
-var DebugPanelLogger = (() => {
-  var Ge = Object.create;
-  var V2 = Object.defineProperty;
-  var Ue = Object.getOwnPropertyDescriptor;
-  var Ke = Object.getOwnPropertyNames;
-  var Qe = Object.getPrototypeOf, Ze = Object.prototype.hasOwnProperty;
-  var Ae = (r3, e4) => () => (e4 || r3((e4 = { exports: {} }).exports, e4), e4.exports), et = (r3, e4) => {
-    for (var t3 in e4) V2(r3, t3, { get: e4[t3], enumerable: true });
-  }, Ne = (r3, e4, t3, n2) => {
-    if (e4 && typeof e4 == "object" || typeof e4 == "function") for (let i4 of Ke(e4)) !Ze.call(r3, i4) && i4 !== t3 && V2(r3, i4, { get: () => e4[i4], enumerable: !(n2 = Ue(e4, i4)) || n2.enumerable });
-    return r3;
-  };
-  var ke = (r3, e4, t3) => (t3 = r3 != null ? Ge(Qe(r3)) : {}, Ne(e4 || !r3 || !r3.__esModule ? V2(t3, "default", { value: r3, enumerable: true }) : t3, r3)), tt = (r3) => Ne(V2({}, "__esModule", { value: true }), r3);
-  var Oe = Ae(($3, Z) => {
-    (function(r3, e4) {
-      typeof $3 == "object" && typeof Z == "object" ? Z.exports = e4() : typeof define == "function" && define.amd ? define("EventBus", [], e4) : typeof $3 == "object" ? $3.EventBus = e4() : r3.EventBus = e4();
-    })($3, function() {
-      var r3 = {};
-      r3 = function() {
-        this.listeners = {};
-      }, r3.prototype = { addEventListener: function(t3, n2, i4) {
-        for (var o3 = [], s3 = arguments.length, a3 = 0; a3 < s3; a3++) o3.push(arguments[a3]);
-        o3 = o3.length > 3 ? o3.splice(3, o3.length - 1) : [], typeof this.listeners[t3] < "u" ? this.listeners[t3].push({ scope: i4, callback: n2, args: o3 }) : this.listeners[t3] = [{ scope: i4, callback: n2, args: o3 }];
-      }, removeEventListener: function(t3, n2, i4) {
-        if (typeof this.listeners[t3] < "u") {
-          for (var o3 = this.listeners[t3].length, s3 = [], a3 = 0; a3 < o3; a3++) {
-            var l3 = this.listeners[t3][a3];
-            l3.scope == i4 && l3.callback == n2 || s3.push(l3);
-          }
-          this.listeners[t3] = s3;
-        }
-      }, hasEventListener: function(t3, n2, i4) {
-        if (typeof this.listeners[t3] < "u") {
-          var o3 = this.listeners[t3].length;
-          if (n2 === void 0 && i4 === void 0) return o3 > 0;
-          for (var s3 = 0; s3 < o3; s3++) {
-            var a3 = this.listeners[t3][s3];
-            if ((!i4 || a3.scope == i4) && a3.callback == n2) return true;
-          }
-        }
-        return false;
-      }, dispatch: function(t3, n2) {
-        for (var i4 = { type: t3, target: n2 }, o3 = [], s3 = arguments.length, a3 = 0; a3 < s3; a3++) o3.push(arguments[a3]);
-        if (o3 = o3.length > 2 ? o3.splice(2, o3.length - 1) : [], o3 = [i4].concat(o3), typeof this.listeners[t3] < "u") for (var l3 = this.listeners[t3].slice(), u4 = l3.length, a3 = 0; a3 < u4; a3++) {
-          var d3 = l3[a3];
-          if (d3 && d3.callback) {
-            var p3 = o3.concat(d3.args);
-            d3.callback.apply(d3.scope, p3);
-          }
-        }
-      }, getEvents: function() {
-        var t3 = "";
-        for (var n2 in this.listeners) for (var i4 = this.listeners[n2].length, o3 = 0; o3 < i4; o3++) {
-          var s3 = this.listeners[n2][o3];
-          t3 += s3.scope && s3.scope.className ? s3.scope.className : "anonymous", t3 += " listen for '" + n2 + `'
-`;
-        }
-        return t3;
-      } };
-      var e4 = new r3();
-      return e4;
-    });
-  });
-  var He = Ae((St, Ie) => {
-    Ie.exports = P2;
-    P2.default = P2;
-    P2.stable = Me;
-    P2.stableStringify = Me;
-    var X = "[...]", _e = "[Circular]", D3 = [], T3 = [];
-    function Fe() {
-      return { depthLimit: Number.MAX_SAFE_INTEGER, edgesLimit: Number.MAX_SAFE_INTEGER };
-    }
-    function P2(r3, e4, t3, n2) {
-      typeof n2 > "u" && (n2 = Fe()), ee(r3, "", 0, [], void 0, 0, n2);
-      var i4;
-      try {
-        T3.length === 0 ? i4 = JSON.stringify(r3, e4, t3) : i4 = JSON.stringify(r3, ze(e4), t3);
-      } catch {
-        return JSON.stringify("[unable to serialize, circular reference is too complex to analyze]");
-      } finally {
-        for (; D3.length !== 0; ) {
-          var o3 = D3.pop();
-          o3.length === 4 ? Object.defineProperty(o3[0], o3[1], o3[3]) : o3[0][o3[1]] = o3[2];
-        }
-      }
-      return i4;
-    }
-    function k3(r3, e4, t3, n2) {
-      var i4 = Object.getOwnPropertyDescriptor(n2, t3);
-      i4.get !== void 0 ? i4.configurable ? (Object.defineProperty(n2, t3, { value: r3 }), D3.push([n2, t3, e4, i4])) : T3.push([e4, t3, r3]) : (n2[t3] = r3, D3.push([n2, t3, e4]));
-    }
-    function ee(r3, e4, t3, n2, i4, o3, s3) {
-      o3 += 1;
-      var a3;
-      if (typeof r3 == "object" && r3 !== null) {
-        for (a3 = 0; a3 < n2.length; a3++) if (n2[a3] === r3) {
-          k3(_e, r3, e4, i4);
-          return;
-        }
-        if (typeof s3.depthLimit < "u" && o3 > s3.depthLimit) {
-          k3(X, r3, e4, i4);
-          return;
-        }
-        if (typeof s3.edgesLimit < "u" && t3 + 1 > s3.edgesLimit) {
-          k3(X, r3, e4, i4);
-          return;
-        }
-        if (n2.push(r3), Array.isArray(r3)) for (a3 = 0; a3 < r3.length; a3++) ee(r3[a3], a3, a3, n2, r3, o3, s3);
-        else {
-          var l3 = Object.keys(r3);
-          for (a3 = 0; a3 < l3.length; a3++) {
-            var u4 = l3[a3];
-            ee(r3[u4], u4, a3, n2, r3, o3, s3);
-          }
-        }
-        n2.pop();
-      }
-    }
-    function rt(r3, e4) {
-      return r3 < e4 ? -1 : r3 > e4 ? 1 : 0;
-    }
-    function Me(r3, e4, t3, n2) {
-      typeof n2 > "u" && (n2 = Fe());
-      var i4 = te(r3, "", 0, [], void 0, 0, n2) || r3, o3;
-      try {
-        T3.length === 0 ? o3 = JSON.stringify(i4, e4, t3) : o3 = JSON.stringify(i4, ze(e4), t3);
-      } catch {
-        return JSON.stringify("[unable to serialize, circular reference is too complex to analyze]");
-      } finally {
-        for (; D3.length !== 0; ) {
-          var s3 = D3.pop();
-          s3.length === 4 ? Object.defineProperty(s3[0], s3[1], s3[3]) : s3[0][s3[1]] = s3[2];
-        }
-      }
-      return o3;
-    }
-    function te(r3, e4, t3, n2, i4, o3, s3) {
-      o3 += 1;
-      var a3;
-      if (typeof r3 == "object" && r3 !== null) {
-        for (a3 = 0; a3 < n2.length; a3++) if (n2[a3] === r3) {
-          k3(_e, r3, e4, i4);
-          return;
-        }
-        try {
-          if (typeof r3.toJSON == "function") return;
-        } catch {
-          return;
-        }
-        if (typeof s3.depthLimit < "u" && o3 > s3.depthLimit) {
-          k3(X, r3, e4, i4);
-          return;
-        }
-        if (typeof s3.edgesLimit < "u" && t3 + 1 > s3.edgesLimit) {
-          k3(X, r3, e4, i4);
-          return;
-        }
-        if (n2.push(r3), Array.isArray(r3)) for (a3 = 0; a3 < r3.length; a3++) te(r3[a3], a3, a3, n2, r3, o3, s3);
-        else {
-          var l3 = {}, u4 = Object.keys(r3).sort(rt);
-          for (a3 = 0; a3 < u4.length; a3++) {
-            var d3 = u4[a3];
-            te(r3[d3], d3, a3, n2, r3, o3, s3), l3[d3] = r3[d3];
-          }
-          if (typeof i4 < "u") D3.push([i4, e4, r3]), i4[e4] = l3;
-          else return l3;
-        }
-        n2.pop();
-      }
-    }
-    function ze(r3) {
-      return r3 = typeof r3 < "u" ? r3 : function(e4, t3) {
-        return t3;
-      }, function(e4, t3) {
-        if (T3.length > 0) for (var n2 = 0; n2 < T3.length; n2++) {
-          var i4 = T3[n2];
-          if (i4[1] === e4 && i4[0] === t3) {
-            t3 = i4[2], T3.splice(n2, 1);
-            break;
-          }
-        }
-        return r3.call(this, e4, t3);
-      };
-    }
-  });
-  var wt = {};
-  et(wt, { DebugPanel: () => Q2, JsonView: () => M2, ScreenPosition: () => je, debug: () => Ye, getWindowSize: () => z3, makeDraggable: () => W, makeResizable: () => G2 });
-  var nt = ".debug-panel{position:fixed;z-index:99999;background:#222;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.3);display:flex;flex-direction:column;overflow:hidden;font-family:Arial,sans-serif;color:#fff;transition:transform .2s ease-in-out,visibility .2s ease-in-out}.debug-panel.visible{visibility:visible;transform:translateY(0)}.debug-panel:not(.visible){visibility:hidden;transform:translateY(10px);pointer-events:none}.debug-panel .debug-panel-tabs{display:flex;flex-wrap:wrap;background:#111;padding:5px;gap:5px;border-bottom:1px solid hsla(0,0%,100%,.1);cursor:grab;user-select:none}.debug-panel .debug-panel-tabs:active{cursor:grabbing}.debug-panel .debug-panel-tabs .debug-tab{background:#333;color:#ccc;padding:5px 10px;border:none;border-radius:4px;cursor:pointer;transition:background .2s ease-in-out}.debug-panel .debug-panel-tabs .debug-tab:hover{background:#444;color:#fff}.debug-panel .debug-panel-tabs .debug-tab:focus{outline:none}.debug-panel .debug-panel-tabs .debug-tab.active{background:#007bff;color:#fff}.debug-panel .debug-panel-content{flex:1;display:flex;flex-direction:column;overflow-y:auto;padding:0px 15px;background:#1a1a1a}.debug-panel .debug-panel-content .debug-tab-content{display:none;flex-direction:column;flex:1;gap:5px}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry{background:#292929;color:#ddd;padding:5px 8px;border-radius:4px;font-size:12px;word-break:break-word;border-left:3px solid #007bff;position:relative;display:flex;align-items:center}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry:hover .debug-delete-button,.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry:hover .debug-copy-button{opacity:1}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-log-entry-text{flex:1;padding-right:70px}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-action-button,.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-delete-button,.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-copy-button{position:absolute;top:50%;transform:translateY(-50%);background:rgba(100,100,100,.8);color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:bold;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s ease-in-out,background .2s ease-in-out}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-action-button:hover,.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-delete-button:hover,.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-copy-button:hover{background:#969696}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-copy-button{right:36px;background:rgba(85,170,255,.8)}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-copy-button:hover{background:#28f}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-delete-button{right:8px;background:rgba(255,85,85,.8)}.debug-panel .debug-panel-content .debug-tab-content .debug-log-entry .debug-delete-button:hover{background:#f22}.debug-panel .debug-toolbar{display:flex;width:100%;align-items:center;justify-content:flex-end;gap:8px;padding:8px;background:#111;border-top:1px solid hsla(0,0%,100%,.1);flex-wrap:wrap}.debug-panel .debug-toolbar .debug-keyboard-hint{margin-right:auto;color:#999;font-size:11px;white-space:nowrap}.debug-panel .debug-toolbar .debug-opacity-container{display:flex;align-items:center;gap:5px;max-width:100px;min-width:40px;flex-shrink:1;padding:5px 0}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-label{font-size:11px;color:#999;white-space:nowrap}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-slider{flex:1;min-width:40px;width:100%;max-width:100%;height:4px;background:#444;border-radius:2px;outline:none;-webkit-appearance:none;appearance:none}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;background:#007bff;cursor:pointer;border-radius:50%;position:relative;top:-4px;transition:background .2s}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-slider::-webkit-slider-thumb:hover{background:#0056b3}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-slider::-moz-range-thumb{width:14px;height:14px;background:#007bff;cursor:pointer;border-radius:50%;border:none;position:relative;top:-4px;transition:background .2s}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-slider::-moz-range-thumb:hover{background:#0056b3}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-slider::-webkit-slider-runnable-track{height:4px;background:#444;border-radius:2px}.debug-panel .debug-toolbar .debug-opacity-container .debug-opacity-slider::-moz-range-track{height:4px;background:#444;border-radius:2px}.debug-panel .debug-toolbar button{background:#d9534f;color:#fff;border:none;padding:6px 12px;border-radius:4px;font-size:12px;cursor:pointer;transition:background .2s;white-space:nowrap;flex-shrink:0}.debug-panel .debug-toolbar button:hover{background:#c9302c}.debug-panel .debug-toolbar button:focus{outline:none}.debug-panel .debug-toolbar{container-type:inline-size}@container (max-width: 350px){.debug-panel .debug-toolbar{flex-direction:column;align-items:stretch}.debug-panel .debug-toolbar .debug-keyboard-hint{display:none}.debug-panel .debug-toolbar .debug-opacity-container{max-width:100%;justify-content:center}}.debug-panel.narrow-panel .debug-toolbar{flex-direction:column;align-items:stretch}.debug-panel.narrow-panel .debug-toolbar .debug-keyboard-hint{margin-right:0;text-align:center}.debug-panel.narrow-panel .debug-toolbar .debug-opacity-container{max-width:100%;justify-content:center}.debug-panel .resize-handle{position:absolute;background:hsla(0,0%,100%,.1);z-index:10;transition:background .2s}.debug-panel .resize-handle:hover{background:hsla(0,0%,100%,.3)}.debug-panel .resize-left,.debug-panel .resize-right{top:0;bottom:0;width:6px;cursor:ew-resize}.debug-panel .resize-left{left:-3px}.debug-panel .resize-right{right:-3px}.debug-panel .resize-top,.debug-panel .resize-bottom{left:0;right:0;height:6px;cursor:ns-resize}.debug-panel .resize-top{top:-3px}.debug-panel .resize-bottom{bottom:-3px}.debug-panel .resize-top-left,.debug-panel .resize-top-right,.debug-panel .resize-bottom-left,.debug-panel .resize-bottom-right{width:10px;height:10px}.debug-panel .resize-top-left{left:-3px;top:-3px;cursor:nwse-resize}.debug-panel .resize-top-right{right:-3px;top:-3px;cursor:nesw-resize}.debug-panel .resize-bottom-left{left:-3px;bottom:-3px;cursor:nesw-resize}.debug-panel .resize-bottom-right{right:-3px;bottom:-3px;cursor:nwse-resize}.debug-state{position:relative;flex:1 0 100%;display:flex;flex-direction:column;margin-bottom:10px;margin-left:10px}.debug-state .json-toggle{position:absolute;top:7px;left:-20px;margin-right:5px;border:none;background:none;cursor:pointer;color:#888;font-size:14px;padding:0;width:20px;height:20px;transition:color .2s}.debug-state .json-toggle:hover{color:#fff}.debug-state .json-toggle:focus{outline:none}.debug-state .debug-state-label{font-size:13px;font-weight:bold;padding:5px 0;color:#ccc}.debug-state .debug-state-label:hover{color:#fff;cursor:pointer;text-decoration:underline}.debug-state .json-wrapper{padding:5px;margin-left:-15px;background:#292929;border-radius:4px;border-left:3px solid #28a745}.debug-state.collapsed .json-wrapper{display:none}";
-  if (typeof document < "u") {
-    let r3 = document.createElement("style");
-    r3.textContent = nt, document.head.appendChild(r3);
-  }
-  var it = ".json-node{position:relative;margin-left:20px;padding-left:0;font-size:12px;line-height:1.4em}.json-node .json-properties{display:flex;flex-direction:column}.json-node .json-property{position:relative;display:flex;align-items:flex-start;padding:2px 0}.json-node .json-property.object{flex-direction:column}.json-node .json-key{font-weight:bold;margin-right:5px;color:#9cdcfe}.json-node .json-key.clickable{cursor:pointer}.json-node .json-key.clickable:hover{color:#4fc3f7;text-decoration:underline}.json-node .json-value{color:#ce9178;white-space:pre-wrap;word-break:break-word;flex:1}.json-node .json-toggle{position:absolute;top:2px;left:-20px;border:none;background:none;cursor:pointer;color:#888;font-size:12px;padding:0;width:16px;height:16px;transition:color .2s}.json-node .json-toggle:hover{color:#fff}.json-node .json-toggle:focus{outline:none}.json-node .collapsed .json-properties{display:none}";
-  if (typeof document < "u") {
-    let r3 = document.createElement("style");
-    r3.textContent = it, document.head.appendChild(r3);
-  }
-  var K2 = ke(Oe(), 1), De = ke(He(), 1);
-  function ot(r3) {
-    var e4;
-    let t3 = /^\/(.*)\/([gimyu]*)$/.exec(r3.toString());
-    if (!t3) throw new Error("Invalid RegExp");
-    return new RegExp((e4 = t3[1]) !== null && e4 !== void 0 ? e4 : "", t3[2]);
-  }
-  function j3(r3) {
-    if (typeof r3 != "object") return r3;
-    if (r3 === null) return null;
-    if (Array.isArray(r3)) return r3.map(j3);
-    if (r3 instanceof Date) return new Date(r3.getTime());
-    if (r3 instanceof RegExp) return ot(r3);
-    let e4 = {};
-    for (let t3 in r3) Object.prototype.hasOwnProperty.call(r3, t3) && (e4[t3] = j3(r3[t3]));
-    return e4;
-  }
-  function $e(r3, e4) {
-    if (r3.length === 0) throw new Error(e4 || "Expected a non-empty array");
-  }
-  var Pe = (r3) => r3[r3.length - 1];
-  var S2 = class {
-    setResult(e4) {
-      return this.result = e4, this.hasResult = true, this;
-    }
-    exit() {
-      return this.exiting = true, this;
-    }
-    push(e4, t3) {
-      return e4.parent = this, typeof t3 < "u" && (e4.childName = t3), e4.root = this.root || this, e4.options = e4.options || this.options, this.children ? ($e(this.children), Pe(this.children).next = e4, this.children.push(e4)) : (this.children = [e4], this.nextAfterChildren = this.next || null, this.next = e4), e4.next = this, this;
-    }
-  };
-  var ne = class extends S2 {
-    constructor(e4, t3) {
-      super(), this.left = e4, this.right = t3, this.pipe = "diff";
-    }
-    prepareDeltaResult(e4) {
-      var t3, n2, i4, o3;
-      if (typeof e4 == "object" && (!((t3 = this.options) === null || t3 === void 0) && t3.omitRemovedValues && Array.isArray(e4) && e4.length > 1 && (e4.length === 2 || e4[2] === 0 || e4[2] === 3) && (e4[0] = 0), !((n2 = this.options) === null || n2 === void 0) && n2.cloneDiffValues)) {
-        let s3 = typeof ((i4 = this.options) === null || i4 === void 0 ? void 0 : i4.cloneDiffValues) == "function" ? (o3 = this.options) === null || o3 === void 0 ? void 0 : o3.cloneDiffValues : j3;
-        typeof e4[0] == "object" && (e4[0] = s3(e4[0])), typeof e4[1] == "object" && (e4[1] = s3(e4[1]));
-      }
-      return e4;
-    }
-    setResult(e4) {
-      return this.prepareDeltaResult(e4), super.setResult(e4);
-    }
-  }, L2 = ne;
-  var ie = class extends S2 {
-    constructor(e4, t3) {
-      super(), this.left = e4, this.delta = t3, this.pipe = "patch";
-    }
-  }, O2 = ie;
-  var re = class extends S2 {
-    constructor(e4) {
-      super(), this.delta = e4, this.pipe = "reverse";
-    }
-  }, _2 = re;
-  var oe = class {
-    constructor(e4) {
-      this.name = e4, this.filters = [];
-    }
-    process(e4) {
-      if (!this.processor) throw new Error("add this pipe to a processor before using it");
-      let t3 = this.debug, n2 = this.filters.length, i4 = e4;
-      for (let o3 = 0; o3 < n2; o3++) {
-        let s3 = this.filters[o3];
-        if (s3 && (t3 && this.log(`filter: ${s3.filterName}`), s3(i4), typeof i4 == "object" && i4.exiting)) {
-          i4.exiting = false;
-          break;
-        }
-      }
-      !i4.next && this.resultCheck && this.resultCheck(i4);
-    }
-    log(e4) {
-      console.log(`[jsondiffpatch] ${this.name} pipe, ${e4}`);
-    }
-    append(...e4) {
-      return this.filters.push(...e4), this;
-    }
-    prepend(...e4) {
-      return this.filters.unshift(...e4), this;
-    }
-    indexOf(e4) {
-      if (!e4) throw new Error("a filter name is required");
-      for (let t3 = 0; t3 < this.filters.length; t3++) {
-        let n2 = this.filters[t3];
-        if (n2?.filterName === e4) return t3;
-      }
-      throw new Error(`filter not found: ${e4}`);
-    }
-    list() {
-      return this.filters.map((e4) => e4.filterName);
-    }
-    after(e4, ...t3) {
-      let n2 = this.indexOf(e4);
-      return this.filters.splice(n2 + 1, 0, ...t3), this;
-    }
-    before(e4, ...t3) {
-      let n2 = this.indexOf(e4);
-      return this.filters.splice(n2, 0, ...t3), this;
-    }
-    replace(e4, ...t3) {
-      let n2 = this.indexOf(e4);
-      return this.filters.splice(n2, 1, ...t3), this;
-    }
-    remove(e4) {
-      let t3 = this.indexOf(e4);
-      return this.filters.splice(t3, 1), this;
-    }
-    clear() {
-      return this.filters.length = 0, this;
-    }
-    shouldHaveResult(e4) {
-      return e4 === false ? (this.resultCheck = null, this) : this.resultCheck ? this : (this.resultCheck = (t3) => {
-        if (!t3.hasResult) {
-          console.log(t3);
-          let n2 = new Error(`${this.name} failed`);
-          throw n2.noResult = true, n2;
-        }
-      }, this);
-    }
-  }, q3 = oe;
-  var se = class {
-    constructor(e4) {
-      this.selfOptions = e4 || {}, this.pipes = {};
-    }
-    options(e4) {
-      return e4 && (this.selfOptions = e4), this.selfOptions;
-    }
-    pipe(e4, t3) {
-      let n2 = t3;
-      if (typeof e4 == "string") {
-        if (typeof n2 > "u") return this.pipes[e4];
-        this.pipes[e4] = n2;
-      }
-      if (e4 && e4.name) {
-        if (n2 = e4, n2.processor === this) return n2;
-        this.pipes[n2.name] = n2;
-      }
-      if (!n2) throw new Error(`pipe is not defined: ${e4}`);
-      return n2.processor = this, n2;
-    }
-    process(e4, t3) {
-      let n2 = e4;
-      n2.options = this.options();
-      let i4 = t3 || e4.pipe || "default", o3;
-      for (; i4; ) typeof n2.nextAfterChildren < "u" && (n2.next = n2.nextAfterChildren, n2.nextAfterChildren = null), typeof i4 == "string" && (i4 = this.pipe(i4)), i4.process(n2), o3 = i4, i4 = null, n2 && n2.next && (n2 = n2.next, i4 = n2.pipe || o3);
-      return n2.hasResult ? n2.result : void 0;
-    }
-  }, We = se;
-  var st = (r3, e4, t3, n2) => r3[t3] === e4[n2], at = (r3, e4, t3, n2) => {
-    var i4, o3, s3;
-    let a3 = r3.length, l3 = e4.length, u4, d3, p3 = new Array(a3 + 1);
-    for (u4 = 0; u4 < a3 + 1; u4++) {
-      let f4 = new Array(l3 + 1);
-      for (d3 = 0; d3 < l3 + 1; d3++) f4[d3] = 0;
-      p3[u4] = f4;
-    }
-    for (p3.match = t3, u4 = 1; u4 < a3 + 1; u4++) {
-      let f4 = p3[u4];
-      if (f4 === void 0) throw new Error("LCS matrix row is undefined");
-      let c3 = p3[u4 - 1];
-      if (c3 === void 0) throw new Error("LCS matrix row is undefined");
-      for (d3 = 1; d3 < l3 + 1; d3++) t3(r3, e4, u4 - 1, d3 - 1, n2) ? f4[d3] = ((i4 = c3[d3 - 1]) !== null && i4 !== void 0 ? i4 : 0) + 1 : f4[d3] = Math.max((o3 = c3[d3]) !== null && o3 !== void 0 ? o3 : 0, (s3 = f4[d3 - 1]) !== null && s3 !== void 0 ? s3 : 0);
-    }
-    return p3;
-  }, lt = (r3, e4, t3, n2) => {
-    let i4 = e4.length, o3 = t3.length, s3 = { sequence: [], indices1: [], indices2: [] };
-    for (; i4 !== 0 && o3 !== 0; ) {
-      if (r3.match === void 0) throw new Error("LCS matrix match function is undefined");
-      if (r3.match(e4, t3, i4 - 1, o3 - 1, n2)) s3.sequence.unshift(e4[i4 - 1]), s3.indices1.unshift(i4 - 1), s3.indices2.unshift(o3 - 1), --i4, --o3;
-      else {
-        let l3 = r3[i4];
-        if (l3 === void 0) throw new Error("LCS matrix row is undefined");
-        let u4 = l3[o3 - 1];
-        if (u4 === void 0) throw new Error("LCS matrix value is undefined");
-        let d3 = r3[i4 - 1];
-        if (d3 === void 0) throw new Error("LCS matrix row is undefined");
-        let p3 = d3[o3];
-        if (p3 === void 0) throw new Error("LCS matrix value is undefined");
-        u4 > p3 ? --o3 : --i4;
-      }
-    }
-    return s3;
-  }, dt = (r3, e4, t3, n2) => {
-    let i4 = n2 || {}, o3 = at(r3, e4, t3 || st, i4);
-    return lt(o3, r3, e4, i4);
-  }, Be = { get: dt };
-  var A3 = 3;
-  function ut(r3, e4, t3, n2) {
-    for (let i4 = 0; i4 < t3; i4++) {
-      let o3 = r3[i4];
-      for (let s3 = 0; s3 < n2; s3++) {
-        let a3 = e4[s3];
-        if (i4 !== s3 && o3 === a3) return true;
-      }
-    }
-    return false;
-  }
-  function Y(r3, e4, t3, n2, i4) {
-    let o3 = r3[t3], s3 = e4[n2];
-    if (o3 === s3) return true;
-    if (typeof o3 != "object" || typeof s3 != "object") return false;
-    let a3 = i4.objectHash;
-    if (!a3) return i4.matchByPosition && t3 === n2;
-    i4.hashCache1 = i4.hashCache1 || [];
-    let l3 = i4.hashCache1[t3];
-    if (typeof l3 > "u" && (i4.hashCache1[t3] = l3 = a3(o3, t3)), typeof l3 > "u") return false;
-    i4.hashCache2 = i4.hashCache2 || [];
-    let u4 = i4.hashCache2[n2];
-    return typeof u4 > "u" && (i4.hashCache2[n2] = u4 = a3(s3, n2)), typeof u4 > "u" ? false : l3 === u4;
-  }
-  var ae = function(e4) {
-    var t3, n2, i4, o3, s3;
-    if (!e4.leftIsArray) return;
-    let a3 = { objectHash: (t3 = e4.options) === null || t3 === void 0 ? void 0 : t3.objectHash, matchByPosition: (n2 = e4.options) === null || n2 === void 0 ? void 0 : n2.matchByPosition }, l3 = 0, u4 = 0, d3, p3, f4, c3 = e4.left, h3 = e4.right, g2 = c3.length, m3 = h3.length, y3;
-    for (g2 > 0 && m3 > 0 && !a3.objectHash && typeof a3.matchByPosition != "boolean" && (a3.matchByPosition = !ut(c3, h3, g2, m3)); l3 < g2 && l3 < m3 && Y(c3, h3, l3, l3, a3); ) d3 = l3, y3 = new L2(c3[d3], h3[d3]), e4.push(y3, d3), l3++;
-    for (; u4 + l3 < g2 && u4 + l3 < m3 && Y(c3, h3, g2 - 1 - u4, m3 - 1 - u4, a3); ) p3 = g2 - 1 - u4, f4 = m3 - 1 - u4, y3 = new L2(c3[p3], h3[f4]), e4.push(y3, f4), u4++;
-    let b2;
-    if (l3 + u4 === g2) {
-      if (g2 === m3) {
-        e4.setResult(void 0).exit();
-        return;
-      }
-      for (b2 = b2 || { _t: "a" }, d3 = l3; d3 < m3 - u4; d3++) b2[d3] = [h3[d3]], e4.prepareDeltaResult(b2[d3]);
-      e4.setResult(b2).exit();
-      return;
-    }
-    if (l3 + u4 === m3) {
-      for (b2 = b2 || { _t: "a" }, d3 = l3; d3 < g2 - u4; d3++) {
-        let w3 = `_${d3}`;
-        b2[w3] = [c3[d3], 0, 0], e4.prepareDeltaResult(b2[w3]);
-      }
-      e4.setResult(b2).exit();
-      return;
-    }
-    a3.hashCache1 = void 0, a3.hashCache2 = void 0;
-    let R = c3.slice(l3, g2 - u4), x2 = h3.slice(l3, m3 - u4), v3 = Be.get(R, x2, Y, a3), E2 = [];
-    for (b2 = b2 || { _t: "a" }, d3 = l3; d3 < g2 - u4; d3++) if (v3.indices1.indexOf(d3 - l3) < 0) {
-      let w3 = `_${d3}`;
-      b2[w3] = [c3[d3], 0, 0], e4.prepareDeltaResult(b2[w3]), E2.push(d3);
-    }
-    let I2 = true;
-    !((i4 = e4.options) === null || i4 === void 0) && i4.arrays && e4.options.arrays.detectMove === false && (I2 = false);
-    let H2 = false;
-    !((s3 = (o3 = e4.options) === null || o3 === void 0 ? void 0 : o3.arrays) === null || s3 === void 0) && s3.includeValueOnMove && (H2 = true);
-    let N2 = E2.length;
-    for (d3 = l3; d3 < m3 - u4; d3++) {
-      let w3 = v3.indices2.indexOf(d3 - l3);
-      if (w3 < 0) {
-        let C3 = false;
-        if (I2 && N2 > 0) for (let B3 = 0; B3 < N2; B3++) {
-          p3 = E2[B3];
-          let J2 = p3 === void 0 ? void 0 : b2[`_${p3}`];
-          if (p3 !== void 0 && J2 && Y(R, x2, p3 - l3, d3 - l3, a3)) {
-            J2.splice(1, 2, d3, A3), J2.splice(1, 2, d3, A3), H2 || (J2[0] = ""), f4 = d3, y3 = new L2(c3[p3], h3[f4]), e4.push(y3, f4), E2.splice(B3, 1), C3 = true;
-            break;
-          }
-        }
-        C3 || (b2[d3] = [h3[d3]], e4.prepareDeltaResult(b2[d3]));
-      } else {
-        if (v3.indices1[w3] === void 0) throw new Error(`Invalid indexOnArray2: ${w3}, seq.indices1: ${v3.indices1}`);
-        if (p3 = v3.indices1[w3] + l3, v3.indices2[w3] === void 0) throw new Error(`Invalid indexOnArray2: ${w3}, seq.indices2: ${v3.indices2}`);
-        f4 = v3.indices2[w3] + l3, y3 = new L2(c3[p3], h3[f4]), e4.push(y3, f4);
-      }
-    }
-    e4.setResult(b2).exit();
-  };
-  ae.filterName = "arrays";
-  var Je = { numerically(r3, e4) {
-    return r3 - e4;
-  }, numericallyBy(r3) {
-    return (e4, t3) => e4[r3] - t3[r3];
-  } }, le = function(e4) {
-    var t3;
-    if (!e4.nested) return;
-    let n2 = e4.delta;
-    if (n2._t !== "a") return;
-    let i4, o3, s3 = n2, a3 = e4.left, l3 = [], u4 = [], d3 = [];
-    for (i4 in s3) if (i4 !== "_t") if (i4[0] === "_") {
-      let c3 = i4;
-      if (s3[c3] !== void 0 && (s3[c3][2] === 0 || s3[c3][2] === A3)) l3.push(Number.parseInt(i4.slice(1), 10));
-      else throw new Error(`only removal or move can be applied at original array indices, invalid diff type: ${(t3 = s3[c3]) === null || t3 === void 0 ? void 0 : t3[2]}`);
-    } else {
-      let c3 = i4;
-      s3[c3].length === 1 ? u4.push({ index: Number.parseInt(c3, 10), value: s3[c3][0] }) : d3.push({ index: Number.parseInt(c3, 10), delta: s3[c3] });
-    }
-    for (l3 = l3.sort(Je.numerically), i4 = l3.length - 1; i4 >= 0; i4--) {
-      if (o3 = l3[i4], o3 === void 0) continue;
-      let c3 = s3[`_${o3}`], h3 = a3.splice(o3, 1)[0];
-      c3?.[2] === A3 && u4.push({ index: c3[1], value: h3 });
-    }
-    u4 = u4.sort(Je.numericallyBy("index"));
-    let p3 = u4.length;
-    for (i4 = 0; i4 < p3; i4++) {
-      let c3 = u4[i4];
-      c3 !== void 0 && a3.splice(c3.index, 0, c3.value);
-    }
-    let f4 = d3.length;
-    if (f4 > 0) for (i4 = 0; i4 < f4; i4++) {
-      let c3 = d3[i4];
-      if (c3 === void 0) continue;
-      let h3 = new O2(a3[c3.index], c3.delta);
-      e4.push(h3, c3.index);
-    }
-    if (!e4.children) {
-      e4.setResult(a3).exit();
-      return;
-    }
-    e4.exit();
-  };
-  le.filterName = "arrays";
-  var de = function(e4) {
-    if (!e4 || !e4.children || e4.delta._t !== "a") return;
-    let n2 = e4.left, i4 = e4.children.length;
-    for (let o3 = 0; o3 < i4; o3++) {
-      let s3 = e4.children[o3];
-      if (s3 === void 0) continue;
-      let a3 = s3.childName;
-      n2[a3] = s3.result;
-    }
-    e4.setResult(n2).exit();
-  };
-  de.filterName = "arraysCollectChildren";
-  var ue = function(e4) {
-    if (!e4.nested) {
-      let i4 = e4.delta;
-      if (i4[2] === A3) {
-        let o3 = i4;
-        e4.newName = `_${o3[1]}`, e4.setResult([o3[0], Number.parseInt(e4.childName.substring(1), 10), A3]).exit();
-      }
-      return;
-    }
-    let t3 = e4.delta;
-    if (t3._t !== "a") return;
-    let n2 = t3;
-    for (let i4 in n2) {
-      if (i4 === "_t") continue;
-      let o3 = new _2(n2[i4]);
-      e4.push(o3, i4);
-    }
-    e4.exit();
-  };
-  ue.filterName = "arrays";
-  var ct = (r3, e4, t3) => {
-    if (typeof e4 == "string" && e4[0] === "_") return Number.parseInt(e4.substring(1), 10);
-    if (Array.isArray(t3) && t3[2] === 0) return `_${e4}`;
-    let n2 = +e4;
-    for (let i4 in r3) {
-      let o3 = r3[i4];
-      if (Array.isArray(o3)) if (o3[2] === A3) {
-        let s3 = Number.parseInt(i4.substring(1), 10), a3 = o3[1];
-        if (a3 === +e4) return s3;
-        s3 <= n2 && a3 > n2 ? n2++ : s3 >= n2 && a3 < n2 && n2--;
-      } else o3[2] === 0 ? Number.parseInt(i4.substring(1), 10) <= n2 && n2++ : o3.length === 1 && Number.parseInt(i4, 10) <= n2 && n2--;
-    }
-    return n2;
-  }, ce = (r3) => {
-    if (!r3 || !r3.children) return;
-    let e4 = r3.delta;
-    if (e4._t !== "a") return;
-    let t3 = e4, n2 = r3.children.length, i4 = { _t: "a" };
-    for (let o3 = 0; o3 < n2; o3++) {
-      let s3 = r3.children[o3];
-      if (s3 === void 0) continue;
-      let a3 = s3.newName;
-      if (typeof a3 > "u") {
-        if (s3.childName === void 0) throw new Error("child.childName is undefined");
-        a3 = ct(t3, s3.childName, s3.result);
-      }
-      i4[a3] !== s3.result && (i4[a3] = s3.result);
-    }
-    r3.setResult(i4).exit();
-  };
-  ce.filterName = "arraysCollectChildren";
-  var pe = function(e4) {
-    e4.left instanceof Date ? (e4.right instanceof Date ? e4.left.getTime() !== e4.right.getTime() ? e4.setResult([e4.left, e4.right]) : e4.setResult(void 0) : e4.setResult([e4.left, e4.right]), e4.exit()) : e4.right instanceof Date && e4.setResult([e4.left, e4.right]).exit();
-  };
-  pe.filterName = "dates";
-  var fe = (r3) => {
-    if (!r3 || !r3.children) return;
-    let e4 = r3.children.length, t3 = r3.result;
-    for (let n2 = 0; n2 < e4; n2++) {
-      let i4 = r3.children[n2];
-      if (i4 !== void 0 && !(typeof i4.result > "u")) {
-        if (t3 = t3 || {}, i4.childName === void 0) throw new Error("diff child.childName is undefined");
-        t3[i4.childName] = i4.result;
-      }
-    }
-    t3 && r3.leftIsArray && (t3._t = "a"), r3.setResult(t3).exit();
-  };
-  fe.filterName = "collectChildren";
-  var he = (r3) => {
-    var e4;
-    if (r3.leftIsArray || r3.leftType !== "object") return;
-    let t3 = r3.left, n2 = r3.right, i4 = (e4 = r3.options) === null || e4 === void 0 ? void 0 : e4.propertyFilter;
-    for (let o3 in t3) {
-      if (!Object.prototype.hasOwnProperty.call(t3, o3) || i4 && !i4(o3, r3)) continue;
-      let s3 = new L2(t3[o3], n2[o3]);
-      r3.push(s3, o3);
-    }
-    for (let o3 in n2) if (Object.prototype.hasOwnProperty.call(n2, o3) && !(i4 && !i4(o3, r3)) && typeof t3[o3] > "u") {
-      let s3 = new L2(void 0, n2[o3]);
-      r3.push(s3, o3);
-    }
-    if (!r3.children || r3.children.length === 0) {
-      r3.setResult(void 0).exit();
-      return;
-    }
-    r3.exit();
-  };
-  he.filterName = "objects";
-  var ge = function(e4) {
-    if (!e4.nested) return;
-    let t3 = e4.delta;
-    if (t3._t) return;
-    let n2 = t3;
-    for (let i4 in n2) {
-      let o3 = new O2(e4.left[i4], n2[i4]);
-      e4.push(o3, i4);
-    }
-    e4.exit();
-  };
-  ge.filterName = "objects";
-  var be = function(e4) {
-    if (!e4 || !e4.children || e4.delta._t) return;
-    let n2 = e4.left, i4 = e4.children.length;
-    for (let o3 = 0; o3 < i4; o3++) {
-      let s3 = e4.children[o3];
-      if (s3 === void 0) continue;
-      let a3 = s3.childName;
-      Object.prototype.hasOwnProperty.call(e4.left, a3) && s3.result === void 0 ? delete n2[a3] : n2[a3] !== s3.result && (n2[a3] = s3.result);
-    }
-    e4.setResult(n2).exit();
-  };
-  be.filterName = "collectChildren";
-  var me = function(e4) {
-    if (!e4.nested || e4.delta._t) return;
-    let n2 = e4.delta;
-    for (let i4 in n2) {
-      let o3 = new _2(n2[i4]);
-      e4.push(o3, i4);
-    }
-    e4.exit();
-  };
-  me.filterName = "objects";
-  var ye = (r3) => {
-    if (!r3 || !r3.children || r3.delta._t) return;
-    let t3 = r3.children.length, n2 = {};
-    for (let i4 = 0; i4 < t3; i4++) {
-      let o3 = r3.children[i4];
-      if (o3 === void 0) continue;
-      let s3 = o3.childName;
-      n2[s3] !== o3.result && (n2[s3] = o3.result);
-    }
-    r3.setResult(n2).exit();
-  };
-  ye.filterName = "collectChildren";
-  var ve = null;
-  function Ve(r3, e4) {
-    var t3;
-    if (!ve) {
-      let n2;
-      if (!((t3 = r3?.textDiff) === null || t3 === void 0) && t3.diffMatchPatch) n2 = new r3.textDiff.diffMatchPatch();
-      else {
-        if (!e4) return null;
-        let i4 = new Error("The diff-match-patch library was not provided. Pass the library in through the options or use the `jsondiffpatch/with-text-diffs` entry-point.");
-        throw i4.diff_match_patch_not_found = true, i4;
-      }
-      ve = { diff: (i4, o3) => n2.patch_toText(n2.patch_make(i4, o3)), patch: (i4, o3) => {
-        let s3 = n2.patch_apply(n2.patch_fromText(o3), i4);
-        for (let a3 of s3[1]) if (!a3) {
-          let l3 = new Error("text patch failed");
-          throw l3.textPatchFailed = true, l3;
-        }
-        return s3[0];
-      } };
-    }
-    return ve;
-  }
-  var xe = function(e4) {
-    var t3, n2;
-    if (e4.leftType !== "string") return;
-    let i4 = e4.left, o3 = e4.right, s3 = ((n2 = (t3 = e4.options) === null || t3 === void 0 ? void 0 : t3.textDiff) === null || n2 === void 0 ? void 0 : n2.minLength) || 60;
-    if (i4.length < s3 || o3.length < s3) {
-      e4.setResult([i4, o3]).exit();
-      return;
-    }
-    let a3 = Ve(e4.options);
-    if (!a3) {
-      e4.setResult([i4, o3]).exit();
-      return;
-    }
-    let l3 = a3.diff;
-    e4.setResult([l3(i4, o3), 0, 2]).exit();
-  };
-  xe.filterName = "texts";
-  var we = function(e4) {
-    if (e4.nested) return;
-    let t3 = e4.delta;
-    if (t3[2] !== 2) return;
-    let n2 = t3, i4 = Ve(e4.options, true).patch;
-    e4.setResult(i4(e4.left, n2[0])).exit();
-  };
-  we.filterName = "texts";
-  var gt = (r3) => {
-    var e4, t3, n2;
-    let i4 = /^@@ +-(\d+),(\d+) +\+(\d+),(\d+) +@@$/, o3 = r3.split(`
-`);
-    for (let s3 = 0; s3 < o3.length; s3++) {
-      let a3 = o3[s3];
-      if (a3 === void 0) continue;
-      let l3 = a3.slice(0, 1);
-      if (l3 === "@") {
-        let u4 = i4.exec(a3);
-        if (u4 !== null) {
-          let d3 = s3;
-          o3[d3] = `@@ -${u4[3]},${u4[4]} +${u4[1]},${u4[2]} @@`;
-        }
-      } else if (l3 === "+") {
-        if (o3[s3] = `-${(e4 = o3[s3]) === null || e4 === void 0 ? void 0 : e4.slice(1)}`, ((t3 = o3[s3 - 1]) === null || t3 === void 0 ? void 0 : t3.slice(0, 1)) === "+") {
-          let u4 = o3[s3];
-          o3[s3] = o3[s3 - 1], o3[s3 - 1] = u4;
-        }
-      } else l3 === "-" && (o3[s3] = `+${(n2 = o3[s3]) === null || n2 === void 0 ? void 0 : n2.slice(1)}`);
-    }
-    return o3.join(`
-`);
-  }, Ee = function(e4) {
-    if (e4.nested) return;
-    let t3 = e4.delta;
-    if (t3[2] !== 2) return;
-    let n2 = t3;
-    e4.setResult([gt(n2[0]), 0, 2]).exit();
-  };
-  Ee.filterName = "texts";
-  var Ce = function(e4) {
-    if (e4.left === e4.right) {
-      e4.setResult(void 0).exit();
-      return;
-    }
-    if (typeof e4.left > "u") {
-      if (typeof e4.right == "function") throw new Error("functions are not supported");
-      e4.setResult([e4.right]).exit();
-      return;
-    }
-    if (typeof e4.right > "u") {
-      e4.setResult([e4.left, 0, 0]).exit();
-      return;
-    }
-    if (typeof e4.left == "function" || typeof e4.right == "function") throw new Error("functions are not supported");
-    if (e4.leftType = e4.left === null ? "null" : typeof e4.left, e4.rightType = e4.right === null ? "null" : typeof e4.right, e4.leftType !== e4.rightType) {
-      e4.setResult([e4.left, e4.right]).exit();
-      return;
-    }
-    if (e4.leftType === "boolean" || e4.leftType === "number") {
-      e4.setResult([e4.left, e4.right]).exit();
-      return;
-    }
-    if (e4.leftType === "object" && (e4.leftIsArray = Array.isArray(e4.left)), e4.rightType === "object" && (e4.rightIsArray = Array.isArray(e4.right)), e4.leftIsArray !== e4.rightIsArray) {
-      e4.setResult([e4.left, e4.right]).exit();
-      return;
-    }
-    e4.left instanceof RegExp && (e4.right instanceof RegExp ? e4.setResult([e4.left.toString(), e4.right.toString()]).exit() : e4.setResult([e4.left, e4.right]).exit());
-  };
-  Ce.filterName = "trivial";
-  var Le = function(e4) {
-    if (typeof e4.delta > "u") {
-      e4.setResult(e4.left).exit();
-      return;
-    }
-    if (e4.nested = !Array.isArray(e4.delta), e4.nested) return;
-    let t3 = e4.delta;
-    if (t3.length === 1) {
-      e4.setResult(t3[0]).exit();
-      return;
-    }
-    if (t3.length === 2) {
-      if (e4.left instanceof RegExp) {
-        let n2 = /^\/(.*)\/([gimyu]+)$/.exec(t3[1]);
-        if (n2?.[1]) {
-          e4.setResult(new RegExp(n2[1], n2[2])).exit();
-          return;
-        }
-      }
-      e4.setResult(t3[1]).exit();
-      return;
-    }
-    t3.length === 3 && t3[2] === 0 && e4.setResult(void 0).exit();
-  };
-  Le.filterName = "trivial";
-  var Se = function(e4) {
-    if (typeof e4.delta > "u") {
-      e4.setResult(e4.delta).exit();
-      return;
-    }
-    if (e4.nested = !Array.isArray(e4.delta), e4.nested) return;
-    let t3 = e4.delta;
-    if (t3.length === 1) {
-      e4.setResult([t3[0], 0, 0]).exit();
-      return;
-    }
-    if (t3.length === 2) {
-      e4.setResult([t3[1], t3[0]]).exit();
-      return;
-    }
-    t3.length === 3 && t3[2] === 0 && e4.setResult([t3[0]]).exit();
-  };
-  Se.filterName = "trivial";
-  var Re = class {
-    constructor(e4) {
-      this.processor = new We(e4), this.processor.pipe(new q3("diff").append(fe, Ce, pe, xe, he, ae).shouldHaveResult()), this.processor.pipe(new q3("patch").append(be, de, Le, we, ge, le).shouldHaveResult()), this.processor.pipe(new q3("reverse").append(ye, ce, Se, Ee, me, ue).shouldHaveResult());
-    }
-    options(e4) {
-      return this.processor.options(e4);
-    }
-    diff(e4, t3) {
-      return this.processor.process(new L2(e4, t3));
-    }
-    patch(e4, t3) {
-      return this.processor.process(new O2(e4, t3));
-    }
-    reverse(e4) {
-      return this.processor.process(new _2(e4));
-    }
-    unpatch(e4, t3) {
-      return this.patch(e4, this.reverse(t3));
-    }
-    clone(e4) {
-      return j3(e4);
-    }
-  }, Te = Re;
-  var F2;
-  function Xe(r3, e4) {
-    return F2 || (F2 = new Te()), F2.diff(r3, e4);
-  }
-  function qe(r3, e4) {
-    return F2 || (F2 = new Te()), F2.patch(r3, e4);
-  }
-  var vt = () => ({ expandAll: false, expandObjects: [], useViewState: true }), M2 = class {
-    constructor(e4, t3, n2) {
-      this.viewStates = {};
-      this.json = e4, this.parentContainer = t3, this.options = Object.assign({}, vt(), n2 || {}), this.render();
-    }
-    render() {
-      this.parentContainer.innerHTML = "";
-      let e4 = this.drawJsonNode(this.json);
-      this.parentContainer.appendChild(e4);
-    }
-    toggleExpandNode(e4, t3, n2) {
-      let i4 = e4.classList.contains("collapsed");
-      e4.classList.toggle("collapsed", !i4), this.viewStates[t3] = !i4, n2 && (n2.textContent = i4 ? "[-]" : "[+]");
-    }
-    drawJsonNode(e4, t3 = "") {
-      let n2 = document.createElement("div");
-      n2.classList.add("json-node");
-      let i4 = document.createElement("div");
-      i4.classList.add("json-properties");
-      for (let o3 in e4) if (Object.prototype.hasOwnProperty.call(e4, o3)) {
-        let s3 = `${t3}${o3}`, a3 = document.createElement("div");
-        a3.classList.add("json-property"), a3.setAttribute("data-path", s3);
-        let l3 = document.createElement("span");
-        l3.classList.add("json-key"), l3.textContent = o3 + ": ";
-        let u4 = document.createElement("div");
-        u4.classList.add("json-value");
-        let d3 = e4[o3], p3 = typeof d3 == "object" && d3 !== null, f4 = Array.isArray(d3);
-        if (p3) {
-          l3.classList.add("clickable"), f4 ? l3.textContent = `${o3} (${d3.length})` : l3.textContent = o3;
-          let c3 = f4 && d3.length > 0 ? true : Object.keys(d3).length > 0;
-          a3.classList.add("object");
-          let h3 = document.createElement("button");
-          h3.classList.add("json-toggle");
-          let g2 = this.drawJsonNode(d3, s3 + "/");
-          if (this.options.expandAll) h3.textContent = "[-]";
-          else {
-            let m3 = false;
-            f4 && c3 ? m3 = true : this.options.expandObjs?.forEach((y3) => {
-              new RegExp(y3).test(s3) && (m3 = true);
-            }), this.options.useViewState && typeof this.viewStates[s3] < "u" && (m3 = !this.viewStates[s3]), m3 ? h3.textContent = "[-]" : (h3.textContent = "[+]", g2.classList.add("collapsed"));
-          }
-          h3.onclick = () => this.toggleExpandNode(g2, s3, h3), l3.onclick = () => this.toggleExpandNode(g2, s3, h3), a3.appendChild(h3), u4.appendChild(g2);
-        } else u4.textContent = String(d3);
-        a3.appendChild(l3), a3.appendChild(u4), i4.appendChild(a3);
-      }
-      return n2.appendChild(i4), n2;
-    }
-    updateJson(e4) {
-      let t3 = Xe(this.json, e4);
-      qe(this.json, t3), this.render();
-    }
-  };
-  function G2(r3, e4 = {}) {
-    r3.querySelectorAll(".resize-handle").forEach((x2) => x2.remove());
-    let { handles: t3 = ["top", "left", "right", "bottom", "top-left", "top-right", "bottom-left", "bottom-right"], maxWidth: n2 = 1 / 0, maxHeight: i4 = 1 / 0, minWidth: o3 = 100, minHeight: s3 = 100, onResize: a3 = () => {
-    } } = e4, l3 = false, u4 = null, d3 = 0, p3 = 0, f4 = 0, c3 = 0, h3 = 0, g2 = 0;
-    function m3(x2) {
-      let v3 = document.createElement("div");
-      v3.classList.add("resize-handle", `resize-${x2}`), v3.addEventListener("mousedown", (E2) => y3(E2, x2)), r3.appendChild(v3);
-    }
-    function y3(x2, v3) {
-      l3 = true, u4 = v3, d3 = x2.clientX, p3 = x2.clientY, f4 = r3.offsetWidth, c3 = r3.offsetHeight, h3 = r3.offsetLeft, g2 = r3.offsetTop, x2.preventDefault(), x2.stopPropagation(), document.addEventListener("mousemove", b2), document.addEventListener("mouseup", R);
-    }
-    function b2(x2) {
-      if (!l3 || !u4) return;
-      let v3 = f4, E2 = c3, I2 = h3, H2 = g2, N2 = x2.clientX - d3, w3 = x2.clientY - p3;
-      if (u4.includes("right") && (v3 = Math.min(Math.max(f4 + N2, o3), n2)), u4.includes("left")) {
-        let C3 = f4 - N2;
-        C3 >= o3 && C3 <= n2 && (v3 = C3, I2 = h3 + N2);
-      }
-      if (u4.includes("bottom") && (E2 = Math.min(Math.max(c3 + w3, s3), i4)), u4.includes("top")) {
-        let C3 = c3 - w3;
-        C3 >= s3 && C3 <= i4 && (E2 = C3, H2 = g2 + w3);
-      }
-      r3.style.width = `${v3}px`, r3.style.height = `${E2}px`, r3.style.left = `${I2}px`, r3.style.top = `${H2}px`, a3(v3, E2);
-    }
-    function R() {
-      l3 = false, u4 = null, document.removeEventListener("mousemove", b2), document.removeEventListener("mouseup", R);
-    }
-    t3.forEach((x2) => m3(x2));
-  }
-  function W(r3, e4, t3 = {}) {
-    let n2 = e4 || r3, i4 = false, o3 = 0, s3 = 0, a3 = 0, l3 = 0, { onDragStart: u4, onDrag: d3, onDragEnd: p3 } = t3;
-    function f4(g2) {
-      let m3 = g2.target;
-      if (m3.tagName === "BUTTON" || m3.closest("button")) return;
-      i4 = true, o3 = g2.clientX, s3 = g2.clientY;
-      let y3 = getComputedStyle(r3);
-      a3 = parseInt(y3.left) || r3.offsetLeft, l3 = parseInt(y3.top) || r3.offsetTop, y3.position !== "absolute" && y3.position !== "fixed" && (r3.style.position = "absolute", r3.style.left = `${a3}px`, r3.style.top = `${l3}px`), g2.preventDefault(), n2.style.cursor = "grabbing", u4 && u4(g2), document.addEventListener("mousemove", c3), document.addEventListener("mouseup", h3);
-    }
-    function c3(g2) {
-      if (!i4) return;
-      let m3 = g2.clientX - o3, y3 = g2.clientY - s3, b2 = a3 + m3, R = l3 + y3;
-      r3.style.left = `${b2}px`, r3.style.top = `${R}px`, d3 && d3(b2, R);
-    }
-    function h3() {
-      i4 && (i4 = false, n2.style.cursor = "grab", p3 && p3(), document.removeEventListener("mousemove", c3), document.removeEventListener("mouseup", h3));
-    }
-    return n2.style.cursor = "grab", n2.addEventListener("mousedown", f4), () => {
-      n2.removeEventListener("mousedown", f4), document.removeEventListener("mousemove", c3), document.removeEventListener("mouseup", h3);
-    };
-  }
-  function z3() {
-    let r3 = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth, e4 = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-    return { width: r3, height: e4 };
-  }
-  var U = "objects", je = ((l3) => (l3.TopLeft = "topLeft", l3.Top = "top", l3.TopRight = "topRight", l3.Right = "right", l3.BottomRight = "bottomRight", l3.Bottom = "bottom", l3.BottomLeft = "bottomLeft", l3.Left = "left", l3))(je || {}), xt = 280, Q2 = class {
-    constructor(e4 = {}) {
-      this.tabEntries = {};
-      this.debugStates = {};
-      this.activeTab = "global";
-      this.options = { position: "bottomRight", width: 600, height: 400, snap: false, snapPadding: 20, ...e4 }, this.container = this.createContainer(), this.tabContainer = this.createTabContainer(), this.contentContainer = this.createContentContainer(), this.container.appendChild(this.tabContainer), this.container.appendChild(this.contentContainer), this.toolbar = this.createGlobalToolbar(), this.container.appendChild(this.toolbar), document.body.appendChild(this.container), this.addTab(U), this.addTab("global"), this.restoreSettings(), this.setupResizable(), this.setupDraggable(), this.setupEventListeners(), this.setupKeyboardShortcut(), e4.show && !this.loadSettings() && this.show();
-    }
-    createContainer() {
-      let e4 = document.createElement("div");
-      return e4.classList.add("debug-panel"), e4.style.width = `${this.options.width}px`, e4.style.height = `${this.options.height}px`, e4.style.position = "fixed", e4.style.opacity = "1", e4;
-    }
-    createTabContainer() {
-      let e4 = document.createElement("div");
-      return e4.classList.add("debug-panel-tabs"), e4;
-    }
-    createContentContainer() {
-      let e4 = document.createElement("div");
-      return e4.classList.add("debug-panel-content"), e4;
-    }
-    createGlobalToolbar() {
-      let e4 = document.createElement("div");
-      e4.classList.add("debug-toolbar");
-      let t3 = document.createElement("span");
-      t3.classList.add("debug-keyboard-hint"), t3.textContent = "Ctrl+Alt+D to hide/show", t3.style.color = "#999", t3.style.fontSize = "11px";
-      let n2 = document.createElement("div");
-      n2.classList.add("debug-opacity-container");
-      let i4 = document.createElement("label");
-      i4.classList.add("debug-opacity-label"), i4.textContent = "O", i4.style.fontSize = "11px", i4.style.color = "#999", i4.style.marginRight = "5px", this.opacitySlider = document.createElement("input"), this.opacitySlider.type = "range", this.opacitySlider.min = "20", this.opacitySlider.max = "100", this.opacitySlider.value = "100", this.opacitySlider.classList.add("debug-opacity-slider"), this.opacitySlider.oninput = () => this.handleOpacityChange(), n2.appendChild(this.opacitySlider);
-      let o3 = document.createElement("button");
-      o3.classList.add("debug-clear-button"), o3.textContent = "Clear", o3.onclick = () => this.clearCurrentTab();
-      let s3 = document.createElement("button");
-      return s3.classList.add("debug-hide-button"), s3.textContent = "Hide", s3.onclick = () => this.hide(), e4.appendChild(t3), e4.appendChild(n2), e4.appendChild(o3), e4.appendChild(s3), e4;
-    }
-    setupResizable() {
-      let { width: e4, height: t3 } = z3();
-      G2(this.container, { handles: ["top", "left", "right", "bottom", "top-left", "top-right", "bottom-left", "bottom-right"], maxWidth: e4 - 20, maxHeight: t3 - 20, minWidth: 200, minHeight: 150, onResize: (n2) => {
-        this.updateToolbarLayout(n2), this.saveSettings();
-      } });
-    }
-    setupDraggable() {
-      this.options.snap ? W(this.container, this.tabContainer, { onDrag: (e4, t3) => this.handleSnapWhileDragging(e4, t3), onDragEnd: () => this.saveSettings() }) : W(this.container, this.tabContainer, { onDragEnd: () => this.saveSettings() });
-    }
-    setupPosition() {
-      let { width: e4, height: t3 } = z3(), n2 = this.options.width || 600, i4 = this.options.height || 400, o3 = 0, s3 = 0;
-      switch (this.options.position) {
-        case "topLeft":
-          o3 = 0, s3 = 0;
-          break;
-        case "top":
-          o3 = (e4 - n2) / 2, s3 = 0;
-          break;
-        case "topRight":
-          o3 = e4 - n2, s3 = 0;
-          break;
-        case "right":
-          o3 = e4 - n2, s3 = (t3 - i4) / 2;
-          break;
-        case "bottomRight":
-          o3 = e4 - n2, s3 = t3 - i4;
-          break;
-        case "bottom":
-          o3 = (e4 - n2) / 2, s3 = t3 - i4;
-          break;
-        case "bottomLeft":
-          o3 = 0, s3 = t3 - i4;
-          break;
-        case "left":
-          o3 = 0, s3 = (t3 - i4) / 2;
-          break;
-      }
-      this.container.style.left = `${o3}px`, this.container.style.top = `${s3}px`;
-    }
-    setupKeyboardShortcut() {
-      document.addEventListener("keydown", (e4) => {
-        e4.ctrlKey && e4.altKey && e4.key.toLowerCase() === "d" && (e4.preventDefault(), this.toggle());
-      });
-    }
-    setupEventListeners() {
-      K2.default.addEventListener("log", (e4) => {
-        let { namespace: t3, message: n2 } = e4.target;
-        this.log(t3, n2);
-      }), K2.default.addEventListener("debug", (e4) => {
-        let { id: t3, state: n2 } = e4.target;
-        if (!t3 || !n2) {
-          console.log("Invalid event data for debug-state. Expected {id, state}, got:", e4);
-          return;
-        }
-        this.debug(t3, n2);
-      });
-    }
-    restoreSettings() {
-      let e4 = this.loadSettings();
-      if (e4) {
-        this.container.style.left = `${e4.left}px`, this.container.style.top = `${e4.top}px`, this.container.style.width = `${e4.width}px`, this.container.style.height = `${e4.height}px`;
-        let t3 = e4.opacity !== void 0 ? e4.opacity : 1;
-        this.container.style.opacity = String(t3), this.opacitySlider && (this.opacitySlider.value = String(Math.round(t3 * 100))), e4.visible ? this.container.classList.add("visible") : this.container.classList.remove("visible");
-      } else this.setupPosition();
-    }
-    loadSettings() {
-      try {
-        let e4 = localStorage.getItem("debugPanelSettings");
-        if (e4) return JSON.parse(e4);
-      } catch (e4) {
-        console.error("Failed to load debug panel settings:", e4);
-      }
-      return null;
-    }
-    saveSettings() {
-      try {
-        let e4 = parseFloat(this.container.style.opacity) || 1, t3 = { left: parseInt(this.container.style.left) || this.container.offsetLeft, top: parseInt(this.container.style.top) || this.container.offsetTop, width: this.container.offsetWidth, height: this.container.offsetHeight, visible: this.container.classList.contains("visible"), opacity: e4 };
-        localStorage.setItem("debugPanelSettings", JSON.stringify(t3));
-      } catch (e4) {
-        console.error("Failed to save debug panel settings:", e4);
-      }
-    }
-    debug(e4, t3) {
-      let n2 = e4, i4 = (0, De.default)(t3), o3 = JSON.parse(i4);
-      this.debugStates[n2] ? this.updateDebugState(n2, o3) : this.addDebugState(n2, o3);
-    }
-    updateDebugState(e4, t3) {
-      let n2 = this.contentContainer.querySelector(`[data-namespace="${U}"]`);
-      if (!n2) {
-        console.error("No content for debug namespace.");
-        return;
-      }
-      let i4 = n2.querySelector(`#debug-state-${e4}`);
-      if (!i4) {
-        console.error(`No debug state found for ${e4}.`);
-        return;
-      }
-      let o3 = i4.querySelector(".json-wrapper");
-      if (!o3) {
-        console.error(`No json wrapper found for existing state ${e4}`);
-        return;
-      }
-      o3.innerHTML = "", this.debugStates[e4].state = t3, this.debugStates[e4].jsonView.updateJson(t3);
-    }
-    addDebugState(e4, t3) {
-      let n2 = this.contentContainer.querySelector(`[data-namespace="${U}"]`);
-      if (!n2) {
-        console.error("No content for debug namespace.");
-        return;
-      }
-      let i4 = document.createElement("div");
-      i4.classList.add("debug-state"), i4.setAttribute("id", `debug-state-${e4}`);
-      let o3 = () => {
-        let d3 = this.debugStates[e4].isExpanded;
-        this.debugStates[e4].isExpanded = !d3, i4.classList.toggle("collapsed", d3), s3.textContent = d3 ? "[+]" : "[-]";
-      }, s3 = document.createElement("button");
-      s3.classList.add("json-toggle"), s3.textContent = "[-]", s3.onclick = o3, i4.appendChild(s3);
-      let a3 = document.createElement("div");
-      a3.classList.add("debug-state-label"), a3.innerText = e4 || "untitled", a3.onclick = o3, i4.appendChild(a3);
-      let l3 = document.createElement("div");
-      l3.classList.add("json-wrapper"), i4.appendChild(l3);
-      let u4 = new M2(t3, l3, {});
-      this.debugStates[e4] = { state: t3, jsonView: u4, isExpanded: true }, n2.appendChild(i4);
-    }
-    addTab(e4) {
-      if (this.tabEntries[e4]) return;
-      this.tabEntries[e4] = [];
-      let t3 = document.createElement("button");
-      t3.classList.add("debug-tab"), t3.textContent = e4, t3.onclick = () => this.switchTab(e4), this.tabContainer.appendChild(t3);
-      let n2 = document.createElement("div");
-      n2.classList.add("debug-tab-content"), n2.dataset.namespace = e4, this.contentContainer.appendChild(n2), Object.keys(this.tabEntries).length === 1 && this.switchTab(e4);
-    }
-    clearCurrentTab() {
-      this.clearTab(this.activeTab);
-    }
-    clearTab(e4) {
-      let t3 = this.contentContainer.querySelector(`[data-namespace="${e4}"]`);
-      t3 && (this.tabEntries[e4] = [], e4 === U && Object.keys(this.debugStates).forEach((n2) => {
-        delete this.debugStates[n2];
-      }), t3.innerHTML = "");
-    }
-    switchTab(e4) {
-      this.activeTab = e4, this.tabContainer.querySelectorAll(".debug-tab").forEach((n2, i4) => {
-        let o3 = Object.keys(this.tabEntries)[i4];
-        n2.classList.toggle("active", o3 === e4);
-      }), this.contentContainer.querySelectorAll(".debug-tab-content").forEach((n2) => {
-        n2.style.display = "none";
-      });
-      let t3 = this.contentContainer.querySelector(`[data-namespace="${e4}"]`);
-      t3 && (t3.style.display = "block");
-    }
-    log(e4, t3) {
-      this.tabEntries[e4] || this.addTab(e4);
-      let n2 = { id: `${e4}-${Date.now()}-${Math.random()}`, message: t3, timestamp: /* @__PURE__ */ new Date() };
-      this.tabEntries[e4].push(n2);
-      let i4 = this.contentContainer.querySelector(`[data-namespace="${e4}"]`);
-      if (!i4) return;
-      let o3 = this.createLogElement(n2, e4);
-      i4.appendChild(o3), e4 !== "global" && this.log("global", t3);
-    }
-    createLogElement(e4, t3) {
-      let n2 = document.createElement("div");
-      n2.classList.add("debug-log-entry"), n2.dataset.logId = e4.id;
-      let i4 = document.createElement("div");
-      i4.innerText = `[${e4.timestamp.toLocaleTimeString()}] ${this.renderLogEntry(e4.message)}`, i4.classList.add("debug-log-entry-text");
-      let o3 = document.createElement("button");
-      o3.innerText = "\u{1F4CB}", o3.classList.add("debug-copy-button"), o3.onclick = () => navigator.clipboard.writeText(i4.innerText);
-      let s3 = document.createElement("button");
-      return s3.innerText = "\u274C", s3.classList.add("debug-delete-button"), s3.onclick = () => this.removeLogEntry(t3, e4.id, n2), n2.appendChild(i4), n2.appendChild(o3), n2.appendChild(s3), n2;
-    }
-    removeLogEntry(e4, t3, n2) {
-      this.tabEntries[e4] = this.tabEntries[e4].filter((i4) => i4.id !== t3), n2.remove();
-    }
-    renderLogEntry(e4) {
-      return Array.isArray(e4) ? e4.join(" ") : typeof e4 == "object" ? (0, De.default)(e4) : String(e4);
-    }
-    updateToolbarLayout(e4) {
-      e4 < xt ? this.container.classList.add("narrow-panel") : this.container.classList.remove("narrow-panel");
-    }
-    handleOpacityChange() {
-      let t3 = parseInt(this.opacitySlider.value) / 100;
-      this.container.classList.contains("visible") && (this.container.style.opacity = String(t3)), this.saveSettings();
-    }
-    handleSnapWhileDragging(e4, t3) {
-      let n2 = this.options.snapPadding || 20, { width: i4, height: o3 } = z3(), s3 = this.container.offsetWidth, a3 = this.container.offsetHeight, l3 = e4, u4 = t3;
-      e4 < n2 ? l3 = 0 : e4 + s3 > i4 - n2 && (l3 = i4 - s3), t3 < n2 ? u4 = 0 : t3 + a3 > o3 - n2 && (u4 = o3 - a3), (l3 !== e4 || u4 !== t3) && (this.container.style.left = `${l3}px`, this.container.style.top = `${u4}px`);
-    }
-    show() {
-      this.container.classList.add("visible");
-      let e4 = parseFloat(this.container.style.opacity) || 1;
-      this.container.style.opacity = String(e4), this.saveSettings();
-    }
-    hide() {
-      this.container.classList.remove("visible"), this.saveSettings();
-    }
-    toggle() {
-      this.container.classList.contains("visible") ? this.hide() : this.show();
-    }
-  };
-  function Ye(r3, e4) {
-    K2.default.dispatch("debug", { idOrState: r3, state: e4 });
-  }
-  return tt(wt);
-})();
-
 // src/Application.ts
 var Application = class {
   constructor() {
@@ -3238,7 +2055,6 @@ var Application = class {
     if (idbTables) for (var t3 of idbTables) dbManager.addStore(t3.name, t3.indexes);
     AudioManager_default.register("hover", "/public/sounds/click.wav");
     AudioManager_default.register("click", "/public/sounds/cool-click.wav");
-    const dp = new (void 0)();
   }
 };
 var Application_default = new Application();
@@ -3286,1378 +2102,1417 @@ var Entry_default = EntryPage;
 // src/components/pages/Home/index.tsx
 init_preact_module();
 
-// src/components/shared/JsonView/EnhancedJsonView.ts
+// node_modules/preact/hooks/dist/hooks.module.js
 init_preact_module();
-
-// node_modules/jsondiffpatch/lib/index.js
 init_preact_module();
-
-// node_modules/jsondiffpatch/lib/diffpatcher.js
-init_preact_module();
-
-// node_modules/jsondiffpatch/lib/clone.js
-init_preact_module();
-function cloneRegExp(re) {
-  var _a;
-  const regexMatch = /^\/(.*)\/([gimyu]*)$/.exec(re.toString());
-  if (!regexMatch) {
-    throw new Error("Invalid RegExp");
-  }
-  return new RegExp((_a = regexMatch[1]) !== null && _a !== void 0 ? _a : "", regexMatch[2]);
+var t2;
+var r2;
+var u3;
+var i3;
+var o2 = 0;
+var f3 = [];
+var c2 = l;
+var e3 = c2.__b;
+var a2 = c2.__r;
+var v2 = c2.diffed;
+var l2 = c2.__c;
+var m2 = c2.unmount;
+var s2 = c2.__;
+function p2(n2, t3) {
+  c2.__h && c2.__h(r2, n2, o2 || t3), o2 = 0;
+  var u4 = r2.__H || (r2.__H = { __: [], __h: [] });
+  return n2 >= u4.__.length && u4.__.push({}), u4.__[n2];
 }
-function clone(arg) {
-  if (typeof arg !== "object") {
-    return arg;
-  }
-  if (arg === null) {
-    return null;
-  }
-  if (Array.isArray(arg)) {
-    return arg.map(clone);
-  }
-  if (arg instanceof Date) {
-    return new Date(arg.getTime());
-  }
-  if (arg instanceof RegExp) {
-    return cloneRegExp(arg);
-  }
-  const cloned = {};
-  for (const name in arg) {
-    if (Object.prototype.hasOwnProperty.call(arg, name)) {
-      cloned[name] = clone(arg[name]);
-    }
-  }
-  return cloned;
+function d2(n2) {
+  return o2 = 1, h2(D2, n2);
 }
-
-// node_modules/jsondiffpatch/lib/contexts/diff.js
-init_preact_module();
-
-// node_modules/jsondiffpatch/lib/contexts/context.js
-init_preact_module();
-
-// node_modules/jsondiffpatch/lib/assertions/arrays.js
-init_preact_module();
-function assertNonEmptyArray(arr, message) {
-  if (arr.length === 0) {
-    throw new Error(message || "Expected a non-empty array");
-  }
-}
-var lastNonEmpty = (arr) => arr[arr.length - 1];
-
-// node_modules/jsondiffpatch/lib/contexts/context.js
-var Context = class {
-  setResult(result) {
-    this.result = result;
-    this.hasResult = true;
-    return this;
-  }
-  exit() {
-    this.exiting = true;
-    return this;
-  }
-  push(child, name) {
-    child.parent = this;
-    if (typeof name !== "undefined") {
-      child.childName = name;
-    }
-    child.root = this.root || this;
-    child.options = child.options || this.options;
-    if (!this.children) {
-      this.children = [child];
-      this.nextAfterChildren = this.next || null;
-      this.next = child;
-    } else {
-      assertNonEmptyArray(this.children);
-      lastNonEmpty(this.children).next = child;
-      this.children.push(child);
-    }
-    child.next = this;
-    return this;
-  }
-};
-
-// node_modules/jsondiffpatch/lib/contexts/diff.js
-var DiffContext = class extends Context {
-  constructor(left, right) {
-    super();
-    this.left = left;
-    this.right = right;
-    this.pipe = "diff";
-  }
-  prepareDeltaResult(result) {
-    var _a, _b, _c, _d;
-    if (typeof result === "object") {
-      if (((_a = this.options) === null || _a === void 0 ? void 0 : _a.omitRemovedValues) && Array.isArray(result) && result.length > 1 && (result.length === 2 || // modified
-      result[2] === 0 || // deleted
-      result[2] === 3)) {
-        result[0] = 0;
-      }
-      if ((_b = this.options) === null || _b === void 0 ? void 0 : _b.cloneDiffValues) {
-        const clone2 = typeof ((_c = this.options) === null || _c === void 0 ? void 0 : _c.cloneDiffValues) === "function" ? (_d = this.options) === null || _d === void 0 ? void 0 : _d.cloneDiffValues : clone;
-        if (typeof result[0] === "object") {
-          result[0] = clone2(result[0]);
+function h2(n2, u4, i4) {
+  var o3 = p2(t2++, 2);
+  if (o3.t = n2, !o3.__c && (o3.__ = [i4 ? i4(u4) : D2(void 0, u4), function(n3) {
+    var t3 = o3.__N ? o3.__N[0] : o3.__[0], r3 = o3.t(t3, n3);
+    t3 !== r3 && (o3.__N = [r3, o3.__[1]], o3.__c.setState({}));
+  }], o3.__c = r2, !r2.__f)) {
+    var f4 = function(n3, t3, r3) {
+      if (!o3.__c.__H) return true;
+      var u5 = o3.__c.__H.__.filter(function(n4) {
+        return !!n4.__c;
+      });
+      if (u5.every(function(n4) {
+        return !n4.__N;
+      })) return !c3 || c3.call(this, n3, t3, r3);
+      var i5 = o3.__c.props !== n3;
+      return u5.forEach(function(n4) {
+        if (n4.__N) {
+          var t4 = n4.__[0];
+          n4.__ = n4.__N, n4.__N = void 0, t4 !== n4.__[0] && (i5 = true);
         }
-        if (typeof result[1] === "object") {
-          result[1] = clone2(result[1]);
+      }), c3 && c3.call(this, n3, t3, r3) || i5;
+    };
+    r2.__f = true;
+    var c3 = r2.shouldComponentUpdate, e4 = r2.componentWillUpdate;
+    r2.componentWillUpdate = function(n3, t3, r3) {
+      if (this.__e) {
+        var u5 = c3;
+        c3 = void 0, f4(n3, t3, r3), c3 = u5;
+      }
+      e4 && e4.call(this, n3, t3, r3);
+    }, r2.shouldComponentUpdate = f4;
+  }
+  return o3.__N || o3.__;
+}
+function y2(n2, u4) {
+  var i4 = p2(t2++, 3);
+  !c2.__s && C2(i4.__H, u4) && (i4.__ = n2, i4.u = u4, r2.__H.__h.push(i4));
+}
+function A2(n2) {
+  return o2 = 5, T2(function() {
+    return { current: n2 };
+  }, []);
+}
+function T2(n2, r3) {
+  var u4 = p2(t2++, 7);
+  return C2(u4.__H, r3) && (u4.__ = n2(), u4.__H = r3, u4.__h = n2), u4.__;
+}
+function q2(n2, t3) {
+  return o2 = 8, T2(function() {
+    return n2;
+  }, t3);
+}
+function j2() {
+  for (var n2; n2 = f3.shift(); ) if (n2.__P && n2.__H) try {
+    n2.__H.__h.forEach(z2), n2.__H.__h.forEach(B2), n2.__H.__h = [];
+  } catch (t3) {
+    n2.__H.__h = [], c2.__e(t3, n2.__v);
+  }
+}
+c2.__b = function(n2) {
+  r2 = null, e3 && e3(n2);
+}, c2.__ = function(n2, t3) {
+  n2 && t3.__k && t3.__k.__m && (n2.__m = t3.__k.__m), s2 && s2(n2, t3);
+}, c2.__r = function(n2) {
+  a2 && a2(n2), t2 = 0;
+  var i4 = (r2 = n2.__c).__H;
+  i4 && (u3 === r2 ? (i4.__h = [], r2.__h = [], i4.__.forEach(function(n3) {
+    n3.__N && (n3.__ = n3.__N), n3.u = n3.__N = void 0;
+  })) : (i4.__h.forEach(z2), i4.__h.forEach(B2), i4.__h = [], t2 = 0)), u3 = r2;
+}, c2.diffed = function(n2) {
+  v2 && v2(n2);
+  var t3 = n2.__c;
+  t3 && t3.__H && (t3.__H.__h.length && (1 !== f3.push(t3) && i3 === c2.requestAnimationFrame || ((i3 = c2.requestAnimationFrame) || w2)(j2)), t3.__H.__.forEach(function(n3) {
+    n3.u && (n3.__H = n3.u), n3.u = void 0;
+  })), u3 = r2 = null;
+}, c2.__c = function(n2, t3) {
+  t3.some(function(n3) {
+    try {
+      n3.__h.forEach(z2), n3.__h = n3.__h.filter(function(n4) {
+        return !n4.__ || B2(n4);
+      });
+    } catch (r3) {
+      t3.some(function(n4) {
+        n4.__h && (n4.__h = []);
+      }), t3 = [], c2.__e(r3, n3.__v);
+    }
+  }), l2 && l2(n2, t3);
+}, c2.unmount = function(n2) {
+  m2 && m2(n2);
+  var t3, r3 = n2.__c;
+  r3 && r3.__H && (r3.__H.__.forEach(function(n3) {
+    try {
+      z2(n3);
+    } catch (n4) {
+      t3 = n4;
+    }
+  }), r3.__H = void 0, t3 && c2.__e(t3, r3.__v));
+};
+var k2 = "function" == typeof requestAnimationFrame;
+function w2(n2) {
+  var t3, r3 = function() {
+    clearTimeout(u4), k2 && cancelAnimationFrame(t3), setTimeout(n2);
+  }, u4 = setTimeout(r3, 35);
+  k2 && (t3 = requestAnimationFrame(r3));
+}
+function z2(n2) {
+  var t3 = r2, u4 = n2.__c;
+  "function" == typeof u4 && (n2.__c = void 0, u4()), r2 = t3;
+}
+function B2(n2) {
+  var t3 = r2;
+  n2.__c = n2.__(), r2 = t3;
+}
+function C2(n2, t3) {
+  return !n2 || n2.length !== t3.length || t3.some(function(t4, r3) {
+    return t4 !== n2[r3];
+  });
+}
+function D2(n2, t3) {
+  return "function" == typeof t3 ? t3(n2) : t3;
+}
+
+// src/components/shared/MysticalBackground/MysticalBackground.tsx
+init_preact_module();
+var MysticalBackground = () => {
+  const canvasRef = A2(null);
+  const particlesRef = A2([]);
+  const flowFieldRef = A2([]);
+  const blobsRef = A2([]);
+  const scrollOffsetRef = A2(0);
+  const animationFrameRef = A2();
+  const timeRef = A2(0);
+  y2(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    if (!ctx) return;
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight * 2;
+      initFlowField();
+    };
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+    const initFlowField = () => {
+      const resolution = 30;
+      const cols = Math.ceil(canvas.width / resolution);
+      const rows = Math.ceil(canvas.height / resolution);
+      flowFieldRef.current = [];
+      for (let y3 = 0; y3 < rows; y3++) {
+        const row = [];
+        for (let x2 = 0; x2 < cols; x2++) {
+          const angle = Math.sin(x2 * 0.1 + y3 * 0.05) * Math.PI + Math.cos(y3 * 0.1 - x2 * 0.05) * Math.PI * 0.5;
+          const magnitude = Math.sin(x2 * 0.05) * Math.cos(y3 * 0.05) * 0.5 + 0.5;
+          row.push({
+            x: x2 * resolution,
+            y: y3 * resolution,
+            angle,
+            magnitude
+          });
         }
-      }
-    }
-    return result;
-  }
-  setResult(result) {
-    this.prepareDeltaResult(result);
-    return super.setResult(result);
-  }
-};
-var diff_default = DiffContext;
-
-// node_modules/jsondiffpatch/lib/contexts/patch.js
-init_preact_module();
-var PatchContext = class extends Context {
-  constructor(left, delta) {
-    super();
-    this.left = left;
-    this.delta = delta;
-    this.pipe = "patch";
-  }
-};
-var patch_default = PatchContext;
-
-// node_modules/jsondiffpatch/lib/contexts/reverse.js
-init_preact_module();
-var ReverseContext = class extends Context {
-  constructor(delta) {
-    super();
-    this.delta = delta;
-    this.pipe = "reverse";
-  }
-};
-var reverse_default = ReverseContext;
-
-// node_modules/jsondiffpatch/lib/pipe.js
-init_preact_module();
-var Pipe = class {
-  constructor(name) {
-    this.name = name;
-    this.filters = [];
-  }
-  process(input) {
-    if (!this.processor) {
-      throw new Error("add this pipe to a processor before using it");
-    }
-    const debug = this.debug;
-    const length = this.filters.length;
-    const context = input;
-    for (let index = 0; index < length; index++) {
-      const filter = this.filters[index];
-      if (!filter)
-        continue;
-      if (debug) {
-        this.log(`filter: ${filter.filterName}`);
-      }
-      filter(context);
-      if (typeof context === "object" && context.exiting) {
-        context.exiting = false;
-        break;
-      }
-    }
-    if (!context.next && this.resultCheck) {
-      this.resultCheck(context);
-    }
-  }
-  log(msg) {
-    console.log(`[jsondiffpatch] ${this.name} pipe, ${msg}`);
-  }
-  append(...args) {
-    this.filters.push(...args);
-    return this;
-  }
-  prepend(...args) {
-    this.filters.unshift(...args);
-    return this;
-  }
-  indexOf(filterName) {
-    if (!filterName) {
-      throw new Error("a filter name is required");
-    }
-    for (let index = 0; index < this.filters.length; index++) {
-      const filter = this.filters[index];
-      if ((filter === null || filter === void 0 ? void 0 : filter.filterName) === filterName) {
-        return index;
-      }
-    }
-    throw new Error(`filter not found: ${filterName}`);
-  }
-  list() {
-    return this.filters.map((f4) => f4.filterName);
-  }
-  after(filterName, ...params) {
-    const index = this.indexOf(filterName);
-    this.filters.splice(index + 1, 0, ...params);
-    return this;
-  }
-  before(filterName, ...params) {
-    const index = this.indexOf(filterName);
-    this.filters.splice(index, 0, ...params);
-    return this;
-  }
-  replace(filterName, ...params) {
-    const index = this.indexOf(filterName);
-    this.filters.splice(index, 1, ...params);
-    return this;
-  }
-  remove(filterName) {
-    const index = this.indexOf(filterName);
-    this.filters.splice(index, 1);
-    return this;
-  }
-  clear() {
-    this.filters.length = 0;
-    return this;
-  }
-  shouldHaveResult(should) {
-    if (should === false) {
-      this.resultCheck = null;
-      return this;
-    }
-    if (this.resultCheck) {
-      return this;
-    }
-    this.resultCheck = (context) => {
-      if (!context.hasResult) {
-        console.log(context);
-        const error5 = new Error(`${this.name} failed`);
-        error5.noResult = true;
-        throw error5;
+        flowFieldRef.current.push(row);
       }
     };
-    return this;
-  }
-};
-var pipe_default = Pipe;
-
-// node_modules/jsondiffpatch/lib/processor.js
-init_preact_module();
-var Processor = class {
-  constructor(options) {
-    this.selfOptions = options || {};
-    this.pipes = {};
-  }
-  options(options) {
-    if (options) {
-      this.selfOptions = options;
-    }
-    return this.selfOptions;
-  }
-  pipe(name, pipeArg) {
-    let pipe = pipeArg;
-    if (typeof name === "string") {
-      if (typeof pipe === "undefined") {
-        return this.pipes[name];
-      }
-      this.pipes[name] = pipe;
-    }
-    if (name && name.name) {
-      pipe = name;
-      if (pipe.processor === this) {
-        return pipe;
-      }
-      this.pipes[pipe.name] = pipe;
-    }
-    if (!pipe) {
-      throw new Error(`pipe is not defined: ${name}`);
-    }
-    pipe.processor = this;
-    return pipe;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  process(input, pipe) {
-    let context = input;
-    context.options = this.options();
-    let nextPipe = pipe || input.pipe || "default";
-    let lastPipe = void 0;
-    while (nextPipe) {
-      if (typeof context.nextAfterChildren !== "undefined") {
-        context.next = context.nextAfterChildren;
-        context.nextAfterChildren = null;
-      }
-      if (typeof nextPipe === "string") {
-        nextPipe = this.pipe(nextPipe);
-      }
-      nextPipe.process(context);
-      lastPipe = nextPipe;
-      nextPipe = null;
-      if (context) {
-        if (context.next) {
-          context = context.next;
-          nextPipe = context.pipe || lastPipe;
+    const initBlobs = () => {
+      const blobs = [];
+      for (let i4 = 0; i4 < 6; i4++) {
+        const vertexCount = 8 + Math.floor(Math.random() * 4);
+        const vertices = [];
+        const baseRadius = 150 + Math.random() * 200;
+        for (let j3 = 0; j3 < vertexCount; j3++) {
+          const angle = j3 / vertexCount * Math.PI * 2;
+          vertices.push({
+            x: 0,
+            y: 0,
+            angle,
+            baseRadius: baseRadius * (0.8 + Math.random() * 0.4)
+          });
         }
-      }
-    }
-    return context.hasResult ? context.result : void 0;
-  }
-};
-var processor_default = Processor;
-
-// node_modules/jsondiffpatch/lib/filters/arrays.js
-init_preact_module();
-
-// node_modules/jsondiffpatch/lib/filters/lcs.js
-init_preact_module();
-var defaultMatch = (array1, array2, index1, index2) => array1[index1] === array2[index2];
-var lengthMatrix = (array1, array2, match, context) => {
-  var _a, _b, _c;
-  const len1 = array1.length;
-  const len2 = array2.length;
-  let x2;
-  let y3;
-  const matrix = new Array(len1 + 1);
-  for (x2 = 0; x2 < len1 + 1; x2++) {
-    const matrixNewRow = new Array(len2 + 1);
-    for (y3 = 0; y3 < len2 + 1; y3++) {
-      matrixNewRow[y3] = 0;
-    }
-    matrix[x2] = matrixNewRow;
-  }
-  matrix.match = match;
-  for (x2 = 1; x2 < len1 + 1; x2++) {
-    const matrixRowX = matrix[x2];
-    if (matrixRowX === void 0) {
-      throw new Error("LCS matrix row is undefined");
-    }
-    const matrixRowBeforeX = matrix[x2 - 1];
-    if (matrixRowBeforeX === void 0) {
-      throw new Error("LCS matrix row is undefined");
-    }
-    for (y3 = 1; y3 < len2 + 1; y3++) {
-      if (match(array1, array2, x2 - 1, y3 - 1, context)) {
-        matrixRowX[y3] = ((_a = matrixRowBeforeX[y3 - 1]) !== null && _a !== void 0 ? _a : 0) + 1;
-      } else {
-        matrixRowX[y3] = Math.max((_b = matrixRowBeforeX[y3]) !== null && _b !== void 0 ? _b : 0, (_c = matrixRowX[y3 - 1]) !== null && _c !== void 0 ? _c : 0);
-      }
-    }
-  }
-  return matrix;
-};
-var backtrack = (matrix, array1, array2, context) => {
-  let index1 = array1.length;
-  let index2 = array2.length;
-  const subsequence = {
-    sequence: [],
-    indices1: [],
-    indices2: []
-  };
-  while (index1 !== 0 && index2 !== 0) {
-    if (matrix.match === void 0) {
-      throw new Error("LCS matrix match function is undefined");
-    }
-    const sameLetter = matrix.match(array1, array2, index1 - 1, index2 - 1, context);
-    if (sameLetter) {
-      subsequence.sequence.unshift(array1[index1 - 1]);
-      subsequence.indices1.unshift(index1 - 1);
-      subsequence.indices2.unshift(index2 - 1);
-      --index1;
-      --index2;
-    } else {
-      const matrixRowIndex1 = matrix[index1];
-      if (matrixRowIndex1 === void 0) {
-        throw new Error("LCS matrix row is undefined");
-      }
-      const valueAtMatrixAbove = matrixRowIndex1[index2 - 1];
-      if (valueAtMatrixAbove === void 0) {
-        throw new Error("LCS matrix value is undefined");
-      }
-      const matrixRowBeforeIndex1 = matrix[index1 - 1];
-      if (matrixRowBeforeIndex1 === void 0) {
-        throw new Error("LCS matrix row is undefined");
-      }
-      const valueAtMatrixLeft = matrixRowBeforeIndex1[index2];
-      if (valueAtMatrixLeft === void 0) {
-        throw new Error("LCS matrix value is undefined");
-      }
-      if (valueAtMatrixAbove > valueAtMatrixLeft) {
-        --index2;
-      } else {
-        --index1;
-      }
-    }
-  }
-  return subsequence;
-};
-var get = (array1, array2, match, context) => {
-  const innerContext = context || {};
-  const matrix = lengthMatrix(array1, array2, match || defaultMatch, innerContext);
-  return backtrack(matrix, array1, array2, innerContext);
-};
-var lcs_default = {
-  get
-};
-
-// node_modules/jsondiffpatch/lib/filters/arrays.js
-var ARRAY_MOVE = 3;
-function arraysHaveMatchByRef(array1, array2, len1, len2) {
-  for (let index1 = 0; index1 < len1; index1++) {
-    const val1 = array1[index1];
-    for (let index2 = 0; index2 < len2; index2++) {
-      const val2 = array2[index2];
-      if (index1 !== index2 && val1 === val2) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-function matchItems(array1, array2, index1, index2, context) {
-  const value1 = array1[index1];
-  const value2 = array2[index2];
-  if (value1 === value2) {
-    return true;
-  }
-  if (typeof value1 !== "object" || typeof value2 !== "object") {
-    return false;
-  }
-  const objectHash = context.objectHash;
-  if (!objectHash) {
-    return context.matchByPosition && index1 === index2;
-  }
-  context.hashCache1 = context.hashCache1 || [];
-  let hash1 = context.hashCache1[index1];
-  if (typeof hash1 === "undefined") {
-    context.hashCache1[index1] = hash1 = objectHash(value1, index1);
-  }
-  if (typeof hash1 === "undefined") {
-    return false;
-  }
-  context.hashCache2 = context.hashCache2 || [];
-  let hash2 = context.hashCache2[index2];
-  if (typeof hash2 === "undefined") {
-    context.hashCache2[index2] = hash2 = objectHash(value2, index2);
-  }
-  if (typeof hash2 === "undefined") {
-    return false;
-  }
-  return hash1 === hash2;
-}
-var diffFilter = function arraysDiffFilter(context) {
-  var _a, _b, _c, _d, _e;
-  if (!context.leftIsArray) {
-    return;
-  }
-  const matchContext = {
-    objectHash: (_a = context.options) === null || _a === void 0 ? void 0 : _a.objectHash,
-    matchByPosition: (_b = context.options) === null || _b === void 0 ? void 0 : _b.matchByPosition
-  };
-  let commonHead = 0;
-  let commonTail = 0;
-  let index;
-  let index1;
-  let index2;
-  const array1 = context.left;
-  const array2 = context.right;
-  const len1 = array1.length;
-  const len2 = array2.length;
-  let child;
-  if (len1 > 0 && len2 > 0 && !matchContext.objectHash && typeof matchContext.matchByPosition !== "boolean") {
-    matchContext.matchByPosition = !arraysHaveMatchByRef(array1, array2, len1, len2);
-  }
-  while (commonHead < len1 && commonHead < len2 && matchItems(array1, array2, commonHead, commonHead, matchContext)) {
-    index = commonHead;
-    child = new diff_default(array1[index], array2[index]);
-    context.push(child, index);
-    commonHead++;
-  }
-  while (commonTail + commonHead < len1 && commonTail + commonHead < len2 && matchItems(array1, array2, len1 - 1 - commonTail, len2 - 1 - commonTail, matchContext)) {
-    index1 = len1 - 1 - commonTail;
-    index2 = len2 - 1 - commonTail;
-    child = new diff_default(array1[index1], array2[index2]);
-    context.push(child, index2);
-    commonTail++;
-  }
-  let result;
-  if (commonHead + commonTail === len1) {
-    if (len1 === len2) {
-      context.setResult(void 0).exit();
-      return;
-    }
-    result = result || {
-      _t: "a"
-    };
-    for (index = commonHead; index < len2 - commonTail; index++) {
-      result[index] = [array2[index]];
-      context.prepareDeltaResult(result[index]);
-    }
-    context.setResult(result).exit();
-    return;
-  }
-  if (commonHead + commonTail === len2) {
-    result = result || {
-      _t: "a"
-    };
-    for (index = commonHead; index < len1 - commonTail; index++) {
-      const key = `_${index}`;
-      result[key] = [array1[index], 0, 0];
-      context.prepareDeltaResult(result[key]);
-    }
-    context.setResult(result).exit();
-    return;
-  }
-  matchContext.hashCache1 = void 0;
-  matchContext.hashCache2 = void 0;
-  const trimmed1 = array1.slice(commonHead, len1 - commonTail);
-  const trimmed2 = array2.slice(commonHead, len2 - commonTail);
-  const seq = lcs_default.get(trimmed1, trimmed2, matchItems, matchContext);
-  const removedItems = [];
-  result = result || {
-    _t: "a"
-  };
-  for (index = commonHead; index < len1 - commonTail; index++) {
-    if (seq.indices1.indexOf(index - commonHead) < 0) {
-      const key = `_${index}`;
-      result[key] = [array1[index], 0, 0];
-      context.prepareDeltaResult(result[key]);
-      removedItems.push(index);
-    }
-  }
-  let detectMove = true;
-  if (((_c = context.options) === null || _c === void 0 ? void 0 : _c.arrays) && context.options.arrays.detectMove === false) {
-    detectMove = false;
-  }
-  let includeValueOnMove = false;
-  if ((_e = (_d = context.options) === null || _d === void 0 ? void 0 : _d.arrays) === null || _e === void 0 ? void 0 : _e.includeValueOnMove) {
-    includeValueOnMove = true;
-  }
-  const removedItemsLength = removedItems.length;
-  for (index = commonHead; index < len2 - commonTail; index++) {
-    const indexOnArray2 = seq.indices2.indexOf(index - commonHead);
-    if (indexOnArray2 < 0) {
-      let isMove = false;
-      if (detectMove && removedItemsLength > 0) {
-        for (let removeItemIndex1 = 0; removeItemIndex1 < removedItemsLength; removeItemIndex1++) {
-          index1 = removedItems[removeItemIndex1];
-          const resultItem = index1 === void 0 ? void 0 : result[`_${index1}`];
-          if (index1 !== void 0 && resultItem && matchItems(trimmed1, trimmed2, index1 - commonHead, index - commonHead, matchContext)) {
-            resultItem.splice(1, 2, index, ARRAY_MOVE);
-            resultItem.splice(1, 2, index, ARRAY_MOVE);
-            if (!includeValueOnMove) {
-              resultItem[0] = "";
-            }
-            index2 = index;
-            child = new diff_default(array1[index1], array2[index2]);
-            context.push(child, index2);
-            removedItems.splice(removeItemIndex1, 1);
-            isMove = true;
-            break;
+        blobs.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: baseRadius,
+          vertices,
+          rotationSpeed: (Math.random() - 0.5) * 5e-4,
+          pulseSpeed: 1e-3 + Math.random() * 2e-3,
+          pulsePhase: Math.random() * Math.PI * 2,
+          color: {
+            h: 190 + Math.random() * 40,
+            // Blue-cyan range
+            s: 60 + Math.random() * 30,
+            l: 30 + Math.random() * 20
           }
-        }
+        });
       }
-      if (!isMove) {
-        result[index] = [array2[index]];
-        context.prepareDeltaResult(result[index]);
+      return blobs;
+    };
+    const initParticles = () => {
+      const particles = [];
+      for (let i4 = 0; i4 < 200; i4++) {
+        particles.push(createParticle());
       }
-    } else {
-      if (seq.indices1[indexOnArray2] === void 0) {
-        throw new Error(`Invalid indexOnArray2: ${indexOnArray2}, seq.indices1: ${seq.indices1}`);
-      }
-      index1 = seq.indices1[indexOnArray2] + commonHead;
-      if (seq.indices2[indexOnArray2] === void 0) {
-        throw new Error(`Invalid indexOnArray2: ${indexOnArray2}, seq.indices2: ${seq.indices2}`);
-      }
-      index2 = seq.indices2[indexOnArray2] + commonHead;
-      child = new diff_default(array1[index1], array2[index2]);
-      context.push(child, index2);
-    }
-  }
-  context.setResult(result).exit();
-};
-diffFilter.filterName = "arrays";
-var compare = {
-  numerically(a3, b2) {
-    return a3 - b2;
-  },
-  numericallyBy(name) {
-    return (a3, b2) => a3[name] - b2[name];
-  }
-};
-var patchFilter = function nestedPatchFilter(context) {
-  var _a;
-  if (!context.nested) {
-    return;
-  }
-  const nestedDelta = context.delta;
-  if (nestedDelta._t !== "a") {
-    return;
-  }
-  let index;
-  let index1;
-  const delta = nestedDelta;
-  const array = context.left;
-  let toRemove = [];
-  let toInsert = [];
-  const toModify = [];
-  for (index in delta) {
-    if (index !== "_t") {
-      if (index[0] === "_") {
-        const removedOrMovedIndex = index;
-        if (delta[removedOrMovedIndex] !== void 0 && (delta[removedOrMovedIndex][2] === 0 || delta[removedOrMovedIndex][2] === ARRAY_MOVE)) {
-          toRemove.push(Number.parseInt(index.slice(1), 10));
+      return particles;
+    };
+    const createParticle = () => {
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.2,
+        vy: (Math.random() - 0.5) * 0.2,
+        size: Math.random() * 2 + 0.5,
+        opacity: Math.random() * 0.6 + 0.2,
+        hue: 180 + Math.random() * 60,
+        life: 1
+      };
+    };
+    particlesRef.current = initParticles();
+    blobsRef.current = initBlobs();
+    initFlowField();
+    const handleScroll = () => {
+      scrollOffsetRef.current = window.scrollY;
+    };
+    window.addEventListener("scroll", handleScroll);
+    const drawBlob = (blob, time) => {
+      const pulse = Math.sin(time * blob.pulseSpeed + blob.pulsePhase) * 0.3 + 1;
+      ctx.beginPath();
+      blob.vertices.forEach((vertex, i4) => {
+        const rotation = time * blob.rotationSpeed;
+        const angle = vertex.angle + rotation;
+        const waveOffset = Math.sin(angle * 3 + time * 2e-3) * 20;
+        const radius = (vertex.baseRadius + waveOffset) * pulse;
+        const x2 = blob.x + Math.cos(angle) * radius;
+        const y3 = blob.y + Math.sin(angle) * radius + scrollOffsetRef.current * 0.05;
+        if (i4 === 0) {
+          ctx.moveTo(x2, y3);
         } else {
-          throw new Error(`only removal or move can be applied at original array indices, invalid diff type: ${(_a = delta[removedOrMovedIndex]) === null || _a === void 0 ? void 0 : _a[2]}`);
+          const prevVertex = blob.vertices[i4 - 1];
+          const prevAngle = prevVertex.angle + rotation;
+          const prevRadius = (prevVertex.baseRadius + Math.sin(prevAngle * 3 + time * 2e-3) * 20) * pulse;
+          const prevX = blob.x + Math.cos(prevAngle) * prevRadius;
+          const prevY = blob.y + Math.sin(prevAngle) * prevRadius + scrollOffsetRef.current * 0.05;
+          const cpX = (prevX + x2) / 2;
+          const cpY = (prevY + y3) / 2;
+          ctx.quadraticCurveTo(prevX, prevY, cpX, cpY);
         }
-      } else {
-        const numberIndex = index;
-        if (delta[numberIndex].length === 1) {
-          toInsert.push({
-            index: Number.parseInt(numberIndex, 10),
-            value: delta[numberIndex][0]
-          });
-        } else {
-          toModify.push({
-            index: Number.parseInt(numberIndex, 10),
-            delta: delta[numberIndex]
-          });
+      });
+      ctx.closePath();
+      const gradient = ctx.createRadialGradient(blob.x, blob.y + scrollOffsetRef.current * 0.05, 0, blob.x, blob.y + scrollOffsetRef.current * 0.05, blob.radius * pulse * 1.5);
+      gradient.addColorStop(0, `hsla(${blob.color.h}, ${blob.color.s}%, ${blob.color.l + 10}%, 0.15)`);
+      gradient.addColorStop(0.5, `hsla(${blob.color.h}, ${blob.color.s}%, ${blob.color.l}%, 0.08)`);
+      gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      ctx.strokeStyle = `hsla(${blob.color.h + 20}, 80%, 60%, 0.1)`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    };
+    const animate = () => {
+      if (!ctx || !canvas) return;
+      timeRef.current += 1;
+      const time = timeRef.current;
+      const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      const scrollFactor = scrollOffsetRef.current % canvas.height / canvas.height;
+      bgGradient.addColorStop(0, `hsl(200, 45%, ${4 + scrollFactor * 2}%)`);
+      bgGradient.addColorStop(0.5, `hsl(195, 50%, ${6 + scrollFactor * 2}%)`);
+      bgGradient.addColorStop(1, `hsl(205, 40%, ${3 + scrollFactor * 2}%)`);
+      ctx.fillStyle = bgGradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      blobsRef.current.forEach((blob) => {
+        drawBlob(blob, time);
+      });
+      particlesRef.current.forEach((particle, index) => {
+        const resolution = 30;
+        const col = Math.floor(particle.x / resolution);
+        const row = Math.floor(particle.y / resolution);
+        if (flowFieldRef.current[row] && flowFieldRef.current[row][col]) {
+          const flow = flowFieldRef.current[row][col];
+          const force = flow.magnitude * 0.05;
+          particle.vx += Math.cos(flow.angle + time * 1e-3) * force;
+          particle.vy += Math.sin(flow.angle + time * 1e-3) * force;
         }
+        particle.vx *= 0.98;
+        particle.vy *= 0.98;
+        particle.x += particle.vx;
+        particle.y += particle.vy + scrollOffsetRef.current * 2e-3;
+        if (particle.x < 0) particle.x = canvas.width;
+        if (particle.x > canvas.width) particle.x = 0;
+        if (particle.y < 0) particle.y = canvas.height;
+        if (particle.y > canvas.height) particle.y = 0;
+        const glowSize = particle.size * 4;
+        const particleGradient = ctx.createRadialGradient(
+          particle.x,
+          particle.y,
+          0,
+          particle.x,
+          particle.y,
+          glowSize
+        );
+        particleGradient.addColorStop(
+          0,
+          `hsla(${particle.hue + Math.sin(time * 0.01) * 20}, 80%, 60%, ${particle.opacity})`
+        );
+        particleGradient.addColorStop(0.5, `hsla(${particle.hue}, 70%, 50%, ${particle.opacity * 0.3})`);
+        particleGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, glowSize, 0, Math.PI * 2);
+        ctx.fillStyle = particleGradient;
+        ctx.fill();
+      });
+      const connectionDistance = 150;
+      particlesRef.current.forEach((p1, i4) => {
+        particlesRef.current.slice(i4 + 1).forEach((p22) => {
+          const dx = p1.x - p22.x;
+          const dy = p1.y - p22.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < connectionDistance) {
+            const opacity = (1 - dist / connectionDistance) * 0.15;
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p22.x, p22.y);
+            ctx.strokeStyle = `rgba(0, 200, 255, ${opacity})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        });
+      });
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+    animate();
+    return () => {
+      window.removeEventListener("resize", resizeCanvas);
+      window.removeEventListener("scroll", handleScroll);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
       }
+    };
+  }, []);
+  return /* @__PURE__ */ u2("div", { className: "mystical-background", children: [
+    /* @__PURE__ */ u2("canvas", { ref: canvasRef, className: "mystical-background__canvas" }),
+    /* @__PURE__ */ u2("div", { className: "mystical-background__overlay" })
+  ] });
+};
+
+// src/components/shared/BeltNavigator/BeltNavigator.tsx
+init_preact_module();
+
+// src/components/shared/CircularBelt/CircularBelt.tsx
+init_preact_module();
+var CircularBelt = ({ items, label, onItemClick, isActive }) => {
+  const [scrollPosition, setScrollPosition] = d2(0);
+  const [isScrolling, setIsScrolling] = d2(false);
+  const [hoveredItemId, setHoveredItemId] = d2(null);
+  const containerRef = A2(null);
+  const scrollIntervalRef = A2();
+  const mouseXRef = A2(0);
+  const itemWidth = 400;
+  const itemSpacing = 50;
+  const totalItemWidth = itemWidth + itemSpacing;
+  const maxScroll = items.length * totalItemWidth;
+  y2(() => {
+    return () => {
+      stopScrolling();
+    };
+  }, []);
+  const startScrolling = (speed) => {
+    if (scrollIntervalRef.current) return;
+    setIsScrolling(true);
+    scrollIntervalRef.current = window.setInterval(() => {
+      setScrollPosition((prev) => {
+        const newPos = prev + speed;
+        if (newPos < 0) return maxScroll + newPos;
+        if (newPos > maxScroll) return newPos - maxScroll;
+        return newPos;
+      });
+    }, 16);
+  };
+  const stopScrolling = () => {
+    if (scrollIntervalRef.current) {
+      clearInterval(scrollIntervalRef.current);
+      scrollIntervalRef.current = void 0;
     }
-  }
-  toRemove = toRemove.sort(compare.numerically);
-  for (index = toRemove.length - 1; index >= 0; index--) {
-    index1 = toRemove[index];
-    if (index1 === void 0)
-      continue;
-    const indexDiff = delta[`_${index1}`];
-    const removedValue = array.splice(index1, 1)[0];
-    if ((indexDiff === null || indexDiff === void 0 ? void 0 : indexDiff[2]) === ARRAY_MOVE) {
-      toInsert.push({
-        index: indexDiff[1],
-        value: removedValue
+    setIsScrolling(false);
+  };
+  const calculateItemStyle = (index, itemId) => {
+    const windowWidth = window.innerWidth;
+    const centerX = windowWidth / 2;
+    let basePosition = index * totalItemWidth - scrollPosition;
+    while (basePosition < -totalItemWidth * 2) {
+      basePosition += maxScroll;
+    }
+    while (basePosition > windowWidth + totalItemWidth * 2) {
+      basePosition -= maxScroll;
+    }
+    const itemCenterX = basePosition + itemWidth / 2;
+    const distanceFromCenter = itemCenterX - centerX;
+    const normalizedDistance = distanceFromCenter / (windowWidth / 2);
+    const isHovered = hoveredItemId === itemId;
+    const skewY = isHovered ? 0 : normalizedDistance * 15;
+    const rotateY = isHovered ? 0 : normalizedDistance * -20;
+    const scale = isHovered ? 1.05 : 1 - Math.abs(normalizedDistance) * 0.3;
+    const opacity = isHovered ? 1 : Math.max(0.3, 1 - Math.abs(normalizedDistance) * 0.6);
+    const zIndex = isHovered ? 200 : Math.max(10, Math.round(100 - Math.abs(distanceFromCenter)));
+    return {
+      transform: `translateX(${basePosition}px) scale(${Math.max(scale, 0.5)}) skewY(${skewY}deg) perspective(1000px) rotateY(${rotateY}deg)`,
+      opacity,
+      zIndex,
+      transformStyle: "preserve-3d",
+      transition: isHovered ? "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)" : "all 0.16s linear"
+    };
+  };
+  const renderItems = () => {
+    const rendered = [];
+    const copies = 3;
+    for (let copy = 0; copy < copies; copy++) {
+      items.forEach((item, index) => {
+        const actualIndex = index + copy * items.length;
+        const style = calculateItemStyle(actualIndex, item.id);
+        rendered.push(
+          /* @__PURE__ */ u2(
+            "div",
+            {
+              className: "circular-belt__item",
+              style,
+              onMouseEnter: () => {
+                setHoveredItemId(item.id);
+                stopScrolling();
+              },
+              onMouseLeave: () => {
+                setHoveredItemId(null);
+              },
+              onClick: () => onItemClick(item),
+              children: /* @__PURE__ */ u2("div", { className: "circular-belt__item-inner", children: [
+                /* @__PURE__ */ u2("div", { className: "circular-belt__item-image", children: /* @__PURE__ */ u2("div", { className: "circular-belt__item-image-placeholder", children: /* @__PURE__ */ u2("span", { children: item.name.charAt(0) }) }) }),
+                /* @__PURE__ */ u2("div", { className: "circular-belt__item-content", children: [
+                  /* @__PURE__ */ u2("h3", { className: "circular-belt__item-title", children: item.name }),
+                  /* @__PURE__ */ u2("p", { className: "circular-belt__item-description", children: item.description }),
+                  item.tags && item.tags.length > 0 && /* @__PURE__ */ u2("div", { className: "circular-belt__item-tags", children: item.tags.map((tag) => /* @__PURE__ */ u2("span", { className: "circular-belt__item-tag", children: tag }, tag)) })
+                ] })
+              ] })
+            },
+            `${item.id}-${copy}`
+          )
+        );
       });
     }
-  }
-  toInsert = toInsert.sort(compare.numericallyBy("index"));
-  const toInsertLength = toInsert.length;
-  for (index = 0; index < toInsertLength; index++) {
-    const insertion = toInsert[index];
-    if (insertion === void 0)
-      continue;
-    array.splice(insertion.index, 0, insertion.value);
-  }
-  const toModifyLength = toModify.length;
-  if (toModifyLength > 0) {
-    for (index = 0; index < toModifyLength; index++) {
-      const modification = toModify[index];
-      if (modification === void 0)
-        continue;
-      const child = new patch_default(array[modification.index], modification.delta);
-      context.push(child, modification.index);
-    }
-  }
-  if (!context.children) {
-    context.setResult(array).exit();
-    return;
-  }
-  context.exit();
-};
-patchFilter.filterName = "arrays";
-var collectChildrenPatchFilter = function collectChildrenPatchFilter2(context) {
-  if (!context || !context.children) {
-    return;
-  }
-  const deltaWithChildren = context.delta;
-  if (deltaWithChildren._t !== "a") {
-    return;
-  }
-  const array = context.left;
-  const length = context.children.length;
-  for (let index = 0; index < length; index++) {
-    const child = context.children[index];
-    if (child === void 0)
-      continue;
-    const arrayIndex = child.childName;
-    array[arrayIndex] = child.result;
-  }
-  context.setResult(array).exit();
-};
-collectChildrenPatchFilter.filterName = "arraysCollectChildren";
-var reverseFilter = function arraysReverseFilter(context) {
-  if (!context.nested) {
-    const nonNestedDelta = context.delta;
-    if (nonNestedDelta[2] === ARRAY_MOVE) {
-      const arrayMoveDelta = nonNestedDelta;
-      context.newName = `_${arrayMoveDelta[1]}`;
-      context.setResult([
-        arrayMoveDelta[0],
-        Number.parseInt(context.childName.substring(1), 10),
-        ARRAY_MOVE
-      ]).exit();
-    }
-    return;
-  }
-  const nestedDelta = context.delta;
-  if (nestedDelta._t !== "a") {
-    return;
-  }
-  const arrayDelta = nestedDelta;
-  for (const name in arrayDelta) {
-    if (name === "_t") {
-      continue;
-    }
-    const child = new reverse_default(arrayDelta[name]);
-    context.push(child, name);
-  }
-  context.exit();
-};
-reverseFilter.filterName = "arrays";
-var reverseArrayDeltaIndex = (delta, index, itemDelta) => {
-  if (typeof index === "string" && index[0] === "_") {
-    return Number.parseInt(index.substring(1), 10);
-  }
-  if (Array.isArray(itemDelta) && itemDelta[2] === 0) {
-    return `_${index}`;
-  }
-  let reverseIndex = +index;
-  for (const deltaIndex in delta) {
-    const deltaItem = delta[deltaIndex];
-    if (Array.isArray(deltaItem)) {
-      if (deltaItem[2] === ARRAY_MOVE) {
-        const moveFromIndex = Number.parseInt(deltaIndex.substring(1), 10);
-        const moveToIndex = deltaItem[1];
-        if (moveToIndex === +index) {
-          return moveFromIndex;
-        }
-        if (moveFromIndex <= reverseIndex && moveToIndex > reverseIndex) {
-          reverseIndex++;
-        } else if (moveFromIndex >= reverseIndex && moveToIndex < reverseIndex) {
-          reverseIndex--;
-        }
-      } else if (deltaItem[2] === 0) {
-        const deleteIndex = Number.parseInt(deltaIndex.substring(1), 10);
-        if (deleteIndex <= reverseIndex) {
-          reverseIndex++;
-        }
-      } else if (deltaItem.length === 1 && Number.parseInt(deltaIndex, 10) <= reverseIndex) {
-        reverseIndex--;
-      }
-    }
-  }
-  return reverseIndex;
-};
-var collectChildrenReverseFilter = (context) => {
-  if (!context || !context.children) {
-    return;
-  }
-  const deltaWithChildren = context.delta;
-  if (deltaWithChildren._t !== "a") {
-    return;
-  }
-  const arrayDelta = deltaWithChildren;
-  const length = context.children.length;
-  const delta = {
-    _t: "a"
+    return rendered;
   };
-  for (let index = 0; index < length; index++) {
-    const child = context.children[index];
-    if (child === void 0)
-      continue;
-    let name = child.newName;
-    if (typeof name === "undefined") {
-      if (child.childName === void 0) {
-        throw new Error("child.childName is undefined");
-      }
-      name = reverseArrayDeltaIndex(arrayDelta, child.childName, child.result);
-    }
-    if (delta[name] !== child.result) {
-      delta[name] = child.result;
-    }
-  }
-  context.setResult(delta).exit();
-};
-collectChildrenReverseFilter.filterName = "arraysCollectChildren";
-
-// node_modules/jsondiffpatch/lib/filters/dates.js
-init_preact_module();
-var diffFilter2 = function datesDiffFilter(context) {
-  if (context.left instanceof Date) {
-    if (context.right instanceof Date) {
-      if (context.left.getTime() !== context.right.getTime()) {
-        context.setResult([context.left, context.right]);
-      } else {
-        context.setResult(void 0);
-      }
-    } else {
-      context.setResult([context.left, context.right]);
-    }
-    context.exit();
-  } else if (context.right instanceof Date) {
-    context.setResult([context.left, context.right]).exit();
-  }
-};
-diffFilter2.filterName = "dates";
-
-// node_modules/jsondiffpatch/lib/filters/nested.js
-init_preact_module();
-var collectChildrenDiffFilter = (context) => {
-  if (!context || !context.children) {
-    return;
-  }
-  const length = context.children.length;
-  let result = context.result;
-  for (let index = 0; index < length; index++) {
-    const child = context.children[index];
-    if (child === void 0)
-      continue;
-    if (typeof child.result === "undefined") {
-      continue;
-    }
-    result = result || {};
-    if (child.childName === void 0) {
-      throw new Error("diff child.childName is undefined");
-    }
-    result[child.childName] = child.result;
-  }
-  if (result && context.leftIsArray) {
-    result._t = "a";
-  }
-  context.setResult(result).exit();
-};
-collectChildrenDiffFilter.filterName = "collectChildren";
-var objectsDiffFilter = (context) => {
-  var _a;
-  if (context.leftIsArray || context.leftType !== "object") {
-    return;
-  }
-  const left = context.left;
-  const right = context.right;
-  const propertyFilter = (_a = context.options) === null || _a === void 0 ? void 0 : _a.propertyFilter;
-  for (const name in left) {
-    if (!Object.prototype.hasOwnProperty.call(left, name)) {
-      continue;
-    }
-    if (propertyFilter && !propertyFilter(name, context)) {
-      continue;
-    }
-    const child = new diff_default(left[name], right[name]);
-    context.push(child, name);
-  }
-  for (const name in right) {
-    if (!Object.prototype.hasOwnProperty.call(right, name)) {
-      continue;
-    }
-    if (propertyFilter && !propertyFilter(name, context)) {
-      continue;
-    }
-    if (typeof left[name] === "undefined") {
-      const child = new diff_default(void 0, right[name]);
-      context.push(child, name);
-    }
-  }
-  if (!context.children || context.children.length === 0) {
-    context.setResult(void 0).exit();
-    return;
-  }
-  context.exit();
-};
-objectsDiffFilter.filterName = "objects";
-var patchFilter2 = function nestedPatchFilter2(context) {
-  if (!context.nested) {
-    return;
-  }
-  const nestedDelta = context.delta;
-  if (nestedDelta._t) {
-    return;
-  }
-  const objectDelta = nestedDelta;
-  for (const name in objectDelta) {
-    const child = new patch_default(context.left[name], objectDelta[name]);
-    context.push(child, name);
-  }
-  context.exit();
-};
-patchFilter2.filterName = "objects";
-var collectChildrenPatchFilter3 = function collectChildrenPatchFilter4(context) {
-  if (!context || !context.children) {
-    return;
-  }
-  const deltaWithChildren = context.delta;
-  if (deltaWithChildren._t) {
-    return;
-  }
-  const object = context.left;
-  const length = context.children.length;
-  for (let index = 0; index < length; index++) {
-    const child = context.children[index];
-    if (child === void 0)
-      continue;
-    const property = child.childName;
-    if (Object.prototype.hasOwnProperty.call(context.left, property) && child.result === void 0) {
-      delete object[property];
-    } else if (object[property] !== child.result) {
-      object[property] = child.result;
-    }
-  }
-  context.setResult(object).exit();
-};
-collectChildrenPatchFilter3.filterName = "collectChildren";
-var reverseFilter2 = function nestedReverseFilter(context) {
-  if (!context.nested) {
-    return;
-  }
-  const nestedDelta = context.delta;
-  if (nestedDelta._t) {
-    return;
-  }
-  const objectDelta = context.delta;
-  for (const name in objectDelta) {
-    const child = new reverse_default(objectDelta[name]);
-    context.push(child, name);
-  }
-  context.exit();
-};
-reverseFilter2.filterName = "objects";
-var collectChildrenReverseFilter2 = (context) => {
-  if (!context || !context.children) {
-    return;
-  }
-  const deltaWithChildren = context.delta;
-  if (deltaWithChildren._t) {
-    return;
-  }
-  const length = context.children.length;
-  const delta = {};
-  for (let index = 0; index < length; index++) {
-    const child = context.children[index];
-    if (child === void 0)
-      continue;
-    const property = child.childName;
-    if (delta[property] !== child.result) {
-      delta[property] = child.result;
-    }
-  }
-  context.setResult(delta).exit();
-};
-collectChildrenReverseFilter2.filterName = "collectChildren";
-
-// node_modules/jsondiffpatch/lib/filters/texts.js
-init_preact_module();
-var TEXT_DIFF = 2;
-var DEFAULT_MIN_LENGTH = 60;
-var cachedDiffPatch = null;
-function getDiffMatchPatch(options, required) {
-  var _a;
-  if (!cachedDiffPatch) {
-    let instance;
-    if ((_a = options === null || options === void 0 ? void 0 : options.textDiff) === null || _a === void 0 ? void 0 : _a.diffMatchPatch) {
-      instance = new options.textDiff.diffMatchPatch();
-    } else {
-      if (!required) {
-        return null;
-      }
-      const error5 = new Error("The diff-match-patch library was not provided. Pass the library in through the options or use the `jsondiffpatch/with-text-diffs` entry-point.");
-      error5.diff_match_patch_not_found = true;
-      throw error5;
-    }
-    cachedDiffPatch = {
-      diff: (txt1, txt2) => instance.patch_toText(instance.patch_make(txt1, txt2)),
-      patch: (txt1, patch2) => {
-        const results = instance.patch_apply(instance.patch_fromText(patch2), txt1);
-        for (const resultOk of results[1]) {
-          if (!resultOk) {
-            const error5 = new Error("text patch failed");
-            error5.textPatchFailed = true;
-            throw error5;
+  return /* @__PURE__ */ u2(
+    "div",
+    {
+      className: `circular-belt ${isActive ? "circular-belt--active" : ""}`,
+      ref: containerRef,
+      "data-label": label,
+      children: [
+        /* @__PURE__ */ u2("div", { className: "circular-belt__items", children: renderItems() }),
+        /* @__PURE__ */ u2(
+          "div",
+          {
+            className: "circular-belt__scroll-zone circular-belt__scroll-zone--left",
+            onMouseEnter: () => {
+              if (isActive) {
+                startScrolling(-8);
+              }
+            },
+            onMouseLeave: stopScrolling
           }
-        }
-        return results[0];
+        ),
+        /* @__PURE__ */ u2(
+          "div",
+          {
+            className: "circular-belt__scroll-zone circular-belt__scroll-zone--right",
+            onMouseEnter: () => {
+              if (isActive) {
+                startScrolling(8);
+              }
+            },
+            onMouseLeave: stopScrolling
+          }
+        ),
+        /* @__PURE__ */ u2("div", { className: "circular-belt__edge-fade circular-belt__edge-fade--left" }),
+        /* @__PURE__ */ u2("div", { className: "circular-belt__edge-fade circular-belt__edge-fade--right" })
+      ]
+    }
+  );
+};
+
+// src/components/shared/BeltNavigator/BeltNavigator.tsx
+var BeltNavigator = ({ rows, onItemClick, onRowChange, activeRowIndex: externalActiveRowIndex }) => {
+  const [activeRowIndex, setActiveRowIndex] = d2(externalActiveRowIndex);
+  const [isTransitioning, setIsTransitioning] = d2(false);
+  const containerRef = A2(null);
+  const canGoUp = activeRowIndex > 0;
+  const canGoDown = activeRowIndex < rows.length - 1;
+  y2(() => {
+    setActiveRowIndex(externalActiveRowIndex);
+  }, [externalActiveRowIndex]);
+  const navigateUp = () => {
+    if (!canGoUp || isTransitioning) return;
+    setIsTransitioning(true);
+    const newIndex = activeRowIndex - 1;
+    setActiveRowIndex(newIndex);
+    onRowChange(newIndex);
+    setTimeout(() => setIsTransitioning(false), 800);
+  };
+  const navigateDown = () => {
+    if (!canGoDown || isTransitioning) return;
+    setIsTransitioning(true);
+    const newIndex = activeRowIndex + 1;
+    setActiveRowIndex(newIndex);
+    onRowChange(newIndex);
+    setTimeout(() => setIsTransitioning(false), 800);
+  };
+  y2(() => {
+    const handleKeyDown = (e4) => {
+      if (isTransitioning) return;
+      if (e4.key === "ArrowUp" || e4.key === "PageUp") {
+        e4.preventDefault();
+        navigateUp();
+      } else if (e4.key === "ArrowDown" || e4.key === "PageDown") {
+        e4.preventDefault();
+        navigateDown();
       }
     };
-  }
-  return cachedDiffPatch;
-}
-var diffFilter3 = function textsDiffFilter(context) {
-  var _a, _b;
-  if (context.leftType !== "string") {
-    return;
-  }
-  const left = context.left;
-  const right = context.right;
-  const minLength = ((_b = (_a = context.options) === null || _a === void 0 ? void 0 : _a.textDiff) === null || _b === void 0 ? void 0 : _b.minLength) || DEFAULT_MIN_LENGTH;
-  if (left.length < minLength || right.length < minLength) {
-    context.setResult([left, right]).exit();
-    return;
-  }
-  const diffMatchPatch = getDiffMatchPatch(context.options);
-  if (!diffMatchPatch) {
-    context.setResult([left, right]).exit();
-    return;
-  }
-  const diff2 = diffMatchPatch.diff;
-  context.setResult([diff2(left, right), 0, TEXT_DIFF]).exit();
-};
-diffFilter3.filterName = "texts";
-var patchFilter3 = function textsPatchFilter(context) {
-  if (context.nested) {
-    return;
-  }
-  const nonNestedDelta = context.delta;
-  if (nonNestedDelta[2] !== TEXT_DIFF) {
-    return;
-  }
-  const textDiffDelta = nonNestedDelta;
-  const patch2 = getDiffMatchPatch(context.options, true).patch;
-  context.setResult(patch2(context.left, textDiffDelta[0])).exit();
-};
-patchFilter3.filterName = "texts";
-var textDeltaReverse = (delta) => {
-  var _a, _b, _c;
-  const headerRegex = /^@@ +-(\d+),(\d+) +\+(\d+),(\d+) +@@$/;
-  const lines = delta.split("\n");
-  for (let i4 = 0; i4 < lines.length; i4++) {
-    const line = lines[i4];
-    if (line === void 0)
-      continue;
-    const lineStart = line.slice(0, 1);
-    if (lineStart === "@") {
-      const header = headerRegex.exec(line);
-      if (header !== null) {
-        const lineHeader = i4;
-        lines[lineHeader] = `@@ -${header[3]},${header[4]} +${header[1]},${header[2]} @@`;
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeRowIndex, isTransitioning]);
+  const calculateRowStyle = (index) => {
+    const diff = index - activeRowIndex;
+    const translateY = diff * 70 - 35;
+    const opacity = diff === 0 ? 1 : Math.max(0.15, 0.4 - Math.abs(diff) * 0.2);
+    const scale = diff === 0 ? 1 : 0.85;
+    const blur = Math.abs(diff) > 0 ? 8 : 0;
+    return {
+      transform: `translateY(calc(50vh + ${translateY}vh)) scale(${scale})`,
+      opacity,
+      filter: `blur(${blur}px)`,
+      pointerEvents: diff === 0 ? "auto" : "none",
+      zIndex: 100 - Math.abs(diff)
+    };
+  };
+  return /* @__PURE__ */ u2("div", { className: "belt-navigator", ref: containerRef, children: [
+    /* @__PURE__ */ u2("div", { className: "belt-navigator__rows", children: rows.map((row, index) => /* @__PURE__ */ u2(
+      "div",
+      {
+        className: `belt-navigator__row ${index === activeRowIndex ? "belt-navigator__row--active" : ""}`,
+        style: calculateRowStyle(index),
+        children: /* @__PURE__ */ u2(
+          CircularBelt,
+          {
+            items: row.items,
+            label: row.label,
+            onItemClick,
+            isActive: index === activeRowIndex
+          }
+        )
+      },
+      row.key
+    )) }),
+    canGoUp && /* @__PURE__ */ u2(
+      "button",
+      {
+        className: "belt-navigator__arrow belt-navigator__arrow--up belt-navigator__arrow--fixed",
+        onClick: navigateUp,
+        children: /* @__PURE__ */ u2("svg", { width: "60", height: "30", viewBox: "0 0 60 30", fill: "none", children: /* @__PURE__ */ u2(
+          "path",
+          {
+            d: "M10 22 L30 8 L50 22",
+            stroke: "currentColor",
+            strokeWidth: "3",
+            strokeLinecap: "round",
+            strokeLinejoin: "round"
+          }
+        ) })
       }
-    } else if (lineStart === "+") {
-      lines[i4] = `-${(_a = lines[i4]) === null || _a === void 0 ? void 0 : _a.slice(1)}`;
-      if (((_b = lines[i4 - 1]) === null || _b === void 0 ? void 0 : _b.slice(0, 1)) === "+") {
-        const lineTmp = lines[i4];
-        lines[i4] = lines[i4 - 1];
-        lines[i4 - 1] = lineTmp;
+    ),
+    canGoDown && /* @__PURE__ */ u2(
+      "button",
+      {
+        className: "belt-navigator__arrow belt-navigator__arrow--down belt-navigator__arrow--fixed",
+        onClick: navigateDown,
+        children: /* @__PURE__ */ u2("svg", { width: "60", height: "30", viewBox: "0 0 60 30", fill: "none", children: /* @__PURE__ */ u2(
+          "path",
+          {
+            d: "M10 8 L30 22 L50 8",
+            stroke: "currentColor",
+            strokeWidth: "3",
+            strokeLinecap: "round",
+            strokeLinejoin: "round"
+          }
+        ) })
       }
-    } else if (lineStart === "-") {
-      lines[i4] = `+${(_c = lines[i4]) === null || _c === void 0 ? void 0 : _c.slice(1)}`;
-    }
-  }
-  return lines.join("\n");
+    )
+  ] });
 };
-var reverseFilter3 = function textsReverseFilter(context) {
-  if (context.nested) {
-    return;
-  }
-  const nonNestedDelta = context.delta;
-  if (nonNestedDelta[2] !== TEXT_DIFF) {
-    return;
-  }
-  const textDiffDelta = nonNestedDelta;
-  context.setResult([textDeltaReverse(textDiffDelta[0]), 0, TEXT_DIFF]).exit();
-};
-reverseFilter3.filterName = "texts";
 
-// node_modules/jsondiffpatch/lib/filters/trivial.js
+// src/components/shared/ItemDetailView/ItemDetailView.tsx
 init_preact_module();
-var diffFilter4 = function trivialMatchesDiffFilter(context) {
-  if (context.left === context.right) {
-    context.setResult(void 0).exit();
-    return;
-  }
-  if (typeof context.left === "undefined") {
-    if (typeof context.right === "function") {
-      throw new Error("functions are not supported");
-    }
-    context.setResult([context.right]).exit();
-    return;
-  }
-  if (typeof context.right === "undefined") {
-    context.setResult([context.left, 0, 0]).exit();
-    return;
-  }
-  if (typeof context.left === "function" || typeof context.right === "function") {
-    throw new Error("functions are not supported");
-  }
-  context.leftType = context.left === null ? "null" : typeof context.left;
-  context.rightType = context.right === null ? "null" : typeof context.right;
-  if (context.leftType !== context.rightType) {
-    context.setResult([context.left, context.right]).exit();
-    return;
-  }
-  if (context.leftType === "boolean" || context.leftType === "number") {
-    context.setResult([context.left, context.right]).exit();
-    return;
-  }
-  if (context.leftType === "object") {
-    context.leftIsArray = Array.isArray(context.left);
-  }
-  if (context.rightType === "object") {
-    context.rightIsArray = Array.isArray(context.right);
-  }
-  if (context.leftIsArray !== context.rightIsArray) {
-    context.setResult([context.left, context.right]).exit();
-    return;
-  }
-  if (context.left instanceof RegExp) {
-    if (context.right instanceof RegExp) {
-      context.setResult([context.left.toString(), context.right.toString()]).exit();
+var ItemDetailView = ({ item, onClose }) => {
+  const [isVisible, setIsVisible] = d2(false);
+  const [showContent, setShowContent] = d2(false);
+  y2(() => {
+    if (item) {
+      setTimeout(() => setIsVisible(true), 50);
+      setTimeout(() => setShowContent(true), 800);
     } else {
-      context.setResult([context.left, context.right]).exit();
+      setShowContent(false);
+      setIsVisible(false);
     }
-  }
-};
-diffFilter4.filterName = "trivial";
-var patchFilter4 = function trivialMatchesPatchFilter(context) {
-  if (typeof context.delta === "undefined") {
-    context.setResult(context.left).exit();
-    return;
-  }
-  context.nested = !Array.isArray(context.delta);
-  if (context.nested) {
-    return;
-  }
-  const nonNestedDelta = context.delta;
-  if (nonNestedDelta.length === 1) {
-    context.setResult(nonNestedDelta[0]).exit();
-    return;
-  }
-  if (nonNestedDelta.length === 2) {
-    if (context.left instanceof RegExp) {
-      const regexArgs = /^\/(.*)\/([gimyu]+)$/.exec(nonNestedDelta[1]);
-      if (regexArgs === null || regexArgs === void 0 ? void 0 : regexArgs[1]) {
-        context.setResult(new RegExp(regexArgs[1], regexArgs[2])).exit();
-        return;
+  }, [item]);
+  const handleClose = () => {
+    setShowContent(false);
+    setIsVisible(false);
+    setTimeout(() => onClose(), 600);
+  };
+  y2(() => {
+    const handleEscape = (e4) => {
+      if (e4.key === "Escape" && item) {
+        handleClose();
       }
-    }
-    context.setResult(nonNestedDelta[1]).exit();
-    return;
-  }
-  if (nonNestedDelta.length === 3 && nonNestedDelta[2] === 0) {
-    context.setResult(void 0).exit();
-  }
-};
-patchFilter4.filterName = "trivial";
-var reverseFilter4 = function trivialReferseFilter(context) {
-  if (typeof context.delta === "undefined") {
-    context.setResult(context.delta).exit();
-    return;
-  }
-  context.nested = !Array.isArray(context.delta);
-  if (context.nested) {
-    return;
-  }
-  const nonNestedDelta = context.delta;
-  if (nonNestedDelta.length === 1) {
-    context.setResult([nonNestedDelta[0], 0, 0]).exit();
-    return;
-  }
-  if (nonNestedDelta.length === 2) {
-    context.setResult([nonNestedDelta[1], nonNestedDelta[0]]).exit();
-    return;
-  }
-  if (nonNestedDelta.length === 3 && nonNestedDelta[2] === 0) {
-    context.setResult([nonNestedDelta[0]]).exit();
-  }
-};
-reverseFilter4.filterName = "trivial";
-
-// node_modules/jsondiffpatch/lib/diffpatcher.js
-var DiffPatcher = class {
-  constructor(options) {
-    this.processor = new processor_default(options);
-    this.processor.pipe(new pipe_default("diff").append(collectChildrenDiffFilter, diffFilter4, diffFilter2, diffFilter3, objectsDiffFilter, diffFilter).shouldHaveResult());
-    this.processor.pipe(new pipe_default("patch").append(collectChildrenPatchFilter3, collectChildrenPatchFilter, patchFilter4, patchFilter3, patchFilter2, patchFilter).shouldHaveResult());
-    this.processor.pipe(new pipe_default("reverse").append(collectChildrenReverseFilter2, collectChildrenReverseFilter, reverseFilter4, reverseFilter3, reverseFilter2, reverseFilter).shouldHaveResult());
-  }
-  options(options) {
-    return this.processor.options(options);
-  }
-  diff(left, right) {
-    return this.processor.process(new diff_default(left, right));
-  }
-  patch(left, delta) {
-    return this.processor.process(new patch_default(left, delta));
-  }
-  reverse(delta) {
-    return this.processor.process(new reverse_default(delta));
-  }
-  unpatch(right, delta) {
-    return this.patch(right, this.reverse(delta));
-  }
-  clone(value) {
-    return clone(value);
-  }
-};
-var diffpatcher_default = DiffPatcher;
-
-// node_modules/jsondiffpatch/lib/index.js
-var defaultInstance;
-function diff(left, right) {
-  if (!defaultInstance) {
-    defaultInstance = new diffpatcher_default();
-  }
-  return defaultInstance.diff(left, right);
-}
-function patch(left, delta) {
-  if (!defaultInstance) {
-    defaultInstance = new diffpatcher_default();
-  }
-  return defaultInstance.patch(left, delta);
-}
-
-// src/lib/utils/StrUtils.ts
-init_preact_module();
-var isValidEmail = (email) => {
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return emailRegex.test(email);
-};
-var isValidUrl = (text) => {
-  try {
-    new URL(text);
-    return true;
-  } catch (error5) {
-    return false;
-  }
-};
-
-// src/components/shared/JsonView/EnhancedJsonView.ts
-var DEFAULT_OPTIONS = () => ({
-  expandAll: false,
-  expandObjects: [],
-  useViewState: true
-});
-var EnhancedJsonView = class {
-  json;
-  parentContainer;
-  options;
-  viewStates = {};
-  // viewstate tree for retaining view during state updates
-  constructor(json, parentContainer, options) {
-    this.json = json;
-    this.parentContainer = parentContainer;
-    this.options = Object.assign({}, DEFAULT_OPTIONS(), options || {});
-    this.render();
-  }
-  render() {
-    this.parentContainer.innerHTML = "";
-    const rootNode = this.drawJsonNode(this.json);
-    this.parentContainer.classList.add("json-view");
-    this.parentContainer.appendChild(rootNode);
-  }
-  toggleSection(childNode, keyPath, toggleButton) {
-    const isCollapsed = childNode.classList.contains("collapsed");
-    childNode.classList.toggle("collapsed", !isCollapsed);
-    this.viewStates[keyPath] = !isCollapsed;
-    toggleButton.textContent = isCollapsed ? "[-]" : "[+]";
-  }
-  // only redraws changed nodes
-  drawJsonNode(jsonObj, currPath = "") {
-    const nodeContainer = document.createElement("div");
-    nodeContainer.classList.add("json-node");
-    const propertiesContainer = document.createElement("div");
-    propertiesContainer.classList.add("json-properties");
-    for (const key in jsonObj) {
-      if (Object.prototype.hasOwnProperty.call(jsonObj, key)) {
-        const keyPath = `${currPath}${key}`;
-        const propertyRow = document.createElement("div");
-        propertyRow.classList.add("json-property");
-        propertyRow.setAttribute("data-path", keyPath);
-        const label = document.createElement("span");
-        label.classList.add("json-key");
-        label.textContent = key + ": ";
-        const valueContainer = document.createElement("div");
-        valueContainer.classList.add("json-value");
-        const value = jsonObj[key];
-        const isObject = typeof value === "object" && value !== null;
-        const isArray = Array.isArray(value);
-        if (value instanceof Date) {
-          valueContainer.textContent = value.toLocaleDateString();
-        } else if (isObject) {
-          propertyRow.classList.add("object");
-          if (isArray) label.textContent = `${key} (${value.length})`;
-          else label.textContent = key;
-          const hasChildren = isArray && value.length > 0 ? true : Object.keys(value).length > 0;
-          const toggleButton = document.createElement("button");
-          toggleButton.classList.add("json-toggle");
-          const childNode = this.drawJsonNode(value, keyPath + "/");
-          if (this.options.expandAll) {
-            toggleButton.textContent = "[-]";
-          } else {
-            let expand = false;
-            if (isArray && hasChildren) {
-              expand = true;
-            } else {
-              this.options.expandObjs?.forEach((e4) => {
-                if (new RegExp(e4).test(keyPath)) expand = true;
-              });
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [item]);
+  if (!item) return null;
+  return /* @__PURE__ */ u2("div", { className: `item-detail-view ${isVisible ? "item-detail-view--visible" : ""}`, children: [
+    /* @__PURE__ */ u2("div", { className: "item-detail-view__backdrop", onClick: handleClose }),
+    /* @__PURE__ */ u2("div", { className: "item-detail-view__container", children: /* @__PURE__ */ u2("div", { className: `item-detail-view__content ${showContent ? "item-detail-view__content--visible" : ""}`, children: [
+      /* @__PURE__ */ u2(
+        "button",
+        {
+          className: "item-detail-view__close item-detail-view__close--left",
+          onClick: handleClose,
+          title: "Back",
+          children: /* @__PURE__ */ u2("svg", { width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", children: /* @__PURE__ */ u2(
+            "path",
+            {
+              d: "M15 18L9 12L15 6",
+              stroke: "currentColor",
+              strokeWidth: "2",
+              strokeLinecap: "round",
+              strokeLinejoin: "round"
             }
-            if (this.options.useViewState) {
-              if (typeof this.viewStates[keyPath] != "undefined") expand = !this.viewStates[keyPath];
-            }
-            if (expand) {
-              toggleButton.textContent = "[-]";
-            } else {
-              toggleButton.textContent = "[+]";
-              childNode.classList.add("collapsed");
-            }
-          }
-          label.onclick = () => {
-            this.toggleSection(childNode, keyPath, toggleButton);
-          };
-          label.appendChild(toggleButton);
-          valueContainer.appendChild(childNode);
-        } else {
-          if (key == "image") {
-            valueContainer.classList.add("image");
-            valueContainer.innerHTML = `<a target="_blank" href="${value}"><img src="${value}"/></a>`;
-          } else if (isValidEmail(value)) {
-            valueContainer.classList.add("email");
-            valueContainer.innerHTML = `<a href="mailto:r${value}">${value}</a>`;
-          } else if (isValidUrl(value)) {
-            valueContainer.classList.add("link");
-            valueContainer.innerHTML = `<a href="${value}">${value}</a>`;
-          } else {
-            valueContainer.textContent = String(value);
-          }
+          ) })
         }
-        if (key != "image") propertyRow.appendChild(label);
-        propertyRow.appendChild(valueContainer);
-        propertiesContainer.appendChild(propertyRow);
-      }
-    }
-    nodeContainer.appendChild(propertiesContainer);
-    return nodeContainer;
-  }
-  updateJson(newJson) {
-    const delta = diff(this.json, newJson);
-    patch(this.json, delta);
-    this.render();
-  }
+      ),
+      /* @__PURE__ */ u2(
+        "button",
+        {
+          className: "item-detail-view__close item-detail-view__close--right",
+          onClick: handleClose,
+          title: "Close",
+          children: /* @__PURE__ */ u2("svg", { width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", children: /* @__PURE__ */ u2(
+            "path",
+            {
+              d: "M18 6L6 18M6 6L18 18",
+              stroke: "currentColor",
+              strokeWidth: "2",
+              strokeLinecap: "round",
+              strokeLinejoin: "round"
+            }
+          ) })
+        }
+      ),
+      /* @__PURE__ */ u2("div", { className: "item-detail-view__hero", children: /* @__PURE__ */ u2("div", { className: "item-detail-view__hero-bg", children: /* @__PURE__ */ u2("div", { className: "item-detail-view__hero-placeholder", children: item.name.charAt(0) }) }) }),
+      /* @__PURE__ */ u2("div", { className: "item-detail-view__body", children: [
+        /* @__PURE__ */ u2("div", { className: "item-detail-view__header", style: { animationDelay: "0.1s" }, children: /* @__PURE__ */ u2("h1", { className: "item-detail-view__title", children: item.name }) }),
+        /* @__PURE__ */ u2("div", { className: "item-detail-view__meta", style: { animationDelay: "0.2s" }, children: [
+          /* @__PURE__ */ u2("p", { className: "item-detail-view__description", children: item.description }),
+          item.tags && item.tags.length > 0 && /* @__PURE__ */ u2("div", { className: "item-detail-view__tags", children: item.tags.map((tag) => /* @__PURE__ */ u2("span", { className: "item-detail-view__tag", children: tag }, tag)) })
+        ] }),
+        /* @__PURE__ */ u2("div", { className: "item-detail-view__details", style: { animationDelay: "0.3s" }, children: [
+          /* @__PURE__ */ u2("h2", { children: "About" }),
+          /* @__PURE__ */ u2("p", { children: item.details })
+        ] }),
+        item.media && item.media.length > 0 && /* @__PURE__ */ u2("div", { className: "item-detail-view__media", style: { animationDelay: "0.4s" }, children: [
+          /* @__PURE__ */ u2("h2", { children: "Media" }),
+          /* @__PURE__ */ u2("div", { className: "item-detail-view__media-grid", children: item.media.map((mediaItem, index) => /* @__PURE__ */ u2("div", { className: "item-detail-view__media-item", children: [
+            /* @__PURE__ */ u2("div", { className: "item-detail-view__media-placeholder", children: mediaItem.type === "image" ? "\u{1F5BC}\uFE0F" : "\u{1F3AC}" }),
+            /* @__PURE__ */ u2("p", { className: "item-detail-view__media-description", children: mediaItem.description })
+          ] }, index)) })
+        ] })
+      ] })
+    ] }) })
+  ] });
 };
+
+// src/data/portfolioData.ts
+init_preact_module();
+var portfolioData = [
+  {
+    key: "featured",
+    label: "Featured",
+    order: 0,
+    items: [
+      {
+        id: "feat-001",
+        name: "Quantum Interface",
+        description: "A revolutionary approach to data visualization",
+        image: "/public/images/projects/quantum.jpg",
+        media: [
+          {
+            url: "/public/images/projects/quantum-1.jpg",
+            type: "image",
+            description: "Main dashboard interface"
+          },
+          {
+            url: "/public/images/projects/quantum-2.jpg",
+            type: "image",
+            description: "Real-time data streams"
+          }
+        ],
+        details: "An immersive data visualization platform that transforms complex datasets into interactive 3D experiences. Built with cutting-edge web technologies and optimized for performance.",
+        tags: ["WebGL", "Three.js", "TypeScript"]
+      },
+      {
+        id: "feat-002",
+        name: "Neural Networks Dashboard",
+        description: "AI-powered analytics and insights",
+        image: "/public/images/projects/neural.jpg",
+        media: [
+          {
+            url: "/public/images/projects/neural-1.jpg",
+            type: "image",
+            description: "Neural network visualization"
+          }
+        ],
+        details: "A sophisticated dashboard for monitoring and analyzing neural network training in real-time. Features advanced visualizations and predictive analytics.",
+        tags: ["React", "Python", "TensorFlow"]
+      },
+      {
+        id: "feat-003",
+        name: "Stellar Navigation",
+        description: "Next-gen space exploration tool",
+        image: "/public/images/projects/stellar.jpg",
+        media: [
+          {
+            url: "/public/images/projects/stellar-1.jpg",
+            type: "image",
+            description: "Star map interface"
+          }
+        ],
+        details: "An interactive celestial mapping application that allows users to explore the cosmos with unprecedented detail and accuracy.",
+        tags: ["WebGL", "Astronomy API", "Canvas"]
+      },
+      {
+        id: "feat-004",
+        name: "Holographic UI System",
+        description: "Futuristic interface paradigm",
+        image: "/public/images/projects/holo.jpg",
+        media: [],
+        details: "A groundbreaking UI framework that brings holographic-style interfaces to the web, with gesture controls and spatial awareness.",
+        tags: ["WebXR", "Three.js", "Motion Tracking"]
+      },
+      {
+        id: "feat-005",
+        name: "Quantum Cryptography Suite",
+        description: "Next-level security protocols",
+        image: "/public/images/projects/crypto.jpg",
+        media: [],
+        details: "A comprehensive cryptography toolkit leveraging quantum-resistant algorithms for future-proof security.",
+        tags: ["Cryptography", "Security", "Go"]
+      },
+      {
+        id: "feat-006",
+        name: "Ethereal Data Streams",
+        description: "Real-time data flow visualization",
+        image: "/public/images/projects/streams.jpg",
+        media: [],
+        details: "A mesmerizing platform for visualizing complex data streams with particle-based rendering.",
+        tags: ["WebGL", "Data Viz", "React"]
+      },
+      {
+        id: "feat-007",
+        name: "Cosmic Code Editor",
+        description: "Space-themed development environment",
+        image: "/public/images/projects/editor.jpg",
+        media: [],
+        details: "A revolutionary code editor with AI-powered suggestions and immersive visual themes.",
+        tags: ["Monaco", "AI", "TypeScript"]
+      },
+      {
+        id: "feat-008",
+        name: "Neural Symphony",
+        description: "AI-generated music composition",
+        image: "/public/images/projects/symphony.jpg",
+        media: [],
+        details: "Create beautiful, original music using neural networks trained on classical compositions.",
+        tags: ["AI", "Audio", "Python"]
+      },
+      {
+        id: "feat-009",
+        name: "Quantum Weather Predictor",
+        description: "Advanced meteorological forecasting",
+        image: "/public/images/projects/weather.jpg",
+        media: [],
+        details: "Leverage quantum computing to predict weather patterns with unprecedented accuracy.",
+        tags: ["Quantum", "ML", "Data Science"]
+      },
+      {
+        id: "feat-010",
+        name: "Bioluminescent UI Framework",
+        description: "Nature-inspired interface library",
+        image: "/public/images/projects/bio.jpg",
+        media: [],
+        details: "A unique UI framework inspired by bioluminescent organisms with glowing, organic animations.",
+        tags: ["UI", "Animation", "CSS"]
+      },
+      {
+        id: "feat-011",
+        name: "Void Network Monitor",
+        description: "Distributed system observability",
+        image: "/public/images/projects/void.jpg",
+        media: [],
+        details: "Monitor and visualize distributed systems across the network with real-time topology maps.",
+        tags: ["DevOps", "Monitoring", "Go"]
+      },
+      {
+        id: "feat-012",
+        name: "Prismatic Color Engine",
+        description: "Advanced color manipulation toolkit",
+        image: "/public/images/projects/prism.jpg",
+        media: [],
+        details: "A comprehensive color theory engine for designers with perceptual color space transformations.",
+        tags: ["Design", "Color", "JavaScript"]
+      },
+      {
+        id: "feat-013",
+        name: "Quantum State Manager",
+        description: "Advanced state synchronization",
+        image: "/public/images/projects/state.jpg",
+        media: [],
+        details: "A sophisticated state management library with time-travel debugging and quantum state principles.",
+        tags: ["State", "React", "TypeScript"]
+      },
+      {
+        id: "feat-014",
+        name: "Neuron Network Visualizer",
+        description: "Interactive neural architecture",
+        image: "/public/images/projects/neuron.jpg",
+        media: [],
+        details: "Real-time visualization of neural network training with 3D architecture exploration.",
+        tags: ["AI", "Visualization", "Three.js"]
+      },
+      {
+        id: "feat-015",
+        name: "Fluid Dynamics Simulator",
+        description: "Real-time physics engine",
+        image: "/public/images/projects/fluid.jpg",
+        media: [],
+        details: "GPU-accelerated fluid dynamics simulation with interactive parameters.",
+        tags: ["Physics", "WebGL", "Shaders"]
+      },
+      {
+        id: "feat-016",
+        name: "Celestial Navigation System",
+        description: "Astronomical positioning tool",
+        image: "/public/images/projects/celestial.jpg",
+        media: [],
+        details: "Navigate using stars and celestial bodies with real-time positioning algorithms.",
+        tags: ["Astronomy", "Navigation", "Math"]
+      },
+      {
+        id: "feat-017",
+        name: "Fractal Generator Pro",
+        description: "Mathematical art creation",
+        image: "/public/images/projects/fractal.jpg",
+        media: [],
+        details: "Generate stunning fractal patterns with deep zoom capabilities and customizable equations.",
+        tags: ["Math", "Graphics", "Canvas"]
+      },
+      {
+        id: "feat-018",
+        name: "Audio Synthesizer",
+        description: "Web-based sound design",
+        image: "/public/images/projects/synth.jpg",
+        media: [],
+        details: "Professional-grade audio synthesizer with modular routing and preset management.",
+        tags: ["Audio", "Web Audio", "Sound"]
+      },
+      {
+        id: "feat-019",
+        name: "Particle Physics Lab",
+        description: "Interactive particle simulator",
+        image: "/public/images/projects/physics.jpg",
+        media: [],
+        details: "Simulate particle interactions with various forces and collision dynamics.",
+        tags: ["Physics", "Simulation", "WebGL"]
+      },
+      {
+        id: "feat-020",
+        name: "Code Morphology Analyzer",
+        description: "AST visualization and refactoring",
+        image: "/public/images/projects/ast.jpg",
+        media: [],
+        details: "Visualize and analyze code structure with automated refactoring suggestions.",
+        tags: ["Tooling", "AST", "Analysis"]
+      }
+    ]
+  },
+  {
+    key: "work",
+    label: "Work",
+    order: 1,
+    items: [
+      {
+        id: "work-001",
+        name: "E-Commerce Platform",
+        description: "Scalable marketplace solution",
+        image: "/public/images/projects/ecommerce.jpg",
+        media: [
+          {
+            url: "/public/images/projects/ecommerce-1.jpg",
+            type: "image",
+            description: "Product catalog"
+          }
+        ],
+        details: "Built a high-performance e-commerce platform handling millions of transactions. Implemented advanced search, recommendations, and real-time inventory management.",
+        tags: ["Node.js", "React", "PostgreSQL"]
+      },
+      {
+        id: "work-002",
+        name: "Healthcare Portal",
+        description: "Patient management system",
+        image: "/public/images/projects/health.jpg",
+        media: [],
+        details: "Developed a HIPAA-compliant patient portal with secure messaging, appointment scheduling, and medical records management.",
+        tags: ["Angular", "Spring Boot", "Security"]
+      },
+      {
+        id: "work-003",
+        name: "Financial Analytics",
+        description: "Real-time market insights",
+        image: "/public/images/projects/finance.jpg",
+        media: [],
+        details: "Created a sophisticated financial analytics platform with live market data, predictive models, and portfolio optimization.",
+        tags: ["Python", "React", "WebSockets"]
+      },
+      {
+        id: "work-004",
+        name: "IoT Control Center",
+        description: "Smart device orchestration",
+        image: "/public/images/projects/iot.jpg",
+        media: [],
+        details: "Engineered a centralized IoT management platform for monitoring and controlling thousands of connected devices.",
+        tags: ["MQTT", "Node.js", "MongoDB"]
+      },
+      {
+        id: "work-005",
+        name: "Educational Platform",
+        description: "Interactive learning environment",
+        image: "/public/images/projects/edu.jpg",
+        media: [],
+        details: "Designed and built an engaging educational platform with gamification, progress tracking, and adaptive learning paths.",
+        tags: ["Vue.js", "Django", "AI"]
+      },
+      {
+        id: "work-006",
+        name: "Content Management System",
+        description: "Enterprise CMS solution",
+        image: "/public/images/projects/cms.jpg",
+        media: [],
+        details: "Architected a flexible, headless CMS serving content to multiple channels with advanced workflow management.",
+        tags: ["GraphQL", "Strapi", "React"]
+      },
+      {
+        id: "work-007",
+        name: "Supply Chain Tracker",
+        description: "Logistics optimization platform",
+        image: "/public/images/projects/supply.jpg",
+        media: [],
+        details: "Real-time tracking and optimization of global supply chains with predictive analytics.",
+        tags: ["Logistics", "Maps", "Analytics"]
+      },
+      {
+        id: "work-008",
+        name: "Video Conferencing Platform",
+        description: "Scalable WebRTC solution",
+        image: "/public/images/projects/video.jpg",
+        media: [],
+        details: "Built a high-quality video conferencing platform supporting thousands of concurrent users.",
+        tags: ["WebRTC", "Socket.io", "Node.js"]
+      },
+      {
+        id: "work-009",
+        name: "Document Collaboration Suite",
+        description: "Real-time collaborative editing",
+        image: "/public/images/projects/docs.jpg",
+        media: [],
+        details: "Google Docs-like collaborative document editing with operational transformation.",
+        tags: ["OT", "WebSockets", "React"]
+      },
+      {
+        id: "work-010",
+        name: "Social Analytics Dashboard",
+        description: "Multi-platform insights",
+        image: "/public/images/projects/social.jpg",
+        media: [],
+        details: "Aggregate and analyze social media metrics across multiple platforms in one unified dashboard.",
+        tags: ["APIs", "Analytics", "Vue.js"]
+      },
+      {
+        id: "work-011",
+        name: "Recruitment Platform",
+        description: "AI-powered hiring system",
+        image: "/public/images/projects/recruit.jpg",
+        media: [],
+        details: "Streamline recruitment with AI-assisted candidate matching and automated workflows.",
+        tags: ["AI", "HR Tech", "Python"]
+      },
+      {
+        id: "work-012",
+        name: "Energy Management System",
+        description: "Smart grid optimization",
+        image: "/public/images/projects/energy.jpg",
+        media: [],
+        details: "Monitor and optimize energy consumption across industrial facilities with ML predictions.",
+        tags: ["IoT", "ML", "Time Series"]
+      },
+      {
+        id: "work-013",
+        name: "Customer Relationship Manager",
+        description: "Next-gen CRM platform",
+        image: "/public/images/projects/crm.jpg",
+        media: [],
+        details: "Built a comprehensive CRM with AI-powered insights and automated workflows.",
+        tags: ["CRM", "AI", "Sales"]
+      },
+      {
+        id: "work-014",
+        name: "Inventory Management Suite",
+        description: "Real-time stock tracking",
+        image: "/public/images/projects/inventory.jpg",
+        media: [],
+        details: "Manage inventory across multiple warehouses with predictive restocking.",
+        tags: ["Logistics", "ML", "React"]
+      },
+      {
+        id: "work-015",
+        name: "Payment Gateway Integration",
+        description: "Secure transaction processing",
+        image: "/public/images/projects/payment.jpg",
+        media: [],
+        details: "Integrated multiple payment providers with fraud detection and recurring billing.",
+        tags: ["Payments", "Security", "API"]
+      },
+      {
+        id: "work-016",
+        name: "Business Intelligence Dashboard",
+        description: "Executive insights platform",
+        image: "/public/images/projects/bi.jpg",
+        media: [],
+        details: "Real-time business metrics and KPI tracking with custom report generation.",
+        tags: ["BI", "Analytics", "Dashboards"]
+      },
+      {
+        id: "work-017",
+        name: "Fleet Management System",
+        description: "Vehicle tracking and optimization",
+        image: "/public/images/projects/fleet.jpg",
+        media: [],
+        details: "Track and optimize fleet operations with route planning and maintenance scheduling.",
+        tags: ["GPS", "Logistics", "Maps"]
+      },
+      {
+        id: "work-018",
+        name: "Booking Platform",
+        description: "Reservation management",
+        image: "/public/images/projects/booking.jpg",
+        media: [],
+        details: "Built a scalable booking system for hotels, flights, and events.",
+        tags: ["Bookings", "Calendar", "Payments"]
+      },
+      {
+        id: "work-019",
+        name: "Legal Document Manager",
+        description: "Contract lifecycle management",
+        image: "/public/images/projects/legal.jpg",
+        media: [],
+        details: "Secure document management with e-signatures and version control.",
+        tags: ["Legal", "DocuSign", "Compliance"]
+      },
+      {
+        id: "work-020",
+        name: "Marketing Automation",
+        description: "Campaign management platform",
+        image: "/public/images/projects/marketing.jpg",
+        media: [],
+        details: "Automated marketing campaigns with A/B testing and analytics.",
+        tags: ["Marketing", "Automation", "Analytics"]
+      }
+    ]
+  },
+  {
+    key: "hobbies",
+    label: "Hobbies",
+    order: 2,
+    items: [
+      {
+        id: "hobby-001",
+        name: "Generative Art",
+        description: "Algorithmic visual experiences",
+        image: "/public/images/projects/genart.jpg",
+        media: [
+          {
+            url: "/public/images/projects/genart-1.jpg",
+            type: "image",
+            description: "Fractal patterns"
+          }
+        ],
+        details: "Exploring the intersection of code and creativity through generative algorithms that produce unique visual compositions.",
+        tags: ["p5.js", "GLSL", "Creative Coding"]
+      },
+      {
+        id: "hobby-002",
+        name: "Music Visualization",
+        description: "Audio-reactive graphics",
+        image: "/public/images/projects/music.jpg",
+        media: [],
+        details: "Creating immersive audio-visual experiences that respond to music in real-time using frequency analysis and particle systems.",
+        tags: ["Web Audio API", "Canvas", "Three.js"]
+      },
+      {
+        id: "hobby-003",
+        name: "Game Development",
+        description: "Interactive storytelling",
+        image: "/public/images/projects/game.jpg",
+        media: [],
+        details: "Developing indie games that blend engaging mechanics with compelling narratives and beautiful pixel art.",
+        tags: ["Phaser", "Unity", "Game Design"]
+      },
+      {
+        id: "hobby-004",
+        name: "Photography Portfolio",
+        description: "Capturing moments in time",
+        image: "/public/images/projects/photo.jpg",
+        media: [],
+        details: "A curated collection of landscape and urban photography, showcasing the beauty of natural and man-made environments.",
+        tags: ["Photography", "Lightroom", "Composition"]
+      },
+      {
+        id: "hobby-005",
+        name: "3D Modeling & Rendering",
+        description: "Digital sculpting adventures",
+        image: "/public/images/projects/3d.jpg",
+        media: [],
+        details: "Creating photorealistic 3D models and environments using Blender and advanced rendering techniques.",
+        tags: ["Blender", "3D", "Rendering"]
+      },
+      {
+        id: "hobby-006",
+        name: "Interactive Fiction",
+        description: "Branching narrative experiences",
+        image: "/public/images/projects/fiction.jpg",
+        media: [],
+        details: "Writing and developing interactive stories with multiple paths and endings.",
+        tags: ["Writing", "Twine", "Narrative"]
+      },
+      {
+        id: "hobby-007",
+        name: "Data Sonification",
+        description: "Turning data into music",
+        image: "/public/images/projects/sonify.jpg",
+        media: [],
+        details: "Experimental project converting various datasets into musical compositions.",
+        tags: ["Audio", "Data", "Creative Coding"]
+      },
+      {
+        id: "hobby-008",
+        name: "Algorithmic Poetry",
+        description: "Computer-generated verses",
+        image: "/public/images/projects/poetry.jpg",
+        media: [],
+        details: "Using natural language processing to generate unique poetry and prose.",
+        tags: ["NLP", "Poetry", "AI"]
+      },
+      {
+        id: "hobby-009",
+        name: "Virtual Reality Worlds",
+        description: "Immersive VR experiences",
+        image: "/public/images/projects/vr.jpg",
+        media: [],
+        details: "Creating interactive VR environments and experiences using WebXR.",
+        tags: ["VR", "WebXR", "Three.js"]
+      },
+      {
+        id: "hobby-010",
+        name: "Procedural Terrain Generation",
+        description: "Infinite landscape creation",
+        image: "/public/images/projects/terrain.jpg",
+        media: [],
+        details: "Generate realistic terrain using noise algorithms and erosion simulation.",
+        tags: ["Procedural", "Terrain", "WebGL"]
+      },
+      {
+        id: "hobby-011",
+        name: "Audio-Visual Installations",
+        description: "Interactive art pieces",
+        image: "/public/images/projects/av.jpg",
+        media: [],
+        details: "Creating immersive audio-visual installations that respond to user input.",
+        tags: ["Art", "Installation", "Interactive"]
+      },
+      {
+        id: "hobby-012",
+        name: "Retro Gaming Remakes",
+        description: "Modern takes on classics",
+        image: "/public/images/projects/retro.jpg",
+        media: [],
+        details: "Reimagining classic games with modern graphics and gameplay mechanics.",
+        tags: ["Gaming", "Remake", "Nostalgia"]
+      }
+    ]
+  },
+  {
+    key: "blog",
+    label: "Blog",
+    order: 3,
+    items: [
+      {
+        id: "blog-001",
+        name: "The Future of Web Development",
+        description: "Trends shaping the next decade",
+        image: "/public/images/blog/future.jpg",
+        media: [],
+        details: "An in-depth exploration of emerging technologies and methodologies that will define the future of web development, from WebAssembly to edge computing.",
+        tags: ["Web Development", "Technology", "Trends"]
+      },
+      {
+        id: "blog-002",
+        name: "Mastering TypeScript",
+        description: "Advanced patterns and practices",
+        image: "/public/images/blog/typescript.jpg",
+        media: [],
+        details: "A comprehensive guide to leveraging TypeScript's advanced features for building robust, maintainable applications.",
+        tags: ["TypeScript", "Programming", "Tutorial"]
+      },
+      {
+        id: "blog-003",
+        name: "Performance Optimization",
+        description: "Making web apps blazing fast",
+        image: "/public/images/blog/performance.jpg",
+        media: [],
+        details: "Practical techniques for optimizing web application performance, from bundle size reduction to efficient rendering strategies.",
+        tags: ["Performance", "Optimization", "Best Practices"]
+      },
+      {
+        id: "blog-004",
+        name: "Design Systems at Scale",
+        description: "Building consistent UIs",
+        image: "/public/images/blog/design.jpg",
+        media: [],
+        details: "Lessons learned from implementing and maintaining large-scale design systems across multiple teams and products.",
+        tags: ["Design Systems", "UI/UX", "Architecture"]
+      },
+      {
+        id: "blog-005",
+        name: "AI in Web Development",
+        description: "Leveraging machine learning",
+        image: "/public/images/blog/ai.jpg",
+        media: [],
+        details: "Exploring practical applications of artificial intelligence and machine learning in modern web development workflows.",
+        tags: ["AI", "Machine Learning", "Innovation"]
+      },
+      {
+        id: "blog-006",
+        name: "WebAssembly Deep Dive",
+        description: "The future of web performance",
+        image: "/public/images/blog/wasm.jpg",
+        media: [],
+        details: "Understanding WebAssembly and how it enables near-native performance in web applications.",
+        tags: ["WebAssembly", "Performance", "Rust"]
+      },
+      {
+        id: "blog-007",
+        name: "Microservices Architecture",
+        description: "Building scalable systems",
+        image: "/public/images/blog/microservices.jpg",
+        media: [],
+        details: "Best practices for designing and implementing microservices architectures.",
+        tags: ["Architecture", "Microservices", "DevOps"]
+      },
+      {
+        id: "blog-008",
+        name: "CSS Grid Mastery",
+        description: "Modern layout techniques",
+        image: "/public/images/blog/grid.jpg",
+        media: [],
+        details: "Master CSS Grid and create complex, responsive layouts with ease.",
+        tags: ["CSS", "Layout", "Design"]
+      },
+      {
+        id: "blog-009",
+        name: "Security Best Practices",
+        description: "Protecting web applications",
+        image: "/public/images/blog/security.jpg",
+        media: [],
+        details: "Essential security practices every web developer should implement.",
+        tags: ["Security", "Best Practices", "OWASP"]
+      },
+      {
+        id: "blog-010",
+        name: "The Art of Code Review",
+        description: "Building better teams",
+        image: "/public/images/blog/review.jpg",
+        media: [],
+        details: "How to conduct effective code reviews that improve code quality and team dynamics.",
+        tags: ["Code Review", "Team", "Process"]
+      },
+      {
+        id: "blog-011",
+        name: "Progressive Web Apps",
+        description: "Native-like web experiences",
+        image: "/public/images/blog/pwa.jpg",
+        media: [],
+        details: "Building PWAs that work offline and feel native on mobile devices.",
+        tags: ["PWA", "Mobile", "Service Workers"]
+      },
+      {
+        id: "blog-012",
+        name: "GraphQL Best Practices",
+        description: "API design patterns",
+        image: "/public/images/blog/graphql.jpg",
+        media: [],
+        details: "Designing efficient GraphQL APIs with proper caching and query optimization.",
+        tags: ["GraphQL", "API", "Architecture"]
+      },
+      {
+        id: "blog-013",
+        name: "Docker for Developers",
+        description: "Containerization guide",
+        image: "/public/images/blog/docker.jpg",
+        media: [],
+        details: "Practical guide to using Docker for development and deployment.",
+        tags: ["Docker", "DevOps", "Containers"]
+      },
+      {
+        id: "blog-014",
+        name: "React Performance Tips",
+        description: "Optimizing React apps",
+        image: "/public/images/blog/react-perf.jpg",
+        media: [],
+        details: "Advanced techniques for optimizing React applications and avoiding common pitfalls.",
+        tags: ["React", "Performance", "Optimization"]
+      }
+    ]
+  }
+];
 
 // src/components/pages/Home/index.tsx
-var data = {
-  "updated": (/* @__PURE__ */ new Date()).toLocaleDateString(),
-  "Home": {
-    "Featured": {
-      "Look at this": {
-        image: "https://auction-site-staging-storage.s3.us-east-2.amazonaws.com/products/72583/Screenshot20250904144307.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVN3I3QVJQ2HWDYQY%2F20251003%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20251003T025804Z&X-Amz-Expires=86400&X-Amz-Signature=a34a323c62b6b7b320aa5272b052bfe845a46a426e93356d855d4acb649f4f68&X-Amz-SignedHeaders=host"
+var HomePage = () => {
+  const [selectedItem, setSelectedItem] = d2(null);
+  const [activeRowIndex, setActiveRowIndex] = d2(0);
+  const sortedPortfolioData = [...portfolioData].sort((a3, b2) => a3.order - b2.order);
+  const handleItemClick = (item) => {
+    setSelectedItem(item);
+  };
+  const handleCloseDetail = () => {
+    setSelectedItem(null);
+  };
+  const handleRowChange = (index) => {
+    setActiveRowIndex(index);
+  };
+  return /* @__PURE__ */ u2("div", { className: "homepage", children: [
+    /* @__PURE__ */ u2(MysticalBackground, {}),
+    /* @__PURE__ */ u2("div", { className: "homepage__navigation", children: [
+      /* @__PURE__ */ u2("div", { className: "homepage__section-title", children: sortedPortfolioData[activeRowIndex].label }),
+      /* @__PURE__ */ u2("div", { className: "homepage__section-links", children: sortedPortfolioData.map((row, index) => /* @__PURE__ */ u2(
+        "button",
+        {
+          className: `homepage__section-link ${index === activeRowIndex ? "homepage__section-link--active" : ""}`,
+          onClick: () => handleRowChange(index),
+          children: row.label
+        },
+        row.key
+      )) })
+    ] }),
+    /* @__PURE__ */ u2("div", { className: "homepage__content", children: /* @__PURE__ */ u2(
+      BeltNavigator,
+      {
+        rows: sortedPortfolioData,
+        onItemClick: handleItemClick,
+        onRowChange: handleRowChange,
+        activeRowIndex
       }
-    },
-    "Contact": {
-      "Email": "rw3iss@gmail.com"
-    }
-  },
-  "Work": {
-    "Latest": {
-      "Project Label": {
-        date: /* @__PURE__ */ new Date()
-      }
-    }
-  }
-};
-var HomePage = (props) => {
-  return /* @__PURE__ */ u2("div", { className: "page", id: "home", children: /* @__PURE__ */ u2("div", { className: "json-wrapper", ref: (dom) => {
-    if (dom) {
-      console.log(`new json view`);
-      const jsonView = new EnhancedJsonView(data, dom, {
-        expandObjs: [/children/, /children\/(.*)/, /entry/, "Home"]
-      });
-      return () => {
-      };
-    }
-  } }) });
+    ) }),
+    /* @__PURE__ */ u2(ItemDetailView, { item: selectedItem, onClose: handleCloseDetail })
+  ] });
 };
 var Home_default = HomePage;
 
@@ -5065,152 +3920,6 @@ function createToolbarItem(item, parent, toolbar) {
   return parent;
 }
 
-// node_modules/preact/hooks/dist/hooks.module.js
-init_preact_module();
-init_preact_module();
-var t2;
-var r2;
-var u3;
-var i3;
-var o2 = 0;
-var f3 = [];
-var c2 = l;
-var e3 = c2.__b;
-var a2 = c2.__r;
-var v2 = c2.diffed;
-var l2 = c2.__c;
-var m2 = c2.unmount;
-var s2 = c2.__;
-function p2(n2, t3) {
-  c2.__h && c2.__h(r2, n2, o2 || t3), o2 = 0;
-  var u4 = r2.__H || (r2.__H = { __: [], __h: [] });
-  return n2 >= u4.__.length && u4.__.push({}), u4.__[n2];
-}
-function d2(n2) {
-  return o2 = 1, h2(D2, n2);
-}
-function h2(n2, u4, i4) {
-  var o3 = p2(t2++, 2);
-  if (o3.t = n2, !o3.__c && (o3.__ = [i4 ? i4(u4) : D2(void 0, u4), function(n3) {
-    var t3 = o3.__N ? o3.__N[0] : o3.__[0], r3 = o3.t(t3, n3);
-    t3 !== r3 && (o3.__N = [r3, o3.__[1]], o3.__c.setState({}));
-  }], o3.__c = r2, !r2.__f)) {
-    var f4 = function(n3, t3, r3) {
-      if (!o3.__c.__H) return true;
-      var u5 = o3.__c.__H.__.filter(function(n4) {
-        return !!n4.__c;
-      });
-      if (u5.every(function(n4) {
-        return !n4.__N;
-      })) return !c3 || c3.call(this, n3, t3, r3);
-      var i5 = o3.__c.props !== n3;
-      return u5.forEach(function(n4) {
-        if (n4.__N) {
-          var t4 = n4.__[0];
-          n4.__ = n4.__N, n4.__N = void 0, t4 !== n4.__[0] && (i5 = true);
-        }
-      }), c3 && c3.call(this, n3, t3, r3) || i5;
-    };
-    r2.__f = true;
-    var c3 = r2.shouldComponentUpdate, e4 = r2.componentWillUpdate;
-    r2.componentWillUpdate = function(n3, t3, r3) {
-      if (this.__e) {
-        var u5 = c3;
-        c3 = void 0, f4(n3, t3, r3), c3 = u5;
-      }
-      e4 && e4.call(this, n3, t3, r3);
-    }, r2.shouldComponentUpdate = f4;
-  }
-  return o3.__N || o3.__;
-}
-function y2(n2, u4) {
-  var i4 = p2(t2++, 3);
-  !c2.__s && C2(i4.__H, u4) && (i4.__ = n2, i4.u = u4, r2.__H.__h.push(i4));
-}
-function A2(n2) {
-  return o2 = 5, T2(function() {
-    return { current: n2 };
-  }, []);
-}
-function T2(n2, r3) {
-  var u4 = p2(t2++, 7);
-  return C2(u4.__H, r3) && (u4.__ = n2(), u4.__H = r3, u4.__h = n2), u4.__;
-}
-function q2(n2, t3) {
-  return o2 = 8, T2(function() {
-    return n2;
-  }, t3);
-}
-function j2() {
-  for (var n2; n2 = f3.shift(); ) if (n2.__P && n2.__H) try {
-    n2.__H.__h.forEach(z2), n2.__H.__h.forEach(B2), n2.__H.__h = [];
-  } catch (t3) {
-    n2.__H.__h = [], c2.__e(t3, n2.__v);
-  }
-}
-c2.__b = function(n2) {
-  r2 = null, e3 && e3(n2);
-}, c2.__ = function(n2, t3) {
-  n2 && t3.__k && t3.__k.__m && (n2.__m = t3.__k.__m), s2 && s2(n2, t3);
-}, c2.__r = function(n2) {
-  a2 && a2(n2), t2 = 0;
-  var i4 = (r2 = n2.__c).__H;
-  i4 && (u3 === r2 ? (i4.__h = [], r2.__h = [], i4.__.forEach(function(n3) {
-    n3.__N && (n3.__ = n3.__N), n3.u = n3.__N = void 0;
-  })) : (i4.__h.forEach(z2), i4.__h.forEach(B2), i4.__h = [], t2 = 0)), u3 = r2;
-}, c2.diffed = function(n2) {
-  v2 && v2(n2);
-  var t3 = n2.__c;
-  t3 && t3.__H && (t3.__H.__h.length && (1 !== f3.push(t3) && i3 === c2.requestAnimationFrame || ((i3 = c2.requestAnimationFrame) || w2)(j2)), t3.__H.__.forEach(function(n3) {
-    n3.u && (n3.__H = n3.u), n3.u = void 0;
-  })), u3 = r2 = null;
-}, c2.__c = function(n2, t3) {
-  t3.some(function(n3) {
-    try {
-      n3.__h.forEach(z2), n3.__h = n3.__h.filter(function(n4) {
-        return !n4.__ || B2(n4);
-      });
-    } catch (r3) {
-      t3.some(function(n4) {
-        n4.__h && (n4.__h = []);
-      }), t3 = [], c2.__e(r3, n3.__v);
-    }
-  }), l2 && l2(n2, t3);
-}, c2.unmount = function(n2) {
-  m2 && m2(n2);
-  var t3, r3 = n2.__c;
-  r3 && r3.__H && (r3.__H.__.forEach(function(n3) {
-    try {
-      z2(n3);
-    } catch (n4) {
-      t3 = n4;
-    }
-  }), r3.__H = void 0, t3 && c2.__e(t3, r3.__v));
-};
-var k2 = "function" == typeof requestAnimationFrame;
-function w2(n2) {
-  var t3, r3 = function() {
-    clearTimeout(u4), k2 && cancelAnimationFrame(t3), setTimeout(n2);
-  }, u4 = setTimeout(r3, 35);
-  k2 && (t3 = requestAnimationFrame(r3));
-}
-function z2(n2) {
-  var t3 = r2, u4 = n2.__c;
-  "function" == typeof u4 && (n2.__c = void 0, u4()), r2 = t3;
-}
-function B2(n2) {
-  var t3 = r2;
-  n2.__c = n2.__(), r2 = t3;
-}
-function C2(n2, t3) {
-  return !n2 || n2.length !== t3.length || t3.some(function(t4, r3) {
-    return t4 !== n2[r3];
-  });
-}
-function D2(n2, t3) {
-  return "function" == typeof t3 ? t3(n2) : t3;
-}
-
 // src/lib/types/Blob.ts
 init_preact_module();
 
@@ -5404,8 +4113,8 @@ var BlobService = class {
     this.cacheService.remove(id);
     this.notifyEvent("blobDeleted", { id });
   }
-  notifyEvent(eventType, data2) {
-    this.eventBus.dispatch(eventType, data2);
+  notifyEvent(eventType, data) {
+    this.eventBus.dispatch(eventType, data);
   }
   clear() {
     this.cacheService.clear();
@@ -7017,7 +5726,7 @@ var Color = (function() {
     }
   }, {
     key: "rgba",
-    get: function get2() {
+    get: function get() {
       if (this._rgba) {
         return this._rgba;
       }
@@ -7035,17 +5744,17 @@ var Color = (function() {
     }
   }, {
     key: "rgbString",
-    get: function get2() {
+    get: function get() {
       return this.printRGB();
     }
   }, {
     key: "rgbaString",
-    get: function get2() {
+    get: function get() {
       return this.printRGB(true);
     }
   }, {
     key: "hsla",
-    get: function get2() {
+    get: function get() {
       if (this._hsla) {
         return this._hsla;
       }
@@ -7063,17 +5772,17 @@ var Color = (function() {
     }
   }, {
     key: "hslString",
-    get: function get2() {
+    get: function get() {
       return this.printHSL();
     }
   }, {
     key: "hslaString",
-    get: function get2() {
+    get: function get() {
       return this.printHSL(true);
     }
   }, {
     key: "hex",
-    get: function get2() {
+    get: function get() {
       var rgb = this.rgba, hex = rgb.map(function(x2, i4) {
         return i4 < 3 ? x2.toString(16) : Math.round(x2 * 255).toString(16);
       });
@@ -8447,10 +7156,10 @@ var eventbus = __toESM(require_eventbus_min());
 var _EventService = class {
   debug = false;
   // fire event
-  dispatch(name, data2) {
+  dispatch(name, data) {
     if (this.debug)
-      console.log("EVENT:", name, data2);
-    eventbus.dispatch(name, data2);
+      console.log("EVENT:", name, data);
+    eventbus.dispatch(name, data);
   }
   subscribe(event, cb) {
     eventbus.addEventListener(event, cb);
@@ -9120,4 +7829,3 @@ vanilla-picker/dist/vanilla-picker.mjs:
    * Released under the ISC license.
    *)
 */
-//# sourceMappingURL=index.js.map

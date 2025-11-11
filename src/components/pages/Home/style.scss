@@ -1,2 +1,212 @@
-#home {
+.homepage {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    overflow: hidden;
+    background: #0a0a1a;
+    color: #e0f0ff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+        'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+
+    &__navigation {
+        position: fixed;
+        top: 3rem;
+        left: 3rem;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    &__section-title {
+        font-size: 3rem;
+        font-weight: 900;
+        color: rgba(0, 220, 255, 0.15);
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        line-height: 1;
+        pointer-events: none;
+        user-select: none;
+    }
+
+    &__section-links {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    &__section-link {
+        background: none;
+        border: none;
+        padding: 0.5rem 0;
+        font-size: 1rem;
+        font-weight: 600;
+        color: rgba(180, 220, 255, 0.6);
+        text-align: left;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+
+        &::before {
+            content: '';
+            position: absolute;
+            left: -1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(0, 200, 255, 0.4);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        &:hover {
+            color: rgba(200, 240, 255, 0.9);
+            transform: translateX(0.5rem);
+
+            &::before {
+                opacity: 1;
+            }
+        }
+
+        &--active {
+            color: rgba(0, 255, 200, 1);
+            text-shadow: 0 0 20px rgba(0, 255, 200, 0.6);
+            transform: translateX(0.5rem);
+
+            &::before {
+                opacity: 1;
+                background: rgba(0, 255, 200, 1);
+                box-shadow: 0 0 10px rgba(0, 255, 200, 0.8);
+            }
+        }
+    }
+
+    &__content {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        z-index: 1;
+    }
+
+    // Global reset for smooth animations
+    * {
+        box-sizing: border-box;
+    }
+
+    // Smooth scrolling
+    html {
+        scroll-behavior: smooth;
+    }
+
+    // Remove default button styles
+    button {
+        background: none;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+    }
+}
+
+// Global styles for the futuristic theme
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background: #0a0a1a;
+    color: #e0f0ff;
+}
+
+// Add some subtle animations to page elements
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .homepage {
+        &__content {
+            padding: 0;
+        }
+    }
+
+    .circular-belt {
+        &__item {
+            width: 300px;
+            height: 400px;
+        }
+
+        &__label h2 {
+            font-size: 4rem;
+        }
+    }
+
+    .item-detail-view {
+        &__container {
+            width: 95%;
+            height: 95vh;
+        }
+
+        &__title {
+            font-size: 2rem;
+        }
+
+        &__body {
+            padding: 1.5rem;
+        }
+
+        &__close {
+            width: 40px;
+            height: 40px;
+
+            &--left {
+                left: 1rem;
+            }
+
+            &--right {
+                right: 1rem;
+            }
+        }
+    }
+}
+
+// Performance optimizations
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
