@@ -2248,257 +2248,923 @@ function D2(n2, t3) {
   return "function" == typeof t3 ? t3(n2) : t3;
 }
 
-// src/components/shared/MysticalBackground/MysticalBackground.tsx
+// src/data/portfolioData.ts
 init_preact_module();
-var MysticalBackground = () => {
-  const canvasRef = A2(null);
-  const particlesRef = A2([]);
-  const flowFieldRef = A2([]);
-  const blobsRef = A2([]);
-  const scrollOffsetRef = A2(0);
-  const animationFrameRef = A2();
-  const timeRef = A2(0);
-  y2(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: false });
-    if (!ctx) return;
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight * 2;
-      initFlowField();
-    };
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-    const initFlowField = () => {
-      const resolution = 30;
-      const cols = Math.ceil(canvas.width / resolution);
-      const rows = Math.ceil(canvas.height / resolution);
-      flowFieldRef.current = [];
-      for (let y3 = 0; y3 < rows; y3++) {
-        const row = [];
-        for (let x2 = 0; x2 < cols; x2++) {
-          const angle = Math.sin(x2 * 0.1 + y3 * 0.05) * Math.PI + Math.cos(y3 * 0.1 - x2 * 0.05) * Math.PI * 0.5;
-          const magnitude = Math.sin(x2 * 0.05) * Math.cos(y3 * 0.05) * 0.5 + 0.5;
-          row.push({
-            x: x2 * resolution,
-            y: y3 * resolution,
-            angle,
-            magnitude
-          });
-        }
-        flowFieldRef.current.push(row);
+
+// src/data/tags.ts
+init_preact_module();
+var PortfolioTag = /* @__PURE__ */ ((PortfolioTag2) => {
+  PortfolioTag2["REACT"] = "React";
+  PortfolioTag2["REACT_NATIVE"] = "React Native";
+  PortfolioTag2["ANGULAR"] = "Angular";
+  PortfolioTag2["EMBER"] = "Ember.js";
+  PortfolioTag2["GATSBY"] = "Gatsby";
+  PortfolioTag2["NEXTJS"] = "Next.js";
+  PortfolioTag2["NODEJS"] = "Node.js";
+  PortfolioTag2["NESTJS"] = "NestJS";
+  PortfolioTag2["EXPRESS"] = "Express";
+  PortfolioTag2["LARAVEL"] = "Laravel";
+  PortfolioTag2["DJANGO"] = "Django";
+  PortfolioTag2["RAILS"] = "Ruby on Rails";
+  PortfolioTag2["ASP_NET"] = "ASP.NET";
+  PortfolioTag2["TYPESCRIPT"] = "TypeScript";
+  PortfolioTag2["JAVASCRIPT"] = "JavaScript";
+  PortfolioTag2["PHP"] = "PHP";
+  PortfolioTag2["PYTHON"] = "Python";
+  PortfolioTag2["JAVA"] = "Java";
+  PortfolioTag2["CSHARP"] = "C#";
+  PortfolioTag2["RUBY"] = "Ruby";
+  PortfolioTag2["WORDPRESS"] = "WordPress";
+  PortfolioTag2["DRUPAL"] = "Drupal";
+  PortfolioTag2["SITECORE"] = "SiteCore";
+  PortfolioTag2["MAGENTO"] = "Magento";
+  PortfolioTag2["SHOPIFY"] = "Shopify";
+  PortfolioTag2["EXPRESSION_ENGINE"] = "ExpressionEngine";
+  PortfolioTag2["SILVERSTRIPE"] = "SilverStripe";
+  PortfolioTag2["AWS"] = "AWS";
+  PortfolioTag2["GCP"] = "Google Cloud";
+  PortfolioTag2["LAMBDA"] = "AWS Lambda";
+  PortfolioTag2["CLOUDFRONT"] = "CloudFront";
+  PortfolioTag2["S3"] = "S3";
+  PortfolioTag2["EC2"] = "EC2";
+  PortfolioTag2["DYNAMODB"] = "DynamoDB";
+  PortfolioTag2["MYSQL"] = "MySQL";
+  PortfolioTag2["POSTGRESQL"] = "PostgreSQL";
+  PortfolioTag2["MONGODB"] = "MongoDB";
+  PortfolioTag2["CASSANDRA"] = "Cassandra";
+  PortfolioTag2["BIGQUERY"] = "BigQuery";
+  PortfolioTag2["REDIS"] = "Redis";
+  PortfolioTag2["MEMCACHED"] = "Memcached";
+  PortfolioTag2["DOCKER"] = "Docker";
+  PortfolioTag2["ANSIBLE"] = "Ansible";
+  PortfolioTag2["CIRCLECI"] = "CircleCI";
+  PortfolioTag2["GIT"] = "Git";
+  PortfolioTag2["REST_API"] = "REST API";
+  PortfolioTag2["GRAPHQL"] = "GraphQL";
+  PortfolioTag2["WEBSOCKETS"] = "WebSockets";
+  PortfolioTag2["STRIPE"] = "Stripe";
+  PortfolioTag2["PAYPAL"] = "PayPal";
+  PortfolioTag2["ZOOM"] = "Zoom Integration";
+  PortfolioTag2["AI_ML"] = "AI/ML";
+  PortfolioTag2["WEBGL"] = "WebGL";
+  PortfolioTag2["SEO"] = "SEO";
+  PortfolioTag2["RESPONSIVE_DESIGN"] = "Responsive Design";
+  PortfolioTag2["PERFORMANCE_OPTIMIZATION"] = "Performance Optimization";
+  PortfolioTag2["E_COMMERCE"] = "E-Commerce";
+  PortfolioTag2["CMS_DEVELOPMENT"] = "CMS Development";
+  PortfolioTag2["FULL_STACK"] = "Full-Stack";
+  PortfolioTag2["MICROSERVICES"] = "Microservices";
+  PortfolioTag2["REAL_TIME"] = "Real-time";
+  PortfolioTag2["MOBILE_DEVELOPMENT"] = "Mobile Development";
+  PortfolioTag2["SYSTEM_ARCHITECTURE"] = "System Architecture";
+  PortfolioTag2["DATABASE_MIGRATION"] = "Database Migration";
+  PortfolioTag2["API_DESIGN"] = "API Design";
+  PortfolioTag2["THIRD_PARTY_INTEGRATION"] = "Third-party Integration";
+  PortfolioTag2["CHATBOT"] = "Chatbot";
+  PortfolioTag2["SSO"] = "Single Sign-On";
+  PortfolioTag2["VIDEO_STREAMING"] = "Video Streaming";
+  return PortfolioTag2;
+})(PortfolioTag || {});
+
+// src/data/portfolioData.ts
+var portfolioData = [
+  {
+    key: "featured",
+    label: "Featured",
+    order: 0,
+    items: [
+      {
+        id: "vendidit",
+        name: "Vendidit",
+        description: "Leading redesign and architecture of B2B bulk auction platform backend on AWS with NextJS and NestJS clients, achieving 2.5x improvement in throughput",
+        image: "/public/data/work/vendidit/thumbnail.svg",
+        thumbnail: "/public/data/work/vendidit/thumbnail.svg",
+        media: [],
+        details: "Lead Full-stack Engineer on the Marketplace Team at Vendidit, an AI-powered recommerce platform. Responsible for architecting and implementing the backend infrastructure on AWS, utilizing Next.js and NestJS for the client applications. Successfully optimized system throughput by 2.5x through advanced optimization techniques. The platform handles livestream and online auctions for returned and used products, helping reduce the 93 billion pounds of returns discarded annually.",
+        tags: ["Next.js" /* NEXTJS */, "NestJS" /* NESTJS */, "AWS" /* AWS */, "TypeScript" /* TYPESCRIPT */, "Node.js" /* NODEJS */, "Performance Optimization" /* PERFORMANCE_OPTIMIZATION */, "System Architecture" /* SYSTEM_ARCHITECTURE */],
+        url: "https://vendidit.com",
+        type: "fulltime",
+        position: "Lead Full-stack Engineer, Marketplace Team",
+        dates: "June 2025 to present"
+      },
+      {
+        id: "adaya-ai",
+        name: "Adaya AI",
+        description: "Led technical operations and architected an ad analytics platform consolidating integrations into one system using TypeScript, Node.js, React, BigQuery, GCP and AWS",
+        image: "/public/data/work/adaya-ai/screenshot.png",
+        thumbnail: "/public/data/work/adaya-ai/thumbnail.svg",
+        media: [],
+        details: "Director of Technology at Adaya AI, responsible for leading all technical operations and architecture decisions. Designed and built a comprehensive ad analytics platform that consolidates multiple advertising integrations into a unified system. Utilized modern cloud infrastructure with GCP and AWS, implemented real-time data processing with BigQuery, and created intuitive dashboards using React and TypeScript.",
+        tags: ["TypeScript" /* TYPESCRIPT */, "Node.js" /* NODEJS */, "React" /* REACT */, "BigQuery" /* BIGQUERY */, "Google Cloud" /* GCP */, "AWS" /* AWS */, "System Architecture" /* SYSTEM_ARCHITECTURE */, "API Design" /* API_DESIGN */],
+        url: "https://adaya.ai",
+        type: "fulltime",
+        position: "Director of Technology",
+        dates: "January 2021 to January 2023"
+      },
+      {
+        id: "preach-logic",
+        name: "Preach Logic",
+        description: "Helped debug and extend a custom CMS for faith-based organizations with AI agent integration",
+        image: "/public/data/work/preach-logic/thumbnail.svg",
+        thumbnail: "/public/data/work/preach-logic/thumbnail.svg",
+        media: [],
+        details: "Freelance work debugging and extending a custom content management system specifically designed for pastors and church leaders. Integrated AI capabilities for auto-tagging, transcript generation, and semantic search of sermon content. The platform centralizes video, audio, and document management with intelligent organization features.",
+        tags: ["AI/ML" /* AI_ML */, "CMS Development" /* CMS_DEVELOPMENT */, "TypeScript" /* TYPESCRIPT */, "Node.js" /* NODEJS */],
+        url: "https://preachlogic.com",
+        type: "freelance",
+        dates: "March 2025"
       }
-    };
-    const initBlobs = () => {
-      const blobs = [];
-      for (let i4 = 0; i4 < 6; i4++) {
-        const vertexCount = 8 + Math.floor(Math.random() * 4);
-        const vertices = [];
-        const baseRadius = 150 + Math.random() * 200;
-        for (let j3 = 0; j3 < vertexCount; j3++) {
-          const angle = j3 / vertexCount * Math.PI * 2;
-          vertices.push({
-            x: 0,
-            y: 0,
-            angle,
-            baseRadius: baseRadius * (0.8 + Math.random() * 0.4)
-          });
-        }
-        blobs.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          radius: baseRadius,
-          vertices,
-          rotationSpeed: (Math.random() - 0.5) * 5e-4,
-          pulseSpeed: 1e-3 + Math.random() * 2e-3,
-          pulsePhase: Math.random() * Math.PI * 2,
-          color: {
-            h: 190 + Math.random() * 40,
-            // Blue-cyan range
-            s: 60 + Math.random() * 30,
-            l: 30 + Math.random() * 20
-          }
-        });
+    ]
+  },
+  {
+    key: "work",
+    label: "Work",
+    order: 1,
+    items: [
+      // FULLTIME POSITIONS
+      {
+        id: "vendidit",
+        name: "Vendidit",
+        description: "Leading redesign and architecture of B2B bulk auction platform backend on AWS with NextJS and NestJS clients, achieving 2.5x improvement in throughput",
+        image: "/public/data/work/vendidit/thumbnail.svg",
+        media: [],
+        details: "Lead Full-stack Engineer on the Marketplace Team at Vendidit, an AI-powered recommerce platform. Responsible for architecting and implementing the backend infrastructure on AWS, utilizing Next.js and NestJS for the client applications. Successfully optimized system throughput by 2.5x through advanced optimization techniques. The platform handles livestream and online auctions for returned and used products, helping reduce the 93 billion pounds of returns discarded annually.",
+        tags: ["Next.js" /* NEXTJS */, "NestJS" /* NESTJS */, "AWS" /* AWS */, "TypeScript" /* TYPESCRIPT */, "Node.js" /* NODEJS */, "Performance Optimization" /* PERFORMANCE_OPTIMIZATION */, "System Architecture" /* SYSTEM_ARCHITECTURE */],
+        url: "https://vendidit.com",
+        type: "fulltime",
+        position: "Lead Full-stack Engineer, Marketplace Team",
+        dates: "June 2025 to present"
+      },
+      {
+        id: "adaya-ai",
+        name: "Adaya AI",
+        description: "Led technical operations and architected an ad analytics platform consolidating integrations into one system using TypeScript, Node.js, React, BigQuery, GCP and AWS",
+        image: "/public/data/work/adaya-ai/screenshot.png",
+        thumbnail: "/public/data/work/adaya-ai/thumbnail.svg",
+        media: [],
+        details: "Director of Technology at Adaya AI, responsible for leading all technical operations and architecture decisions. Designed and built a comprehensive ad analytics platform that consolidates multiple advertising integrations into a unified system. Utilized modern cloud infrastructure with GCP and AWS, implemented real-time data processing with BigQuery, and created intuitive dashboards using React and TypeScript.",
+        tags: ["TypeScript" /* TYPESCRIPT */, "Node.js" /* NODEJS */, "React" /* REACT */, "BigQuery" /* BIGQUERY */, "Google Cloud" /* GCP */, "AWS" /* AWS */, "System Architecture" /* SYSTEM_ARCHITECTURE */, "API Design" /* API_DESIGN */],
+        url: "https://adaya.ai",
+        type: "fulltime",
+        position: "Director of Technology",
+        dates: "January 2021 to January 2023"
+      },
+      {
+        id: "envoyai",
+        name: "EnvoyAI",
+        description: "First hire who designed developer portal for healthcare startup using Node.js/NestJS, AWS services, and React, enabling management of dockerized AI algorithms",
+        thumbnail: "/public/data/work/envoyai/thumbnail.png",
+        media: [],
+        details: "Lead Senior Software Engineer and first technical hire at EnvoyAI, a healthcare AI startup. Architected and built the complete developer portal from the ground up, enabling healthcare providers to manage and deploy dockerized AI algorithms for hospital integration. Utilized Node.js/NestJS for the backend, AWS services for infrastructure, and React for the frontend interface. The platform streamlined the deployment of medical AI models into hospital environments.",
+        tags: ["Node.js" /* NODEJS */, "NestJS" /* NESTJS */, "AWS" /* AWS */, "React" /* REACT */, "Docker" /* DOCKER */, "AI/ML" /* AI_ML */, "API Design" /* API_DESIGN */, "System Architecture" /* SYSTEM_ARCHITECTURE */],
+        type: "fulltime",
+        position: "Lead Senior Software Engineer",
+        dates: "August 2017 to August 2018"
+      },
+      {
+        id: "huge-inc",
+        name: "Huge Inc.",
+        description: "Full-stack ASP.NET developer maintaining website codebase and SiteCore CMS, leading database migration from SQL Server to Cassandra",
+        thumbnail: "/public/data/work/huge-inc/thumbnail.png",
+        media: [],
+        details: "Software Engineer at Huge Inc., a prominent digital agency. Worked as a full-stack ASP.NET developer, maintaining complex website codebases and managing SiteCore CMS implementations. Led a critical database migration project transitioning from SQL Server to Cassandra, enabling improved scalability and performance for high-traffic client websites.",
+        tags: ["ASP.NET" /* ASP_NET */, "C#" /* CSHARP */, "SiteCore" /* SITECORE */, "Cassandra" /* CASSANDRA */, "Database Migration" /* DATABASE_MIGRATION */, "Full-Stack" /* FULL_STACK */],
+        type: "fulltime",
+        position: "Software Engineer",
+        dates: "December 2014 to March 2015"
+      },
+      {
+        id: "publicis-modem",
+        name: "Publicis Modem",
+        description: "Led ASP.NET backend development for Garnier USA sites, mentoring team members on recommendation systems, newsletters, and user tracking features",
+        thumbnail: "/public/data/work/publicis-modem/thumbnail.png",
+        media: [],
+        details: "Lead Backend Developer at Publicis Modem, responsible for ASP.NET backend architecture for Garnier USA websites. Mentored junior developers and led implementation of advanced features including product recommendation systems, newsletter management, and comprehensive user tracking and analytics. Worked on high-profile beauty and cosmetics brand digital experiences.",
+        tags: ["ASP.NET" /* ASP_NET */, "C#" /* CSHARP */, "REST API" /* REST_API */, "Full-Stack" /* FULL_STACK */, "E-Commerce" /* E_COMMERCE */],
+        type: "fulltime",
+        position: "Lead Backend Developer",
+        dates: "July 2012 to February 2013"
+      },
+      {
+        id: "elephant-ventures",
+        name: "Elephant Ventures",
+        description: "PHP backend developer contributing to GroupSlots iPhone prototype, PitneyBowesMeter.com e-commerce platform, and GeneralSnus.com CMS refactoring",
+        thumbnail: "/public/data/work/elephant-ventures/thumbnail.png",
+        media: [],
+        details: "Software Engineer at Elephant Ventures working across multiple client projects. Developed PHP backend for GroupSlots iPhone app prototype, built e-commerce functionality for PitneyBowesMeter.com, and refactored CMS architecture for GeneralSnus.com. Gained extensive experience in diverse technology stacks and client requirements.",
+        tags: ["PHP" /* PHP */, "MySQL" /* MYSQL */, "E-Commerce" /* E_COMMERCE */, "CMS Development" /* CMS_DEVELOPMENT */, "REST API" /* REST_API */],
+        type: "fulltime",
+        position: "Software Engineer",
+        dates: "August 2011 to July 2012"
+      },
+      {
+        id: "rga-interactive",
+        name: "R/GA Interactive",
+        description: "ASP.NET backend developer for high-profile clients including Verizon, Barnes & Noble, and L'Or\xE9al; led internal reporting systems and intranet architecture",
+        thumbnail: "/public/data/work/rga-interactive/thumbnail.png",
+        media: [],
+        details: "Software Developer at R/GA Interactive, one of the world's leading digital agencies. Worked as ASP.NET backend developer on high-profile client projects including Verizon, Barnes & Noble, and L'Or\xE9al. Led development of internal reporting systems and architected company intranet infrastructure. Gained experience building enterprise-scale applications for Fortune 500 brands.",
+        tags: ["ASP.NET" /* ASP_NET */, "C#" /* CSHARP */, "MySQL" /* MYSQL */, "Full-Stack" /* FULL_STACK */, "System Architecture" /* SYSTEM_ARCHITECTURE */],
+        type: "fulltime",
+        position: "Software Developer",
+        dates: "May 2007 to August 2011"
+      },
+      {
+        id: "mydorp",
+        name: "MyDorp",
+        description: "Lead developer for early web operating system platform using ASP.NET, Java, and custom Eclipse plugins for scalable service hosting",
+        image: "/public/data/work/mydorp/thumbnail.svg",
+        thumbnail: "/public/data/work/mydorp/thumbnail.svg",
+        media: [],
+        details: "Lead Developer for MyDorp, an innovative early web operating system platform. Architected and built a scalable service hosting environment using ASP.NET and Java, created custom Eclipse plugins for development tooling. Pioneering work in cloud-based application platforms before modern PaaS solutions existed.",
+        tags: ["ASP.NET" /* ASP_NET */, "Java" /* JAVA */, "C#" /* CSHARP */, "System Architecture" /* SYSTEM_ARCHITECTURE */],
+        type: "fulltime",
+        dates: "September 2005 to August 2007"
+      },
+      {
+        id: "rutgers-university",
+        name: "Rutgers University",
+        description: "Lead developer for Livingston.com using PHP and MySQL, collaborating with Dean on dynamic user pages and administrative functionality",
+        thumbnail: "/public/data/work/rutgers-university/thumbnail.png",
+        media: [],
+        details: "Lead Developer for Livingston.com at Rutgers University. Built comprehensive PHP/MySQL web application with dynamic user profile pages and administrative backend. Collaborated directly with university administration to deliver student-facing portal with community features.",
+        tags: ["PHP" /* PHP */, "MySQL" /* MYSQL */, "Full-Stack" /* FULL_STACK */, "CMS Development" /* CMS_DEVELOPMENT */],
+        type: "fulltime",
+        dates: "January 2005 to May 2007"
+      },
+      // FREELANCE PROJECTS
+      {
+        id: "preach-logic",
+        name: "Preach Logic",
+        description: "Helped debug and extend a custom CMS for faith-based organizations with AI agent integration",
+        image: "/public/data/work/preach-logic/thumbnail.svg",
+        media: [],
+        details: "Freelance work debugging and extending a custom content management system specifically designed for pastors and church leaders. Integrated AI capabilities for auto-tagging, transcript generation, and semantic search of sermon content. The platform centralizes video, audio, and document management with intelligent organization features.",
+        tags: ["AI/ML" /* AI_ML */, "CMS Development" /* CMS_DEVELOPMENT */, "TypeScript" /* TYPESCRIPT */, "Node.js" /* NODEJS */],
+        url: "https://preachlogic.com",
+        type: "freelance",
+        dates: "March 2025"
+      },
+      {
+        id: "tier-33",
+        name: "Tier 33 Productions",
+        description: "Designed React single-page application for audio/visual rental company using AWS Lambda, CloudFront, and S3",
+        image: "/public/data/work/tier-33/thumbnail.svg",
+        thumbnail: "/public/data/work/tier-33/thumbnail.svg",
+        media: [],
+        details: "Freelance development of a modern React single-page application for Tier 33 Productions, a Philadelphia-based AV equipment rental company. Implemented serverless architecture using AWS Lambda, CloudFront for CDN, and S3 for static hosting. The site showcases rental equipment including speakers, DJ gear, lighting, and stage equipment.",
+        tags: ["React" /* REACT */, "AWS" /* AWS */, "AWS Lambda" /* LAMBDA */, "CloudFront" /* CLOUDFRONT */, "S3" /* S3 */, "JavaScript" /* JAVASCRIPT */],
+        url: "https://tier33.com",
+        type: "freelance",
+        dates: "December 2023"
+      },
+      {
+        id: "urbandaddy-drinklist",
+        name: "UrbanDaddy DrinkList",
+        description: "Refactored frontend/backend for drink exploration site using Django/Python, JavaScript, and Memcached integration with Google Sheets",
+        image: "/public/data/work/urbandaddy-drinklist/thumbnail.svg",
+        thumbnail: "/public/data/work/urbandaddy-drinklist/thumbnail.svg",
+        media: [],
+        details: "Freelance refactoring project for UrbanDaddy's DrinkList platform. Modernized both frontend and backend architecture using Django/Python, optimized performance with Memcached caching, and integrated Google Sheets API for content management. The site provides curated drink recommendations and cocktail exploration.",
+        tags: ["Django" /* DJANGO */, "Python" /* PYTHON */, "JavaScript" /* JAVASCRIPT */, "Memcached" /* MEMCACHED */, "REST API" /* REST_API */],
+        type: "freelance",
+        dates: "December 2020"
+      },
+      {
+        id: "opus-logica",
+        name: "Opus Logica",
+        description: "Maintained NASA WorldWind WebGL extension and developed Ruby on Rails admin app for Crohn's disease IoT tracking",
+        thumbnail: "/public/data/work/opus-logica/thumbnail.png",
+        media: [],
+        details: "Freelance work maintaining NASA WorldWind WebGL-based geospatial visualization extension. Also developed Ruby on Rails administrative application for IoT tracking system monitoring Crohn's disease patients. Worked with real-time data visualization and healthcare data management.",
+        tags: ["WebGL" /* WEBGL */, "Ruby on Rails" /* RAILS */, "Ruby" /* RUBY */, "JavaScript" /* JAVASCRIPT */, "Real-time" /* REAL_TIME */],
+        type: "freelance",
+        dates: "March 2020 to July 2020"
+      },
+      {
+        id: "esupporthealth",
+        name: "eSupportHealth",
+        description: "Built PHP/WordPress backend and React SPA frontend for health services with Zoom integration and Stripe payments",
+        image: "/public/data/work/esupporthealth/thumbnail.svg",
+        thumbnail: "/public/data/work/esupporthealth/thumbnail.svg",
+        media: [],
+        details: "Freelance full-stack development for eSupportHealth telemedicine platform. Built WordPress/PHP backend with custom API endpoints, created React single-page application frontend, integrated Zoom for video consultations, and implemented Stripe payment processing. Delivered comprehensive telehealth solution during COVID-19 pandemic.",
+        tags: ["PHP" /* PHP */, "WordPress" /* WORDPRESS */, "React" /* REACT */, "Stripe" /* STRIPE */, "Zoom Integration" /* ZOOM */, "REST API" /* REST_API */],
+        type: "freelance",
+        dates: "June 2020 to September 2020"
+      },
+      {
+        id: "quuie",
+        name: "Quuie",
+        description: "Developed Angular 8 mobile-first app with Java backend enabling drag-and-drop webpage creation",
+        image: "/public/data/work/quuie/thumbnail.svg",
+        thumbnail: "/public/data/work/quuie/thumbnail.svg",
+        media: [],
+        details: "Freelance development of mobile-first web application using Angular 8 and Java backend. Implemented intuitive drag-and-drop interface for non-technical users to create custom webpages. Built responsive design system and real-time preview functionality.",
+        tags: ["Angular" /* ANGULAR */, "Java" /* JAVA */, "TypeScript" /* TYPESCRIPT */, "Mobile Development" /* MOBILE_DEVELOPMENT */, "REST API" /* REST_API */],
+        type: "freelance",
+        dates: "January 2020 to April 2020"
+      },
+      {
+        id: "one-night",
+        name: "One Night",
+        description: "Full-stack developer on Laravel/React project with iOS support, using CircleCI, DialogFlow chatbot, and Synxis booking API",
+        thumbnail: "/public/data/work/one-night/thumbnail.png",
+        media: [],
+        details: "Freelance full-stack development for One Night hotel booking platform. Built Laravel backend with React frontend, iOS native app integration, DialogFlow AI chatbot for customer support, and Synxis booking API integration. Implemented CI/CD pipeline with CircleCI.",
+        tags: ["Laravel" /* LARAVEL */, "React" /* REACT */, "PHP" /* PHP */, "Chatbot" /* CHATBOT */, "REST API" /* REST_API */, "Mobile Development" /* MOBILE_DEVELOPMENT */],
+        url: "http://onenightstandard.com/",
+        type: "freelance",
+        dates: "August 2019 to February 2020"
+      },
+      {
+        id: "surprize",
+        name: "Surprize",
+        description: "Developed React Native mobile app with Expo and Gatsby-based desktop site for celebrity booking management",
+        image: "/public/data/work/surprize/thumbnail.svg",
+        thumbnail: "/public/data/work/surprize/thumbnail.svg",
+        media: [],
+        details: "Freelance development of cross-platform mobile app using React Native and Expo, plus desktop website using Gatsby. Platform connects users with celebrity booking and management services. Implemented real-time messaging, payment processing, and booking calendar features.",
+        tags: ["React Native" /* REACT_NATIVE */, "Gatsby" /* GATSBY */, "React" /* REACT */, "Mobile Development" /* MOBILE_DEVELOPMENT */, "JavaScript" /* JAVASCRIPT */],
+        type: "freelance",
+        dates: "July 2019 to August 2019"
+      },
+      {
+        id: "kk-jay",
+        name: "KK & Jay",
+        description: "Sole developer of React/Node.js/Express e-commerce site integrated with Shopify backend",
+        thumbnail: "/public/data/work/kk-jay/thumbnail.png",
+        media: [],
+        details: "Freelance sole developer for KK & Jay Supply Co. e-commerce platform. Built custom React frontend with Node.js/Express backend, integrated with Shopify for product management and checkout. Implemented responsive design, shopping cart, and customer account management. The site specializes in men's accessories including suspenders and shirttail garters.",
+        tags: ["React" /* REACT */, "Node.js" /* NODEJS */, "Express" /* EXPRESS */, "Shopify" /* SHOPIFY */, "E-Commerce" /* E_COMMERCE */, "JavaScript" /* JAVASCRIPT */],
+        url: "https://kkandjay.com",
+        type: "freelance",
+        dates: "December 2018 to June 2019"
+      },
+      {
+        id: "ripe",
+        name: "Ripe",
+        description: "Developed responsive frontend and modified Node.js backend for job/interview management using AWS DynamoDB and Ansible",
+        thumbnail: "/public/data/work/ripe/thumbnail.png",
+        media: [],
+        details: "Freelance development for Ripe job interview management platform. Built responsive React frontend and extended Node.js backend functionality. Utilized AWS DynamoDB for data storage and Ansible for deployment automation. Platform helps companies manage candidate interviews and reference checks.",
+        tags: ["React" /* REACT */, "Node.js" /* NODEJS */, "DynamoDB" /* DYNAMODB */, "AWS" /* AWS */, "Ansible" /* ANSIBLE */, "Responsive Design" /* RESPONSIVE_DESIGN */],
+        type: "freelance",
+        dates: "July 2017"
+      },
+      {
+        id: "shackshare",
+        name: "Shackshare",
+        description: 'Lead developer for Laravel "Airbnb for students" application handling responsive pages and full-stack tasks',
+        thumbnail: "/public/data/work/shackshare/thumbnail.png",
+        media: [],
+        details: "Freelance lead developer for Shackshare, a student housing marketplace platform. Built full-stack Laravel application with responsive design, property listings, booking management, and payment processing. Created comprehensive admin dashboard for property management.",
+        tags: ["Laravel" /* LARAVEL */, "PHP" /* PHP */, "MySQL" /* MYSQL */, "Responsive Design" /* RESPONSIVE_DESIGN */, "Full-Stack" /* FULL_STACK */],
+        type: "freelance",
+        dates: "June 2017"
+      },
+      {
+        id: "kitmoda",
+        name: "Kitmoda",
+        description: "Created fully responsive mosaic gallery in JavaScript with dynamic grid resizing algorithm",
+        thumbnail: "/public/data/work/kitmoda/thumbnail.png",
+        media: [],
+        details: "Freelance frontend development creating custom JavaScript mosaic gallery with intelligent dynamic grid resizing algorithm. Built responsive layout engine that adjusts tile sizes based on viewport and content. Optimized for performance with lazy loading and smooth animations.",
+        tags: ["JavaScript" /* JAVASCRIPT */, "Responsive Design" /* RESPONSIVE_DESIGN */, "Performance Optimization" /* PERFORMANCE_OPTIMIZATION */],
+        type: "freelance",
+        dates: "June 2017"
+      },
+      {
+        id: "logicbrush-studios",
+        name: "Logicbrush Studios",
+        description: "Assisted on multiple PHP projects using WordPress, Laravel, ExpressionEngine, Magento, and SilverStripe",
+        thumbnail: "/public/data/work/logicbrush-studios/thumbnail.png",
+        media: [],
+        details: "Freelance work across diverse PHP projects for multiple clients. Gained experience with various CMS and frameworks including WordPress, Laravel, ExpressionEngine, Magento e-commerce, and SilverStripe. Developed custom themes, plugins, and e-commerce functionality.",
+        tags: ["PHP" /* PHP */, "WordPress" /* WORDPRESS */, "Laravel" /* LARAVEL */, "ExpressionEngine" /* EXPRESSION_ENGINE */, "Magento" /* MAGENTO */, "SilverStripe" /* SILVERSTRIPE */],
+        type: "freelance",
+        dates: "October 2016 to May 2017"
+      },
+      {
+        id: "more-perfect-union",
+        name: "More Perfect Union",
+        description: "Lead developer for The Chisel platform using Node.js/Express, Ember.js, MongoDB, and MySQL for political advocacy collaboration",
+        thumbnail: "/public/data/work/more-perfect-union/thumbnail.png",
+        media: [],
+        details: "Freelance lead developer for The Chisel, a political advocacy collaboration platform. Built full-stack application using Node.js/Express backend, Ember.js frontend, with MongoDB and MySQL for data persistence. Enabled activists and organizers to coordinate campaigns and share resources.",
+        tags: ["Node.js" /* NODEJS */, "Express" /* EXPRESS */, "Ember.js" /* EMBER */, "MongoDB" /* MONGODB */, "MySQL" /* MYSQL */, "Full-Stack" /* FULL_STACK */],
+        type: "freelance",
+        dates: "December 2015 to May 2016"
+      },
+      {
+        id: "fabworx",
+        name: "Fabworx",
+        description: "Lead WordPress developer customizing frontend for fabricated car parts shop",
+        thumbnail: "/public/data/work/fabworx/thumbnail.png",
+        media: [],
+        details: "Freelance WordPress development for Fabworx custom car parts shop. Built custom theme with product showcase, responsive design, and e-commerce functionality. Integrated with existing inventory management system.",
+        tags: ["WordPress" /* WORDPRESS */, "PHP" /* PHP */, "E-Commerce" /* E_COMMERCE */, "Responsive Design" /* RESPONSIVE_DESIGN */],
+        type: "freelance",
+        dates: "October 2016"
+      },
+      {
+        id: "shindig-events",
+        name: "Shindig Events",
+        description: "Lead WordPress developer creating ground-up design for events site with case studies and blog",
+        thumbnail: "/public/data/work/shindig-events/thumbnail.png",
+        media: [],
+        details: "Freelance WordPress development for Shindig Events. Designed and built complete site from scratch with custom theme, case study portfolio, blog functionality, and event management features. Implemented SEO optimization and responsive design.",
+        tags: ["WordPress" /* WORDPRESS */, "PHP" /* PHP */, "Responsive Design" /* RESPONSIVE_DESIGN */, "SEO" /* SEO */],
+        type: "freelance",
+        dates: "August 2016"
+      },
+      {
+        id: "tuebora",
+        name: "Tuebora",
+        description: "Contributed responsive landing pages for user access management product suite",
+        thumbnail: "/public/data/work/tuebora/thumbnail.png",
+        media: [],
+        details: "Freelance frontend development for Tuebora enterprise access management platform. Created responsive landing pages showcasing product features, pricing, and use cases. Implemented modern design with smooth animations and lead capture forms.",
+        tags: ["JavaScript" /* JAVASCRIPT */, "Responsive Design" /* RESPONSIVE_DESIGN */, PortfolioTag.HTML, PortfolioTag.CSS],
+        type: "freelance",
+        dates: "August 2016"
+      },
+      {
+        id: "kubi",
+        name: "Kubi",
+        description: "Designed WordPress responsive homepage, product pages, and checkout with lazy-loading video",
+        thumbnail: "/public/data/work/kubi/thumbnail.png",
+        media: [],
+        details: "Freelance WordPress development for Kubi telepresence robot by Revolve Robotics. Built responsive e-commerce site with custom product pages, checkout flow, and lazy-loading video integration for product demos. Optimized for performance and conversion.",
+        tags: ["WordPress" /* WORDPRESS */, "PHP" /* PHP */, "E-Commerce" /* E_COMMERCE */, "Responsive Design" /* RESPONSIVE_DESIGN */, "Video Streaming" /* VIDEO_STREAMING */],
+        type: "freelance",
+        dates: "2016"
+      },
+      {
+        id: "rowan-university",
+        name: "Rowan University",
+        description: "Integrated SimpleSAMLphp with Drupal for Canvas LMS single sign-on capability",
+        thumbnail: "/public/data/work/rowan-university/thumbnail.png",
+        media: [],
+        details: "Freelance integration work for Rowan University. Implemented SimpleSAMLphp authentication with Drupal CMS to enable single sign-on for Canvas Learning Management System. Streamlined student and faculty access across university platforms.",
+        tags: ["PHP" /* PHP */, "Drupal" /* DRUPAL */, "Single Sign-On" /* SSO */, "Third-party Integration" /* THIRD_PARTY_INTEGRATION */],
+        type: "freelance",
+        dates: "August 2015"
+      },
+      {
+        id: "internetorg",
+        name: "Internet.org",
+        description: "Lead PHP developer for multilingual Facebook campaign using Laravel 4 and Amazon S3",
+        thumbnail: "/public/data/work/internetorg/thumbnail.png",
+        media: [],
+        details: "Freelance lead developer for Internet.org (Facebook initiative) multilingual campaign platform. Built Laravel 4 application with Amazon S3 integration for media storage, supporting multiple languages and regions. High-traffic social media campaign reaching global audience.",
+        tags: ["Laravel" /* LARAVEL */, "PHP" /* PHP */, "S3" /* S3 */, "AWS" /* AWS */, "REST API" /* REST_API */],
+        type: "freelance",
+        dates: "March 2015"
+      },
+      {
+        id: "yihame",
+        name: "YiHa.me",
+        description: "Developed WordPress startup site with Mailchimp and KickoffLabs integration",
+        thumbnail: "/public/data/work/yihame/thumbnail.png",
+        media: [],
+        details: "Freelance WordPress development for YiHa.me startup. Built marketing site with Mailchimp email marketing integration and KickoffLabs viral referral system. Implemented lead capture and social sharing features for growth marketing.",
+        tags: ["WordPress" /* WORDPRESS */, "PHP" /* PHP */, "Third-party Integration" /* THIRD_PARTY_INTEGRATION */, "Responsive Design" /* RESPONSIVE_DESIGN */],
+        type: "freelance",
+        dates: "February 2015"
+      },
+      {
+        id: "decaro-trucking",
+        name: "DeCaro Trucking",
+        description: "Architect and lead developer of PHP/Angular.js trucking management application with cloud synchronization",
+        thumbnail: "/public/data/work/decaro-trucking/thumbnail.png",
+        media: [],
+        details: "Freelance architect and lead developer for comprehensive trucking management application. Built PHP backend API with Angular.js frontend, implemented cloud synchronization for offline capability, driver scheduling, route optimization, and invoicing. Desktop and mobile responsive design.",
+        tags: ["PHP" /* PHP */, "Angular" /* ANGULAR */, "MySQL" /* MYSQL */, "REST API" /* REST_API */, "Full-Stack" /* FULL_STACK */],
+        type: "freelance",
+        dates: "November 2014"
+      },
+      {
+        id: "figibox",
+        name: "Figibox",
+        description: "Lead WordPress developer for social geocaching website transitioning to Node.js",
+        thumbnail: "/public/data/work/figibox/thumbnail.png",
+        media: [],
+        details: "Freelance development for Figibox social geocaching platform. Initially built on WordPress, then architected migration to Node.js for improved real-time features. Implemented map-based interface, user profiles, and location-based discovery features.",
+        tags: ["WordPress" /* WORDPRESS */, "Node.js" /* NODEJS */, "PHP" /* PHP */, "MySQL" /* MYSQL */, "REST API" /* REST_API */],
+        type: "freelance",
+        dates: "September 2014"
+      },
+      {
+        id: "oldspice-hairstimonials",
+        name: "OldSpice Hairstimonials",
+        description: "Lead backend developer for high-traffic video site with around 50k daily users managing AWS infrastructure and custom CMS",
+        thumbnail: "/public/data/work/oldspice-hairstimonials/thumbnail.png",
+        media: [],
+        details: "Freelance lead backend developer for Old Spice viral marketing campaign. Built custom CMS and video management system handling 50,000+ daily users. Managed AWS infrastructure with auto-scaling, CloudFront CDN, S3 video storage, and optimized for high-traffic spikes. User-generated content moderation and social sharing features.",
+        tags: ["PHP" /* PHP */, "AWS" /* AWS */, "S3" /* S3 */, "CloudFront" /* CLOUDFRONT */, "Video Streaming" /* VIDEO_STREAMING */, "Performance Optimization" /* PERFORMANCE_OPTIMIZATION */],
+        type: "freelance",
+        dates: "January to March 2014"
+      },
+      {
+        id: "cooper-union",
+        name: "Cooper Union",
+        description: "Frontend development of virtual timeline with searchable interface and Google Docs API integration",
+        thumbnail: "/public/data/work/cooper-union/thumbnail.png",
+        media: [],
+        details: "Freelance frontend development for Cooper Union historical timeline project. Built interactive virtual timeline with searchable interface, Google Docs API integration for content management, and smooth scrolling animations. Historical event visualization with media embeds.",
+        tags: ["JavaScript" /* JAVASCRIPT */, "REST API" /* REST_API */, "Responsive Design" /* RESPONSIVE_DESIGN */],
+        type: "freelance",
+        dates: "2014"
+      },
+      {
+        id: "true-renaissance",
+        name: "True Renaissance",
+        description: "Lead WordPress developer and server administrator with social media and PayPal e-commerce integration",
+        thumbnail: "/public/data/work/true-renaissance/thumbnail.png",
+        media: [],
+        details: "Freelance WordPress development and server administration for True Renaissance. Built custom theme with social media integration, PayPal payment processing for product sales, and managed server infrastructure. Implemented SEO optimization and responsive design.",
+        tags: ["WordPress" /* WORDPRESS */, "PHP" /* PHP */, "PayPal" /* PAYPAL */, "E-Commerce" /* E_COMMERCE */, "Responsive Design" /* RESPONSIVE_DESIGN */],
+        type: "freelance",
+        dates: "January 2014"
+      },
+      {
+        id: "espn-fantasy-football",
+        name: "ESPN Fantasy Football Toolkit",
+        description: "Lead backend developer for high-traffic fantasy sports platform using PHP and MySQL with ESPN web services integration",
+        thumbnail: "/public/data/work/espn-fantasy-football/thumbnail.png",
+        media: [],
+        details: "Freelance lead backend developer for ESPN Fantasy Football Toolkit. Built high-traffic PHP/MySQL application integrating ESPN web services for real-time player stats, league management, and draft tools. Optimized for performance during peak fantasy football season with millions of users.",
+        tags: ["PHP" /* PHP */, "MySQL" /* MYSQL */, "REST API" /* REST_API */, "Performance Optimization" /* PERFORMANCE_OPTIMIZATION */, "Third-party Integration" /* THIRD_PARTY_INTEGRATION */],
+        type: "freelance",
+        dates: "July 2013"
+      },
+      {
+        id: "nabisco-party-in-play",
+        name: "Nabisco Party In Play",
+        description: "Lead backend developer for fantasy sports platform with PHP and MySQL managing user leagues and ESPN player data",
+        thumbnail: "/public/data/work/nabisco-party-in-play/thumbnail.png",
+        media: [],
+        details: "Freelance lead backend developer for Nabisco Party In Play fantasy sports platform. Built PHP/MySQL backend managing user leagues, player drafts, scoring systems, and ESPN player data integration. Handled high concurrent user load during live sports events.",
+        tags: ["PHP" /* PHP */, "MySQL" /* MYSQL */, "REST API" /* REST_API */, "Third-party Integration" /* THIRD_PARTY_INTEGRATION */, "Real-time" /* REAL_TIME */],
+        type: "freelance",
+        dates: "January 2013"
+      },
+      {
+        id: "athletestouch",
+        name: "AthletesTouch",
+        description: "Lead WordPress developer and server administrator for athlete community with responsive design and payment APIs",
+        thumbnail: "/public/data/work/athletestouch/thumbnail.png",
+        media: [],
+        details: "Freelance WordPress development and server administration for AthletesTouch social network. Built custom responsive theme, integrated payment processing APIs for premium memberships, athlete profile management, and community features. Managed server infrastructure and performance optimization.",
+        tags: ["WordPress" /* WORDPRESS */, "PHP" /* PHP */, "MySQL" /* MYSQL */, "Responsive Design" /* RESPONSIVE_DESIGN */, "Third-party Integration" /* THIRD_PARTY_INTEGRATION */],
+        type: "freelance",
+        dates: "January 2013 to January 2014"
+      },
+      {
+        id: "wild-rhino-films",
+        name: "Wild Rhino Films",
+        description: "Custom site development showcasing documentary film portfolio",
+        thumbnail: "/public/data/work/wild-rhino-films/thumbnail.png",
+        media: [],
+        details: "Freelance custom website development for Wild Rhino Films production company. Built portfolio site showcasing documentary films with video embeds, film descriptions, festival awards, and contact features. Responsive design optimized for video playback.",
+        tags: ["JavaScript" /* JAVASCRIPT */, "PHP" /* PHP */, "Responsive Design" /* RESPONSIVE_DESIGN */, "Video Streaming" /* VIDEO_STREAMING */],
+        type: "freelance",
+        dates: "December 2012"
+      },
+      {
+        id: "vitacare-world",
+        name: "Vitacare World",
+        description: "Implemented PHP shopping cart backend integrating drugstore.com third-party API",
+        thumbnail: "/public/data/work/vitacare-world/thumbnail.png",
+        media: [],
+        details: "Freelance PHP backend development for Vitacare World e-commerce platform. Implemented custom shopping cart with drugstore.com API integration for product inventory, pricing, and order fulfillment. Payment processing and order management features.",
+        tags: ["PHP" /* PHP */, "MySQL" /* MYSQL */, "E-Commerce" /* E_COMMERCE */, "REST API" /* REST_API */, "Third-party Integration" /* THIRD_PARTY_INTEGRATION */],
+        type: "freelance",
+        dates: "September 2012"
+      },
+      {
+        id: "ouidad",
+        name: "Ouidad",
+        description: "Created interactive Facebook pages with beauty preference selection and newsletter integration",
+        thumbnail: "/public/data/work/ouidad/thumbnail.png",
+        media: [],
+        details: "Freelance Facebook application development for Ouidad beauty brand. Built interactive Facebook pages with beauty product preference quizzes, newsletter signup integration, and social sharing features. Integrated with existing e-commerce and email marketing platforms.",
+        tags: ["JavaScript" /* JAVASCRIPT */, "PHP" /* PHP */, "REST API" /* REST_API */, "Third-party Integration" /* THIRD_PARTY_INTEGRATION */],
+        type: "freelance",
+        dates: "July 2012"
+      },
+      {
+        id: "finding-home",
+        name: "Finding Home",
+        description: "Lead designer/developer for photography and artwork site featuring carousels and interactive galleries",
+        thumbnail: "/public/data/work/finding-home/thumbnail.png",
+        media: [],
+        details: "Freelance designer and developer for Finding Home photography exhibition website. Created custom interactive galleries with carousel navigation, lightbox viewing, and artwork information panels. Responsive design showcasing documentary photography.",
+        tags: ["JavaScript" /* JAVASCRIPT */, "PHP" /* PHP */, "Responsive Design" /* RESPONSIVE_DESIGN */],
+        type: "freelance",
+        dates: "June 2012"
+      },
+      {
+        id: "natures-boost",
+        name: "Nature's Boost Energy Lozenge",
+        description: "Website design and development with online PayPal ordering for energy product",
+        thumbnail: "/public/data/work/natures-boost/thumbnail.png",
+        media: [],
+        details: "Freelance website design and development for Nature's Boost Energy Lozenge product. Built e-commerce site with PayPal payment integration, product information pages, and responsive design. Simple checkout flow optimized for conversion.",
+        tags: ["JavaScript" /* JAVASCRIPT */, "PHP" /* PHP */, "PayPal" /* PAYPAL */, "E-Commerce" /* E_COMMERCE */, "Responsive Design" /* RESPONSIVE_DESIGN */],
+        type: "freelance",
+        dates: "December 2011"
       }
-      return blobs;
-    };
-    const initParticles = () => {
-      const particles = [];
-      for (let i4 = 0; i4 < 200; i4++) {
-        particles.push(createParticle());
+    ]
+  },
+  {
+    key: "hobbies",
+    label: "Hobbies",
+    order: 2,
+    items: [
+      {
+        id: "hob-001",
+        name: "Music Production",
+        description: "Electronic music composition and sound design",
+        media: [],
+        details: "Exploring electronic music production, synthesizer programming, and audio engineering. Creating ambient soundscapes and experimental compositions.",
+        tags: ["Audio", "Creative", "Technology"]
+      },
+      {
+        id: "hob-002",
+        name: "Photography",
+        description: "Urban and landscape photography",
+        media: [],
+        details: "Capturing moments through the lens, focusing on urban environments and natural landscapes. Experimenting with long exposure and night photography.",
+        tags: ["Visual Arts", "Creative"]
+      },
+      {
+        id: "hob-003",
+        name: "Open Source",
+        description: "Contributing to open source projects",
+        media: [],
+        details: "Active contributor to various open source projects. Particularly interested in developer tools and web frameworks.",
+        tags: ["Development", "Community", "Code"]
+      },
+      {
+        id: "hob-004",
+        name: "Game Development",
+        description: "Indie game prototyping and experimentation",
+        media: [],
+        details: "Creating small game prototypes and exploring game mechanics. Focus on procedural generation and interactive experiences.",
+        tags: ["Creative", "Programming", "Design"]
+      },
+      {
+        id: "hob-005",
+        name: "Reading",
+        description: "Sci-fi, philosophy, and technology books",
+        media: [],
+        details: "Avid reader of science fiction, philosophy, and books about technology and society. Particularly interested in speculative fiction and future studies.",
+        tags: ["Learning", "Literature"]
+      },
+      {
+        id: "hob-006",
+        name: "Hiking",
+        description: "Trail hiking and outdoor exploration",
+        media: [],
+        details: "Exploring hiking trails and natural environments. Weekend adventures in state and national parks.",
+        tags: ["Outdoors", "Fitness", "Nature"]
+      },
+      {
+        id: "hob-007",
+        name: "Cooking",
+        description: "Experimental cooking and recipe development",
+        media: [],
+        details: "Exploring different cuisines and developing new recipes. Interest in molecular gastronomy and food science.",
+        tags: ["Creative", "Food", "Science"]
+      },
+      {
+        id: "hob-008",
+        name: "DIY Electronics",
+        description: "Arduino and Raspberry Pi projects",
+        media: [],
+        details: "Building custom electronics projects with Arduino and Raspberry Pi. Home automation and sensor-based installations.",
+        tags: ["Hardware", "Programming", "Maker"]
+      },
+      {
+        id: "hob-009",
+        name: "Meditation",
+        description: "Mindfulness and meditation practice",
+        media: [],
+        details: "Daily meditation practice focusing on mindfulness and presence. Exploring various meditation techniques and philosophies.",
+        tags: ["Wellness", "Mental Health", "Practice"]
+      },
+      {
+        id: "hob-010",
+        name: "Chess",
+        description: "Online chess and strategy games",
+        media: [],
+        details: "Regular chess player online and in person. Studying openings, tactics, and endgame theory.",
+        tags: ["Strategy", "Game", "Learning"]
+      },
+      {
+        id: "hob-011",
+        name: "Sketching",
+        description: "Digital and traditional illustration",
+        media: [],
+        details: "Creating sketches and illustrations both digitally and traditionally. Character design and concept art.",
+        tags: ["Art", "Creative", "Visual"]
+      },
+      {
+        id: "hob-012",
+        name: "Language Learning",
+        description: "Spanish and Japanese study",
+        media: [],
+        details: "Learning Spanish and Japanese through apps, books, and conversation practice. Interest in linguistics and language acquisition.",
+        tags: ["Learning", "Languages", "Culture"]
       }
-      return particles;
-    };
-    const createParticle = () => {
-      return {
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.2,
-        vy: (Math.random() - 0.5) * 0.2,
-        size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.6 + 0.2,
-        hue: 180 + Math.random() * 60,
-        life: 1
-      };
-    };
-    particlesRef.current = initParticles();
-    blobsRef.current = initBlobs();
-    initFlowField();
-    const handleScroll = () => {
-      scrollOffsetRef.current = window.scrollY;
-    };
-    window.addEventListener("scroll", handleScroll);
-    const drawBlob = (blob, time) => {
-      const pulse = Math.sin(time * blob.pulseSpeed + blob.pulsePhase) * 0.3 + 1;
-      ctx.beginPath();
-      blob.vertices.forEach((vertex, i4) => {
-        const rotation = time * blob.rotationSpeed;
-        const angle = vertex.angle + rotation;
-        const waveOffset = Math.sin(angle * 3 + time * 2e-3) * 20;
-        const radius = (vertex.baseRadius + waveOffset) * pulse;
-        const x2 = blob.x + Math.cos(angle) * radius;
-        const y3 = blob.y + Math.sin(angle) * radius + scrollOffsetRef.current * 0.05;
-        if (i4 === 0) {
-          ctx.moveTo(x2, y3);
-        } else {
-          const prevVertex = blob.vertices[i4 - 1];
-          const prevAngle = prevVertex.angle + rotation;
-          const prevRadius = (prevVertex.baseRadius + Math.sin(prevAngle * 3 + time * 2e-3) * 20) * pulse;
-          const prevX = blob.x + Math.cos(prevAngle) * prevRadius;
-          const prevY = blob.y + Math.sin(prevAngle) * prevRadius + scrollOffsetRef.current * 0.05;
-          const cpX = (prevX + x2) / 2;
-          const cpY = (prevY + y3) / 2;
-          ctx.quadraticCurveTo(prevX, prevY, cpX, cpY);
-        }
-      });
-      ctx.closePath();
-      const gradient = ctx.createRadialGradient(blob.x, blob.y + scrollOffsetRef.current * 0.05, 0, blob.x, blob.y + scrollOffsetRef.current * 0.05, blob.radius * pulse * 1.5);
-      gradient.addColorStop(0, `hsla(${blob.color.h}, ${blob.color.s}%, ${blob.color.l + 10}%, 0.15)`);
-      gradient.addColorStop(0.5, `hsla(${blob.color.h}, ${blob.color.s}%, ${blob.color.l}%, 0.08)`);
-      gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
-      ctx.fillStyle = gradient;
-      ctx.fill();
-      ctx.strokeStyle = `hsla(${blob.color.h + 20}, 80%, 60%, 0.1)`;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    };
-    const animate = () => {
-      if (!ctx || !canvas) return;
-      timeRef.current += 1;
-      const time = timeRef.current;
-      const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      const scrollFactor = scrollOffsetRef.current % canvas.height / canvas.height;
-      bgGradient.addColorStop(0, `hsl(200, 45%, ${4 + scrollFactor * 2}%)`);
-      bgGradient.addColorStop(0.5, `hsl(195, 50%, ${6 + scrollFactor * 2}%)`);
-      bgGradient.addColorStop(1, `hsl(205, 40%, ${3 + scrollFactor * 2}%)`);
-      ctx.fillStyle = bgGradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      blobsRef.current.forEach((blob) => {
-        drawBlob(blob, time);
-      });
-      particlesRef.current.forEach((particle, index) => {
-        const resolution = 30;
-        const col = Math.floor(particle.x / resolution);
-        const row = Math.floor(particle.y / resolution);
-        if (flowFieldRef.current[row] && flowFieldRef.current[row][col]) {
-          const flow = flowFieldRef.current[row][col];
-          const force = flow.magnitude * 0.05;
-          particle.vx += Math.cos(flow.angle + time * 1e-3) * force;
-          particle.vy += Math.sin(flow.angle + time * 1e-3) * force;
-        }
-        particle.vx *= 0.98;
-        particle.vy *= 0.98;
-        particle.x += particle.vx;
-        particle.y += particle.vy + scrollOffsetRef.current * 2e-3;
-        if (particle.x < 0) particle.x = canvas.width;
-        if (particle.x > canvas.width) particle.x = 0;
-        if (particle.y < 0) particle.y = canvas.height;
-        if (particle.y > canvas.height) particle.y = 0;
-        const glowSize = particle.size * 4;
-        const particleGradient = ctx.createRadialGradient(
-          particle.x,
-          particle.y,
-          0,
-          particle.x,
-          particle.y,
-          glowSize
-        );
-        particleGradient.addColorStop(
-          0,
-          `hsla(${particle.hue + Math.sin(time * 0.01) * 20}, 80%, 60%, ${particle.opacity})`
-        );
-        particleGradient.addColorStop(0.5, `hsla(${particle.hue}, 70%, 50%, ${particle.opacity * 0.3})`);
-        particleGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, glowSize, 0, Math.PI * 2);
-        ctx.fillStyle = particleGradient;
-        ctx.fill();
-      });
-      const connectionDistance = 150;
-      particlesRef.current.forEach((p1, i4) => {
-        particlesRef.current.slice(i4 + 1).forEach((p22) => {
-          const dx = p1.x - p22.x;
-          const dy = p1.y - p22.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < connectionDistance) {
-            const opacity = (1 - dist / connectionDistance) * 0.15;
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p22.x, p22.y);
-            ctx.strokeStyle = `rgba(0, 200, 255, ${opacity})`;
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          }
-        });
-      });
-      animationFrameRef.current = requestAnimationFrame(animate);
-    };
-    animate();
-    return () => {
-      window.removeEventListener("resize", resizeCanvas);
-      window.removeEventListener("scroll", handleScroll);
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
+    ]
+  },
+  {
+    key: "blog",
+    label: "Blog",
+    order: 3,
+    items: [
+      {
+        id: "blog-001",
+        name: "Modern Web Architecture",
+        description: "Exploring the latest patterns in web application design",
+        media: [],
+        details: "A deep dive into modern web architecture patterns, including microservices, serverless, and edge computing. Discussion of trade-offs and use cases.",
+        tags: ["Web Development", "Architecture", "Tutorial"]
+      },
+      {
+        id: "blog-002",
+        name: "TypeScript Best Practices",
+        description: "Advanced TypeScript patterns for scalable applications",
+        media: [],
+        details: "Comprehensive guide to TypeScript best practices, covering type safety, generics, decorators, and architectural patterns for large-scale applications.",
+        tags: ["TypeScript", "Tutorial", "Best Practices"]
+      },
+      {
+        id: "blog-003",
+        name: "The Future of AI in Development",
+        description: "How AI tools are changing the software development landscape",
+        media: [],
+        details: "Thoughts on AI-assisted development tools, their impact on productivity, and the future of software engineering in an AI-augmented world.",
+        tags: ["AI", "Opinion", "Future Tech"]
+      },
+      {
+        id: "blog-004",
+        name: "Performance Optimization Techniques",
+        description: "Practical strategies for faster web applications",
+        media: [],
+        details: "Detailed guide to web performance optimization, covering code splitting, lazy loading, caching strategies, and profiling techniques.",
+        tags: ["Performance", "Tutorial", "Optimization"]
+      },
+      {
+        id: "blog-005",
+        name: "Building Accessible Interfaces",
+        description: "Creating inclusive web experiences for all users",
+        media: [],
+        details: "Best practices for web accessibility, including WCAG guidelines, semantic HTML, ARIA attributes, and keyboard navigation.",
+        tags: ["Accessibility", "Best Practices", "UX"]
+      },
+      {
+        id: "blog-006",
+        name: "State Management Patterns",
+        description: "Comparing different approaches to application state",
+        media: [],
+        details: "Analysis of various state management solutions including Redux, MobX, Zustand, and React Context, with use case recommendations.",
+        tags: ["React", "State Management", "Comparison"]
+      },
+      {
+        id: "blog-007",
+        name: "GraphQL vs REST",
+        description: "Choosing the right API architecture",
+        media: [],
+        details: "Comprehensive comparison of GraphQL and REST APIs, covering performance, developer experience, caching, and when to use each approach.",
+        tags: ["API", "GraphQL", "REST", "Comparison"]
+      },
+      {
+        id: "blog-008",
+        name: "Docker for Developers",
+        description: "Containerization essentials for modern development",
+        media: [],
+        details: "Practical guide to Docker for development workflows, including multi-stage builds, docker-compose, and CI/CD integration.",
+        tags: ["Docker", "DevOps", "Tutorial"]
+      },
+      {
+        id: "blog-009",
+        name: "Serverless Architecture",
+        description: "Building scalable applications without managing servers",
+        media: [],
+        details: "Introduction to serverless architecture with AWS Lambda, API Gateway, and DynamoDB. Cost analysis and best practices included.",
+        tags: ["Serverless", "AWS", "Architecture"]
+      },
+      {
+        id: "blog-010",
+        name: "CSS Grid Mastery",
+        description: "Modern layouts with CSS Grid",
+        media: [],
+        details: "Complete guide to CSS Grid, including practical examples, responsive patterns, and browser compatibility considerations.",
+        tags: ["CSS", "Tutorial", "Layout"]
+      },
+      {
+        id: "blog-011",
+        name: "Security Best Practices",
+        description: "Protecting web applications from common vulnerabilities",
+        media: [],
+        details: "Overview of web security fundamentals covering OWASP Top 10, authentication, authorization, XSS, CSRF, and secure coding practices.",
+        tags: ["Security", "Best Practices", "Web Development"]
+      },
+      {
+        id: "blog-012",
+        name: "Testing Strategies",
+        description: "Comprehensive testing approaches for web applications",
+        media: [],
+        details: "Guide to testing strategies including unit tests, integration tests, E2E tests, and TDD. Tools and frameworks comparison included.",
+        tags: ["Testing", "Best Practices", "QA"]
+      },
+      {
+        id: "blog-013",
+        name: "Progressive Web Apps",
+        description: "Building app-like experiences on the web",
+        media: [],
+        details: "Complete guide to Progressive Web Apps, covering service workers, offline functionality, push notifications, and installation.",
+        tags: ["PWA", "Web Development", "Tutorial"]
+      },
+      {
+        id: "blog-014",
+        name: "Micro-Frontends",
+        description: "Scaling frontend development with micro-frontends",
+        media: [],
+        details: "Introduction to micro-frontend architecture, implementation strategies, and when this approach makes sense for your organization.",
+        tags: ["Architecture", "Frontend", "Scalability"]
       }
-    };
-  }, []);
-  return /* @__PURE__ */ u2("div", { className: "mystical-background", children: [
-    /* @__PURE__ */ u2("canvas", { ref: canvasRef, className: "mystical-background__canvas" }),
-    /* @__PURE__ */ u2("div", { className: "mystical-background__overlay" })
-  ] });
-};
+    ]
+  }
+];
 
 // src/components/shared/BeltNavigator/BeltNavigator.tsx
 init_preact_module();
 
 // src/components/shared/CircularBelt/CircularBelt.tsx
 init_preact_module();
-var CircularBelt = ({ items, label, onItemClick, isActive }) => {
-  const [scrollPosition, setScrollPosition] = d2(0);
+var CircularBelt = ({ items, label, onItemClick, isActive, scrollToItemId, trackScrollPercent, infiniteScroll = false, onTagClick }) => {
+  const [currentPageIndex, setCurrentPageIndex] = d2(0);
   const [isScrolling, setIsScrolling] = d2(false);
   const [hoveredItemId, setHoveredItemId] = d2(null);
   const containerRef = A2(null);
   const scrollIntervalRef = A2();
   const mouseXRef = A2(0);
+  const scrollAccumulatorRef = A2(0);
+  const hoverPageIntervalRef = A2();
+  const touchStartRef = A2(null);
+  const touchVelocityRef = A2(0);
+  const momentumAnimationRef = A2();
+  const lastTouchXRef = A2(0);
+  const lastTouchTimeRef = A2(0);
   const itemWidth = 400;
   const itemSpacing = 50;
   const totalItemWidth = itemWidth + itemSpacing;
   const maxScroll = items.length * totalItemWidth;
+  const scrollPosition = currentPageIndex * totalItemWidth;
   y2(() => {
     return () => {
       stopScrolling();
+      if (momentumAnimationRef.current) {
+        cancelAnimationFrame(momentumAnimationRef.current);
+      }
+      if (hoverPageIntervalRef.current) {
+        clearInterval(hoverPageIntervalRef.current);
+      }
     };
   }, []);
+  y2(() => {
+    if (trackScrollPercent !== void 0 && isActive) {
+      const itemIndex = Math.round(trackScrollPercent * items.length);
+      const clampedIndex = Math.max(0, Math.min(items.length - 1, itemIndex));
+      setCurrentPageIndex(clampedIndex);
+    }
+  }, [trackScrollPercent, isActive, items.length]);
+  y2(() => {
+    if (scrollToItemId && isActive) {
+      const itemIndex = items.findIndex((item) => item.id === scrollToItemId);
+      if (itemIndex !== -1) {
+        setCurrentPageIndex(itemIndex);
+      }
+    }
+  }, [scrollToItemId, isActive, items]);
   const startScrolling = (speed) => {
     if (scrollIntervalRef.current) return;
     setIsScrolling(true);
     scrollIntervalRef.current = window.setInterval(() => {
       setScrollPosition((prev) => {
         const newPos = prev + speed;
-        if (newPos < 0) return maxScroll + newPos;
-        if (newPos > maxScroll) return newPos - maxScroll;
-        return newPos;
+        if (infiniteScroll) {
+          if (newPos < 0) return maxScroll + newPos;
+          if (newPos > maxScroll) return newPos - maxScroll;
+          return newPos;
+        } else {
+          return Math.max(0, Math.min(maxScroll, newPos));
+        }
       });
     }, 16);
   };
@@ -2509,36 +3175,145 @@ var CircularBelt = ({ items, label, onItemClick, isActive }) => {
     }
     setIsScrolling(false);
   };
+  const handleTouchStart = (e4) => {
+    if (!isActive) return;
+    const touch = e4.touches[0];
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      time: Date.now()
+    };
+    lastTouchXRef.current = touch.clientX;
+    lastTouchTimeRef.current = Date.now();
+    touchVelocityRef.current = 0;
+    if (momentumAnimationRef.current) {
+      cancelAnimationFrame(momentumAnimationRef.current);
+      momentumAnimationRef.current = void 0;
+    }
+    stopScrolling();
+  };
+  const handleTouchMove = (e4) => {
+    if (!isActive || !touchStartRef.current) return;
+    const touch = e4.touches[0];
+    const currentTime = Date.now();
+    const deltaX = touch.clientX - lastTouchXRef.current;
+    const deltaTime = currentTime - lastTouchTimeRef.current;
+    const deltaY = Math.abs(touch.clientY - touchStartRef.current.y);
+    const deltaXAbs = Math.abs(touch.clientX - touchStartRef.current.x);
+    if (deltaXAbs > deltaY) {
+      e4.preventDefault();
+    }
+    if (deltaTime > 0) {
+      touchVelocityRef.current = deltaX / deltaTime;
+    }
+    setScrollPosition((prev) => {
+      const newPos = prev - deltaX;
+      if (infiniteScroll) {
+        if (newPos < 0) return maxScroll + newPos;
+        if (newPos > maxScroll) return newPos - maxScroll;
+        return newPos;
+      } else {
+        return Math.max(0, Math.min(maxScroll, newPos));
+      }
+    });
+    lastTouchXRef.current = touch.clientX;
+    lastTouchTimeRef.current = currentTime;
+  };
+  const handleTouchEnd = (e4) => {
+    if (!isActive || !touchStartRef.current) return;
+    const touchDuration = Date.now() - touchStartRef.current.time;
+    const velocity = touchVelocityRef.current;
+    touchStartRef.current = null;
+    if (Math.abs(velocity) > 0.5 && touchDuration < 300) {
+      applyMomentum(velocity * 1e3);
+    }
+  };
+  const applyMomentum = (initialVelocity) => {
+    let velocity = initialVelocity;
+    const friction = 0.95;
+    const minVelocity = 0.5;
+    const animate = () => {
+      velocity *= friction;
+      if (Math.abs(velocity) < minVelocity) {
+        momentumAnimationRef.current = void 0;
+        return;
+      }
+      setScrollPosition((prev) => {
+        const newPos = prev - velocity * 0.016;
+        if (infiniteScroll) {
+          if (newPos < 0) return maxScroll + newPos;
+          if (newPos > maxScroll) return newPos - maxScroll;
+          return newPos;
+        } else {
+          const clampedPos = Math.max(0, Math.min(maxScroll, newPos));
+          if (clampedPos === 0 || clampedPos === maxScroll) {
+            if (momentumAnimationRef.current) {
+              cancelAnimationFrame(momentumAnimationRef.current);
+              momentumAnimationRef.current = void 0;
+            }
+          }
+          return clampedPos;
+        }
+      });
+      momentumAnimationRef.current = requestAnimationFrame(animate);
+    };
+    animate();
+  };
+  y2(() => {
+    const container = containerRef.current;
+    if (!container || !isActive) return;
+    container.addEventListener("touchstart", handleTouchStart, { passive: false });
+    container.addEventListener("touchmove", handleTouchMove, { passive: false });
+    container.addEventListener("touchend", handleTouchEnd);
+    return () => {
+      container.removeEventListener("touchstart", handleTouchStart);
+      container.removeEventListener("touchmove", handleTouchMove);
+      container.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [isActive, maxScroll]);
   const calculateItemStyle = (index, itemId) => {
     const windowWidth = window.innerWidth;
     const centerX = windowWidth / 2;
-    let basePosition = index * totalItemWidth - scrollPosition;
-    while (basePosition < -totalItemWidth * 2) {
-      basePosition += maxScroll;
-    }
-    while (basePosition > windowWidth + totalItemWidth * 2) {
-      basePosition -= maxScroll;
+    const centeringOffset = centerX - itemWidth / 2;
+    let basePosition = index * totalItemWidth - scrollPosition + centeringOffset;
+    if (infiniteScroll) {
+      while (basePosition < -totalItemWidth * 2) {
+        basePosition += maxScroll;
+      }
+      while (basePosition > windowWidth + totalItemWidth * 2) {
+        basePosition -= maxScroll;
+      }
     }
     const itemCenterX = basePosition + itemWidth / 2;
     const distanceFromCenter = itemCenterX - centerX;
     const normalizedDistance = distanceFromCenter / (windowWidth / 2);
     const isHovered = hoveredItemId === itemId;
-    const skewY = isHovered ? 0 : normalizedDistance * 15;
-    const rotateY = isHovered ? 0 : normalizedDistance * -20;
-    const scale = isHovered ? 1.05 : 1 - Math.abs(normalizedDistance) * 0.3;
-    const opacity = isHovered ? 1 : Math.max(0.3, 1 - Math.abs(normalizedDistance) * 0.6);
-    const zIndex = isHovered ? 200 : Math.max(10, Math.round(100 - Math.abs(distanceFromCenter)));
+    const isCentered = Math.abs(normalizedDistance) < 0.1;
+    const skewY = isCentered || isHovered ? 0 : normalizedDistance * 15;
+    const rotateY = isCentered || isHovered ? 0 : normalizedDistance * -20;
+    let scale;
+    if (isCentered) {
+      scale = 1.8;
+    } else if (isHovered) {
+      scale = 1.05;
+    } else {
+      scale = 0.7 - Math.abs(normalizedDistance) * 0.3;
+    }
+    const opacity = isCentered || isHovered ? 1 : Math.max(0, 1 - Math.abs(normalizedDistance) * 1.2);
+    const zIndex = isCentered ? 300 : isHovered ? 200 : Math.max(10, Math.round(100 - Math.abs(distanceFromCenter)));
+    const translateY = isCentered ? -100 : 0;
     return {
-      transform: `translateX(${basePosition}px) scale(${Math.max(scale, 0.5)}) skewY(${skewY}deg) perspective(1000px) rotateY(${rotateY}deg)`,
+      transform: `translateX(${basePosition}px) translateY(${translateY}px) scale(${Math.max(scale, 0.4)}) skewY(${skewY}deg) perspective(1000px) rotateY(${rotateY}deg)`,
       opacity,
       zIndex,
       transformStyle: "preserve-3d",
-      transition: isHovered ? "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)" : "all 0.16s linear"
+      // Quick, snappy transitions for paging effect
+      transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)"
     };
   };
   const renderItems = () => {
     const rendered = [];
-    const copies = 3;
+    const copies = infiniteScroll ? 3 : 1;
     for (let copy = 0; copy < copies; copy++) {
       items.forEach((item, index) => {
         const actualIndex = index + copy * items.length;
@@ -2556,13 +3331,48 @@ var CircularBelt = ({ items, label, onItemClick, isActive }) => {
               onMouseLeave: () => {
                 setHoveredItemId(null);
               },
+              onWheel: (e4) => {
+                if (isActive) {
+                  e4.preventDefault();
+                  e4.stopPropagation();
+                  handleWheel(e4.nativeEvent);
+                }
+              },
               onClick: () => onItemClick(item),
               children: /* @__PURE__ */ u2("div", { className: "circular-belt__item-inner", children: [
-                /* @__PURE__ */ u2("div", { className: "circular-belt__item-image", children: /* @__PURE__ */ u2("div", { className: "circular-belt__item-image-placeholder", children: /* @__PURE__ */ u2("span", { children: item.name.charAt(0) }) }) }),
+                item.thumbnail && /* @__PURE__ */ u2("div", { className: "circular-belt__item-logo", children: /* @__PURE__ */ u2(
+                  "img",
+                  {
+                    src: item.thumbnail,
+                    alt: `${item.name} logo`,
+                    className: "circular-belt__item-logo-img"
+                  }
+                ) }),
+                /* @__PURE__ */ u2("div", { className: "circular-belt__item-image", children: item.image ? /* @__PURE__ */ u2(
+                  "img",
+                  {
+                    src: item.image,
+                    alt: item.name,
+                    className: "circular-belt__item-image-img"
+                  }
+                ) : /* @__PURE__ */ u2("div", { className: "circular-belt__item-image-placeholder", children: /* @__PURE__ */ u2("span", { children: item.name.charAt(0) }) }) }),
                 /* @__PURE__ */ u2("div", { className: "circular-belt__item-content", children: [
                   /* @__PURE__ */ u2("h3", { className: "circular-belt__item-title", children: item.name }),
                   /* @__PURE__ */ u2("p", { className: "circular-belt__item-description", children: item.description }),
-                  item.tags && item.tags.length > 0 && /* @__PURE__ */ u2("div", { className: "circular-belt__item-tags", children: item.tags.map((tag) => /* @__PURE__ */ u2("span", { className: "circular-belt__item-tag", children: tag }, tag)) })
+                  item.tags && item.tags.length > 0 && /* @__PURE__ */ u2("div", { className: "circular-belt__item-tags", children: item.tags.map((tag) => /* @__PURE__ */ u2(
+                    "button",
+                    {
+                      className: "circular-belt__item-tag",
+                      onClick: (e4) => {
+                        e4.stopPropagation();
+                        if (onTagClick) {
+                          onTagClick(tag);
+                        }
+                      },
+                      children: tag
+                    },
+                    tag
+                  )) })
                 ] })
               ] })
             },
@@ -2573,6 +3383,37 @@ var CircularBelt = ({ items, label, onItemClick, isActive }) => {
     }
     return rendered;
   };
+  const handleWheel = (e4) => {
+    if (!isActive || isScrolling) return;
+    scrollAccumulatorRef.current += e4.deltaX + e4.deltaY;
+    const threshold = 50;
+    if (Math.abs(scrollAccumulatorRef.current) > threshold) {
+      const direction = scrollAccumulatorRef.current > 0 ? 1 : -1;
+      const newIndex = currentPageIndex + direction;
+      if (newIndex >= 0 && newIndex < items.length) {
+        setIsScrolling(true);
+        setCurrentPageIndex(newIndex);
+        scrollAccumulatorRef.current = 0;
+        setTimeout(() => setIsScrolling(false), 250);
+      } else {
+        scrollAccumulatorRef.current = 0;
+      }
+    }
+  };
+  const backdropRef = A2(null);
+  y2(() => {
+    const backdrop = backdropRef.current;
+    if (!backdrop || !isActive) return;
+    const wheelHandler = (e4) => {
+      e4.preventDefault();
+      e4.stopPropagation();
+      handleWheel(e4);
+    };
+    backdrop.addEventListener("wheel", wheelHandler, { passive: false });
+    return () => {
+      backdrop.removeEventListener("wheel", wheelHandler);
+    };
+  }, [isActive, currentPageIndex, isScrolling, items.length]);
   return /* @__PURE__ */ u2(
     "div",
     {
@@ -2580,17 +3421,35 @@ var CircularBelt = ({ items, label, onItemClick, isActive }) => {
       ref: containerRef,
       "data-label": label,
       children: [
+        /* @__PURE__ */ u2("div", { className: "circular-belt__wheel-backdrop", ref: backdropRef }),
         /* @__PURE__ */ u2("div", { className: "circular-belt__items", children: renderItems() }),
         /* @__PURE__ */ u2(
           "div",
           {
             className: "circular-belt__scroll-zone circular-belt__scroll-zone--left",
             onMouseEnter: () => {
-              if (isActive) {
-                startScrolling(-8);
+              if (!isActive) return;
+              if (hoverPageIntervalRef.current) {
+                clearInterval(hoverPageIntervalRef.current);
               }
+              setCurrentPageIndex((prev) => Math.max(0, prev - 1));
+              hoverPageIntervalRef.current = window.setInterval(() => {
+                setCurrentPageIndex((prev) => {
+                  const newIndex = Math.max(0, prev - 1);
+                  if (newIndex === prev) {
+                    if (hoverPageIntervalRef.current) {
+                      clearInterval(hoverPageIntervalRef.current);
+                    }
+                  }
+                  return newIndex;
+                });
+              }, 500);
             },
-            onMouseLeave: stopScrolling
+            onMouseLeave: () => {
+              if (hoverPageIntervalRef.current) {
+                clearInterval(hoverPageIntervalRef.current);
+              }
+            }
           }
         ),
         /* @__PURE__ */ u2(
@@ -2598,11 +3457,28 @@ var CircularBelt = ({ items, label, onItemClick, isActive }) => {
           {
             className: "circular-belt__scroll-zone circular-belt__scroll-zone--right",
             onMouseEnter: () => {
-              if (isActive) {
-                startScrolling(8);
+              if (!isActive) return;
+              if (hoverPageIntervalRef.current) {
+                clearInterval(hoverPageIntervalRef.current);
               }
+              setCurrentPageIndex((prev) => Math.min(items.length - 1, prev + 1));
+              hoverPageIntervalRef.current = window.setInterval(() => {
+                setCurrentPageIndex((prev) => {
+                  const newIndex = Math.min(items.length - 1, prev + 1);
+                  if (newIndex === prev) {
+                    if (hoverPageIntervalRef.current) {
+                      clearInterval(hoverPageIntervalRef.current);
+                    }
+                  }
+                  return newIndex;
+                });
+              }, 500);
             },
-            onMouseLeave: stopScrolling
+            onMouseLeave: () => {
+              if (hoverPageIntervalRef.current) {
+                clearInterval(hoverPageIntervalRef.current);
+              }
+            }
           }
         ),
         /* @__PURE__ */ u2("div", { className: "circular-belt__edge-fade circular-belt__edge-fade--left" }),
@@ -2612,118 +3488,858 @@ var CircularBelt = ({ items, label, onItemClick, isActive }) => {
   );
 };
 
-// src/components/shared/BeltNavigator/BeltNavigator.tsx
-var BeltNavigator = ({ rows, onItemClick, onRowChange, activeRowIndex: externalActiveRowIndex }) => {
-  const [activeRowIndex, setActiveRowIndex] = d2(externalActiveRowIndex);
-  const [isTransitioning, setIsTransitioning] = d2(false);
-  const containerRef = A2(null);
-  const canGoUp = activeRowIndex > 0;
-  const canGoDown = activeRowIndex < rows.length - 1;
+// src/components/shared/SectionBackground/SectionBackground.tsx
+init_preact_module();
+var SectionBackground = ({ theme }) => {
+  const canvasRef = A2(null);
+  const animationFrameRef = A2();
+  const timeRef = A2(0);
   y2(() => {
-    setActiveRowIndex(externalActiveRowIndex);
-  }, [externalActiveRowIndex]);
-  const navigateUp = () => {
-    if (!canGoUp || isTransitioning) return;
-    setIsTransitioning(true);
-    const newIndex = activeRowIndex - 1;
-    setActiveRowIndex(newIndex);
-    onRowChange(newIndex);
-    setTimeout(() => setIsTransitioning(false), 800);
-  };
-  const navigateDown = () => {
-    if (!canGoDown || isTransitioning) return;
-    setIsTransitioning(true);
-    const newIndex = activeRowIndex + 1;
-    setActiveRowIndex(newIndex);
-    onRowChange(newIndex);
-    setTimeout(() => setIsTransitioning(false), 800);
-  };
-  y2(() => {
-    const handleKeyDown = (e4) => {
-      if (isTransitioning) return;
-      if (e4.key === "ArrowUp" || e4.key === "PageUp") {
-        e4.preventDefault();
-        navigateUp();
-      } else if (e4.key === "ArrowDown" || e4.key === "PageDown") {
-        e4.preventDefault();
-        navigateDown();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    if (!ctx) return;
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+    const animate = () => {
+      if (!ctx || !canvas) return;
+      timeRef.current += 1;
+      const time = timeRef.current;
+      switch (theme) {
+        case "space":
+          drawSpaceTheme(ctx, canvas, time);
+          break;
+        case "nebula":
+          drawNebulaTheme(ctx, canvas, time);
+          break;
+        case "ocean":
+          drawOceanTheme(ctx, canvas, time);
+          break;
+        case "cosmic":
+          drawCosmicTheme(ctx, canvas, time);
+          break;
+      }
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+    animate();
+    return () => {
+      window.removeEventListener("resize", resizeCanvas);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
       }
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeRowIndex, isTransitioning]);
-  const calculateRowStyle = (index) => {
-    const diff = index - activeRowIndex;
-    const translateY = diff * 70 - 35;
-    const opacity = diff === 0 ? 1 : Math.max(0.15, 0.4 - Math.abs(diff) * 0.2);
-    const scale = diff === 0 ? 1 : 0.85;
-    const blur = Math.abs(diff) > 0 ? 8 : 0;
+  }, [theme]);
+  const drawSpaceTheme = (ctx, canvas, time) => {
+    ctx.fillStyle = "#030510";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (let i4 = 0; i4 < 100; i4++) {
+      const x2 = i4 * 137.5 % canvas.width;
+      const y3 = i4 * 217.3 % canvas.height;
+      const size = Math.sin(time * 0.01 + i4) * 1.5 + 2;
+      const opacity = Math.sin(time * 0.02 + i4 * 0.5) * 0.3 + 0.7;
+      const gradient = ctx.createRadialGradient(x2, y3, 0, x2, y3, size * 2);
+      gradient.addColorStop(0, `rgba(200, 220, 255, ${opacity})`);
+      gradient.addColorStop(1, "rgba(100, 150, 255, 0)");
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(x2, y3, size * 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    const galaxyX = canvas.width * 0.7;
+    const galaxyY = canvas.height * 0.3;
+    const galaxyGradient = ctx.createRadialGradient(galaxyX, galaxyY, 0, galaxyX, galaxyY, 200);
+    galaxyGradient.addColorStop(0, "rgba(100, 150, 255, 0.15)");
+    galaxyGradient.addColorStop(0.5, "rgba(80, 120, 200, 0.08)");
+    galaxyGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+    ctx.fillStyle = galaxyGradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  };
+  const drawNebulaTheme = (ctx, canvas, time) => {
+    ctx.fillStyle = "#0a0520";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (let i4 = 0; i4 < 5; i4++) {
+      const x2 = Math.sin(time * 3e-4 + i4) * 200 + canvas.width * (0.2 + i4 * 0.15);
+      const y3 = Math.cos(time * 4e-4 + i4) * 150 + canvas.height * (0.3 + i4 * 0.1);
+      const radius = 250 + Math.sin(time * 1e-3 + i4) * 50;
+      const gradient = ctx.createRadialGradient(x2, y3, 0, x2, y3, radius);
+      const hue = (280 + i4 * 20) % 360;
+      gradient.addColorStop(0, `hsla(${hue}, 70%, 50%, 0.15)`);
+      gradient.addColorStop(0.5, `hsla(${hue + 20}, 60%, 40%, 0.08)`);
+      gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+  };
+  const drawOceanTheme = (ctx, canvas, time) => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, "#001a2e");
+    gradient.addColorStop(1, "#000a15");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    for (let i4 = 0; i4 < 5; i4++) {
+      const x2 = canvas.width * (0.2 + i4 * 0.15) + Math.sin(time * 1e-3 + i4) * 50;
+      const rayGradient = ctx.createLinearGradient(x2, 0, x2 + 100, canvas.height);
+      rayGradient.addColorStop(0, "rgba(100, 200, 255, 0.08)");
+      rayGradient.addColorStop(1, "rgba(0, 150, 200, 0)");
+      ctx.fillStyle = rayGradient;
+      ctx.beginPath();
+      ctx.moveTo(x2, 0);
+      ctx.lineTo(x2 + 150, canvas.height);
+      ctx.lineTo(x2 + 50, canvas.height);
+      ctx.lineTo(x2 - 100, 0);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.restore();
+    for (let i4 = 0; i4 < 30; i4++) {
+      const x2 = i4 * 73.5 % canvas.width;
+      const y3 = (i4 * 127.3 + time * 0.2) % canvas.height;
+      const size = Math.random() * 3 + 1;
+      ctx.fillStyle = `rgba(150, 220, 255, ${0.3 + Math.sin(time * 0.01 + i4) * 0.2})`;
+      ctx.beginPath();
+      ctx.arc(x2, y3, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  };
+  const drawCosmicTheme = (ctx, canvas, time) => {
+    ctx.fillStyle = "#05050f";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "rgba(0, 255, 200, 0.08)";
+    ctx.lineWidth = 1;
+    const gridSize = 50;
+    const offset = time * 0.5 % gridSize;
+    for (let x2 = -offset; x2 < canvas.width; x2 += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(x2, 0);
+      ctx.lineTo(x2, canvas.height);
+      ctx.stroke();
+    }
+    for (let y3 = -offset; y3 < canvas.height; y3 += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(0, y3);
+      ctx.lineTo(canvas.width, y3);
+      ctx.stroke();
+    }
+    for (let i4 = 0; i4 < 3; i4++) {
+      const x2 = canvas.width * (0.3 + i4 * 0.2) + Math.sin(time * 2e-3 + i4) * 100;
+      const y3 = canvas.height * 0.5 + Math.cos(time * 3e-3 + i4) * 150;
+      const radius = 80 + Math.sin(time * 4e-3 + i4) * 20;
+      const gradient = ctx.createRadialGradient(x2, y3, 0, x2, y3, radius);
+      gradient.addColorStop(0, "rgba(0, 255, 200, 0.2)");
+      gradient.addColorStop(0.5, "rgba(0, 200, 255, 0.1)");
+      gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(x2, y3, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  };
+  return /* @__PURE__ */ u2("div", { className: "section-background", children: /* @__PURE__ */ u2("canvas", { ref: canvasRef, className: "section-background__canvas" }) });
+};
+
+// src/components/shared/ThumbnailPreview/ThumbnailPreview.tsx
+init_preact_module();
+var THUMBNAIL_SIZE = 80;
+var SEQUENTIAL_DELAY = 300;
+var SEQUENTIAL_ITEM_DELAY = 40;
+var SCROLL_ZONE_WIDTH = 150;
+var AUTO_SCROLL_SPEED = 4;
+var ThumbnailPreview = ({
+  items,
+  onItemClick,
+  onScrollToItem,
+  hasBeenViewed,
+  onTrackScroll,
+  beltScrollPercent = 0
+}) => {
+  const [visibleItems, setVisibleItems] = d2(/* @__PURE__ */ new Set());
+  const [trackScrollPosition, setTrackScrollPosition] = d2(0);
+  const [hoveredItemIndex, setHoveredItemIndex] = d2(null);
+  const [isHoveringTrack, setIsHoveringTrack] = d2(false);
+  const [mouseX, setMouseX] = d2(0);
+  const trackRef = A2(null);
+  const containerRef = A2(null);
+  const scrollIntervalRef = A2();
+  const animationTimeoutsRef = A2([]);
+  y2(() => {
+    return () => {
+      animationTimeoutsRef.current.forEach(clearTimeout);
+      if (scrollIntervalRef.current) clearInterval(scrollIntervalRef.current);
+    };
+  }, []);
+  y2(() => {
+    animationTimeoutsRef.current.forEach(clearTimeout);
+    animationTimeoutsRef.current = [];
+    if (!hasBeenViewed) {
+      items.forEach((_2, index) => {
+        const timeout = window.setTimeout(() => {
+          setVisibleItems((prev) => {
+            const newSet = new Set(prev);
+            newSet.add(index);
+            return newSet;
+          });
+        }, SEQUENTIAL_DELAY + index * SEQUENTIAL_ITEM_DELAY);
+        animationTimeoutsRef.current.push(timeout);
+      });
+    } else {
+      setTimeout(() => {
+        const allIndexes = new Set(items.map((_2, index) => index));
+        setVisibleItems(allIndexes);
+      }, SEQUENTIAL_DELAY);
+    }
+    return () => {
+      animationTimeoutsRef.current.forEach(clearTimeout);
+      animationTimeoutsRef.current = [];
+    };
+  }, [hasBeenViewed, items.length]);
+  const handleThumbnailClick = (item) => {
+    onScrollToItem(item.id);
+    setTimeout(() => {
+      onItemClick(item);
+    }, 300);
+  };
+  const handleThumbnailHover = (index) => {
+    setHoveredItemIndex(index);
+    const scrollPercent = index / items.length;
+    if (onTrackScroll) {
+      onTrackScroll(scrollPercent);
+    }
+  };
+  const handleThumbnailLeave = () => {
+  };
+  const handleTrackMouseMove = (e4) => {
+    if (!trackRef.current || !containerRef.current) return;
+    const trackRect = trackRef.current.getBoundingClientRect();
+    const relativeX = e4.clientX - trackRect.left;
+    setMouseX(relativeX);
+    const container = containerRef.current;
+    const maxScroll = container.scrollWidth - container.clientWidth;
+    if (maxScroll > 0) {
+      if (relativeX < SCROLL_ZONE_WIDTH && container.scrollLeft > 0) {
+        startAutoScroll(-AUTO_SCROLL_SPEED);
+      } else if (relativeX > trackRect.width - SCROLL_ZONE_WIDTH && container.scrollLeft < maxScroll) {
+        startAutoScroll(AUTO_SCROLL_SPEED);
+      } else {
+        stopAutoScroll();
+      }
+    }
+  };
+  const handleTrackMouseEnter = () => {
+    setIsHoveringTrack(true);
+  };
+  const handleTrackMouseLeave = () => {
+    setIsHoveringTrack(false);
+    setHoveredItemIndex(null);
+    stopAutoScroll();
+  };
+  const handleTrackWheel = (e4) => {
+    e4.preventDefault();
+    if (!containerRef.current) return;
+    const scrollSpeed = 2;
+    containerRef.current.scrollLeft += e4.deltaY * scrollSpeed;
+  };
+  const startAutoScroll = (speed) => {
+    if (scrollIntervalRef.current) return;
+    scrollIntervalRef.current = window.setInterval(() => {
+      if (containerRef.current) {
+        containerRef.current.scrollLeft += speed;
+      }
+    }, 16);
+  };
+  const stopAutoScroll = () => {
+    if (scrollIntervalRef.current) {
+      clearInterval(scrollIntervalRef.current);
+      scrollIntervalRef.current = void 0;
+    }
+  };
+  const handleTrackScroll = () => {
+    if (containerRef.current) {
+      setTrackScrollPosition(containerRef.current.scrollLeft);
+    }
+  };
+  y2(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.addEventListener("mousemove", handleTrackMouseMove);
+    track.addEventListener("mouseenter", handleTrackMouseEnter);
+    track.addEventListener("mouseleave", handleTrackMouseLeave);
+    track.addEventListener("wheel", handleTrackWheel, { passive: false });
+    return () => {
+      track.removeEventListener("mousemove", handleTrackMouseMove);
+      track.removeEventListener("mouseenter", handleTrackMouseEnter);
+      track.removeEventListener("mouseleave", handleTrackMouseLeave);
+      track.removeEventListener("wheel", handleTrackWheel);
+    };
+  }, [items.length]);
+  const getGlowStyle = () => {
+    if (!isHoveringTrack) {
+      return { opacity: 0 };
+    }
+    const glowWidth = 400;
+    const glowHeight = THUMBNAIL_SIZE + 40;
     return {
-      transform: `translateY(calc(50vh + ${translateY}vh)) scale(${scale})`,
-      opacity,
-      filter: `blur(${blur}px)`,
-      pointerEvents: diff === 0 ? "auto" : "none",
-      zIndex: 100 - Math.abs(diff)
+      opacity: 0.6,
+      left: `${mouseX}px`,
+      top: "50%",
+      transform: "translate(-50%, -50%)",
+      width: `${glowWidth}px`,
+      height: `${glowHeight}px`
     };
   };
-  return /* @__PURE__ */ u2("div", { className: "belt-navigator", ref: containerRef, children: [
-    /* @__PURE__ */ u2("div", { className: "belt-navigator__rows", children: rows.map((row, index) => /* @__PURE__ */ u2(
+  return /* @__PURE__ */ u2("div", { className: "thumbnail-preview", ref: trackRef, children: [
+    /* @__PURE__ */ u2("div", { className: "thumbnail-preview__glow", style: getGlowStyle() }),
+    /* @__PURE__ */ u2("div", { className: "thumbnail-preview__fade thumbnail-preview__fade--left" }),
+    /* @__PURE__ */ u2("div", { className: "thumbnail-preview__fade thumbnail-preview__fade--right" }),
+    /* @__PURE__ */ u2(
       "div",
       {
-        className: `belt-navigator__row ${index === activeRowIndex ? "belt-navigator__row--active" : ""}`,
-        style: calculateRowStyle(index),
-        children: /* @__PURE__ */ u2(
-          CircularBelt,
-          {
-            items: row.items,
-            label: row.label,
-            onItemClick,
-            isActive: index === activeRowIndex
-          }
-        )
-      },
-      row.key
-    )) }),
-    canGoUp && /* @__PURE__ */ u2(
-      "button",
-      {
-        className: "belt-navigator__arrow belt-navigator__arrow--up belt-navigator__arrow--fixed",
-        onClick: navigateUp,
-        children: /* @__PURE__ */ u2("svg", { width: "60", height: "30", viewBox: "0 0 60 30", fill: "none", children: /* @__PURE__ */ u2(
-          "path",
-          {
-            d: "M10 22 L30 8 L50 22",
-            stroke: "currentColor",
-            strokeWidth: "3",
-            strokeLinecap: "round",
-            strokeLinejoin: "round"
-          }
-        ) })
-      }
-    ),
-    canGoDown && /* @__PURE__ */ u2(
-      "button",
-      {
-        className: "belt-navigator__arrow belt-navigator__arrow--down belt-navigator__arrow--fixed",
-        onClick: navigateDown,
-        children: /* @__PURE__ */ u2("svg", { width: "60", height: "30", viewBox: "0 0 60 30", fill: "none", children: /* @__PURE__ */ u2(
-          "path",
-          {
-            d: "M10 8 L30 22 L50 8",
-            stroke: "currentColor",
-            strokeWidth: "3",
-            strokeLinecap: "round",
-            strokeLinejoin: "round"
-          }
-        ) })
+        className: "thumbnail-preview__container",
+        ref: containerRef,
+        onScroll: handleTrackScroll,
+        children: /* @__PURE__ */ u2("div", { className: "thumbnail-preview__track", children: items.map((item, index) => {
+          const isVisible = visibleItems.has(index);
+          return /* @__PURE__ */ u2(
+            "div",
+            {
+              className: `thumbnail-preview__item ${hoveredItemIndex === index ? "thumbnail-preview__item--active" : ""}`,
+              style: {
+                width: `${THUMBNAIL_SIZE}px`,
+                height: `${THUMBNAIL_SIZE}px`,
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? "translateY(0) scale(1)" : "translateY(20px) scale(0.8)",
+                transition: "opacity 0.3s ease, transform 0.3s ease"
+              },
+              onClick: () => handleThumbnailClick(item),
+              onMouseEnter: () => handleThumbnailHover(index),
+              onMouseLeave: handleThumbnailLeave,
+              children: /* @__PURE__ */ u2("div", { className: "thumbnail-preview__item-inner", children: item.thumbnail ? /* @__PURE__ */ u2(
+                "img",
+                {
+                  src: item.thumbnail,
+                  alt: item.name,
+                  className: "thumbnail-preview__item-image"
+                }
+              ) : /* @__PURE__ */ u2("div", { className: "thumbnail-preview__item-placeholder", children: /* @__PURE__ */ u2("span", { children: item.name.split(" ").map((word) => word.charAt(0)).join("") }) }) })
+            },
+            item.id
+          );
+        }) })
       }
     )
   ] });
 };
 
+// src/components/shared/TagSearchView/TagSearchView.tsx
+init_preact_module();
+
+// src/lib/utils/portfolioFilter.ts
+init_preact_module();
+function filterPortfolioItems(options) {
+  const { tags = [], type } = options;
+  if (tags.length === 0 && !type) {
+    return [];
+  }
+  const allItems = portfolioData.flatMap((row) => row.items);
+  return allItems.filter((item) => {
+    if (type && item.type !== type) {
+      return false;
+    }
+    if (tags.length > 0) {
+      if (!item.tags || item.tags.length === 0) {
+        return false;
+      }
+      return item.tags.some((tag) => tags.includes(tag));
+    }
+    return true;
+  });
+}
+function getAllTags() {
+  const allItems = portfolioData.flatMap((row) => row.items);
+  const tagSet = /* @__PURE__ */ new Set();
+  allItems.forEach((item) => {
+    if (item.tags) {
+      item.tags.forEach((tag) => tagSet.add(tag));
+    }
+  });
+  return Array.from(tagSet).sort();
+}
+
+// src/components/shared/TagSearchView/TagSearchView.tsx
+var TAG_CATEGORIES = {
+  "Frontend": ["React", "Preact", "JavaScript", "TypeScript", "HTML", "CSS", "SCSS", "Vue", "Angular", "jQuery", "WebGL", "Three.js", "D3.js", "Chart.js"],
+  "Backend": ["Node.js", "Express", "PHP", "Python", "Ruby", "Java", "C#", ".NET", "REST API", "GraphQL", "Django", "Laravel", "Spring"],
+  "Database": ["MySQL", "PostgreSQL", "MongoDB", "Redis", "SQLite", "Firebase", "DynamoDB", "Elasticsearch"],
+  "DevOps & Cloud": ["AWS", "Docker", "Kubernetes", "CI/CD", "Jenkins", "GitHub Actions", "Azure", "Google Cloud", "Terraform", "Ansible"],
+  "Architecture": ["Microservices", "Serverless", "Monolith", "API Design", "System Design", "Scalability", "Performance", "Security"],
+  "Tools & Workflow": ["Git", "GitHub", "GitLab", "Webpack", "Vite", "esbuild", "npm", "Yarn", "VS Code", "Figma", "Photoshop"],
+  "Mobile": ["React Native", "iOS", "Android", "Flutter", "Swift", "Kotlin", "Mobile UI"],
+  "Data & Analytics": ["Data Visualization", "Analytics", "Machine Learning", "AI", "Big Data", "ETL", "Reporting"],
+  "Testing": ["Jest", "Mocha", "Cypress", "Testing Library", "Unit Testing", "Integration Testing", "E2E Testing"],
+  "Other": []
+};
+var TagSearchView = ({ selectedTags, onTagClick }) => {
+  const [categorizedTags, setCategorizedTags] = d2({});
+  y2(() => {
+    const allTags = getAllTags();
+    const categorized = {};
+    Object.keys(TAG_CATEGORIES).forEach((category) => {
+      categorized[category] = [];
+    });
+    allTags.forEach((tag) => {
+      let placed = false;
+      for (const [category, categoryTags] of Object.entries(TAG_CATEGORIES)) {
+        if (categoryTags.includes(tag)) {
+          if (!categorized[category]) categorized[category] = [];
+          categorized[category].push(tag);
+          placed = true;
+          break;
+        }
+      }
+      if (!placed) {
+        if (!categorized["Other"]) categorized["Other"] = [];
+        categorized["Other"].push(tag);
+      }
+    });
+    Object.keys(categorized).forEach((category) => {
+      if (categorized[category].length === 0) {
+        delete categorized[category];
+      }
+    });
+    setCategorizedTags(categorized);
+  }, []);
+  return /* @__PURE__ */ u2("div", { className: "tag-search-view", children: [
+    /* @__PURE__ */ u2("div", { className: "tag-search-view__header", children: /* @__PURE__ */ u2("h3", { className: "tag-search-view__title", children: "Filter by Technology" }) }),
+    /* @__PURE__ */ u2("div", { className: "tag-search-view__categories", children: Object.entries(categorizedTags).map(([category, tags]) => /* @__PURE__ */ u2("div", { className: "tag-search-view__category", children: [
+      /* @__PURE__ */ u2("h4", { className: "tag-search-view__category-title", children: category }),
+      /* @__PURE__ */ u2("div", { className: "tag-search-view__tag-list", children: tags.map((tag) => /* @__PURE__ */ u2(
+        "button",
+        {
+          className: `tag-search-view__tag ${selectedTags.includes(tag) ? "tag-search-view__tag--selected" : ""}`,
+          onClick: () => onTagClick(tag),
+          children: tag
+        },
+        tag
+      )) })
+    ] }, category)) })
+  ] });
+};
+
+// src/components/shared/BeltNavigator/BeltNavigator.tsx
+var SECTION_THEMES = ["space", "nebula", "ocean", "cosmic"];
+var BeltNavigator = ({ rows, onItemClick, onRowChange, activeRowIndex, selectedTags, onTagsChange, onCloseDetailView }) => {
+  const containerRef = A2(null);
+  const [currentSection, setCurrentSection] = d2(0);
+  const isScrollingRef = A2(false);
+  const scrollTimeoutRef = A2();
+  const [viewedSections, setViewedSections] = d2(/* @__PURE__ */ new Set());
+  const [scrollToItemId, setScrollToItemId] = d2(null);
+  const [beltScrollPercents, setBeltScrollPercents] = d2(/* @__PURE__ */ new Map());
+  const [isLoadingSearch, setIsLoadingSearch] = d2(false);
+  const [searchResults, setSearchResults] = d2([]);
+  const [isFadingOut, setIsFadingOut] = d2(false);
+  const previousResultsRef = A2([]);
+  const searchRow = selectedTags.length > 0 ? {
+    key: "search",
+    label: "Search Results",
+    order: rows.length,
+    items: searchResults
+  } : null;
+  const allRows = searchRow ? [...rows, searchRow] : rows;
+  const handleScroll = (event) => {
+    event.preventDefault();
+    if (isScrollingRef.current) return;
+    const delta = event.deltaY;
+    const direction = delta > 0 ? 1 : -1;
+    const newSection = currentSection + direction;
+    if (newSection >= 0 && newSection <= rows.length) {
+      isScrollingRef.current = true;
+      setCurrentSection(newSection);
+      onRowChange(newSection);
+      const container = containerRef.current;
+      if (container) {
+        const targetScroll = newSection * window.innerHeight;
+        container.scrollTo({
+          top: targetScroll,
+          behavior: "smooth"
+        });
+      }
+      setTimeout(() => {
+        isScrollingRef.current = false;
+      }, 600);
+    }
+  };
+  y2(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    container.addEventListener("wheel", handleScroll, { passive: false });
+    return () => {
+      container.removeEventListener("wheel", handleScroll);
+    };
+  }, [currentSection, rows.length]);
+  y2(() => {
+    if (activeRowIndex !== currentSection) {
+      setCurrentSection(activeRowIndex);
+      const container = containerRef.current;
+      if (container) {
+        const targetScroll = activeRowIndex * window.innerHeight;
+        container.scrollTo({
+          top: targetScroll,
+          behavior: "smooth"
+        });
+      }
+    }
+  }, [activeRowIndex]);
+  y2(() => {
+    const handleKeyDown = (e4) => {
+      if (isScrollingRef.current) return;
+      if (e4.key === "ArrowDown" || e4.key === "PageDown") {
+        e4.preventDefault();
+        const newSection = Math.min(currentSection + 1, rows.length);
+        if (newSection !== currentSection) {
+          setCurrentSection(newSection);
+          onRowChange(newSection);
+          isScrollingRef.current = true;
+          setTimeout(() => isScrollingRef.current = false, 600);
+        }
+      } else if (e4.key === "ArrowUp" || e4.key === "PageUp") {
+        e4.preventDefault();
+        const newSection = Math.max(currentSection - 1, 0);
+        if (newSection !== currentSection) {
+          setCurrentSection(newSection);
+          onRowChange(newSection);
+          isScrollingRef.current = true;
+          setTimeout(() => isScrollingRef.current = false, 600);
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentSection, rows.length]);
+  y2(() => {
+    const animationDuration = 1500;
+    if (!viewedSections.has(currentSection)) {
+      const timeout = setTimeout(() => {
+        setViewedSections((prev) => /* @__PURE__ */ new Set([...prev, currentSection]));
+      }, animationDuration);
+      return () => clearTimeout(timeout);
+    }
+  }, [currentSection]);
+  const handleScrollToItem = (itemId) => {
+    setScrollToItemId(itemId);
+    setTimeout(() => setScrollToItemId(null), 700);
+  };
+  const handleTrackScroll = (scrollPercent) => {
+    setBeltScrollPercents((prev) => {
+      const newMap = new Map(prev);
+      newMap.set(currentSection, scrollPercent);
+      return newMap;
+    });
+  };
+  const handleTagSearch = (tags) => {
+    if (onCloseDetailView) {
+      onCloseDetailView();
+    }
+    setIsLoadingSearch(true);
+    setTimeout(() => {
+      const filtered = filterPortfolioItems({ tags });
+      setSearchResults(filtered);
+      onTagsChange(tags);
+      setIsLoadingSearch(false);
+      const searchIndex = rows.length;
+      setCurrentSection(searchIndex);
+      onRowChange(searchIndex);
+      const container = containerRef.current;
+      if (container) {
+        const targetScroll = searchIndex * window.innerHeight;
+        container.scrollTo({
+          top: targetScroll,
+          behavior: "smooth"
+        });
+      }
+    }, 300);
+  };
+  y2(() => {
+    if (selectedTags.length > 0) {
+      const isOnSearchSection = currentSection === rows.length;
+      if (previousResultsRef.current.length > 0 && isOnSearchSection) {
+        setIsFadingOut(true);
+        setTimeout(() => {
+          const filtered = filterPortfolioItems({ tags: selectedTags });
+          setSearchResults(filtered);
+          previousResultsRef.current = filtered;
+          setIsFadingOut(false);
+        }, 300);
+      } else {
+        const filtered = filterPortfolioItems({ tags: selectedTags });
+        setSearchResults(filtered);
+        previousResultsRef.current = filtered;
+        setIsFadingOut(false);
+      }
+    } else {
+      previousResultsRef.current = [];
+      setSearchResults([]);
+      setIsFadingOut(false);
+    }
+  }, [selectedTags, currentSection]);
+  return /* @__PURE__ */ u2("div", { className: "belt-navigator", ref: containerRef, children: [
+    isLoadingSearch && /* @__PURE__ */ u2("div", { className: "belt-navigator__loading", children: [
+      /* @__PURE__ */ u2("div", { className: "belt-navigator__loading-spinner" }),
+      /* @__PURE__ */ u2("p", { className: "belt-navigator__loading-text", children: "Searching..." })
+    ] }),
+    rows.map((row, index) => /* @__PURE__ */ u2("div", { className: "belt-navigator__section", "data-index": index, children: [
+      /* @__PURE__ */ u2(SectionBackground, { theme: SECTION_THEMES[index % SECTION_THEMES.length] }),
+      /* @__PURE__ */ u2("div", { className: "belt-navigator__section-content", children: /* @__PURE__ */ u2(
+        CircularBelt,
+        {
+          items: row.items,
+          label: row.label,
+          onItemClick,
+          isActive: index === currentSection,
+          scrollToItemId: index === currentSection ? scrollToItemId : null,
+          trackScrollPercent: beltScrollPercents.get(index),
+          onTagClick: (tag) => {
+            if (onCloseDetailView) {
+              onCloseDetailView();
+            }
+            const newTags = selectedTags.includes(tag) ? selectedTags.filter((t3) => t3 !== tag) : [...selectedTags, tag];
+            handleTagSearch(newTags);
+          }
+        }
+      ) }),
+      index === currentSection && /* @__PURE__ */ u2(
+        ThumbnailPreview,
+        {
+          items: row.items,
+          onItemClick,
+          onScrollToItem: handleScrollToItem,
+          hasBeenViewed: viewedSections.has(index),
+          onTrackScroll: handleTrackScroll,
+          beltScrollPercent: beltScrollPercents.get(index)
+        }
+      )
+    ] }, row.key)),
+    /* @__PURE__ */ u2("div", { className: "belt-navigator__section", "data-index": rows.length, children: [
+      /* @__PURE__ */ u2(SectionBackground, { theme: SECTION_THEMES[rows.length % SECTION_THEMES.length] }),
+      /* @__PURE__ */ u2("div", { className: `belt-navigator__section-content ${isFadingOut ? "belt-navigator__section-content--fading" : ""}`, children: selectedTags.length > 0 && searchResults.length > 0 && /* @__PURE__ */ u2(
+        CircularBelt,
+        {
+          items: searchResults,
+          label: "Search Results",
+          onItemClick,
+          isActive: currentSection === rows.length,
+          scrollToItemId: currentSection === rows.length ? scrollToItemId : null,
+          trackScrollPercent: beltScrollPercents.get(rows.length),
+          onTagClick: (tag) => {
+            if (onCloseDetailView) {
+              onCloseDetailView();
+            }
+            const newTags = selectedTags.includes(tag) ? selectedTags.filter((t3) => t3 !== tag) : [...selectedTags, tag];
+            handleTagSearch(newTags);
+          }
+        }
+      ) }),
+      currentSection === rows.length && searchResults.length > 0 && /* @__PURE__ */ u2(
+        ThumbnailPreview,
+        {
+          items: searchResults,
+          onItemClick,
+          onScrollToItem: handleScrollToItem,
+          hasBeenViewed: viewedSections.has(rows.length),
+          onTrackScroll: handleTrackScroll,
+          beltScrollPercent: beltScrollPercents.get(rows.length)
+        }
+      ),
+      currentSection === rows.length && /* @__PURE__ */ u2("div", { className: "belt-navigator__search-overlay", children: /* @__PURE__ */ u2(
+        TagSearchView,
+        {
+          selectedTags,
+          onTagClick: (tag) => {
+            const newTags = selectedTags.includes(tag) ? selectedTags.filter((t3) => t3 !== tag) : [...selectedTags, tag];
+            onTagsChange(newTags);
+          }
+        }
+      ) })
+    ] }, "search")
+  ] });
+};
+
 // src/components/shared/ItemDetailView/ItemDetailView.tsx
 init_preact_module();
-var ItemDetailView = ({ item, onClose }) => {
+
+// src/components/shared/MediaCarousel/MediaCarousel.tsx
+init_preact_module();
+var MediaCarousel = ({ mainImage, media, isVisible, onClose }) => {
+  const [currentIndex, setCurrentIndex] = d2(0);
+  const videoRefs = A2(/* @__PURE__ */ new Map());
+  const touchStartRef = A2(null);
+  const allMedia = [];
+  if (mainImage) {
+    allMedia.push({ url: mainImage, type: "image", description: "Main image" });
+  }
+  allMedia.push(...media);
+  y2(() => {
+    if (!isVisible) {
+      videoRefs.current.forEach((video) => {
+        video.pause();
+        video.currentTime = 0;
+      });
+    }
+  }, [isVisible]);
+  y2(() => {
+    videoRefs.current.forEach((video, index) => {
+      if (index !== currentIndex) {
+        video.pause();
+      }
+    });
+  }, [currentIndex]);
+  y2(() => {
+    return () => {
+      videoRefs.current.forEach((video) => {
+        video.pause();
+        video.currentTime = 0;
+      });
+    };
+  }, []);
+  const handlePrevious = () => {
+    setCurrentIndex((prev) => prev === 0 ? allMedia.length - 1 : prev - 1);
+  };
+  const handleNext = () => {
+    setCurrentIndex((prev) => prev === allMedia.length - 1 ? 0 : prev + 1);
+  };
+  const handleThumbnailClick = (index) => {
+    setCurrentIndex(index);
+  };
+  const handleTouchStart = (e4) => {
+    touchStartRef.current = {
+      x: e4.touches[0].clientX,
+      time: Date.now()
+    };
+  };
+  const handleTouchEnd = (e4) => {
+    if (!touchStartRef.current) return;
+    const touchEnd = e4.changedTouches[0].clientX;
+    const deltaX = touchEnd - touchStartRef.current.x;
+    const deltaTime = Date.now() - touchStartRef.current.time;
+    if (Math.abs(deltaX) > 50 && deltaTime < 300) {
+      if (deltaX > 0) {
+        handlePrevious();
+      } else {
+        handleNext();
+      }
+    }
+    touchStartRef.current = null;
+  };
+  const registerVideoRef = (index, el) => {
+    if (el) {
+      videoRefs.current.set(index, el);
+    } else {
+      videoRefs.current.delete(index);
+    }
+  };
+  if (allMedia.length === 0) {
+    return null;
+  }
+  const currentItem = allMedia[currentIndex];
+  const showThumbnails = allMedia.length > 1;
+  return /* @__PURE__ */ u2("div", { className: "media-carousel", children: [
+    /* @__PURE__ */ u2(
+      "div",
+      {
+        className: "media-carousel__main",
+        onTouchStart: handleTouchStart,
+        onTouchEnd: handleTouchEnd,
+        children: [
+          currentItem.type === "image" ? /* @__PURE__ */ u2(
+            "img",
+            {
+              src: currentItem.url,
+              alt: currentItem.description || "Media item",
+              className: "media-carousel__image"
+            }
+          ) : /* @__PURE__ */ u2(
+            "video",
+            {
+              ref: (el) => registerVideoRef(currentIndex, el),
+              src: currentItem.url,
+              className: "media-carousel__video",
+              controls: true,
+              playsInline: true
+            }
+          ),
+          allMedia.length > 1 && /* @__PURE__ */ u2("div", { className: "media-carousel__description", children: currentItem.description || `${currentIndex + 1} / ${allMedia.length}` })
+        ]
+      }
+    ),
+    allMedia.length > 1 && /* @__PURE__ */ u2("div", { className: "media-carousel__controls", children: [
+      /* @__PURE__ */ u2(
+        "button",
+        {
+          className: "media-carousel__arrow media-carousel__arrow--left",
+          onClick: handlePrevious,
+          title: "Previous",
+          children: /* @__PURE__ */ u2("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", children: /* @__PURE__ */ u2(
+            "path",
+            {
+              d: "M15 18L9 12L15 6",
+              stroke: "currentColor",
+              strokeWidth: "2",
+              strokeLinecap: "round",
+              strokeLinejoin: "round"
+            }
+          ) })
+        }
+      ),
+      /* @__PURE__ */ u2("div", { className: "media-carousel__indicator", children: [
+        currentIndex + 1,
+        " / ",
+        allMedia.length
+      ] }),
+      /* @__PURE__ */ u2(
+        "button",
+        {
+          className: "media-carousel__arrow media-carousel__arrow--right",
+          onClick: handleNext,
+          title: "Next",
+          children: /* @__PURE__ */ u2("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", children: /* @__PURE__ */ u2(
+            "path",
+            {
+              d: "M9 18L15 12L9 6",
+              stroke: "currentColor",
+              strokeWidth: "2",
+              strokeLinecap: "round",
+              strokeLinejoin: "round"
+            }
+          ) })
+        }
+      )
+    ] }),
+    showThumbnails && /* @__PURE__ */ u2("div", { className: "media-carousel__thumbnails", children: allMedia.map((item, index) => /* @__PURE__ */ u2(
+      "div",
+      {
+        className: `media-carousel__thumbnail ${index === currentIndex ? "media-carousel__thumbnail--active" : ""}`,
+        onClick: () => handleThumbnailClick(index),
+        children: item.type === "image" ? /* @__PURE__ */ u2(
+          "img",
+          {
+            src: item.url,
+            alt: item.description || `Thumbnail ${index + 1}`,
+            className: "media-carousel__thumbnail-image"
+          }
+        ) : /* @__PURE__ */ u2("div", { className: "media-carousel__thumbnail-video", children: /* @__PURE__ */ u2("svg", { width: "24", height: "24", viewBox: "0 0 24 24", fill: "currentColor", children: /* @__PURE__ */ u2("path", { d: "M8 5v14l11-7z" }) }) })
+      },
+      index
+    )) })
+  ] });
+};
+
+// src/components/shared/ItemDetailView/ItemDetailView.tsx
+var ItemDetailView = ({ item, onClose, onTagClick }) => {
   const [isVisible, setIsVisible] = d2(false);
   const [showContent, setShowContent] = d2(false);
   y2(() => {
@@ -2750,6 +4366,8 @@ var ItemDetailView = ({ item, onClose }) => {
     return () => window.removeEventListener("keydown", handleEscape);
   }, [item]);
   if (!item) return null;
+  const hasMedia = item.media && item.media.length > 0;
+  const showCarousel = item.image || hasMedia;
   return /* @__PURE__ */ u2("div", { className: `item-detail-view ${isVisible ? "item-detail-view--visible" : ""}`, children: [
     /* @__PURE__ */ u2("div", { className: "item-detail-view__backdrop", onClick: handleClose }),
     /* @__PURE__ */ u2("div", { className: "item-detail-view__container", children: /* @__PURE__ */ u2("div", { className: `item-detail-view__content ${showContent ? "item-detail-view__content--visible" : ""}`, children: [
@@ -2789,695 +4407,87 @@ var ItemDetailView = ({ item, onClose }) => {
           ) })
         }
       ),
-      /* @__PURE__ */ u2("div", { className: "item-detail-view__hero", children: /* @__PURE__ */ u2("div", { className: "item-detail-view__hero-bg", children: /* @__PURE__ */ u2("div", { className: "item-detail-view__hero-placeholder", children: item.name.charAt(0) }) }) }),
+      item.thumbnail && /* @__PURE__ */ u2("div", { className: "item-detail-view__thumbnail-bar", children: /* @__PURE__ */ u2(
+        "img",
+        {
+          src: item.thumbnail,
+          alt: `${item.name} logo`,
+          className: "item-detail-view__thumbnail-image"
+        }
+      ) }),
+      showCarousel ? /* @__PURE__ */ u2("div", { className: "item-detail-view__media-section", children: /* @__PURE__ */ u2(
+        MediaCarousel,
+        {
+          mainImage: item.image,
+          media: item.media || [],
+          isVisible,
+          onClose: handleClose
+        }
+      ) }) : (
+        /* Show large text banner if no images */
+        /* @__PURE__ */ u2("div", { className: "item-detail-view__name-banner", children: /* @__PURE__ */ u2("div", { className: "item-detail-view__name-banner-text", children: item.name }) })
+      ),
       /* @__PURE__ */ u2("div", { className: "item-detail-view__body", children: [
-        /* @__PURE__ */ u2("div", { className: "item-detail-view__header", style: { animationDelay: "0.1s" }, children: /* @__PURE__ */ u2("h1", { className: "item-detail-view__title", children: item.name }) }),
+        /* @__PURE__ */ u2("div", { className: "item-detail-view__header", style: { animationDelay: "0.1s" }, children: [
+          /* @__PURE__ */ u2("h1", { className: "item-detail-view__title", children: item.name }),
+          (item.position || item.dates || item.type) && /* @__PURE__ */ u2("div", { className: "item-detail-view__work-meta", children: [
+            item.position && /* @__PURE__ */ u2("div", { className: "item-detail-view__position", children: item.position }),
+            item.dates && /* @__PURE__ */ u2("div", { className: "item-detail-view__dates", children: item.dates }),
+            item.type && /* @__PURE__ */ u2("div", { className: `item-detail-view__type item-detail-view__type--${item.type}`, children: item.type === "fulltime" ? "Full-time" : "Freelance" })
+          ] }),
+          item.url && /* @__PURE__ */ u2(
+            "a",
+            {
+              href: item.url,
+              target: "_blank",
+              rel: "noopener noreferrer",
+              className: "item-detail-view__url",
+              children: [
+                "Visit Website",
+                /* @__PURE__ */ u2("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", children: /* @__PURE__ */ u2(
+                  "path",
+                  {
+                    d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3",
+                    stroke: "currentColor",
+                    strokeWidth: "2",
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round"
+                  }
+                ) })
+              ]
+            }
+          )
+        ] }),
         /* @__PURE__ */ u2("div", { className: "item-detail-view__meta", style: { animationDelay: "0.2s" }, children: [
           /* @__PURE__ */ u2("p", { className: "item-detail-view__description", children: item.description }),
-          item.tags && item.tags.length > 0 && /* @__PURE__ */ u2("div", { className: "item-detail-view__tags", children: item.tags.map((tag) => /* @__PURE__ */ u2("span", { className: "item-detail-view__tag", children: tag }, tag)) })
+          item.tags && item.tags.length > 0 && /* @__PURE__ */ u2("div", { className: "item-detail-view__tags", children: item.tags.map((tag) => /* @__PURE__ */ u2(
+            "button",
+            {
+              className: "item-detail-view__tag",
+              onClick: () => {
+                if (onTagClick) {
+                  onTagClick(tag);
+                }
+              },
+              children: tag
+            },
+            tag
+          )) })
         ] }),
-        /* @__PURE__ */ u2("div", { className: "item-detail-view__details", style: { animationDelay: "0.3s" }, children: [
-          /* @__PURE__ */ u2("h2", { children: "About" }),
+        item.details && /* @__PURE__ */ u2("div", { className: "item-detail-view__details", style: { animationDelay: "0.3s" }, children: [
+          /* @__PURE__ */ u2("h2", { children: "Details" }),
           /* @__PURE__ */ u2("p", { children: item.details })
-        ] }),
-        item.media && item.media.length > 0 && /* @__PURE__ */ u2("div", { className: "item-detail-view__media", style: { animationDelay: "0.4s" }, children: [
-          /* @__PURE__ */ u2("h2", { children: "Media" }),
-          /* @__PURE__ */ u2("div", { className: "item-detail-view__media-grid", children: item.media.map((mediaItem, index) => /* @__PURE__ */ u2("div", { className: "item-detail-view__media-item", children: [
-            /* @__PURE__ */ u2("div", { className: "item-detail-view__media-placeholder", children: mediaItem.type === "image" ? "\u{1F5BC}\uFE0F" : "\u{1F3AC}" }),
-            /* @__PURE__ */ u2("p", { className: "item-detail-view__media-description", children: mediaItem.description })
-          ] }, index)) })
         ] })
       ] })
     ] }) })
   ] });
 };
 
-// src/data/portfolioData.ts
-init_preact_module();
-var portfolioData = [
-  {
-    key: "featured",
-    label: "Featured",
-    order: 0,
-    items: [
-      {
-        id: "feat-001",
-        name: "Quantum Interface",
-        description: "A revolutionary approach to data visualization",
-        image: "/public/images/projects/quantum.jpg",
-        media: [
-          {
-            url: "/public/images/projects/quantum-1.jpg",
-            type: "image",
-            description: "Main dashboard interface"
-          },
-          {
-            url: "/public/images/projects/quantum-2.jpg",
-            type: "image",
-            description: "Real-time data streams"
-          }
-        ],
-        details: "An immersive data visualization platform that transforms complex datasets into interactive 3D experiences. Built with cutting-edge web technologies and optimized for performance.",
-        tags: ["WebGL", "Three.js", "TypeScript"]
-      },
-      {
-        id: "feat-002",
-        name: "Neural Networks Dashboard",
-        description: "AI-powered analytics and insights",
-        image: "/public/images/projects/neural.jpg",
-        media: [
-          {
-            url: "/public/images/projects/neural-1.jpg",
-            type: "image",
-            description: "Neural network visualization"
-          }
-        ],
-        details: "A sophisticated dashboard for monitoring and analyzing neural network training in real-time. Features advanced visualizations and predictive analytics.",
-        tags: ["React", "Python", "TensorFlow"]
-      },
-      {
-        id: "feat-003",
-        name: "Stellar Navigation",
-        description: "Next-gen space exploration tool",
-        image: "/public/images/projects/stellar.jpg",
-        media: [
-          {
-            url: "/public/images/projects/stellar-1.jpg",
-            type: "image",
-            description: "Star map interface"
-          }
-        ],
-        details: "An interactive celestial mapping application that allows users to explore the cosmos with unprecedented detail and accuracy.",
-        tags: ["WebGL", "Astronomy API", "Canvas"]
-      },
-      {
-        id: "feat-004",
-        name: "Holographic UI System",
-        description: "Futuristic interface paradigm",
-        image: "/public/images/projects/holo.jpg",
-        media: [],
-        details: "A groundbreaking UI framework that brings holographic-style interfaces to the web, with gesture controls and spatial awareness.",
-        tags: ["WebXR", "Three.js", "Motion Tracking"]
-      },
-      {
-        id: "feat-005",
-        name: "Quantum Cryptography Suite",
-        description: "Next-level security protocols",
-        image: "/public/images/projects/crypto.jpg",
-        media: [],
-        details: "A comprehensive cryptography toolkit leveraging quantum-resistant algorithms for future-proof security.",
-        tags: ["Cryptography", "Security", "Go"]
-      },
-      {
-        id: "feat-006",
-        name: "Ethereal Data Streams",
-        description: "Real-time data flow visualization",
-        image: "/public/images/projects/streams.jpg",
-        media: [],
-        details: "A mesmerizing platform for visualizing complex data streams with particle-based rendering.",
-        tags: ["WebGL", "Data Viz", "React"]
-      },
-      {
-        id: "feat-007",
-        name: "Cosmic Code Editor",
-        description: "Space-themed development environment",
-        image: "/public/images/projects/editor.jpg",
-        media: [],
-        details: "A revolutionary code editor with AI-powered suggestions and immersive visual themes.",
-        tags: ["Monaco", "AI", "TypeScript"]
-      },
-      {
-        id: "feat-008",
-        name: "Neural Symphony",
-        description: "AI-generated music composition",
-        image: "/public/images/projects/symphony.jpg",
-        media: [],
-        details: "Create beautiful, original music using neural networks trained on classical compositions.",
-        tags: ["AI", "Audio", "Python"]
-      },
-      {
-        id: "feat-009",
-        name: "Quantum Weather Predictor",
-        description: "Advanced meteorological forecasting",
-        image: "/public/images/projects/weather.jpg",
-        media: [],
-        details: "Leverage quantum computing to predict weather patterns with unprecedented accuracy.",
-        tags: ["Quantum", "ML", "Data Science"]
-      },
-      {
-        id: "feat-010",
-        name: "Bioluminescent UI Framework",
-        description: "Nature-inspired interface library",
-        image: "/public/images/projects/bio.jpg",
-        media: [],
-        details: "A unique UI framework inspired by bioluminescent organisms with glowing, organic animations.",
-        tags: ["UI", "Animation", "CSS"]
-      },
-      {
-        id: "feat-011",
-        name: "Void Network Monitor",
-        description: "Distributed system observability",
-        image: "/public/images/projects/void.jpg",
-        media: [],
-        details: "Monitor and visualize distributed systems across the network with real-time topology maps.",
-        tags: ["DevOps", "Monitoring", "Go"]
-      },
-      {
-        id: "feat-012",
-        name: "Prismatic Color Engine",
-        description: "Advanced color manipulation toolkit",
-        image: "/public/images/projects/prism.jpg",
-        media: [],
-        details: "A comprehensive color theory engine for designers with perceptual color space transformations.",
-        tags: ["Design", "Color", "JavaScript"]
-      },
-      {
-        id: "feat-013",
-        name: "Quantum State Manager",
-        description: "Advanced state synchronization",
-        image: "/public/images/projects/state.jpg",
-        media: [],
-        details: "A sophisticated state management library with time-travel debugging and quantum state principles.",
-        tags: ["State", "React", "TypeScript"]
-      },
-      {
-        id: "feat-014",
-        name: "Neuron Network Visualizer",
-        description: "Interactive neural architecture",
-        image: "/public/images/projects/neuron.jpg",
-        media: [],
-        details: "Real-time visualization of neural network training with 3D architecture exploration.",
-        tags: ["AI", "Visualization", "Three.js"]
-      },
-      {
-        id: "feat-015",
-        name: "Fluid Dynamics Simulator",
-        description: "Real-time physics engine",
-        image: "/public/images/projects/fluid.jpg",
-        media: [],
-        details: "GPU-accelerated fluid dynamics simulation with interactive parameters.",
-        tags: ["Physics", "WebGL", "Shaders"]
-      },
-      {
-        id: "feat-016",
-        name: "Celestial Navigation System",
-        description: "Astronomical positioning tool",
-        image: "/public/images/projects/celestial.jpg",
-        media: [],
-        details: "Navigate using stars and celestial bodies with real-time positioning algorithms.",
-        tags: ["Astronomy", "Navigation", "Math"]
-      },
-      {
-        id: "feat-017",
-        name: "Fractal Generator Pro",
-        description: "Mathematical art creation",
-        image: "/public/images/projects/fractal.jpg",
-        media: [],
-        details: "Generate stunning fractal patterns with deep zoom capabilities and customizable equations.",
-        tags: ["Math", "Graphics", "Canvas"]
-      },
-      {
-        id: "feat-018",
-        name: "Audio Synthesizer",
-        description: "Web-based sound design",
-        image: "/public/images/projects/synth.jpg",
-        media: [],
-        details: "Professional-grade audio synthesizer with modular routing and preset management.",
-        tags: ["Audio", "Web Audio", "Sound"]
-      },
-      {
-        id: "feat-019",
-        name: "Particle Physics Lab",
-        description: "Interactive particle simulator",
-        image: "/public/images/projects/physics.jpg",
-        media: [],
-        details: "Simulate particle interactions with various forces and collision dynamics.",
-        tags: ["Physics", "Simulation", "WebGL"]
-      },
-      {
-        id: "feat-020",
-        name: "Code Morphology Analyzer",
-        description: "AST visualization and refactoring",
-        image: "/public/images/projects/ast.jpg",
-        media: [],
-        details: "Visualize and analyze code structure with automated refactoring suggestions.",
-        tags: ["Tooling", "AST", "Analysis"]
-      }
-    ]
-  },
-  {
-    key: "work",
-    label: "Work",
-    order: 1,
-    items: [
-      {
-        id: "work-001",
-        name: "E-Commerce Platform",
-        description: "Scalable marketplace solution",
-        image: "/public/images/projects/ecommerce.jpg",
-        media: [
-          {
-            url: "/public/images/projects/ecommerce-1.jpg",
-            type: "image",
-            description: "Product catalog"
-          }
-        ],
-        details: "Built a high-performance e-commerce platform handling millions of transactions. Implemented advanced search, recommendations, and real-time inventory management.",
-        tags: ["Node.js", "React", "PostgreSQL"]
-      },
-      {
-        id: "work-002",
-        name: "Healthcare Portal",
-        description: "Patient management system",
-        image: "/public/images/projects/health.jpg",
-        media: [],
-        details: "Developed a HIPAA-compliant patient portal with secure messaging, appointment scheduling, and medical records management.",
-        tags: ["Angular", "Spring Boot", "Security"]
-      },
-      {
-        id: "work-003",
-        name: "Financial Analytics",
-        description: "Real-time market insights",
-        image: "/public/images/projects/finance.jpg",
-        media: [],
-        details: "Created a sophisticated financial analytics platform with live market data, predictive models, and portfolio optimization.",
-        tags: ["Python", "React", "WebSockets"]
-      },
-      {
-        id: "work-004",
-        name: "IoT Control Center",
-        description: "Smart device orchestration",
-        image: "/public/images/projects/iot.jpg",
-        media: [],
-        details: "Engineered a centralized IoT management platform for monitoring and controlling thousands of connected devices.",
-        tags: ["MQTT", "Node.js", "MongoDB"]
-      },
-      {
-        id: "work-005",
-        name: "Educational Platform",
-        description: "Interactive learning environment",
-        image: "/public/images/projects/edu.jpg",
-        media: [],
-        details: "Designed and built an engaging educational platform with gamification, progress tracking, and adaptive learning paths.",
-        tags: ["Vue.js", "Django", "AI"]
-      },
-      {
-        id: "work-006",
-        name: "Content Management System",
-        description: "Enterprise CMS solution",
-        image: "/public/images/projects/cms.jpg",
-        media: [],
-        details: "Architected a flexible, headless CMS serving content to multiple channels with advanced workflow management.",
-        tags: ["GraphQL", "Strapi", "React"]
-      },
-      {
-        id: "work-007",
-        name: "Supply Chain Tracker",
-        description: "Logistics optimization platform",
-        image: "/public/images/projects/supply.jpg",
-        media: [],
-        details: "Real-time tracking and optimization of global supply chains with predictive analytics.",
-        tags: ["Logistics", "Maps", "Analytics"]
-      },
-      {
-        id: "work-008",
-        name: "Video Conferencing Platform",
-        description: "Scalable WebRTC solution",
-        image: "/public/images/projects/video.jpg",
-        media: [],
-        details: "Built a high-quality video conferencing platform supporting thousands of concurrent users.",
-        tags: ["WebRTC", "Socket.io", "Node.js"]
-      },
-      {
-        id: "work-009",
-        name: "Document Collaboration Suite",
-        description: "Real-time collaborative editing",
-        image: "/public/images/projects/docs.jpg",
-        media: [],
-        details: "Google Docs-like collaborative document editing with operational transformation.",
-        tags: ["OT", "WebSockets", "React"]
-      },
-      {
-        id: "work-010",
-        name: "Social Analytics Dashboard",
-        description: "Multi-platform insights",
-        image: "/public/images/projects/social.jpg",
-        media: [],
-        details: "Aggregate and analyze social media metrics across multiple platforms in one unified dashboard.",
-        tags: ["APIs", "Analytics", "Vue.js"]
-      },
-      {
-        id: "work-011",
-        name: "Recruitment Platform",
-        description: "AI-powered hiring system",
-        image: "/public/images/projects/recruit.jpg",
-        media: [],
-        details: "Streamline recruitment with AI-assisted candidate matching and automated workflows.",
-        tags: ["AI", "HR Tech", "Python"]
-      },
-      {
-        id: "work-012",
-        name: "Energy Management System",
-        description: "Smart grid optimization",
-        image: "/public/images/projects/energy.jpg",
-        media: [],
-        details: "Monitor and optimize energy consumption across industrial facilities with ML predictions.",
-        tags: ["IoT", "ML", "Time Series"]
-      },
-      {
-        id: "work-013",
-        name: "Customer Relationship Manager",
-        description: "Next-gen CRM platform",
-        image: "/public/images/projects/crm.jpg",
-        media: [],
-        details: "Built a comprehensive CRM with AI-powered insights and automated workflows.",
-        tags: ["CRM", "AI", "Sales"]
-      },
-      {
-        id: "work-014",
-        name: "Inventory Management Suite",
-        description: "Real-time stock tracking",
-        image: "/public/images/projects/inventory.jpg",
-        media: [],
-        details: "Manage inventory across multiple warehouses with predictive restocking.",
-        tags: ["Logistics", "ML", "React"]
-      },
-      {
-        id: "work-015",
-        name: "Payment Gateway Integration",
-        description: "Secure transaction processing",
-        image: "/public/images/projects/payment.jpg",
-        media: [],
-        details: "Integrated multiple payment providers with fraud detection and recurring billing.",
-        tags: ["Payments", "Security", "API"]
-      },
-      {
-        id: "work-016",
-        name: "Business Intelligence Dashboard",
-        description: "Executive insights platform",
-        image: "/public/images/projects/bi.jpg",
-        media: [],
-        details: "Real-time business metrics and KPI tracking with custom report generation.",
-        tags: ["BI", "Analytics", "Dashboards"]
-      },
-      {
-        id: "work-017",
-        name: "Fleet Management System",
-        description: "Vehicle tracking and optimization",
-        image: "/public/images/projects/fleet.jpg",
-        media: [],
-        details: "Track and optimize fleet operations with route planning and maintenance scheduling.",
-        tags: ["GPS", "Logistics", "Maps"]
-      },
-      {
-        id: "work-018",
-        name: "Booking Platform",
-        description: "Reservation management",
-        image: "/public/images/projects/booking.jpg",
-        media: [],
-        details: "Built a scalable booking system for hotels, flights, and events.",
-        tags: ["Bookings", "Calendar", "Payments"]
-      },
-      {
-        id: "work-019",
-        name: "Legal Document Manager",
-        description: "Contract lifecycle management",
-        image: "/public/images/projects/legal.jpg",
-        media: [],
-        details: "Secure document management with e-signatures and version control.",
-        tags: ["Legal", "DocuSign", "Compliance"]
-      },
-      {
-        id: "work-020",
-        name: "Marketing Automation",
-        description: "Campaign management platform",
-        image: "/public/images/projects/marketing.jpg",
-        media: [],
-        details: "Automated marketing campaigns with A/B testing and analytics.",
-        tags: ["Marketing", "Automation", "Analytics"]
-      }
-    ]
-  },
-  {
-    key: "hobbies",
-    label: "Hobbies",
-    order: 2,
-    items: [
-      {
-        id: "hobby-001",
-        name: "Generative Art",
-        description: "Algorithmic visual experiences",
-        image: "/public/images/projects/genart.jpg",
-        media: [
-          {
-            url: "/public/images/projects/genart-1.jpg",
-            type: "image",
-            description: "Fractal patterns"
-          }
-        ],
-        details: "Exploring the intersection of code and creativity through generative algorithms that produce unique visual compositions.",
-        tags: ["p5.js", "GLSL", "Creative Coding"]
-      },
-      {
-        id: "hobby-002",
-        name: "Music Visualization",
-        description: "Audio-reactive graphics",
-        image: "/public/images/projects/music.jpg",
-        media: [],
-        details: "Creating immersive audio-visual experiences that respond to music in real-time using frequency analysis and particle systems.",
-        tags: ["Web Audio API", "Canvas", "Three.js"]
-      },
-      {
-        id: "hobby-003",
-        name: "Game Development",
-        description: "Interactive storytelling",
-        image: "/public/images/projects/game.jpg",
-        media: [],
-        details: "Developing indie games that blend engaging mechanics with compelling narratives and beautiful pixel art.",
-        tags: ["Phaser", "Unity", "Game Design"]
-      },
-      {
-        id: "hobby-004",
-        name: "Photography Portfolio",
-        description: "Capturing moments in time",
-        image: "/public/images/projects/photo.jpg",
-        media: [],
-        details: "A curated collection of landscape and urban photography, showcasing the beauty of natural and man-made environments.",
-        tags: ["Photography", "Lightroom", "Composition"]
-      },
-      {
-        id: "hobby-005",
-        name: "3D Modeling & Rendering",
-        description: "Digital sculpting adventures",
-        image: "/public/images/projects/3d.jpg",
-        media: [],
-        details: "Creating photorealistic 3D models and environments using Blender and advanced rendering techniques.",
-        tags: ["Blender", "3D", "Rendering"]
-      },
-      {
-        id: "hobby-006",
-        name: "Interactive Fiction",
-        description: "Branching narrative experiences",
-        image: "/public/images/projects/fiction.jpg",
-        media: [],
-        details: "Writing and developing interactive stories with multiple paths and endings.",
-        tags: ["Writing", "Twine", "Narrative"]
-      },
-      {
-        id: "hobby-007",
-        name: "Data Sonification",
-        description: "Turning data into music",
-        image: "/public/images/projects/sonify.jpg",
-        media: [],
-        details: "Experimental project converting various datasets into musical compositions.",
-        tags: ["Audio", "Data", "Creative Coding"]
-      },
-      {
-        id: "hobby-008",
-        name: "Algorithmic Poetry",
-        description: "Computer-generated verses",
-        image: "/public/images/projects/poetry.jpg",
-        media: [],
-        details: "Using natural language processing to generate unique poetry and prose.",
-        tags: ["NLP", "Poetry", "AI"]
-      },
-      {
-        id: "hobby-009",
-        name: "Virtual Reality Worlds",
-        description: "Immersive VR experiences",
-        image: "/public/images/projects/vr.jpg",
-        media: [],
-        details: "Creating interactive VR environments and experiences using WebXR.",
-        tags: ["VR", "WebXR", "Three.js"]
-      },
-      {
-        id: "hobby-010",
-        name: "Procedural Terrain Generation",
-        description: "Infinite landscape creation",
-        image: "/public/images/projects/terrain.jpg",
-        media: [],
-        details: "Generate realistic terrain using noise algorithms and erosion simulation.",
-        tags: ["Procedural", "Terrain", "WebGL"]
-      },
-      {
-        id: "hobby-011",
-        name: "Audio-Visual Installations",
-        description: "Interactive art pieces",
-        image: "/public/images/projects/av.jpg",
-        media: [],
-        details: "Creating immersive audio-visual installations that respond to user input.",
-        tags: ["Art", "Installation", "Interactive"]
-      },
-      {
-        id: "hobby-012",
-        name: "Retro Gaming Remakes",
-        description: "Modern takes on classics",
-        image: "/public/images/projects/retro.jpg",
-        media: [],
-        details: "Reimagining classic games with modern graphics and gameplay mechanics.",
-        tags: ["Gaming", "Remake", "Nostalgia"]
-      }
-    ]
-  },
-  {
-    key: "blog",
-    label: "Blog",
-    order: 3,
-    items: [
-      {
-        id: "blog-001",
-        name: "The Future of Web Development",
-        description: "Trends shaping the next decade",
-        image: "/public/images/blog/future.jpg",
-        media: [],
-        details: "An in-depth exploration of emerging technologies and methodologies that will define the future of web development, from WebAssembly to edge computing.",
-        tags: ["Web Development", "Technology", "Trends"]
-      },
-      {
-        id: "blog-002",
-        name: "Mastering TypeScript",
-        description: "Advanced patterns and practices",
-        image: "/public/images/blog/typescript.jpg",
-        media: [],
-        details: "A comprehensive guide to leveraging TypeScript's advanced features for building robust, maintainable applications.",
-        tags: ["TypeScript", "Programming", "Tutorial"]
-      },
-      {
-        id: "blog-003",
-        name: "Performance Optimization",
-        description: "Making web apps blazing fast",
-        image: "/public/images/blog/performance.jpg",
-        media: [],
-        details: "Practical techniques for optimizing web application performance, from bundle size reduction to efficient rendering strategies.",
-        tags: ["Performance", "Optimization", "Best Practices"]
-      },
-      {
-        id: "blog-004",
-        name: "Design Systems at Scale",
-        description: "Building consistent UIs",
-        image: "/public/images/blog/design.jpg",
-        media: [],
-        details: "Lessons learned from implementing and maintaining large-scale design systems across multiple teams and products.",
-        tags: ["Design Systems", "UI/UX", "Architecture"]
-      },
-      {
-        id: "blog-005",
-        name: "AI in Web Development",
-        description: "Leveraging machine learning",
-        image: "/public/images/blog/ai.jpg",
-        media: [],
-        details: "Exploring practical applications of artificial intelligence and machine learning in modern web development workflows.",
-        tags: ["AI", "Machine Learning", "Innovation"]
-      },
-      {
-        id: "blog-006",
-        name: "WebAssembly Deep Dive",
-        description: "The future of web performance",
-        image: "/public/images/blog/wasm.jpg",
-        media: [],
-        details: "Understanding WebAssembly and how it enables near-native performance in web applications.",
-        tags: ["WebAssembly", "Performance", "Rust"]
-      },
-      {
-        id: "blog-007",
-        name: "Microservices Architecture",
-        description: "Building scalable systems",
-        image: "/public/images/blog/microservices.jpg",
-        media: [],
-        details: "Best practices for designing and implementing microservices architectures.",
-        tags: ["Architecture", "Microservices", "DevOps"]
-      },
-      {
-        id: "blog-008",
-        name: "CSS Grid Mastery",
-        description: "Modern layout techniques",
-        image: "/public/images/blog/grid.jpg",
-        media: [],
-        details: "Master CSS Grid and create complex, responsive layouts with ease.",
-        tags: ["CSS", "Layout", "Design"]
-      },
-      {
-        id: "blog-009",
-        name: "Security Best Practices",
-        description: "Protecting web applications",
-        image: "/public/images/blog/security.jpg",
-        media: [],
-        details: "Essential security practices every web developer should implement.",
-        tags: ["Security", "Best Practices", "OWASP"]
-      },
-      {
-        id: "blog-010",
-        name: "The Art of Code Review",
-        description: "Building better teams",
-        image: "/public/images/blog/review.jpg",
-        media: [],
-        details: "How to conduct effective code reviews that improve code quality and team dynamics.",
-        tags: ["Code Review", "Team", "Process"]
-      },
-      {
-        id: "blog-011",
-        name: "Progressive Web Apps",
-        description: "Native-like web experiences",
-        image: "/public/images/blog/pwa.jpg",
-        media: [],
-        details: "Building PWAs that work offline and feel native on mobile devices.",
-        tags: ["PWA", "Mobile", "Service Workers"]
-      },
-      {
-        id: "blog-012",
-        name: "GraphQL Best Practices",
-        description: "API design patterns",
-        image: "/public/images/blog/graphql.jpg",
-        media: [],
-        details: "Designing efficient GraphQL APIs with proper caching and query optimization.",
-        tags: ["GraphQL", "API", "Architecture"]
-      },
-      {
-        id: "blog-013",
-        name: "Docker for Developers",
-        description: "Containerization guide",
-        image: "/public/images/blog/docker.jpg",
-        media: [],
-        details: "Practical guide to using Docker for development and deployment.",
-        tags: ["Docker", "DevOps", "Containers"]
-      },
-      {
-        id: "blog-014",
-        name: "React Performance Tips",
-        description: "Optimizing React apps",
-        image: "/public/images/blog/react-perf.jpg",
-        media: [],
-        details: "Advanced techniques for optimizing React applications and avoiding common pitfalls.",
-        tags: ["React", "Performance", "Optimization"]
-      }
-    ]
-  }
-];
-
 // src/components/pages/Home/index.tsx
 var HomePage = () => {
   const [selectedItem, setSelectedItem] = d2(null);
   const [activeRowIndex, setActiveRowIndex] = d2(0);
+  const [selectedTags, setSelectedTags] = d2([]);
   const sortedPortfolioData = [...portfolioData].sort((a3, b2) => a3.order - b2.order);
   const handleItemClick = (item) => {
     setSelectedItem(item);
@@ -3488,19 +4498,60 @@ var HomePage = () => {
   const handleRowChange = (index) => {
     setActiveRowIndex(index);
   };
+  const handleTagsChange = (tags) => {
+    setSelectedTags(tags);
+  };
+  const handleTagClick = (tag) => {
+    setSelectedItem(null);
+    const newTags = selectedTags.includes(tag) ? selectedTags.filter((t3) => t3 !== tag) : [...selectedTags, tag];
+    setSelectedTags(newTags);
+    if (activeRowIndex !== sortedPortfolioData.length) {
+      handleRowChange(sortedPortfolioData.length);
+    }
+  };
+  const handleRemoveTag = (tag) => {
+    setSelectedTags((prev) => prev.filter((t3) => t3 !== tag));
+  };
   return /* @__PURE__ */ u2("div", { className: "homepage", children: [
-    /* @__PURE__ */ u2(MysticalBackground, {}),
     /* @__PURE__ */ u2("div", { className: "homepage__navigation", children: [
-      /* @__PURE__ */ u2("div", { className: "homepage__section-title", children: sortedPortfolioData[activeRowIndex].label }),
-      /* @__PURE__ */ u2("div", { className: "homepage__section-links", children: sortedPortfolioData.map((row, index) => /* @__PURE__ */ u2(
-        "button",
-        {
-          className: `homepage__section-link ${index === activeRowIndex ? "homepage__section-link--active" : ""}`,
-          onClick: () => handleRowChange(index),
-          children: row.label
-        },
-        row.key
-      )) })
+      /* @__PURE__ */ u2("div", { className: "homepage__name", children: "Ryan Weiss" }),
+      /* @__PURE__ */ u2("div", { className: "homepage__section-links", children: [
+        sortedPortfolioData.map((row, index) => /* @__PURE__ */ u2(
+          "button",
+          {
+            className: `homepage__section-link ${index === activeRowIndex ? "homepage__section-link--active" : ""}`,
+            onClick: () => handleRowChange(index),
+            children: row.label
+          },
+          row.key
+        )),
+        /* @__PURE__ */ u2("div", { className: "homepage__search-section", children: [
+          /* @__PURE__ */ u2(
+            "button",
+            {
+              className: `homepage__section-link ${activeRowIndex === sortedPortfolioData.length ? "homepage__section-link--active" : ""}`,
+              onClick: () => handleRowChange(sortedPortfolioData.length),
+              children: "SEARCH"
+            }
+          ),
+          selectedTags.length > 0 && /* @__PURE__ */ u2("div", { className: "homepage__selected-tags", children: selectedTags.map((tag) => /* @__PURE__ */ u2("span", { className: "homepage__tag", children: [
+            tag,
+            /* @__PURE__ */ u2(
+              "button",
+              {
+                className: "homepage__tag-remove",
+                onClick: (e4) => {
+                  e4.stopPropagation();
+                  handleRemoveTag(tag);
+                },
+                "aria-label": `Remove ${tag}`,
+                children: "\xD7"
+              }
+            )
+          ] }, tag)) })
+        ] })
+      ] }),
+      /* @__PURE__ */ u2("div", { className: "homepage__section-title", children: activeRowIndex < sortedPortfolioData.length ? sortedPortfolioData[activeRowIndex].label : "Search Results" })
     ] }),
     /* @__PURE__ */ u2("div", { className: "homepage__content", children: /* @__PURE__ */ u2(
       BeltNavigator,
@@ -3508,10 +4559,20 @@ var HomePage = () => {
         rows: sortedPortfolioData,
         onItemClick: handleItemClick,
         onRowChange: handleRowChange,
-        activeRowIndex
+        activeRowIndex,
+        selectedTags,
+        onTagsChange: handleTagsChange,
+        onCloseDetailView: handleCloseDetail
       }
     ) }),
-    /* @__PURE__ */ u2(ItemDetailView, { item: selectedItem, onClose: handleCloseDetail })
+    /* @__PURE__ */ u2(
+      ItemDetailView,
+      {
+        item: selectedItem,
+        onClose: handleCloseDetail,
+        onTagClick: handleTagClick
+      }
+    )
   ] });
 };
 var Home_default = HomePage;

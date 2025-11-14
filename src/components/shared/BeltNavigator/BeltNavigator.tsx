@@ -1,133 +1,332 @@
-import { useState, useEffect, useRef } from 'preact/hooks';
-import { PortfolioRow, PortfolioItem } from '../../../data/portfolioData';
+import { useEffect, useRef, useState } from 'preact/hooks';
+import { PortfolioItem, PortfolioRow } from '../../../data/portfolioData';
 import { CircularBelt } from '../CircularBelt/CircularBelt';
+import { SectionBackground } from '../SectionBackground/SectionBackground';
+import { ThumbnailPreview } from '../ThumbnailPreview/ThumbnailPreview';
+import { TagSearchView } from '../TagSearchView/TagSearchView';
+import { filterPortfolioItems } from '../../../lib/utils/portfolioFilter';
 import './BeltNavigator.scss';
 
 interface BeltNavigatorProps {
-    rows: PortfolioRow[];
-    onItemClick: (item: PortfolioItem) => void;
-    onRowChange: (index: number) => void;
-    activeRowIndex: number;
+	rows: PortfolioRow[];
+	onItemClick: (item: PortfolioItem) => void;
+	onRowChange: (index: number) => void;
+	activeRowIndex: number;
+	selectedTags: string[];
+	onTagsChange: (tags: string[]) => void;
+	onCloseDetailView?: () => void;
 }
 
-export const BeltNavigator = ({ rows, onItemClick, onRowChange, activeRowIndex: externalActiveRowIndex }: BeltNavigatorProps) => {
-    const [activeRowIndex, setActiveRowIndex] = useState(externalActiveRowIndex);
-    const [isTransitioning, setIsTransitioning] = useState(false);
-    const containerRef = useRef<HTMLDivElement>(null);
+const SECTION_THEMES: Array<'space' | 'nebula' | 'ocean' | 'cosmic'> = ['space', 'nebula', 'ocean', 'cosmic'];
 
-    const canGoUp = activeRowIndex > 0;
-    const canGoDown = activeRowIndex < rows.length - 1;
+export const BeltNavigator = ({ rows, onItemClick, onRowChange, activeRowIndex, selectedTags, onTagsChange, onCloseDetailView }: BeltNavigatorProps) => {
+	const containerRef = useRef<HTMLDivElement>(null);
+	const [currentSection, setCurrentSection] = useState(0);
+	const isScrollingRef = useRef(false);
+	const scrollTimeoutRef = useRef<number>();
+	const [viewedSections, setViewedSections] = useState<Set<number>>(new Set()); // Track viewed sections
+	const [scrollToItemId, setScrollToItemId] = useState<string | null>(null);
+	const [beltScrollPercents, setBeltScrollPercents] = useState<Map<number, number>>(new Map()); // Track scroll position per section
+	const [isLoadingSearch, setIsLoadingSearch] = useState(false);
+	const [searchResults, setSearchResults] = useState<PortfolioItem[]>([]);
+	const [isFadingOut, setIsFadingOut] = useState(false);
+	const previousResultsRef = useRef<PortfolioItem[]>([]);
 
-    // Sync with external state
-    useEffect(() => {
-        setActiveRowIndex(externalActiveRowIndex);
-    }, [externalActiveRowIndex]);
+	// Create dynamic search row
+	const searchRow: PortfolioRow | null = selectedTags.length > 0 ? {
+		key: 'search',
+		label: 'Search Results',
+		order: rows.length,
+		items: searchResults
+	} : null;
 
-    const navigateUp = () => {
-        if (!canGoUp || isTransitioning) return;
-        setIsTransitioning(true);
-        const newIndex = activeRowIndex - 1;
-        setActiveRowIndex(newIndex);
-        onRowChange(newIndex);
-        setTimeout(() => setIsTransitioning(false), 800);
-    };
+	// Combine regular rows with search row
+	const allRows = searchRow ? [...rows, searchRow] : rows;
 
-    const navigateDown = () => {
-        if (!canGoDown || isTransitioning) return;
-        setIsTransitioning(true);
-        const newIndex = activeRowIndex + 1;
-        setActiveRowIndex(newIndex);
-        onRowChange(newIndex);
-        setTimeout(() => setIsTransitioning(false), 800);
-    };
+	// Handle scroll events with debouncing
+	const handleScroll = (event: WheelEvent) => {
+		event.preventDefault();
 
-    // Keyboard navigation
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (isTransitioning) return;
+		if (isScrollingRef.current) return;
 
-            if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-                e.preventDefault();
-                navigateUp();
-            } else if (e.key === 'ArrowDown' || e.key === 'PageDown') {
-                e.preventDefault();
-                navigateDown();
-            }
-        };
+		const delta = event.deltaY;
+		const direction = delta > 0 ? 1 : -1;
+		const newSection = currentSection + direction;
 
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [activeRowIndex, isTransitioning]);
+		// Allow scrolling to search section (rows.length)
+		if (newSection >= 0 && newSection <= rows.length) {
+			isScrollingRef.current = true;
+			setCurrentSection(newSection);
+			onRowChange(newSection);
 
-    const calculateRowStyle = (index: number) => {
-        const diff = index - activeRowIndex;
-        // Center the active row by offsetting all rows
-        const translateY = diff * 70 - 35; // Offset to center the active row
-        const opacity = diff === 0 ? 1 : Math.max(0.15, 0.4 - Math.abs(diff) * 0.2);
-        const scale = diff === 0 ? 1 : 0.85;
-        const blur = Math.abs(diff) > 0 ? 8 : 0;
+			// Scroll to section
+			const container = containerRef.current;
+			if (container) {
+				const targetScroll = newSection * window.innerHeight;
+				container.scrollTo({
+					top: targetScroll,
+					behavior: 'smooth'
+				});
+			}
 
-        return {
-            transform: `translateY(calc(50vh + ${translateY}vh)) scale(${scale})`,
-            opacity,
-            filter: `blur(${blur}px)`,
-            pointerEvents: diff === 0 ? ('auto' as const) : ('none' as const),
-            zIndex: 100 - Math.abs(diff)
-        };
-    };
+			// Reset scrolling flag after animation
+			setTimeout(() => {
+				isScrollingRef.current = false;
+			}, 600); // Fast animation - 600ms
+		}
+	};
 
-    return (
-        <div className="belt-navigator" ref={containerRef}>
-            <div className="belt-navigator__rows">
-                {rows.map((row, index) => (
-                    <div
-                        key={row.key}
-                        className={`belt-navigator__row ${
-                            index === activeRowIndex ? 'belt-navigator__row--active' : ''
-                        }`}
-                        style={calculateRowStyle(index)}>
-                        <CircularBelt
-                            items={row.items}
-                            label={row.label}
-                            onItemClick={onItemClick}
-                            isActive={index === activeRowIndex}
-                        />
-                    </div>
-                ))}
-            </div>
+	useEffect(() => {
+		const container = containerRef.current;
+		if (!container) return;
 
-            {canGoUp && (
-                <button
-                    className="belt-navigator__arrow belt-navigator__arrow--up belt-navigator__arrow--fixed"
-                    onClick={navigateUp}>
-                    <svg width="60" height="30" viewBox="0 0 60 30" fill="none">
-                        <path
-                            d="M10 22 L30 8 L50 22"
-                            stroke="currentColor"
-                            strokeWidth="3"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
-                </button>
-            )}
+		container.addEventListener('wheel', handleScroll, { passive: false });
 
-            {canGoDown && (
-                <button
-                    className="belt-navigator__arrow belt-navigator__arrow--down belt-navigator__arrow--fixed"
-                    onClick={navigateDown}>
-                    <svg width="60" height="30" viewBox="0 0 60 30" fill="none">
-                        <path
-                            d="M10 8 L30 22 L50 8"
-                            stroke="currentColor"
-                            strokeWidth="3"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
-                </button>
-            )}
+		return () => {
+			container.removeEventListener('wheel', handleScroll);
+		};
+	}, [currentSection, rows.length]);
 
-        </div>
-    );
+	// Sync with external activeRowIndex changes (from nav clicks)
+	useEffect(() => {
+		if (activeRowIndex !== currentSection) {
+			setCurrentSection(activeRowIndex);
+			const container = containerRef.current;
+			if (container) {
+				const targetScroll = activeRowIndex * window.innerHeight;
+				container.scrollTo({
+					top: targetScroll,
+					behavior: 'smooth'
+				});
+			}
+		}
+	}, [activeRowIndex]);
+
+	// Keyboard navigation
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (isScrollingRef.current) return;
+
+			if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+				e.preventDefault();
+				// Allow navigating to search section (rows.length)
+				const newSection = Math.min(currentSection + 1, rows.length);
+				if (newSection !== currentSection) {
+					setCurrentSection(newSection);
+					onRowChange(newSection);
+					isScrollingRef.current = true;
+					setTimeout(() => (isScrollingRef.current = false), 600);
+				}
+			} else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+				e.preventDefault();
+				const newSection = Math.max(currentSection - 1, 0);
+				if (newSection !== currentSection) {
+					setCurrentSection(newSection);
+					onRowChange(newSection);
+					isScrollingRef.current = true;
+					setTimeout(() => (isScrollingRef.current = false), 600);
+				}
+			}
+		};
+
+		window.addEventListener('keydown', handleKeyDown);
+		return () => window.removeEventListener('keydown', handleKeyDown);
+	}, [currentSection, rows.length]);
+
+	// Mark section as viewed AFTER animations have time to complete
+	useEffect(() => {
+		// Calculate animation duration: estimate 20 items max at 150ms each = 3000ms
+		// Add buffer of 500ms to be safe
+		const animationDuration = 1500;
+
+		// Only delay if section hasn't been viewed yet
+		if (!viewedSections.has(currentSection)) {
+			const timeout = setTimeout(() => {
+				setViewedSections((prev) => new Set([...prev, currentSection]));
+			}, animationDuration);
+
+			return () => clearTimeout(timeout);
+		}
+	}, [currentSection]);
+
+	// Handler for thumbnail click - scroll to item in carousel
+	const handleScrollToItem = (itemId: string) => {
+		setScrollToItemId(itemId);
+		// Reset after a delay to allow re-triggering
+		setTimeout(() => setScrollToItemId(null), 700);
+	};
+
+	// Handler for track scroll - update belt position
+	const handleTrackScroll = (scrollPercent: number) => {
+		setBeltScrollPercents((prev) => {
+			const newMap = new Map(prev);
+			newMap.set(currentSection, scrollPercent);
+			return newMap;
+		});
+	};
+
+	// Handle tag search
+	const handleTagSearch = (tags: string[]) => {
+		// Close any open detail views
+		if (onCloseDetailView) {
+			onCloseDetailView();
+		}
+
+		// Show loading state
+		setIsLoadingSearch(true);
+
+		// Simulate async search (you can make this actually async if needed)
+		setTimeout(() => {
+			const filtered = filterPortfolioItems({ tags });
+			setSearchResults(filtered);
+			onTagsChange(tags);
+			setIsLoadingSearch(false);
+
+			// Scroll to search section (always at rows.length)
+			const searchIndex = rows.length;
+			setCurrentSection(searchIndex);
+			onRowChange(searchIndex);
+
+			const container = containerRef.current;
+			if (container) {
+				const targetScroll = searchIndex * window.innerHeight;
+				container.scrollTo({
+					top: targetScroll,
+					behavior: 'smooth'
+				});
+			}
+		}, 300);
+	};
+
+	// Effect to filter items when tags change
+	useEffect(() => {
+		if (selectedTags.length > 0) {
+			const isOnSearchSection = currentSection === rows.length;
+
+			// Only fade out if we're already on the search section with previous results
+			if (previousResultsRef.current.length > 0 && isOnSearchSection) {
+				setIsFadingOut(true);
+
+				// Wait for fade out animation to complete
+				setTimeout(() => {
+					const filtered = filterPortfolioItems({ tags: selectedTags });
+					setSearchResults(filtered);
+					previousResultsRef.current = filtered;
+					setIsFadingOut(false);
+				}, 300); // Fade out duration
+			} else {
+				// If not on search section or no previous results, update immediately
+				const filtered = filterPortfolioItems({ tags: selectedTags });
+				setSearchResults(filtered);
+				previousResultsRef.current = filtered;
+				setIsFadingOut(false);
+			}
+		} else {
+			// No tags selected, clear results
+			previousResultsRef.current = [];
+			setSearchResults([]);
+			setIsFadingOut(false);
+		}
+	}, [selectedTags, currentSection]);
+
+	return (
+		<div className="belt-navigator" ref={containerRef}>
+			{/* Loading overlay */}
+			{isLoadingSearch && (
+				<div className="belt-navigator__loading">
+					<div className="belt-navigator__loading-spinner"></div>
+					<p className="belt-navigator__loading-text">Searching...</p>
+				</div>
+			)}
+
+			{/* Regular rows */}
+			{rows.map((row, index) => (
+				<div key={row.key} className="belt-navigator__section" data-index={index}>
+					<SectionBackground theme={SECTION_THEMES[index % SECTION_THEMES.length]} />
+					<div className="belt-navigator__section-content">
+						<CircularBelt
+							items={row.items}
+							label={row.label}
+							onItemClick={onItemClick}
+							isActive={index === currentSection}
+							scrollToItemId={index === currentSection ? scrollToItemId : null}
+							trackScrollPercent={beltScrollPercents.get(index)}
+							onTagClick={(tag) => {
+								if (onCloseDetailView) {
+									onCloseDetailView();
+								}
+								const newTags = selectedTags.includes(tag) ? selectedTags.filter(t => t !== tag) : [...selectedTags, tag];
+								handleTagSearch(newTags);
+							}}
+						/>
+					</div>
+
+					{/* Show thumbnail preview for active section */}
+					{index === currentSection && (
+						<ThumbnailPreview
+							items={row.items}
+							onItemClick={onItemClick}
+							onScrollToItem={handleScrollToItem}
+							hasBeenViewed={viewedSections.has(index)}
+							onTrackScroll={handleTrackScroll}
+							beltScrollPercent={beltScrollPercents.get(index)}
+						/>
+					)}
+				</div>
+			))}
+
+			{/* Search section - always in DOM */}
+			<div key="search" className="belt-navigator__section" data-index={rows.length}>
+				<SectionBackground theme={SECTION_THEMES[rows.length % SECTION_THEMES.length]} />
+				<div className={`belt-navigator__section-content ${isFadingOut ? 'belt-navigator__section-content--fading' : ''}`}>
+					{/* Show belt with results if tags are selected and results exist */}
+					{selectedTags.length > 0 && searchResults.length > 0 && (
+						<CircularBelt
+							items={searchResults}
+							label="Search Results"
+							onItemClick={onItemClick}
+							isActive={currentSection === rows.length}
+							scrollToItemId={currentSection === rows.length ? scrollToItemId : null}
+							trackScrollPercent={beltScrollPercents.get(rows.length)}
+							onTagClick={(tag) => {
+								if (onCloseDetailView) {
+									onCloseDetailView();
+								}
+								const newTags = selectedTags.includes(tag) ? selectedTags.filter(t => t !== tag) : [...selectedTags, tag];
+								handleTagSearch(newTags);
+							}}
+						/>
+					)}
+				</div>
+
+				{/* Show thumbnail preview when there are results and section is active */}
+				{currentSection === rows.length && searchResults.length > 0 && (
+					<ThumbnailPreview
+						items={searchResults}
+						onItemClick={onItemClick}
+						onScrollToItem={handleScrollToItem}
+						hasBeenViewed={viewedSections.has(rows.length)}
+						onTrackScroll={handleTrackScroll}
+						beltScrollPercent={beltScrollPercents.get(rows.length)}
+					/>
+				)}
+
+				{/* Tag search view - always show when section is active */}
+				{currentSection === rows.length && (
+					<div className="belt-navigator__search-overlay">
+						<TagSearchView
+							selectedTags={selectedTags}
+							onTagClick={(tag) => {
+								// Toggle tag and immediately update search results
+								const newTags = selectedTags.includes(tag)
+									? selectedTags.filter(t => t !== tag)
+									: [...selectedTags, tag];
+								onTagsChange(newTags);
+							}}
+						/>
+					</div>
+				)}
+			</div>
+		</div>
+	);
 };

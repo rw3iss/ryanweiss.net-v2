@@ -1,21 +1,21 @@
 import { useEffect, useState } from 'preact/hooks';
 import { PortfolioItem } from '../../../data/portfolioData';
+import { MediaCarousel } from '../MediaCarousel/MediaCarousel';
 import './ItemDetailView.scss';
 
 interface ItemDetailViewProps {
     item: PortfolioItem | null;
     onClose: () => void;
+    onTagClick?: (tag: string) => void;
 }
 
-export const ItemDetailView = ({ item, onClose }: ItemDetailViewProps) => {
+export const ItemDetailView = ({ item, onClose, onTagClick }: ItemDetailViewProps) => {
     const [isVisible, setIsVisible] = useState(false);
     const [showContent, setShowContent] = useState(false);
 
     useEffect(() => {
         if (item) {
-            // Start opening animation
             setTimeout(() => setIsVisible(true), 50);
-            // Start content reveal after zoom completes
             setTimeout(() => setShowContent(true), 800);
         } else {
             setShowContent(false);
@@ -41,6 +41,9 @@ export const ItemDetailView = ({ item, onClose }: ItemDetailViewProps) => {
     }, [item]);
 
     if (!item) return null;
+
+    const hasMedia = item.media && item.media.length > 0;
+    const showCarousel = item.image || hasMedia;
 
     return (
         <div className={`item-detail-view ${isVisible ? 'item-detail-view--visible' : ''}`}>
@@ -79,17 +82,78 @@ export const ItemDetailView = ({ item, onClose }: ItemDetailViewProps) => {
                         </svg>
                     </button>
 
-                    {/* Hero section */}
-                    <div className="item-detail-view__hero">
-                        <div className="item-detail-view__hero-bg">
-                            <div className="item-detail-view__hero-placeholder">{item.name.charAt(0)}</div>
+                    {/* Thumbnail at very top */}
+                    {item.thumbnail && (
+                        <div className="item-detail-view__thumbnail-bar">
+                            <img
+                                src={item.thumbnail}
+                                alt={`${item.name} logo`}
+                                className="item-detail-view__thumbnail-image"
+                            />
                         </div>
-                    </div>
+                    )}
+
+                    {/* Show carousel if we have image or media */}
+                    {showCarousel ? (
+                        <div className="item-detail-view__media-section">
+                            <MediaCarousel
+                                mainImage={item.image}
+                                media={item.media || []}
+                                isVisible={isVisible}
+                                onClose={handleClose}
+                            />
+                        </div>
+                    ) : (
+                        /* Show large text banner if no images */
+                        <div className="item-detail-view__name-banner">
+                            <div className="item-detail-view__name-banner-text">
+                                {item.name}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Content section */}
                     <div className="item-detail-view__body">
                         <div className="item-detail-view__header" style={{ animationDelay: '0.1s' }}>
                             <h1 className="item-detail-view__title">{item.name}</h1>
+
+                            {/* Work metadata */}
+                            {(item.position || item.dates || item.type) && (
+                                <div className="item-detail-view__work-meta">
+                                    {item.position && (
+                                        <div className="item-detail-view__position">{item.position}</div>
+                                    )}
+                                    {item.dates && (
+                                        <div className="item-detail-view__dates">{item.dates}</div>
+                                    )}
+                                    {item.type && (
+                                        <div className={`item-detail-view__type item-detail-view__type--${item.type}`}>
+                                            {item.type === 'fulltime' ? 'Full-time' : 'Freelance'}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Website URL */}
+                            {item.url && (
+                                <a
+                                    href={item.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="item-detail-view__url"
+                                >
+                                    Visit Website
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                        <path
+                                            d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+                                    </svg>
+                                </a>
+                            )}
                         </div>
 
                         <div className="item-detail-view__meta" style={{ animationDelay: '0.2s' }}>
@@ -97,34 +161,25 @@ export const ItemDetailView = ({ item, onClose }: ItemDetailViewProps) => {
                             {item.tags && item.tags.length > 0 && (
                                 <div className="item-detail-view__tags">
                                     {item.tags.map((tag) => (
-                                        <span key={tag} className="item-detail-view__tag">
+                                        <button
+                                            key={tag}
+                                            className="item-detail-view__tag"
+                                            onClick={() => {
+                                                if (onTagClick) {
+                                                    onTagClick(tag);
+                                                }
+                                            }}>
                                             {tag}
-                                        </span>
+                                        </button>
                                     ))}
                                 </div>
                             )}
                         </div>
 
-                        <div className="item-detail-view__details" style={{ animationDelay: '0.3s' }}>
-                            <h2>About</h2>
-                            <p>{item.details}</p>
-                        </div>
-
-                        {item.media && item.media.length > 0 && (
-                            <div className="item-detail-view__media" style={{ animationDelay: '0.4s' }}>
-                                <h2>Media</h2>
-                                <div className="item-detail-view__media-grid">
-                                    {item.media.map((mediaItem, index) => (
-                                        <div key={index} className="item-detail-view__media-item">
-                                            <div className="item-detail-view__media-placeholder">
-                                                {mediaItem.type === 'image' ? '🖼️' : '🎬'}
-                                            </div>
-                                            <p className="item-detail-view__media-description">
-                                                {mediaItem.description}
-                                            </p>
-                                        </div>
-                                    ))}
-                                </div>
+                        {item.details && (
+                            <div className="item-detail-view__details" style={{ animationDelay: '0.3s' }}>
+                                <h2>Details</h2>
+                                <p>{item.details}</p>
                             </div>
                         )}
                     </div>
