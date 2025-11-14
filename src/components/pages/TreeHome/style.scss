@@ -16,10 +16,18 @@
         display: block;
     }
 
+    &__lists {
+        position: fixed;
+        top: 50%;
+        left: 100px;
+        transform: translateY(-50%);
+        z-index: 500;
+    }
+
     &__debug {
         position: fixed;
         top: 1rem;
-        left: 1rem;
+        right: 1rem;
         padding: 1rem;
         background: rgba(0, 0, 0, 0.7);
         color: rgba(0, 220, 255, 0.8);

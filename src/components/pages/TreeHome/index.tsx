@@ -1,12 +1,22 @@
 import { h } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { portfolioData } from '../../../data/portfolioData';
+import { buildTreeData, TreeListItem } from './treeDataBuilder';
+import { TreeList } from './TreeList';
 import './style.scss';
 
 export const TreeHome = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+    const [treeData, setTreeData] = useState<TreeListItem[]>([]);
+    const [selectedPath, setSelectedPath] = useState<string[]>([]);
+
+    // Initialize tree data
+    useEffect(() => {
+        const data = buildTreeData();
+        setTreeData(data);
+    }, []);
 
     // Handle canvas resize
     useEffect(() => {
@@ -96,14 +106,40 @@ export const TreeHome = () => {
         ctx.fillRect(0, 0, width, height);
     };
 
+    const handleItemSelect = (item: TreeListItem, depth: number, itemId: string) => {
+        // Update selection path: keep path up to current depth, then add new selection
+        const newPath = selectedPath.slice(0, depth);
+
+        // If clicking the same item, toggle it off
+        if (selectedPath[depth] === itemId) {
+            setSelectedPath(newPath);
+        } else {
+            // Otherwise, add the new selection
+            newPath.push(itemId);
+            setSelectedPath(newPath);
+        }
+    };
+
     return (
         <div className="tree-home" ref={containerRef}>
             <canvas className="tree-home__canvas" ref={canvasRef} />
 
+            {/* Tree List UI */}
+            {treeData.length > 0 && (
+                <div className="tree-home__lists">
+                    <TreeList
+                        items={treeData}
+                        onItemSelect={handleItemSelect}
+                        selectedPath={selectedPath}
+                    />
+                </div>
+            )}
+
             {/* Debug info */}
             <div className="tree-home__debug">
                 <p>Canvas: {dimensions.width} x {dimensions.height}</p>
-                <p>Portfolio Items: {portfolioData.reduce((sum, row) => sum + row.items.length, 0)}</p>
+                <p>Categories: {treeData.length}</p>
+                <p>Selected Path: {selectedPath.join(' > ')}</p>
             </div>
         </div>
     );

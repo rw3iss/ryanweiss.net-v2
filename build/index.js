@@ -8197,10 +8197,125 @@ var ColorPage = () => {
 
 // src/components/pages/TreeHome/index.tsx
 init_preact_module();
+
+// src/components/pages/TreeHome/treeDataBuilder.ts
+init_preact_module();
+var buildTreeData = () => {
+  const categoriesMap = /* @__PURE__ */ new Map();
+  portfolioData.forEach((row) => {
+    row.items.forEach((item) => {
+      if (item.tags && item.tags.length > 0) {
+        item.tags.forEach((tag) => {
+          if (!categoriesMap.has(tag)) {
+            categoriesMap.set(tag, []);
+          }
+          const items = categoriesMap.get(tag);
+          if (!items.find((i4) => i4.id === item.id)) {
+            items.push(item);
+          }
+        });
+      }
+    });
+  });
+  const treeData = [];
+  const sortedCategories = Array.from(categoriesMap.keys()).sort();
+  sortedCategories.forEach((category) => {
+    const items = categoriesMap.get(category);
+    const categoryNode = {
+      id: `category-${category}`,
+      label: category,
+      type: "category",
+      children: items.map((item) => ({
+        id: item.id,
+        label: item.name,
+        type: "item",
+        data: item,
+        children: void 0
+      }))
+    };
+    treeData.push(categoryNode);
+  });
+  return treeData;
+};
+
+// src/components/pages/TreeHome/TreeList.tsx
+init_preact_module();
+var TreeList = ({
+  items,
+  depth = 0,
+  onItemSelect,
+  isClosing = false,
+  selectedPath = []
+}) => {
+  const [animatedItems, setAnimatedItems] = d2(/* @__PURE__ */ new Set());
+  const listRef = A2(null);
+  const selectedItemId = selectedPath[depth] || null;
+  y2(() => {
+    if (isClosing) return;
+    const timeouts = [];
+    items.forEach((item, index) => {
+      const timeout = window.setTimeout(() => {
+        setAnimatedItems((prev) => /* @__PURE__ */ new Set([...prev, item.id]));
+      }, index * 50);
+      timeouts.push(timeout);
+    });
+    return () => {
+      timeouts.forEach(clearTimeout);
+    };
+  }, [items, isClosing]);
+  const handleItemClick = (item) => {
+    if (onItemSelect) {
+      onItemSelect(item, depth, item.id);
+    }
+  };
+  return /* @__PURE__ */ u2(
+    "div",
+    {
+      className: `tree-list ${isClosing ? "tree-list--closing" : "tree-list--opening"}`,
+      ref: listRef,
+      style: { "--depth": depth },
+      children: /* @__PURE__ */ u2("div", { className: "tree-list__items", children: items.map((item) => {
+        const isAnimated = animatedItems.has(item.id);
+        const isSelected = selectedItemId === item.id;
+        const hasChildren = item.children && item.children.length > 0;
+        return /* @__PURE__ */ u2("div", { className: "tree-list__item-wrapper", children: [
+          /* @__PURE__ */ u2(
+            "div",
+            {
+              className: `tree-list__item ${isAnimated ? "tree-list__item--animated" : ""} ${isSelected ? "tree-list__item--selected" : ""} ${hasChildren ? "tree-list__item--has-children" : ""}`,
+              onClick: () => handleItemClick(item),
+              children: [
+                /* @__PURE__ */ u2("span", { className: "tree-list__item-label", children: item.label }),
+                hasChildren && /* @__PURE__ */ u2("span", { className: "tree-list__item-arrow", children: "\u203A" })
+              ]
+            }
+          ),
+          isSelected && hasChildren && /* @__PURE__ */ u2(
+            TreeList,
+            {
+              items: item.children,
+              depth: depth + 1,
+              onItemSelect,
+              selectedPath
+            }
+          )
+        ] }, item.id);
+      }) })
+    }
+  );
+};
+
+// src/components/pages/TreeHome/index.tsx
 var TreeHome = () => {
   const canvasRef = A2(null);
   const containerRef = A2(null);
   const [dimensions, setDimensions] = d2({ width: 0, height: 0 });
+  const [treeData, setTreeData] = d2([]);
+  const [selectedPath, setSelectedPath] = d2([]);
+  y2(() => {
+    const data = buildTreeData();
+    setTreeData(data);
+  }, []);
   y2(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
@@ -8265,8 +8380,25 @@ var TreeHome = () => {
     ctx.fillStyle = vignette;
     ctx.fillRect(0, 0, width, height);
   };
+  const handleItemSelect = (item, depth, itemId) => {
+    const newPath = selectedPath.slice(0, depth);
+    if (selectedPath[depth] === itemId) {
+      setSelectedPath(newPath);
+    } else {
+      newPath.push(itemId);
+      setSelectedPath(newPath);
+    }
+  };
   return /* @__PURE__ */ u2("div", { className: "tree-home", ref: containerRef, children: [
     /* @__PURE__ */ u2("canvas", { className: "tree-home__canvas", ref: canvasRef }),
+    treeData.length > 0 && /* @__PURE__ */ u2("div", { className: "tree-home__lists", children: /* @__PURE__ */ u2(
+      TreeList,
+      {
+        items: treeData,
+        onItemSelect: handleItemSelect,
+        selectedPath
+      }
+    ) }),
     /* @__PURE__ */ u2("div", { className: "tree-home__debug", children: [
       /* @__PURE__ */ u2("p", { children: [
         "Canvas: ",
@@ -8275,8 +8407,12 @@ var TreeHome = () => {
         dimensions.height
       ] }),
       /* @__PURE__ */ u2("p", { children: [
-        "Portfolio Items: ",
-        portfolioData.reduce((sum, row) => sum + row.items.length, 0)
+        "Categories: ",
+        treeData.length
+      ] }),
+      /* @__PURE__ */ u2("p", { children: [
+        "Selected Path: ",
+        selectedPath.join(" > ")
       ] })
     ] })
   ] });

@@ -1,0 +1,137 @@
+.tree-list {
+    position: absolute;
+    top: 0;
+    left: calc(var(--depth) * 250px);
+    min-width: 250px;
+    max-width: 250px;
+    background: rgba(10, 25, 40, 0.85);
+    border: 1px solid rgba(0, 200, 255, 0.25);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    padding: 0.5rem 0;
+    z-index: calc(100 + var(--depth));
+
+    // Opening animation
+    &--opening {
+        animation: list-fade-in 0.3s ease-out forwards;
+    }
+
+    // Closing animation
+    &--closing {
+        animation: list-fade-out 0.2s ease-in forwards;
+    }
+
+    &__items {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    &__item-wrapper {
+        position: relative;
+    }
+
+    &__item {
+        padding: 0.75rem 1rem;
+        color: rgba(180, 220, 255, 0.9);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        border-radius: 4px;
+        margin: 0 0.5rem;
+
+        // Initial state before animation
+        opacity: 0;
+        transform: translateX(-20px);
+
+        &--animated {
+            animation: item-slide-in 0.3s ease-out forwards;
+        }
+
+        &:hover {
+            background: rgba(0, 180, 255, 0.15);
+            color: rgba(220, 240, 255, 1);
+            transform: translateX(4px);
+        }
+
+        &--selected {
+            background: rgba(0, 200, 255, 0.25);
+            color: rgba(230, 250, 255, 1);
+            border-left: 3px solid rgba(0, 220, 255, 0.8);
+            padding-left: calc(1rem - 3px);
+
+            &:hover {
+                background: rgba(0, 220, 255, 0.35);
+            }
+        }
+
+        &--has-children {
+            padding-right: 2rem;
+        }
+    }
+
+    &__item-label {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__item-arrow {
+        position: absolute;
+        right: 1rem;
+        font-size: 1.2rem;
+        color: rgba(0, 220, 255, 0.6);
+        transition: all 0.2s ease;
+
+        .tree-list__item:hover & {
+            color: rgba(0, 220, 255, 1);
+            transform: translateX(2px);
+        }
+
+        .tree-list__item--selected & {
+            color: rgba(0, 220, 255, 1);
+            transform: rotate(90deg);
+        }
+    }
+}
+
+// List animations
+@keyframes list-fade-in {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes list-fade-out {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+}
+
+// Item slide-in animation
+@keyframes item-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
