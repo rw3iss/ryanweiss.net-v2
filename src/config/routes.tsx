@@ -7,6 +7,7 @@ import PlayPage from 'components/pages/Play';
 import TimelinePage from 'components/pages/Timeline/index';
 import WorkPage from 'components/pages/Work';
 import { ColorPage } from '../components/pages/Colors/ColorPage';
+import { TreeHome } from '../components/pages/TreeHome';
 
 export default {
 	"/": (p?) => <HomePage />,
@@ -16,6 +17,7 @@ export default {
 	"/editor": (p?) => <OtherPage />,
 	"/colors": (p?) => <ColorPage />,
 	"/timeline": (p?) => <TimelinePage />,
+	"/tree": (p?) => <TreeHome />,
 	"/entries/:slug": (p?) => <EntryPage />,
 	"*": (p?) => <NotFoundPage />
 }

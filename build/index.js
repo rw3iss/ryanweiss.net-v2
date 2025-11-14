@@ -8195,6 +8195,93 @@ var ColorPage = () => {
   );
 };
 
+// src/components/pages/TreeHome/index.tsx
+init_preact_module();
+var TreeHome = () => {
+  const canvasRef = A2(null);
+  const containerRef = A2(null);
+  const [dimensions, setDimensions] = d2({ width: 0, height: 0 });
+  y2(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        setDimensions({ width, height });
+      }
+    };
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    return () => {
+      window.removeEventListener("resize", updateDimensions);
+    };
+  }, []);
+  y2(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    canvas.width = dimensions.width;
+    canvas.height = dimensions.height;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = dimensions.width * dpr;
+    canvas.height = dimensions.height * dpr;
+    canvas.style.width = `${dimensions.width}px`;
+    canvas.style.height = `${dimensions.height}px`;
+    ctx.scale(dpr, dpr);
+    drawBackground(ctx, dimensions.width, dimensions.height);
+  }, [dimensions]);
+  const drawBackground = (ctx, width, height) => {
+    const gradient = ctx.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, "#0a1628");
+    gradient.addColorStop(0.25, "#0d1f2d");
+    gradient.addColorStop(0.5, "#0e2433");
+    gradient.addColorStop(0.75, "#0b1f23");
+    gradient.addColorStop(1, "#081419");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+    addTextureOverlay(ctx, width, height);
+  };
+  const addTextureOverlay = (ctx, width, height) => {
+    const imageData = ctx.getImageData(0, 0, width, height);
+    const data = imageData.data;
+    for (let i4 = 0; i4 < data.length; i4 += 4) {
+      const noise = (Math.random() - 0.5) * 8;
+      data[i4] += noise;
+      data[i4 + 1] += noise;
+      data[i4 + 2] += noise;
+    }
+    ctx.putImageData(imageData, 0, 0);
+    const vignette = ctx.createRadialGradient(
+      width / 2,
+      height / 2,
+      0,
+      width / 2,
+      height / 2,
+      Math.max(width, height) * 0.8
+    );
+    vignette.addColorStop(0, "rgba(0, 0, 0, 0)");
+    vignette.addColorStop(0.7, "rgba(0, 0, 0, 0.1)");
+    vignette.addColorStop(1, "rgba(0, 0, 0, 0.4)");
+    ctx.fillStyle = vignette;
+    ctx.fillRect(0, 0, width, height);
+  };
+  return /* @__PURE__ */ u2("div", { className: "tree-home", ref: containerRef, children: [
+    /* @__PURE__ */ u2("canvas", { className: "tree-home__canvas", ref: canvasRef }),
+    /* @__PURE__ */ u2("div", { className: "tree-home__debug", children: [
+      /* @__PURE__ */ u2("p", { children: [
+        "Canvas: ",
+        dimensions.width,
+        " x ",
+        dimensions.height
+      ] }),
+      /* @__PURE__ */ u2("p", { children: [
+        "Portfolio Items: ",
+        portfolioData.reduce((sum, row) => sum + row.items.length, 0)
+      ] })
+    ] })
+  ] });
+};
+
 // src/config/routes.tsx
 var routes_default = {
   "/": (p3) => /* @__PURE__ */ u2(Home_default, {}),
@@ -8204,6 +8291,7 @@ var routes_default = {
   "/editor": (p3) => /* @__PURE__ */ u2(Other_default, {}),
   "/colors": (p3) => /* @__PURE__ */ u2(ColorPage, {}),
   "/timeline": (p3) => /* @__PURE__ */ u2(Timeline_default, {}),
+  "/tree": (p3) => /* @__PURE__ */ u2(TreeHome, {}),
   "/entries/:slug": (p3) => /* @__PURE__ */ u2(Entry_default, {}),
   "*": (p3) => /* @__PURE__ */ u2(NotFound_default, {})
 };
